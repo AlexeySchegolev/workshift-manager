@@ -1,44 +1,5 @@
 // Mitarbeiterdaten und Schichtdefinitionen
-const employees = [
-    { name: "Katrin Richter", role: "Pflegehelfer", hoursPerWeek: 21 },
-    { name: "Lisa Martin", role: "Pflegehelfer", hoursPerWeek: 21 },
-    { name: "Philipp Berg", role: "Pflegehelfer", hoursPerWeek: 21 },
-    { name: "Erik Friedrich", role: "Pflegehelfer", hoursPerWeek: 28 },
-    { name: "Sophie Meier", role: "Pflegehelfer", hoursPerWeek: 28 },
-    { name: "Tim Lange", role: "Pflegehelfer", hoursPerWeek: 35 },
-    { name: "Elena Bauer", role: "Pfleger", hoursPerWeek: 14 },
-    { name: "Mia König", role: "Pfleger", hoursPerWeek: 14 },
-    { name: "Nina Krause", role: "Pfleger", hoursPerWeek: 14 },
-    { name: "Marlene Weber", role: "Pfleger", hoursPerWeek: 21 },
-    { name: "Anna Schulz", role: "Pfleger", hoursPerWeek: 21 },
-    { name: "Isabel Neumann", role: "Pfleger", hoursPerWeek: 21 },
-    { name: "Clara Hoffmann", role: "Pfleger", hoursPerWeek: 28 },
-    { name: "Maximilian Klein", role: "Pfleger", hoursPerWeek: 28 },
-    { name: "Paul Zimmermann", role: "Pfleger", hoursPerWeek: 28 },
-    { name: "Lukas Fischer", role: "Pfleger", hoursPerWeek: 35 },
-    { name: "Nico Meyer", role: "Pfleger", hoursPerWeek: 35 },
-    { name: "Leon Wolf", role: "Pfleger", hoursPerWeek: 35 },
-    { name: "Tom Herzog", role: "Pfleger", hoursPerWeek: 35 },
-    { name: "Markus Engel", role: "Pfleger", hoursPerWeek: 35 },
-    { name: "Emma Schmitt", role: "Pfleger", hoursPerWeek: 35 },
-    { name: "Lea Schröder", role: "Schichtleiter", hoursPerWeek: 14 },
-    { name: "Jonas Becker", role: "Schichtleiter", hoursPerWeek: 28 },
-    { name: "Jan Busch", role: "Schichtleiter", hoursPerWeek: 35 }
-];
-
-const shifts = {
-    longDays: {
-        F:   { start: "06:00", end: "13:00", roles: ["Pfleger", "Schichtleiter", "Pflegehelfer"] },
-        S00: { start: "11:00", end: "18:00", roles: ["Pfleger"] },
-        S0:  { start: "11:30", end: "18:30", roles: ["Pfleger", "Schichtleiter", "Pflegehelfer"] },
-        S1:  { start: "12:00", end: "19:00", roles: ["Pfleger", "Schichtleiter"] },
-        S:   { start: "12:00", end: "19:00", roles: ["Pfleger", "Schichtleiter"] }
-    },
-    shortDays: {
-        F:   { start: "06:00", end: "13:00", roles: ["Pfleger", "Schichtleiter", "Pflegehelfer"] },
-        FS:  { start: "06:45", end: "14:00", roles: ["Pfleger", "Schichtleiter"] }
-    }
-};
+// Diese Daten werden nun dynamisch geladen
 
 /**
  * Mischt ein Array in zufälliger Reihenfolge (Fisher-Yates Shuffle).
@@ -476,11 +437,72 @@ function getMonthName(monthNumber) {
 // ---------------------------------------------
 // Erstellen des Shiftplans und Darstellung im DOM
 // ---------------------------------------------
-window.addEventListener("DOMContentLoaded", () => {
+async function loadData() {
+    let employees = [];
+    let shifts = {};
+
+    // Versuche, Mitarbeiterdaten aus localStorage zu laden
+    const storedEmployees = localStorage.getItem('employees');
+    if (storedEmployees) {
+        try {
+            employees = JSON.parse(storedEmployees);
+            console.log("Mitarbeiterdaten aus localStorage geladen.");
+        } catch (e) {
+            console.error("Fehler beim Parsen der Mitarbeiterdaten aus localStorage:", e);
+            // Fallback auf JSON-Datei, falls localStorage korrupt ist
+            employees = await fetchInitialData();
+        }
+    } else {
+        // Wenn nichts im localStorage, lade von der JSON-Datei
+        employees = await fetchInitialData();
+    }
+
+    // Schichtdaten immer von der JSON-Datei laden, da sie nicht editierbar sind
+    try {
+        const response = await fetch('mitarbeiter.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        shifts = data.shifts;
+    } catch (error) {
+        console.error("Fehler beim Laden der Schichtdaten aus mitarbeiter.json:", error);
+        // Fallback oder Fehlerbehandlung, falls shifts nicht geladen werden können
+        // Für diese Demo: Leeres shifts-Objekt, was zu einem leeren Plan führt
+        shifts = { longDays: {}, shortDays: {} };
+    }
+
+
+    if (employees.length === 0) {
+        console.warn("Keine Mitarbeiterdaten verfügbar. Schichtplan kann nicht generiert werden.");
+        document.getElementById('shift-table-container').innerHTML = '<p>Keine Mitarbeiterdaten verfügbar. Bitte fügen Sie Mitarbeiter über die Mitarbeiterverwaltung hinzu.</p>';
+        document.getElementById('constraint-summary').innerHTML = '';
+        return;
+    }
+
     const { shiftPlan, finalEmployeeAvailability } = generateShiftPlan(employees, shifts);
     createShiftTable(shiftPlan, employees);
     displayConstraintViolations(shiftPlan, employees, shifts, finalEmployeeAvailability);
-});
+}
+
+async function fetchInitialData() {
+    try {
+        const response = await fetch('mitarbeiter.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // Speichere die initialen Mitarbeiterdaten im localStorage, wenn sie geladen werden
+        localStorage.setItem('employees', JSON.stringify(data.employees));
+        return data.employees;
+    } catch (error) {
+        console.error("Fehler beim Laden der initialen Mitarbeiterdaten aus mitarbeiter.json:", error);
+        return []; // Leeres Array bei Fehler
+    }
+}
+
+
+window.addEventListener("DOMContentLoaded", loadData);
 
 /**
  * Erzeugt die tabellarische Darstellung des Schichtplans im DOM.
@@ -629,9 +651,9 @@ function displayConstraintViolations(shiftPlan, employees, shifts, finalEmployee
 
     employees.forEach(emp => {
         const targetMonthlyHours = emp.hoursPerWeek * avgWeeksPerMonth;
-        const actualMonthlyHours = finalEmployeeAvailability[emp.name].totalHoursAssigned;
+        const actualMonthlyHours = finalEmployeeAvailability[emp.name] ? finalEmployeeAvailability[emp.name].totalHoursAssigned : 0; // Handle case where employee might not be in availability if not assigned any shifts
         const deviation = actualMonthlyHours - targetMonthlyHours;
-        const deviationPercentage = (deviation / targetMonthlyHours) * 100;
+        const deviationPercentage = targetMonthlyHours === 0 ? 0 : (deviation / targetMonthlyHours) * 100; // Avoid division by zero
 
         let li = document.createElement('li');
         let statusClass = 'ok';
@@ -658,7 +680,7 @@ function displayConstraintViolations(shiftPlan, employees, shifts, finalEmployee
 
     // 3. Überprüfung: Samstage pro Mitarbeiter
     employees.forEach(emp => {
-        const saturdaysWorked = finalEmployeeAvailability[emp.name].saturdaysWorked;
+        const saturdaysWorked = finalEmployeeAvailability[emp.name] ? finalEmployeeAvailability[emp.name].saturdaysWorked : 0;
         let li = document.createElement('li');
         let statusClass = 'ok';
         let statusText = '✅';

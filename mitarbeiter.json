@@ -1,0 +1,41 @@
+{
+  "employees": [
+      { "name": "Katrin Richter", "role": "Pflegehelfer", "hoursPerWeek": 21 },
+      { "name": "Lisa Martin", "role": "Pflegehelfer", "hoursPerWeek": 21 },
+      { "name": "Philipp Berg", "role": "Pflegehelfer", "hoursPerWeek": 21 },
+      { "name": "Erik Friedrich", "role": "Pflegehelfer", "hoursPerWeek": 28 },
+      { "name": "Sophie Meier", "role": "Pflegehelfer", "hoursPerWeek": 28 },
+      { "name": "Tim Lange", "role": "Pflegehelfer", "hoursPerWeek": 35 },
+      { "name": "Elena Bauer", "role": "Pfleger", "hoursPerWeek": 14 },
+      { "name": "Mia König", "role": "Pfleger", "hoursPerWeek": 14 },
+      { "name": "Nina Krause", "role": "Pfleger", "hoursPerWeek": 14 },
+      { "name": "Marlene Weber", "role": "Pfleger", "hoursPerWeek": 21 },
+      { "name": "Anna Schulz", "role": "Pfleger", "hoursPerWeek": 21 },
+      { "name": "Isabel Neumann", "role": "Pfleger", "hoursPerWeek": 21 },
+      { "name": "Clara Hoffmann", "role": "Pfleger", "hoursPerWeek": 28 },
+      { "name": "Maximilian Klein", "role": "Pfleger", "hoursPerWeek": 28 },
+      { "name": "Paul Zimmermann", "role": "Pfleger", "hoursPerWeek": 28 },
+      { "name": "Lukas Fischer", "role": "Pfleger", "hoursPerWeek": 35 },
+      { "name": "Nico Meyer", "role": "Pfleger", "hoursPerWeek": 35 },
+      { "name": "Leon Wolf", "role": "Pfleger", "hoursPerWeek": 35 },
+      { "name": "Tom Herzog", "role": "Pfleger", "hoursPerWeek": 35 },
+      { "name": "Markus Engel", "role": "Pfleger", "hoursPerWeek": 35 },
+      { "name": "Emma Schmitt", "role": "Pfleger", "hoursPerWeek": 35 },
+      { "name": "Lea Schröder", "role": "Schichtleiter", "hoursPerWeek": 14 },
+      { "name": "Jonas Becker", "role": "Schichtleiter", "hoursPerWeek": 28 },
+      { "name": "Jan Busch", "role": "Schichtleiter", "hoursPerWeek": 35 }
+  ],
+  "shifts": {
+      "longDays": {
+          "F": { "start": "06:00", "end": "13:00", "roles": ["Pfleger", "Schichtleiter", "Pflegehelfer"] },
+          "S00": { "start": "11:00", "end": "18:00", "roles": ["Pfleger"] },
+          "S0": { "start": "11:30", "end": "18:30", "roles": ["Pfleger", "Schichtleiter", "Pflegehelfer"] },
+          "S1": { "start": "12:00", "end": "19:00", "roles": ["Pfleger", "Schichtleiter"] },
+          "S": { "start": "12:00", "end": "19:00", "roles": ["Pfleger", "Schichtleiter"] }
+      },
+      "shortDays": {
+          "F": { "start": "06:00", "end": "13:00", "roles": ["Pfleger", "Schichtleiter", "Pflegehelfer"] },
+          "FS": { "start": "06:45", "end": "14:00", "roles": ["Pfleger", "Schichtleiter"] }
+      }
+  }
+}

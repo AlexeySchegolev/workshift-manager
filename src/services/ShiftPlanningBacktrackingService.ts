@@ -60,81 +60,31 @@ export class ShiftPlanningBacktrackingService {
       );
     }
     
-    // Bestimme die Anforderungen für diese Schicht
+    // VEREINFACHTE LOGIK: NUR SCHICHTLEITER-PLANUNG
+    // Alle anderen Rollen sind auskommentiert für schrittweises Testen
+    
     let requiredSlots: { validRoles: string[], count: number }[] = [];
     
-    if (shiftName === "S00" || shiftName === "S" || shiftName === "FS" || shiftName === "S1" || shiftName === "S0") {
-      console.log(`Versuche Spezialschicht ${shiftName} für Tag ${dayKey} zu besetzen`);
-      
-      // Spezielle Schichten, die nur von einem Mitarbeiter besetzt werden
-      if (shiftName === "S1") {
-        // S1-Schicht: Muss von einem Pfleger oder Schichtleiter besetzt werden
-        requiredSlots.push({
-          validRoles: ["Pfleger", "Schichtleiter"],
-          count: 1
-        });
-      } else if (shiftName === "S0") {
-        // S0-Schicht: Muss von einem Pfleger oder Schichtleiter besetzt werden
-        // Pflegehelfer können optional auch hier eingesetzt werden
-        requiredSlots.push({
-          validRoles: ["Pfleger", "Schichtleiter", "Pflegehelfer"],
-          count: 1
-        });
-      } else {
-        // Alle anderen Spezialschichten
-        requiredSlots.push({
-          validRoles: shift.roles,
-          count: 1
-        });
-      }
-      
-      // Strikter Sicherheitsmechanismus: Nur einen einzigen Slot für Spezialschichten erlauben
-      const success = this.fillRequiredSlots(
-        requiredSlots,
-        0,
-        employees,
-        employeeAvailability,
-        shiftPlan,
-        dayKey,
-        shiftName,
-        shift,
-        weekday,
-        strictMode
-      );
-      
-      // Explizite Überprüfung, ob die Spezialschicht besetzt wurde
-      if (success) {
-        console.log(`Spezialschicht ${shiftName} für Tag ${dayKey} erfolgreich besetzt`);
-        
-        // Prüfen, ob die Schicht tatsächlich Mitarbeiter zugewiesen bekommen hat
-        const dayPlan = shiftPlan[dayKey] as DayShiftPlan;
-        if (!dayPlan[shiftName] || dayPlan[shiftName].length === 0) {
-          console.error(`Fehler: Spezialschicht ${shiftName} wurde als erfolgreich markiert, hat aber keine Mitarbeiter`);
-          return false;
-        }
-        
-        // Weitermachen mit der nächsten Schicht
-        return this.assignDayShiftsWithBacktracking(
-          shiftNames,
-          index + 1,
-          employees,
-          employeeAvailability,
-          shiftPlan,
-          dayKey,
-          dayShifts,
-          weekday,
-          strictMode
-        );
-      } else {
-        console.warn(`Konnte Spezialschicht ${shiftName} für Tag ${dayKey} nicht besetzen`);
-        return false;
-      }
-    } else {
-      // Standard-Schichten: mind. 1 Schichtleiter, 1 Pflegehelfer, 4 Pfleger
-      requiredSlots.push({ validRoles: ["Schichtleiter"], count: 1 });
-      requiredSlots.push({ validRoles: ["Pflegehelfer"], count: 1 });
-      requiredSlots.push({ validRoles: ["Pfleger"], count: 4 });
-    }
+    // VOLLSTÄNDIGE LOGIK: SCHICHTLEITER + 4 PFLEGER + 1 PFLEGEHELFER PRO SCHICHT
+    console.log(`Versuche Schicht ${shiftName} für Tag ${dayKey} zu besetzen (1 Schichtleiter + 4 Pfleger + 1 Pflegehelfer)`);
+    
+    // 1 Schichtleiter pro Schicht
+    requiredSlots.push({
+      validRoles: ["Schichtleiter"],
+      count: 1
+    });
+    
+    // 4 Pfleger pro Schicht
+    requiredSlots.push({
+      validRoles: ["Pfleger"],
+      count: 4
+    });
+    
+    // 1 Pflegehelfer pro Schicht (neu aktiviert!)
+    requiredSlots.push({
+      validRoles: ["Pflegehelfer"],
+      count: 1
+    });
     
     // Prüfen, ob der Tag null ist und ggf. initialisieren
     if (shiftPlan[dayKey] === null) {

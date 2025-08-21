@@ -254,8 +254,9 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                       {emp.name}
                     </Typography>
                     <Typography variant="caption" color="textSecondary" sx={{ fontSize: '0.7rem' }}>
-                      {emp.role.charAt(0)} • {emp.hoursPerWeek}h
-                      {emp.clinic && ` • ${emp.clinic.charAt(0)}`}
+                      {emp.role}
+                      {emp.hoursPerMonth && ` • ${emp.hoursPerMonth}h/Monat`}
+                      {emp.clinic && ` • ${emp.clinic}`}
                     </Typography>
                   </TableCell>
                   

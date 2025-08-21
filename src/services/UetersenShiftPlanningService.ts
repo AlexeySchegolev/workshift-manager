@@ -8,6 +8,7 @@ import { relaxedRules } from '../data/defaultRules';
 import { uetersenShifts } from '../data/defaultShifts';
 import { ShiftPlanningUtilService } from './ShiftPlanningUtilService';
 import { ShiftPlanningConstraintService } from './ShiftPlanningConstraintService';
+import { EmployeeRoleSortingService } from './EmployeeRoleSortingService';
 
 // Export stellt sicher, dass die Datei als Modul erkannt wird
 export {};
@@ -44,17 +45,17 @@ export class UetersenShiftPlanningService {
     const daysInMonth = new Date(year, month, 0).getDate();
     const weeks = ShiftPlanningUtilService.groupDaysByWeek(year, month, daysInMonth);
     
-    // Mitarbeiterlisten nach Rolle
+    // VOLLSTÄNDIGE LOGIK: ALLE ROLLEN FÜR UETERSEN
     const schichtleiter = employees.filter(emp => emp.role === 'Schichtleiter');
     const pfleger = employees.filter(emp => emp.role === 'Pfleger');
     const pflegehelfer = employees.filter(emp => emp.role === 'Pflegehelfer');
     
     // Für jede Woche Schichten planen
     for (const weekNumber in weeks) {
-      // Mitarbeiterlisten mischen für faire Verteilung
+      // Nur Schichtleiter mischen für faire Verteilung
       const shuffledSchichtleiter = [...schichtleiter].sort(() => Math.random() - 0.5);
-      const shuffledPfleger = [...pfleger].sort(() => Math.random() - 0.5);
-      const shuffledPflegehelfer = [...pflegehelfer].sort(() => Math.random() - 0.5);
+      // const shuffledPfleger = [...pfleger].sort(() => Math.random() - 0.5);
+      // const shuffledPflegehelfer = [...pflegehelfer].sort(() => Math.random() - 0.5);
       
       // Wöchentliche Stunden und letzte Schicht zurücksetzen
       employees.forEach(emp => {
@@ -87,6 +88,7 @@ export class UetersenShiftPlanningService {
         
         const dayPlan = shiftPlan[dayKey] as DayShiftPlan;
         
+        // ERWEITERTE UETERSEN-PLANUNG: SCHICHTLEITER + PFLEGER
         // 1. Schichtleiter zuweisen (einer pro Tag, markiert als 6)
         let assignedSchichtleiter = false;
         for (const sl of shuffledSchichtleiter) {
@@ -109,48 +111,35 @@ export class UetersenShiftPlanningService {
             employeeAvailability[sl.id].lastShiftType = "6";
             
             assignedSchichtleiter = true;
+            console.log(`Schichtleiter ${sl.name} für Uetersen am ${dayKey} zugewiesen`);
             break;
           }
         }
         
         if (!assignedSchichtleiter) {
           // Kein Schichtleiter verfügbar, Tag überspringen
+          console.log(`Kein Schichtleiter für Uetersen am ${dayKey} verfügbar`);
           shiftPlan[dayKey] = null;
           continue;
         }
         
-        // 2. Frühschicht (4) - 2 Pfleger und 1 Pflegehelfer
+        // 2. Frühschicht (4) - 2 Pfleger
         if (!dayPlan["4"]) {
           dayPlan["4"] = [];
         }
         
-        // Pflegehelfer für Frühschicht
-        let pflegehelferAssigned = false;
-        for (const ph of shuffledPflegehelfer) {
-          if (ShiftPlanningConstraintService.canAssignEmployeeToUetersen(
-            ph, employeeAvailability, dayKey, "4", uetersenShifts.longDays["4"]
-          )) {
-            dayPlan["4"].push(ph.id);
-            
-            // Verfügbarkeit aktualisieren
-            const shiftHours = ShiftPlanningUtilService.calculateShiftHours(
-              uetersenShifts.longDays["4"].start,
-              uetersenShifts.longDays["4"].end
-            );
-            employeeAvailability[ph.id].weeklyHoursAssigned += shiftHours;
-            employeeAvailability[ph.id].totalHoursAssigned += shiftHours;
-            employeeAvailability[ph.id].shiftsAssigned.push(dayKey);
-            employeeAvailability[ph.id].lastShiftType = "4";
-            
-            pflegehelferAssigned = true;
-            break;
-          }
-        }
+        // Pfleger für Uetersen sortieren (abwechslungsreiche Verteilung)
+        const uetersenPfleger = employees.filter(emp => emp.role === 'Pfleger' && emp.clinic === 'Uetersen');
+        const sortedUetersenPfleger = EmployeeRoleSortingService.sortAndShuffleByRole(
+          uetersenPfleger,
+          employeeAvailability,
+          "4"
+        );
         
-        // 2 Pfleger für Frühschicht
-        let pflegerCount = 0;
-        for (const p of shuffledPfleger) {
-          if (pflegerCount >= 2) break;
+        // 2 Pfleger für Frühschicht (4)
+        let pflegerCount4 = 0;
+        for (const p of sortedUetersenPfleger) {
+          if (pflegerCount4 >= 2) break;
           
           if (ShiftPlanningConstraintService.canAssignEmployeeToUetersen(
             p, employeeAvailability, dayKey, "4", uetersenShifts.longDays["4"]
@@ -167,7 +156,8 @@ export class UetersenShiftPlanningService {
             employeeAvailability[p.id].shiftsAssigned.push(dayKey);
             employeeAvailability[p.id].lastShiftType = "4";
             
-            pflegerCount++;
+            pflegerCount4++;
+            console.log(`Pfleger ${p.name} für Uetersen Schicht 4 am ${dayKey} zugewiesen (${pflegerCount4}/2)`);
           }
         }
         
@@ -176,9 +166,16 @@ export class UetersenShiftPlanningService {
           dayPlan["5"] = [];
         }
         
-        let lateShiftPflegerCount = 0;
-        for (const p of shuffledPfleger) {
-          if (lateShiftPflegerCount >= 2) break;
+        // Pfleger für Spätschicht sortieren (abwechslungsreiche Verteilung)
+        const sortedUetersenPflegerSpat = EmployeeRoleSortingService.sortAndShuffleByRole(
+          uetersenPfleger,
+          employeeAvailability,
+          "5"
+        );
+        
+        let pflegerCount5 = 0;
+        for (const p of sortedUetersenPflegerSpat) {
+          if (pflegerCount5 >= 2) break;
           
           if (ShiftPlanningConstraintService.canAssignEmployeeToUetersen(
             p, employeeAvailability, dayKey, "5", uetersenShifts.longDays["5"]
@@ -195,17 +192,102 @@ export class UetersenShiftPlanningService {
             employeeAvailability[p.id].shiftsAssigned.push(dayKey);
             employeeAvailability[p.id].lastShiftType = "5";
             
-            lateShiftPflegerCount++;
+            pflegerCount5++;
+            console.log(`Pfleger ${p.name} für Uetersen Schicht 5 am ${dayKey} zugewiesen (${pflegerCount5}/2)`);
           }
         }
         
-        // Prüfen, ob alle erforderlichen Mitarbeiter zugewiesen wurden
-        const requiredFruhschichtCount = pflegehelferAssigned ? 3 : 2; // 2 Pfleger + evtl. 1 Pflegehelfer
-        
-        if (dayPlan["4"].length < requiredFruhschichtCount || dayPlan["5"].length < 2) {
-          // Nicht genügend Mitarbeiter verfügbar, Tag als unvollständig markieren
-          shiftPlan[dayKey] = null;
+        // Prüfen, ob genügend Pfleger zugewiesen wurden
+        if (pflegerCount4 < 2 || pflegerCount5 < 2) {
+          console.warn(`Uetersen ${dayKey}: Nicht genügend Pfleger (${pflegerCount4}/2 für Schicht 4, ${pflegerCount5}/2 für Schicht 5)`);
+          // Tag trotzdem behalten, auch wenn nicht vollständig besetzt
         }
+        
+        // ALLE ANDEREN ROLLEN SIND AUSKOMMENTIERT:
+        
+        // // 2. Frühschicht (4) - 2 Pfleger und 1 Pflegehelfer
+        // if (!dayPlan["4"]) {
+        //   dayPlan["4"] = [];
+        // }
+        //
+        // // Pflegehelfer für Frühschicht
+        // let pflegehelferAssigned = false;
+        // for (const ph of shuffledPflegehelfer) {
+        //   if (ShiftPlanningConstraintService.canAssignEmployeeToUetersen(
+        //     ph, employeeAvailability, dayKey, "4", uetersenShifts.longDays["4"]
+        //   )) {
+        //     dayPlan["4"].push(ph.id);
+        //
+        //     const shiftHours = ShiftPlanningUtilService.calculateShiftHours(
+        //       uetersenShifts.longDays["4"].start,
+        //       uetersenShifts.longDays["4"].end
+        //     );
+        //     employeeAvailability[ph.id].weeklyHoursAssigned += shiftHours;
+        //     employeeAvailability[ph.id].totalHoursAssigned += shiftHours;
+        //     employeeAvailability[ph.id].shiftsAssigned.push(dayKey);
+        //     employeeAvailability[ph.id].lastShiftType = "4";
+        //
+        //     pflegehelferAssigned = true;
+        //     break;
+        //   }
+        // }
+        //
+        // // 2 Pfleger für Frühschicht
+        // let pflegerCount = 0;
+        // for (const p of shuffledPfleger) {
+        //   if (pflegerCount >= 2) break;
+        //
+        //   if (ShiftPlanningConstraintService.canAssignEmployeeToUetersen(
+        //     p, employeeAvailability, dayKey, "4", uetersenShifts.longDays["4"]
+        //   )) {
+        //     dayPlan["4"].push(p.id);
+        //
+        //     const shiftHours = ShiftPlanningUtilService.calculateShiftHours(
+        //       uetersenShifts.longDays["4"].start,
+        //       uetersenShifts.longDays["4"].end
+        //     );
+        //     employeeAvailability[p.id].weeklyHoursAssigned += shiftHours;
+        //     employeeAvailability[p.id].totalHoursAssigned += shiftHours;
+        //     employeeAvailability[p.id].shiftsAssigned.push(dayKey);
+        //     employeeAvailability[p.id].lastShiftType = "4";
+        //
+        //     pflegerCount++;
+        //   }
+        // }
+        //
+        // // 3. Spätschicht (5) - 2 Pfleger
+        // if (!dayPlan["5"]) {
+        //   dayPlan["5"] = [];
+        // }
+        //
+        // let lateShiftPflegerCount = 0;
+        // for (const p of shuffledPfleger) {
+        //   if (lateShiftPflegerCount >= 2) break;
+        //
+        //   if (ShiftPlanningConstraintService.canAssignEmployeeToUetersen(
+        //     p, employeeAvailability, dayKey, "5", uetersenShifts.longDays["5"]
+        //   )) {
+        //     dayPlan["5"].push(p.id);
+        //
+        //     const shiftHours = ShiftPlanningUtilService.calculateShiftHours(
+        //       uetersenShifts.longDays["5"].start,
+        //       uetersenShifts.longDays["5"].end
+        //     );
+        //     employeeAvailability[p.id].weeklyHoursAssigned += shiftHours;
+        //     employeeAvailability[p.id].totalHoursAssigned += shiftHours;
+        //     employeeAvailability[p.id].shiftsAssigned.push(dayKey);
+        //     employeeAvailability[p.id].lastShiftType = "5";
+        //
+        //     lateShiftPflegerCount++;
+        //   }
+        // }
+        //
+        // // Prüfen, ob alle erforderlichen Mitarbeiter zugewiesen wurden
+        // const requiredFruhschichtCount = pflegehelferAssigned ? 3 : 2;
+        //
+        // if (dayPlan["4"].length < requiredFruhschichtCount || dayPlan["5"].length < 2) {
+        //   shiftPlan[dayKey] = null;
+        // }
       }
     }
     

@@ -6,18 +6,15 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails
+  Divider
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { allRuleCategories, RuleCategory } from '../data/detailedRules';
 
 /**
  * Komponente zur Anzeige aller Schichtregeln
  * Verwendet die strukturierten Regeln aus der detailedRules.ts Datei
+ * Zeigt alle Regeln direkt an (ohne Accordion), um sicherzustellen, dass alle Zeilen sichtbar sind
  */
 const ShiftRulesDisplay: React.FC = () => {
   return (
@@ -28,30 +25,25 @@ const ShiftRulesDisplay: React.FC = () => {
         </Typography>
 
         {allRuleCategories.map((category: RuleCategory, index: number) => (
-          <Accordion key={index} defaultExpanded>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls={`panel${index + 1}a-content`}
-              id={`panel${index + 1}a-header`}
-            >
-              <Typography variant="h6">{category.title}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <List>
-                {category.rules.map((rule, ruleIndex) => (
-                  <React.Fragment key={ruleIndex}>
-                    <ListItem>
-                      <ListItemText 
-                        primary={rule.primary} 
-                        secondary={rule.secondary} 
-                      />
-                    </ListItem>
-                    {ruleIndex < category.rules.length - 1 && <Divider />}
-                  </React.Fragment>
-                ))}
-              </List>
-            </AccordionDetails>
-          </Accordion>
+          <Box key={index} sx={{ mb: 4 }}>
+            <Typography variant="h6" sx={{ mb: 2, mt: 2, bgcolor: 'background.default', p: 1 }}>
+              {category.title}
+            </Typography>
+            <List>
+              {category.rules.map((rule, ruleIndex) => (
+                <React.Fragment key={ruleIndex}>
+                  <ListItem>
+                    <ListItemText
+                      primary={rule.primary}
+                      secondary={rule.secondary}
+                    />
+                  </ListItem>
+                  {ruleIndex < category.rules.length - 1 && <Divider />}
+                </React.Fragment>
+              ))}
+            </List>
+            {index < allRuleCategories.length - 1 && <Divider sx={{ mt: 2 }} />}
+          </Box>
         ))}
       </Paper>
     </Box>

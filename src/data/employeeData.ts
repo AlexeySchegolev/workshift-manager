@@ -49,10 +49,10 @@ export const getEmployeesByRole = (role: "Pfleger" | "Pflegehelfer" | "Schichtle
 };
 
 /**
- * Hilfsfunktion zum Filtern der Mitarbeiter nach Wochenstunden
+ * Hilfsfunktion zum Filtern der Mitarbeiter nach Monatsstunden
  */
-export const getEmployeesByHoursPerWeek = (hours: number): Employee[] => {
-  return employeeData.filter(employee => employee.hoursPerWeek === hours);
+export const getEmployeesByHoursPerMonth = (hours: number): Employee[] => {
+  return employeeData.filter(employee => employee.hoursPerMonth === hours);
 };
 
 /**

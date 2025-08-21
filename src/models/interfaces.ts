@@ -5,8 +5,8 @@ export interface Employee {
   id: string;
   name: string;
   role: EmployeeRole;
-  hoursPerWeek: number;
-  hoursPerMonth?: number; // Optionales Feld für direkte monatliche Sollstunden
+  hoursPerMonth: number; // Monatliche Sollstunden
+  hoursPerWeek?: number; // Optional: Wöchentliche Sollstunden (wird nicht mehr angezeigt)
   clinic?: 'Elmshorn' | 'Uetersen'; // Zugehörigkeit zur Praxis
 }
 

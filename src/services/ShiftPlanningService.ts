@@ -35,13 +35,16 @@ export class ShiftPlanningService {
     const elmshornerEmployees = employees.filter(emp => emp.clinic === 'Elmshorn' || !emp.clinic);
     const uetersenEmployees = employees.filter(emp => emp.clinic === 'Uetersen');
     
+    // ALLE Mitarbeiter für Samstagsplanung (Elmshorn + Uetersen)
+    const allEmployeesForSaturdays = [...elmshornerEmployees, ...uetersenEmployees];
+    
     // Mitarbeiter nach Rolle sortieren
     const sortedElmshornerEmployees = EmployeeRoleSortingService.sortEmployeesByRole(elmshornerEmployees);
     const sortedUetersenEmployees = EmployeeRoleSortingService.sortEmployeesByRole(uetersenEmployees);
     
-    // Schichtplan für Elmshorn erstellen
+    // Schichtplan für Elmshorn erstellen (mit allen Mitarbeitern für Samstage)
     console.log("Versuche Schichtplan für Elmshorn mit strengen Regeln zu erstellen...");
-    let elmshornerResult = this.runPlanningAttempt(sortedElmshornerEmployees, defaultShifts, year, month, true);
+    let elmshornerResult = this.runPlanningAttempt(sortedElmshornerEmployees, allEmployeesForSaturdays, defaultShifts, year, month, true);
     
     // Prüfen, ob der Plan vollständig ist
     const hasElmshornerNullDays = Object.values(elmshornerResult.shiftPlan).some(dayPlan => dayPlan === null);
@@ -49,7 +52,7 @@ export class ShiftPlanningService {
     if (hasElmshornerNullDays) {
       // Wenn nicht vollständig, mit gelockerten Regeln versuchen
       console.log("Konnte keinen vollständigen Plan für Elmshorn mit strengen Regeln erstellen. Versuche es mit gelockerten Regeln...");
-      elmshornerResult = this.runPlanningAttempt(sortedElmshornerEmployees, defaultShifts, year, month, false);
+      elmshornerResult = this.runPlanningAttempt(sortedElmshornerEmployees, allEmployeesForSaturdays, defaultShifts, year, month, false);
     } else {
       console.log("Schichtplan für Elmshorn erfolgreich mit strengen Regeln erstellt.");
     }
@@ -104,6 +107,7 @@ export class ShiftPlanningService {
    */
   private static runPlanningAttempt(
     employees: Employee[],
+    allEmployeesForSaturdays: Employee[],
     shifts: ShiftDefinitions,
     year: number,
     month: number,
@@ -112,8 +116,8 @@ export class ShiftPlanningService {
     const shiftPlan: MonthlyShiftPlan = {};
     const employeeAvailability: EmployeeAvailability = {};
     
-    // Verfügbarkeit initialisieren
-    employees.forEach(emp => {
+    // Verfügbarkeit für ALLE Mitarbeiter initialisieren (auch Uetersen für Samstage)
+    allEmployeesForSaturdays.forEach(emp => {
       employeeAvailability[emp.id] = {
         weeklyHoursAssigned: 0,
         totalHoursAssigned: 0,
@@ -129,8 +133,9 @@ export class ShiftPlanningService {
     
     // Für jede Woche Schichten planen
     for (const weekNumber in weeks) {
-      // Mitarbeiterliste nach Rolle sortieren und innerhalb jeder Rolle mischen
-      const sortedAndShuffledEmployees = EmployeeRoleSortingService.sortAndShuffleByRole(employees);
+      // Mitarbeiterliste nach Rolle sortieren - wird für jeden Tag neu sortiert
+      // (wird später in der Schichtschleife mit aktuellem Schichttyp aufgerufen)
+      let sortedAndShuffledEmployees = EmployeeRoleSortingService.sortAndShuffleByRole(employees, employeeAvailability);
       
       // Wöchentliche Stunden und letzte Schicht zurücksetzen
       sortedAndShuffledEmployees.forEach(emp => {
@@ -162,92 +167,192 @@ export class ShiftPlanningService {
         const isLongDay = [1, 3, 5].includes(weekday);
         const dayShifts = isLongDay ? shifts.longDays : shifts.shortDays;
         
-        // Schichtpriorisierung: Spezialschichten zuerst
-        const specialShifts = ['S0', 'S1', 'S00', 'S', 'FS'];
-        const regularShifts = Object.keys(dayShifts).filter(s => !specialShifts.includes(s));
+        // SPEZIELLE SAMSTAGS-LOGIK: F-SCHICHT MIT 1 SCHICHTLEITER + 4 PFLEGER + 1 PFLEGEHELFER
+        if (weekday === 6) { // Samstag
+          console.log(`Samstag ${dayKey}: F-Schicht mit 1 Schichtleiter + 4 Pfleger + 1 Pflegehelfer planen`);
+          
+          const dayPlan = shiftPlan[dayKey] as DayShiftPlan;
+          let saturdaySuccess = true;
+          
+          // Nur F-Schicht versuchen
+          if (dayShifts['F']) {
+            dayPlan['F'] = [];
+            
+            // ALLE Mitarbeiter für Samstag sortieren (Elmshorn + Uetersen) - faire Samstagsverteilung!
+            const employeesForSaturday = EmployeeRoleSortingService.sortEmployeesForSaturday(
+              allEmployeesForSaturdays,
+              employeeAvailability
+            );
+            
+            // 1. Einen Schichtleiter für F-Schicht finden
+            let schichtleiterAssigned = false;
+            for (const emp of employeesForSaturday) {
+              if (emp.role !== 'Schichtleiter') continue;
+              
+              if (ShiftPlanningConstraintService.canAssignEmployee(
+                emp,
+                dayShifts['F'].roles,
+                employeeAvailability,
+                dayKey,
+                weekday,
+                'F',
+                dayShifts['F'],
+                strictMode
+              )) {
+                // Schichtleiter zuweisen
+                dayPlan['F'].push(emp.id);
+                
+                // Verfügbarkeit aktualisieren
+                const shiftHours = ShiftPlanningUtilService.calculateShiftHours(
+                  dayShifts['F'].start,
+                  dayShifts['F'].end
+                );
+                employeeAvailability[emp.id].weeklyHoursAssigned += shiftHours;
+                employeeAvailability[emp.id].totalHoursAssigned += shiftHours;
+                employeeAvailability[emp.id].shiftsAssigned.push(dayKey);
+                employeeAvailability[emp.id].lastShiftType = 'F';
+                employeeAvailability[emp.id].saturdaysWorked += 1;
+                
+                schichtleiterAssigned = true;
+                console.log(`Samstag ${dayKey}: Schichtleiter ${emp.name} für F-Schicht zugewiesen`);
+                break;
+              }
+            }
+            
+            // 2. 4 Pfleger für F-Schicht finden
+            let pflegerAssigned = 0;
+            for (const emp of employeesForSaturday) {
+              if (emp.role !== 'Pfleger' || pflegerAssigned >= 4) continue;
+              
+              if (ShiftPlanningConstraintService.canAssignEmployee(
+                emp,
+                dayShifts['F'].roles,
+                employeeAvailability,
+                dayKey,
+                weekday,
+                'F',
+                dayShifts['F'],
+                strictMode
+              )) {
+                // Pfleger zuweisen
+                dayPlan['F'].push(emp.id);
+                
+                // Verfügbarkeit aktualisieren
+                const shiftHours = ShiftPlanningUtilService.calculateShiftHours(
+                  dayShifts['F'].start,
+                  dayShifts['F'].end
+                );
+                employeeAvailability[emp.id].weeklyHoursAssigned += shiftHours;
+                employeeAvailability[emp.id].totalHoursAssigned += shiftHours;
+                employeeAvailability[emp.id].shiftsAssigned.push(dayKey);
+                employeeAvailability[emp.id].lastShiftType = 'F';
+                employeeAvailability[emp.id].saturdaysWorked += 1;
+                
+                pflegerAssigned++;
+                console.log(`Samstag ${dayKey}: Pfleger ${emp.name} für F-Schicht zugewiesen (${pflegerAssigned}/4)`);
+              }
+            }
+            
+            // 3. 1 Pflegehelfer für F-Schicht finden
+            let pflegehelferAssigned = 0;
+            for (const emp of employeesForSaturday) {
+              if (emp.role !== 'Pflegehelfer' || pflegehelferAssigned >= 1) continue;
+              
+              if (ShiftPlanningConstraintService.canAssignEmployee(
+                emp,
+                dayShifts['F'].roles,
+                employeeAvailability,
+                dayKey,
+                weekday,
+                'F',
+                dayShifts['F'],
+                strictMode
+              )) {
+                // Pflegehelfer zuweisen
+                dayPlan['F'].push(emp.id);
+                
+                // Verfügbarkeit aktualisieren
+                const shiftHours = ShiftPlanningUtilService.calculateShiftHours(
+                  dayShifts['F'].start,
+                  dayShifts['F'].end
+                );
+                employeeAvailability[emp.id].weeklyHoursAssigned += shiftHours;
+                employeeAvailability[emp.id].totalHoursAssigned += shiftHours;
+                employeeAvailability[emp.id].shiftsAssigned.push(dayKey);
+                employeeAvailability[emp.id].lastShiftType = 'F';
+                employeeAvailability[emp.id].saturdaysWorked += 1;
+                
+                pflegehelferAssigned++;
+                console.log(`Samstag ${dayKey}: Pflegehelfer ${emp.name} für F-Schicht zugewiesen (${pflegehelferAssigned}/1)`);
+                break; // Nur 1 Pflegehelfer benötigt
+              }
+            }
+            
+            // Prüfen ob Mindestbesetzung erreicht wurde
+            if (!schichtleiterAssigned || pflegerAssigned < 4 || pflegehelferAssigned < 1) {
+              console.warn(`Samstag ${dayKey}: Nicht genügend Mitarbeiter (${schichtleiterAssigned ? 1 : 0} Schichtleiter, ${pflegerAssigned}/4 Pfleger, ${pflegehelferAssigned}/1 Pflegehelfer)`);
+              saturdaySuccess = false;
+            }
+          }
+          
+          if (!saturdaySuccess) {
+            shiftPlan[dayKey] = null;
+          }
+          
+          continue; // Samstag ist fertig, weiter zum nächsten Tag
+        }
         
-        // Sortierte Schichtnamen: Spezialschichten zuerst, dann reguläre Schichten
-        const sortedShiftNames = [...specialShifts.filter(s => dayShifts[s]), ...regularShifts];
+        // NORMALE PLANUNG FÜR ANDERE TAGE
+        // Vereinfachte Schichtpriorisierung: Nur F und S
+        const sortedShiftNames = Object.keys(dayShifts).sort((a, b) => {
+          // F zuerst, dann S
+          if (a === 'F') return -1;
+          if (b === 'F') return 1;
+          if (a === 'S') return -1;
+          if (b === 'S') return 1;
+          return 0;
+        });
         
         console.log(`Tag ${dayKey}: Schichtzuweisung in Reihenfolge: ${sortedShiftNames.join(', ')}`);
         
-        // Schichten für diesen Tag zuweisen
-        const success = ShiftPlanningBacktrackingService.assignDayShiftsWithBacktracking(
-          sortedShiftNames,
-          0,
-          sortedAndShuffledEmployees,
-          employeeAvailability,
-          shiftPlan,
-          dayKey,
-          dayShifts,
-          weekday,
-          strictMode
-        );
+        // Für jede Schicht die Mitarbeiter neu sortieren für Abwechslung
+        let daySuccess = true;
+        for (const shiftName of sortedShiftNames) {
+          if (!dayShifts[shiftName]) continue;
+          
+          // Mitarbeiter für diese spezifische Schicht sortieren (Abwechslung!)
+          const employeesForShift = EmployeeRoleSortingService.sortAndShuffleByRole(
+            employees,
+            employeeAvailability,
+            shiftName
+          );
+          
+          // Einzelne Schicht zuweisen
+          const shiftSuccess = ShiftPlanningBacktrackingService.assignDayShiftsWithBacktracking(
+            [shiftName], // Nur diese eine Schicht
+            0,
+            employeesForShift,
+            employeeAvailability,
+            shiftPlan,
+            dayKey,
+            dayShifts,
+            weekday,
+            strictMode
+          );
+          
+          if (!shiftSuccess) {
+            daySuccess = false;
+            break;
+          }
+        }
+        
+        const success = daySuccess;
         
         // Wenn keine erfolgreiche Zuweisung möglich war
         if (!success) {
-          // Spezialbehandlung für Samstage: Sicherstellen, dass mindestens die Frühschicht besetzt ist
-          if (weekday === 6) {
-            console.log(`Keine vollständige Zuweisung für Samstag ${dayKey} möglich - versuche zumindest die Frühschicht zu besetzen`);
-            
-            // Zurücksetzen des Tagesplans
-            shiftPlan[dayKey] = {};
-            
-            // Nur für die Frühschicht versuchen
-            const frühschicht = 'F';
-            if (dayShifts[frühschicht]) {
-              // Sortierte und gemischte Mitarbeiterliste verwenden
-              const dayPlan = shiftPlan[dayKey] as DayShiftPlan;
-              dayPlan[frühschicht] = [];
-              
-              // Versuchen, die Frühschicht mit mindestens einem Mitarbeiter zu besetzen
-              let frühschichtBesetzt = false;
-              
-              for (const emp of sortedAndShuffledEmployees) {
-                if (ShiftPlanningConstraintService.canAssignEmployee(
-                  emp,
-                  dayShifts[frühschicht].roles,
-                  employeeAvailability,
-                  dayKey,
-                  weekday,
-                  frühschicht,
-                  dayShifts[frühschicht],
-                  false // Im gelockerten Modus versuchen
-                )) {
-                  // Mitarbeiter zuweisen
-                  dayPlan[frühschicht].push(emp.id);
-                  
-                  // Verfügbarkeit aktualisieren
-                  const shiftHours = ShiftPlanningUtilService.calculateShiftHours(
-                    dayShifts[frühschicht].start,
-                    dayShifts[frühschicht].end
-                  );
-                  employeeAvailability[emp.id].weeklyHoursAssigned += shiftHours;
-                  employeeAvailability[emp.id].totalHoursAssigned += shiftHours;
-                  employeeAvailability[emp.id].shiftsAssigned.push(dayKey);
-                  employeeAvailability[emp.id].lastShiftType = frühschicht;
-                  employeeAvailability[emp.id].saturdaysWorked += 1;
-                  
-                  frühschichtBesetzt = true;
-                  console.log(`Frühschicht für Samstag ${dayKey} erfolgreich mit ${emp.name} besetzt`);
-                  break; // Ein Mitarbeiter für die Frühschicht reicht
-                }
-              }
-              
-              // Wenn auch keine Frühschicht besetzt werden konnte, den Tag als null markieren
-              if (!frühschichtBesetzt) {
-                console.warn(`Konnte auch keine Frühschicht für Samstag ${dayKey} besetzen`);
-                shiftPlan[dayKey] = null;
-              }
-            } else {
-              // Wenn keine Frühschicht für diesen Tag definiert ist (unwahrscheinlich)
-              console.warn(`Keine Frühschicht für Samstag ${dayKey} definiert`);
-              shiftPlan[dayKey] = null;
-            }
-          } else {
-            // Für andere Tage: Tag als null markieren, wenn keine Zuweisung möglich war
-            shiftPlan[dayKey] = null;
-          }
+          // Für andere Tage (nicht Samstag): Tag als null markieren, wenn keine Zuweisung möglich war
+          // Samstage werden bereits oben speziell behandelt
+          shiftPlan[dayKey] = null;
         }
       }
     }

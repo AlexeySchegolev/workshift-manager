@@ -12,25 +12,7 @@ export const defaultShifts: ShiftDefinitions = {
       end: "13:00",
       roles: ["Pfleger", "Schichtleiter", "Pflegehelfer"]
     },
-    // Spätschicht 00 (wird immer nur von einem Pfleger belegt)
-    S00: {
-      start: "11:00",
-      end: "18:00",
-      roles: ["Pfleger"]
-    },
-    // Spätschicht 0
-    S0: {
-      start: "11:30",
-      end: "18:30",
-      roles: ["Pfleger", "Schichtleiter", "Pflegehelfer"]
-    },
-    // Spätschicht 1
-    S1: {
-      start: "12:00",
-      end: "19:00",
-      roles: ["Pfleger", "Schichtleiter"]
-    },
-    // Spätschicht (wird nur von einem Pfleger oder Schichtleiter belegt)
+    // Spätschicht (vereinfacht)
     S: {
       start: "12:00",
       end: "19:00",
@@ -40,17 +22,11 @@ export const defaultShifts: ShiftDefinitions = {
   
   // Kurze Tage (Dienstag, Donnerstag, Samstag)
   shortDays: {
-    // Frühschicht
+    // Frühschicht (auch für Samstag)
     F: {
       start: "06:00",
       end: "13:00",
       roles: ["Pfleger", "Schichtleiter", "Pflegehelfer"]
-    },
-    // Frühschicht Special (wird nur von einem Pfleger oder einem Schichtleiter belegt)
-    FS: {
-      start: "06:45",
-      end: "14:00",
-      roles: ["Pfleger", "Schichtleiter"]
     }
   }
 };
@@ -74,10 +50,10 @@ export const uetersenShifts: ShiftDefinitions = {
       end: "19:00",
       roles: ["Pfleger"]
     },
-    // Schichtleiter (markiert als 6)
+    // Schichtleiter (markiert als 6) - 10 Stunden
     "6": {
       start: "06:00",
-      end: "19:00",
+      end: "16:00",
       roles: ["Schichtleiter"]
     }
   },

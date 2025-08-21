@@ -90,9 +90,8 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
   const handleEditEmployee = (employee: Employee) => {
     setName(employee.name);
     setRole(employee.role);
-    // Verwende die tatsächlichen hoursPerMonth-Werte aus den Mitarbeiterdaten
-    // Falls hoursPerMonth nicht definiert ist, berechne es aus hoursPerWeek
-    setHoursPerMonth(employee.hoursPerMonth ?? employee.hoursPerWeek * 4.33);
+    // Verwende die Monatsstunden aus den Mitarbeiterdaten
+    setHoursPerMonth(employee.hoursPerMonth ?? 0);
     setClinic(employee.clinic || 'Elmshorn');
     setEditingId(employee.id);
     setErrors({});
@@ -198,8 +197,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         name,
         role: role as EmployeeRole,
         hoursPerMonth: Number(hoursPerMonth.toFixed(1)),
-        // Auch hoursPerWeek für Kompatibilität setzen (ungefähr 1/4 der Monatsstunden)
-        hoursPerWeek: Math.round(hoursPerMonth / 4.33),
         clinic: clinic as 'Elmshorn' | 'Uetersen'
       };
       
@@ -363,7 +360,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                     <TableCell>
                       {employee.hoursPerMonth !== undefined
                         ? employee.hoursPerMonth.toFixed(1)
-                        : (employee.hoursPerWeek * 4.33).toFixed(1)}
+                        : "0.0"}
                     </TableCell>
                   <TableCell>{employee.clinic || 'Elmshorn'}</TableCell>
                   <TableCell align="right">

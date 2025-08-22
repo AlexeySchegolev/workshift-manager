@@ -31,6 +31,7 @@ import {
 // Komponenten
 import MonthSelector from '../components/MonthSelector';
 import ShiftTable from '../components/ShiftTable';
+import PlanungsValidierung from '../components/PlanungsValidierung';
 
 // Interfaces und Services
 import {
@@ -459,6 +460,13 @@ const ShiftPlanningPage: React.FC = () => {
             </Typography>
           </Box>
         </Paper>
+      </Fade>
+
+      {/* Planungsvalidierung */}
+      <Fade in={showCards} timeout={1800}>
+        <Box sx={{ mb: 4 }}>
+          <PlanungsValidierung />
+        </Box>
       </Fade>
     </Container>
   );

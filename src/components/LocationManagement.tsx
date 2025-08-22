@@ -1,0 +1,506 @@
+import React, { useState } from 'react';
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Chip,
+  Avatar,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  FormControlLabel,
+  Switch,
+  Divider,
+  useTheme,
+  alpha,
+} from '@mui/material';
+import {
+  LocationOn as LocationIcon,
+  Phone as PhoneIcon,
+  Email as EmailIcon,
+  Person as PersonIcon,
+  Schedule as ScheduleIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Add as AddIcon,
+  Business as BusinessIcon,
+  Assessment as AssessmentIcon,
+} from '@mui/icons-material';
+import { Location, LocationStats } from '../models/interfaces';
+import { locationData, locationStatsData } from '../data/locationData';
+
+interface LocationManagementProps {
+  locations?: Location[];
+  onLocationsChange?: (locations: Location[]) => void;
+}
+
+/**
+ * Standort-Verwaltungskomponente
+ */
+const LocationManagement: React.FC<LocationManagementProps> = ({
+  locations: propLocations,
+  onLocationsChange,
+}) => {
+  const theme = useTheme();
+  const [locations, setLocations] = useState<Location[]>(propLocations || locationData);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Standort-Statistiken
+  const getLocationStats = (locationId: string): LocationStats => {
+    return locationStatsData[locationId as keyof typeof locationStatsData] || {
+      totalPatients: 0,
+      averageUtilization: 0,
+      employeeCount: 0,
+    };
+  };
+
+  // Dialog öffnen
+  const handleOpenDialog = (location?: Location) => {
+    if (location) {
+      setSelectedLocation(location);
+      setIsEditing(true);
+    } else {
+      setSelectedLocation({
+        id: '',
+        name: '',
+        address: '',
+        city: '',
+        postalCode: '',
+        phone: '',
+        email: '',
+        manager: '',
+        capacity: 0,
+        operatingHours: {
+          monday: [],
+          tuesday: [],
+          wednesday: [],
+          thursday: [],
+          friday: [],
+          saturday: [],
+          sunday: [],
+        },
+        specialties: [],
+        equipment: [],
+        isActive: true,
+      });
+      setIsEditing(false);
+    }
+    setIsDialogOpen(true);
+  };
+
+  // Dialog schließen
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedLocation(null);
+    setIsEditing(false);
+  };
+
+  // Standort speichern
+  const handleSaveLocation = () => {
+    if (!selectedLocation) return;
+
+    let updatedLocations: Location[];
+    if (isEditing) {
+      updatedLocations = locations.map(loc =>
+        loc.id === selectedLocation.id ? selectedLocation : loc
+      );
+    } else {
+      const newId = `location_${Date.now()}`;
+      updatedLocations = [...locations, { ...selectedLocation, id: newId }];
+    }
+
+    setLocations(updatedLocations);
+    onLocationsChange?.(updatedLocations);
+    handleCloseDialog();
+  };
+
+  // Standort löschen
+  const handleDeleteLocation = (locationId: string) => {
+    if (window.confirm('Sind Sie sicher, dass Sie diesen Standort löschen möchten?')) {
+      const updatedLocations = locations.filter(loc => loc.id !== locationId);
+      setLocations(updatedLocations);
+      onLocationsChange?.(updatedLocations);
+    }
+  };
+
+  // Öffnungszeiten formatieren
+  const formatOperatingHours = (location: Location): string => {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+    
+    const activeDays = days
+      .map((day, index) => ({
+        name: dayNames[index],
+        slots: location.operatingHours[day as keyof typeof location.operatingHours]
+      }))
+      .filter(day => day.slots.length > 0);
+
+    if (activeDays.length === 0) return 'Geschlossen';
+    
+    return activeDays
+      .map(day => `${day.name}: ${day.slots.map(slot => `${slot.start}-${slot.end}`).join(', ')}`)
+      .join(' • ');
+  };
+
+  return (
+    <Box>
+      {/* Header */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          Standortverwaltung
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => handleOpenDialog()}
+          sx={{ borderRadius: 2 }}
+        >
+          Neuer Standort
+        </Button>
+      </Box>
+
+      {/* Standort-Karten */}
+      <Grid container spacing={3}>
+        {locations.map((location) => {
+          const stats = getLocationStats(location.id);
+          return (
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={location.id}>
+              <Card
+                sx={{
+                  height: '100%',
+                  borderRadius: 3,
+                  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: theme.shadows[8],
+                  },
+                }}
+              >
+                <CardContent sx={{ pb: 1 }}>
+                  {/* Header */}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Avatar
+                        sx={{
+                          bgcolor: location.isActive ? 'success.main' : 'grey.400',
+                          width: 40,
+                          height: 40,
+                        }}
+                      >
+                        <BusinessIcon />
+                      </Avatar>
+                      <Box>
+                        <Typography variant="h6" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+                          {location.name}
+                        </Typography>
+                        <Chip
+                          label={location.isActive ? 'Aktiv' : 'Inaktiv'}
+                          size="small"
+                          color={location.isActive ? 'success' : 'default'}
+                          sx={{ mt: 0.5 }}
+                        />
+                      </Box>
+                    </Box>
+                    <Box>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleOpenDialog(location)}
+                        sx={{ color: 'primary.main' }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleDeleteLocation(location.id)}
+                        sx={{ color: 'error.main' }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  </Box>
+
+                  {/* Adresse */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    <LocationIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
+                    <Typography variant="body2" color="text.secondary">
+                      {location.address}, {location.postalCode} {location.city}
+                    </Typography>
+                  </Box>
+
+                  {/* Kontakt */}
+                  {location.phone && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <PhoneIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {location.phone}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {location.email && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <EmailIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {location.email}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* Manager */}
+                  {location.manager && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                      <PersonIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
+                      <Typography variant="body2" color="text.secondary">
+                        Leitung: {location.manager}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  <Divider sx={{ my: 2 }} />
+
+                  {/* Statistiken */}
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 2 }}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600 }}>
+                        {stats.totalPatients}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Patienten
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="h6" color="success.main" sx={{ fontWeight: 600 }}>
+                        {stats.averageUtilization}%
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Auslastung
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>
+                        {location.capacity}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Kapazität
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="h6" color="warning.main" sx={{ fontWeight: 600 }}>
+                        {stats.employeeCount}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Mitarbeiter
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* Spezialisierungen */}
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                      Spezialisierungen:
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {location.specialties.slice(0, 3).map((specialty, index) => (
+                        <Chip
+                          key={index}
+                          label={specialty}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontSize: '0.7rem' }}
+                        />
+                      ))}
+                      {location.specialties.length > 3 && (
+                        <Chip
+                          label={`+${location.specialties.length - 3}`}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontSize: '0.7rem' }}
+                        />
+                      )}
+                    </Box>
+                  </Box>
+
+                  {/* Öffnungszeiten */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <ScheduleIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
+                    <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.3 }}>
+                      {formatOperatingHours(location)}
+                    </Typography>
+                  </Box>
+                </CardContent>
+
+                <CardActions sx={{ pt: 0, px: 2, pb: 2 }}>
+                  <Button
+                    size="small"
+                    startIcon={<AssessmentIcon />}
+                    sx={{ color: 'primary.main' }}
+                  >
+                    Details
+                  </Button>
+                  <Button
+                    size="small"
+                    startIcon={<EditIcon />}
+                    onClick={() => handleOpenDialog(location)}
+                    sx={{ color: 'info.main' }}
+                  >
+                    Bearbeiten
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+
+      {/* Bearbeitungs-Dialog */}
+      <Dialog
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: 3 }
+        }}
+      >
+        <DialogTitle>
+          {isEditing ? 'Standort bearbeiten' : 'Neuer Standort'}
+        </DialogTitle>
+        <DialogContent>
+          {selectedLocation && (
+            <Box sx={{ pt: 1 }}>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="Name"
+                    value={selectedLocation.name}
+                    onChange={(e) => setSelectedLocation({
+                      ...selectedLocation,
+                      name: e.target.value
+                    })}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="Manager"
+                    value={selectedLocation.manager || ''}
+                    onChange={(e) => setSelectedLocation({
+                      ...selectedLocation,
+                      manager: e.target.value
+                    })}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    fullWidth
+                    label="Adresse"
+                    value={selectedLocation.address}
+                    onChange={(e) => setSelectedLocation({
+                      ...selectedLocation,
+                      address: e.target.value
+                    })}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="PLZ"
+                    value={selectedLocation.postalCode}
+                    onChange={(e) => setSelectedLocation({
+                      ...selectedLocation,
+                      postalCode: e.target.value
+                    })}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="Stadt"
+                    value={selectedLocation.city}
+                    onChange={(e) => setSelectedLocation({
+                      ...selectedLocation,
+                      city: e.target.value
+                    })}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="Telefon"
+                    value={selectedLocation.phone || ''}
+                    onChange={(e) => setSelectedLocation({
+                      ...selectedLocation,
+                      phone: e.target.value
+                    })}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="E-Mail"
+                    value={selectedLocation.email || ''}
+                    onChange={(e) => setSelectedLocation({
+                      ...selectedLocation,
+                      email: e.target.value
+                    })}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="Kapazität"
+                    type="number"
+                    value={selectedLocation.capacity}
+                    onChange={(e) => setSelectedLocation({
+                      ...selectedLocation,
+                      capacity: parseInt(e.target.value) || 0
+                    })}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={selectedLocation.isActive}
+                        onChange={(e) => setSelectedLocation({
+                          ...selectedLocation,
+                          isActive: e.target.checked
+                        })}
+                      />
+                    }
+                    label="Aktiv"
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button onClick={handleCloseDialog}>
+            Abbrechen
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSaveLocation}
+            sx={{ borderRadius: 2 }}
+          >
+            {isEditing ? 'Speichern' : 'Erstellen'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
+export default LocationManagement;

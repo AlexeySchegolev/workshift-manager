@@ -23,6 +23,8 @@ import {
   Dashboard as DashboardIcon,
   Notifications as NotificationsIcon,
   Settings as SettingsIcon,
+  Rule as RuleIcon,
+  Business as BusinessIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 
@@ -46,7 +48,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigationLinks = [
     { title: 'Dashboard', path: '/', icon: <DashboardIcon />, description: 'Übersicht und Statistiken' },
     { title: 'Schichtplanung', path: '/schichtplanung', icon: <CalendarIcon />, description: 'Schichtpläne erstellen und verwalten' },
-    { title: 'Mitarbeiter', path: '/mitarbeiter', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten' }
+    { title: 'Mitarbeiter', path: '/mitarbeiter', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten' },
+    { title: 'Standorte', path: '/standorte', icon: <BusinessIcon />, description: 'Standorte und Praxen verwalten' },
+    { title: 'Schichtregeln', path: '/schichtregeln', icon: <RuleIcon />, description: 'Regeln und Vorgaben für die Schichtplanung' }
   ];
 
 

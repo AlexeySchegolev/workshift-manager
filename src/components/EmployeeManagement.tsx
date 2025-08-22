@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Paper,
   Typography,
   TextField,
   Button,
@@ -23,14 +22,28 @@ import {
   DialogTitle,
   Snackbar,
   Alert,
-  FormHelperText
+  FormHelperText,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Avatar,
+  useTheme,
+  alpha,
+  Fade,
+  Tooltip,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Cancel as CancelIcon,
-  Save as SaveIcon
+  Save as SaveIcon,
+  People as PeopleIcon,
+  PersonAdd as PersonAddIcon,
+  Business as BusinessIcon,
+  Schedule as ScheduleIcon,
+  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -42,12 +55,14 @@ interface EmployeeManagementProps {
 }
 
 /**
- * Komponente zur Verwaltung der Mitarbeiter
+ * Moderne Mitarbeiterverwaltung im Dashboard-Style
  */
 const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
   employees,
   onEmployeesChange
 }) => {
+  const theme = useTheme();
+
   // Formularstatus
   const [name, setName] = useState('');
   const [role, setRole] = useState<EmployeeRole | ''>('');
@@ -76,6 +91,21 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     severity: 'info'
   });
 
+  // Statistiken berechnen
+  const calculateStats = () => {
+    const totalEmployees = employees.length;
+    const elmshorn = employees.filter(emp => emp.clinic !== 'Uetersen').length;
+    const uetersen = employees.filter(emp => emp.clinic === 'Uetersen').length;
+    const schichtleiter = employees.filter(emp => emp.role === 'Schichtleiter').length;
+    const avgHours = employees.length > 0 
+      ? Math.round(employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0) / employees.length)
+      : 0;
+
+    return { totalEmployees, elmshorn, uetersen, schichtleiter, avgHours };
+  };
+
+  const stats = calculateStats();
+
   // Formular zurücksetzen
   const resetForm = () => {
     setName('');
@@ -90,7 +120,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
   const handleEditEmployee = (employee: Employee) => {
     setName(employee.name);
     setRole(employee.role);
-    // Verwende die Monatsstunden aus den Mitarbeiterdaten
     setHoursPerMonth(employee.hoursPerMonth ?? 0);
     setClinic(employee.clinic || 'Elmshorn');
     setEditingId(employee.id);
@@ -114,7 +143,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     if (employeeToDelete) {
       const updatedEmployees = employees.filter(emp => emp.id !== employeeToDelete.id);
       onEmployeesChange(updatedEmployees);
-      // Nicht mehr in localStorage speichern
       
       setSnackbar({
         open: true,
@@ -178,7 +206,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
               name,
               role: role as EmployeeRole,
               hoursPerMonth: Number(hoursPerMonth.toFixed(1)),
-              // Auch hoursPerWeek für Kompatibilität aktualisieren (ungefähr 1/4 der Monatsstunden)
               hoursPerWeek: Math.round(hoursPerMonth / 4.33),
               clinic: clinic as 'Elmshorn' | 'Uetersen'
             }
@@ -210,7 +237,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     }
     
     onEmployeesChange(updatedEmployees);
-    // Nicht mehr in localStorage speichern
     resetForm();
   };
 
@@ -219,191 +245,511 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
+  // Rolle-spezifische Farben
+  const getRoleColor = (role: EmployeeRole) => {
+    switch (role) {
+      case 'Schichtleiter': return theme.palette.primary.main;
+      case 'Pfleger': return theme.palette.success.main;
+      case 'Pflegehelfer': return theme.palette.info.main;
+      default: return theme.palette.grey[500];
+    }
+  };
+
+  // Avatar-Initialen generieren
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      {/* Formular zum Hinzufügen/Bearbeiten von Mitarbeitern */}
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          {editingId ? 'Mitarbeiter bearbeiten' : 'Neuen Mitarbeiter hinzufügen'}
-        </Typography>
-        
+      {/* Statistik-Cards */}
+      <Fade in timeout={600}>
         <Box
-          component="form"
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr 1fr auto' },
-            gap: 2,
-            alignItems: 'flex-start'
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)',
+            },
+            gap: 3,
           }}
-          noValidate
-          autoComplete="off"
         >
-          <TextField
-            label="Name"
-            variant="outlined"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            error={!!errors.name}
-            helperText={errors.name}
-            fullWidth
-          />
-          
-          <FormControl fullWidth error={!!errors.role}>
-            <InputLabel id="role-label">Rolle</InputLabel>
-            <Select
-              labelId="role-label"
-              value={role}
-              label="Rolle"
-              onChange={(e) => setRole(e.target.value as EmployeeRole)}
+          <Box>
+            <Card
+              sx={{
+                borderRadius: 3,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.primary.light, 0.02)} 100%)`,
+              }}
             >
-              <MenuItem value="">
-                <em>Bitte wählen</em>
-              </MenuItem>
-              <MenuItem value="Pfleger">Pfleger</MenuItem>
-              <MenuItem value="Pflegehelfer">Pflegehelfer</MenuItem>
-              <MenuItem value="Schichtleiter">Schichtleiter</MenuItem>
-            </Select>
-            {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
-          </FormControl>
-          
-          <TextField
-            label="Stunden pro Monat"
-            variant="outlined"
-            type="number"
-            inputProps={{ min: 1, max: 180, step: "0.1" }}
-            value={hoursPerMonth}
-            onChange={(e) => setHoursPerMonth(e.target.value === '' ? '' : Number(e.target.value))}
-            error={!!errors.hoursPerMonth}
-            helperText={errors.hoursPerMonth}
-            fullWidth
-          />
-          
-          <FormControl fullWidth error={!!errors.clinic}>
-            <InputLabel id="clinic-label">Praxis</InputLabel>
-            <Select
-              labelId="clinic-label"
-              value={clinic}
-              label="Praxis"
-              onChange={(e) => setClinic(e.target.value as 'Elmshorn' | 'Uetersen' | '')}
+              <CardContent sx={{ textAlign: 'center', py: 3 }}>
+                <Avatar
+                  sx={{
+                    bgcolor: alpha(theme.palette.primary.main, 0.1),
+                    color: theme.palette.primary.main,
+                    width: 56,
+                    height: 56,
+                    mx: 'auto',
+                    mb: 2,
+                  }}
+                >
+                  <PeopleIcon sx={{ fontSize: 28 }} />
+                </Avatar>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                  {stats.totalEmployees}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Mitarbeiter gesamt
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+
+          <Box>
+            <Card
+              sx={{
+                borderRadius: 3,
+                border: `1px solid ${alpha(theme.palette.success.main, 0.1)}`,
+                background: `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.05)} 0%, ${alpha(theme.palette.success.light, 0.02)} 100%)`,
+              }}
             >
-              <MenuItem value="">
-                <em>Bitte wählen</em>
-              </MenuItem>
-              <MenuItem value="Elmshorn">Elmshorn</MenuItem>
-              <MenuItem value="Uetersen">Uetersen</MenuItem>
-            </Select>
-            {errors.clinic && <FormHelperText>{errors.clinic}</FormHelperText>}
-          </FormControl>
-          
-          <Box sx={{ display: 'flex', gap: 1, alignSelf: 'center' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={editingId ? <SaveIcon /> : <AddIcon />}
-              onClick={handleSaveEmployee}
+              <CardContent sx={{ textAlign: 'center', py: 3 }}>
+                <Avatar
+                  sx={{
+                    bgcolor: alpha(theme.palette.success.main, 0.1),
+                    color: theme.palette.success.main,
+                    width: 56,
+                    height: 56,
+                    mx: 'auto',
+                    mb: 2,
+                  }}
+                >
+                  <CheckCircleIcon sx={{ fontSize: 28 }} />
+                </Avatar>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                  {stats.schichtleiter}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Schichtleiter
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+
+          <Box>
+            <Card
+              sx={{
+                borderRadius: 3,
+                border: `1px solid ${alpha(theme.palette.info.main, 0.1)}`,
+                background: `linear-gradient(135deg, ${alpha(theme.palette.info.main, 0.05)} 0%, ${alpha(theme.palette.info.light, 0.02)} 100%)`,
+              }}
             >
-              {editingId ? 'Speichern' : 'Hinzufügen'}
-            </Button>
-            
-            {editingId && (
-              <Button
-                variant="outlined"
-                color="secondary"
-                startIcon={<CancelIcon />}
-                onClick={resetForm}
-              >
-                Abbrechen
-              </Button>
-            )}
+              <CardContent sx={{ textAlign: 'center', py: 3 }}>
+                <Avatar
+                  sx={{
+                    bgcolor: alpha(theme.palette.info.main, 0.1),
+                    color: theme.palette.info.main,
+                    width: 56,
+                    height: 56,
+                    mx: 'auto',
+                    mb: 2,
+                  }}
+                >
+                  <BusinessIcon sx={{ fontSize: 28 }} />
+                </Avatar>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                  {stats.elmshorn}/{stats.uetersen}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Elmshorn/Uetersen
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+
+          <Box>
+            <Card
+              sx={{
+                borderRadius: 3,
+                border: `1px solid ${alpha(theme.palette.warning.main, 0.1)}`,
+                background: `linear-gradient(135deg, ${alpha(theme.palette.warning.main, 0.05)} 0%, ${alpha(theme.palette.warning.light, 0.02)} 100%)`,
+              }}
+            >
+              <CardContent sx={{ textAlign: 'center', py: 3 }}>
+                <Avatar
+                  sx={{
+                    bgcolor: alpha(theme.palette.warning.main, 0.1),
+                    color: theme.palette.warning.main,
+                    width: 56,
+                    height: 56,
+                    mx: 'auto',
+                    mb: 2,
+                  }}
+                >
+                  <ScheduleIcon sx={{ fontSize: 28 }} />
+                </Avatar>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                  {stats.avgHours}h
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Ø Stunden/Monat
+                </Typography>
+              </CardContent>
+            </Card>
           </Box>
         </Box>
-      </Paper>
+      </Fade>
 
-      {/* Tabelle mit bestehenden Mitarbeitern */}
-      <Paper sx={{ width: '100%' }}>
-        <TableContainer sx={{ maxHeight: '50vh' }}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Rolle</TableCell>
-                <TableCell>Stunden/Monat</TableCell>
-                <TableCell>Praxis</TableCell>
-                <TableCell align="right">Aktionen</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {employees.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    <Typography variant="body2" color="textSecondary">
-                      Keine Mitarbeiter vorhanden
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                employees.map((employee) => (
-                  <TableRow
-                    key={employee.id}
-                    hover
+      {/* Formular zum Hinzufügen/Bearbeiten von Mitarbeitern */}
+      <Fade in timeout={800}>
+        <Card
+          sx={{
+            borderRadius: 3,
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <CardHeader
+            title={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PersonAddIcon sx={{ fontSize: '1.25rem', color: 'primary.main' }} />
+                <Typography variant="h6" component="div">
+                  {editingId ? 'Mitarbeiter bearbeiten' : 'Neuen Mitarbeiter hinzufügen'}
+                </Typography>
+              </Box>
+            }
+            sx={{ pb: 1 }}
+          />
+          <CardContent>
+            <Box
+              component="form"
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr) auto' },
+                gap: 3,
+                alignItems: 'flex-start'
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                label="Name"
+                variant="outlined"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                error={!!errors.name}
+                helperText={errors.name}
+                fullWidth
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  },
+                }}
+              />
+              
+              <FormControl fullWidth error={!!errors.role}>
+                <InputLabel id="role-label">Rolle</InputLabel>
+                <Select
+                  labelId="role-label"
+                  value={role}
+                  label="Rolle"
+                  onChange={(e) => setRole(e.target.value as EmployeeRole)}
+                  sx={{
+                    borderRadius: 2,
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>Bitte wählen</em>
+                  </MenuItem>
+                  <MenuItem value="Pfleger">Pfleger</MenuItem>
+                  <MenuItem value="Pflegehelfer">Pflegehelfer</MenuItem>
+                  <MenuItem value="Schichtleiter">Schichtleiter</MenuItem>
+                </Select>
+                {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
+              </FormControl>
+              
+              <TextField
+                label="Stunden pro Monat"
+                variant="outlined"
+                type="number"
+                inputProps={{ min: 1, max: 180, step: "0.1" }}
+                value={hoursPerMonth}
+                onChange={(e) => setHoursPerMonth(e.target.value === '' ? '' : Number(e.target.value))}
+                error={!!errors.hoursPerMonth}
+                helperText={errors.hoursPerMonth}
+                fullWidth
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  },
+                }}
+              />
+              
+              <FormControl fullWidth error={!!errors.clinic}>
+                <InputLabel id="clinic-label">Praxis</InputLabel>
+                <Select
+                  labelId="clinic-label"
+                  value={clinic}
+                  label="Praxis"
+                  onChange={(e) => setClinic(e.target.value as 'Elmshorn' | 'Uetersen' | '')}
+                  sx={{
+                    borderRadius: 2,
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>Bitte wählen</em>
+                  </MenuItem>
+                  <MenuItem value="Elmshorn">Elmshorn</MenuItem>
+                  <MenuItem value="Uetersen">Uetersen</MenuItem>
+                </Select>
+                {errors.clinic && <FormHelperText>{errors.clinic}</FormHelperText>}
+              </FormControl>
+              
+              <Box sx={{ display: 'flex', gap: 1, alignSelf: 'center' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={editingId ? <SaveIcon /> : <AddIcon />}
+                  onClick={handleSaveEmployee}
+                  sx={{
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    px: 3,
+                  }}
+                >
+                  {editingId ? 'Speichern' : 'Hinzufügen'}
+                </Button>
+                
+                {editingId && (
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CancelIcon />}
+                    onClick={resetForm}
                     sx={{
-                      '&:last-child td, &:last-child th': { border: 0 },
-                      backgroundColor: employee.id === editingId ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
-                      // Praxisfarbe als Hintergrund (leicht abgeschwächt)
-                      ...(employee.clinic === 'Uetersen' ? { backgroundColor: 'rgba(173, 216, 230, 0.2)' } : {})
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 600,
                     }}
                   >
-                    <TableCell component="th" scope="row">
-                      {employee.name}
-                    </TableCell>
-                    <TableCell>{employee.role}</TableCell>
-                    <TableCell>
-                      {employee.hoursPerMonth !== undefined
-                        ? employee.hoursPerMonth.toFixed(1)
-                        : "0.0"}
-                    </TableCell>
-                  <TableCell>{employee.clinic || 'Elmshorn'}</TableCell>
-                  <TableCell align="right">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleEditEmployee(employee)}
-                        disabled={!!editingId && editingId !== employee.id}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleOpenDeleteDialog(employee)}
-                        disabled={!!editingId}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
+                    Abbrechen
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
+      </Fade>
+
+      {/* Tabelle mit bestehenden Mitarbeitern */}
+      <Fade in timeout={1000}>
+        <Card
+          sx={{
+            borderRadius: 3,
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <CardHeader
+            title={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PeopleIcon sx={{ fontSize: '1.25rem', color: 'primary.main' }} />
+                <Typography variant="h6" component="div">
+                  Mitarbeiterübersicht
+                </Typography>
+              </Box>
+            }
+            subheader={`${employees.length} Mitarbeiter registriert`}
+            sx={{ pb: 1 }}
+          />
+          <CardContent sx={{ pt: 0, px: 0 }}>
+            <TableContainer
+              sx={{
+                borderRadius: 0,
+                border: 'none',
+                maxHeight: '70vh',
+                width: '100%',
+              }}
+            >
+              <Table stickyHeader size="medium">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700, width: '30%' }}>Mitarbeiter</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: '20%' }}>Rolle</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: '15%' }}>Stunden/Monat</TableCell>
+                    <TableCell sx={{ fontWeight: 700, width: '15%' }}>Praxis</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700, width: '20%' }}>Aktionen</TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+                </TableHead>
+                <TableBody>
+                  {employees.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
+                        <Box sx={{ textAlign: 'center' }}>
+                          <PeopleIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+                          <Typography variant="h6" color="text.secondary" gutterBottom>
+                            Keine Mitarbeiter vorhanden
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Fügen Sie Ihren ersten Mitarbeiter über das Formular oben hinzu.
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    employees.map((employee) => (
+                      <TableRow
+                        key={employee.id}
+                        hover
+                        sx={{
+                          backgroundColor: employee.id === editingId 
+                            ? alpha(theme.palette.primary.main, 0.05) 
+                            : 'inherit',
+                          '&:hover': {
+                            backgroundColor: alpha(theme.palette.primary.main, 0.03),
+                          },
+                        }}
+                      >
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Avatar
+                              sx={{
+                                bgcolor: getRoleColor(employee.role),
+                                width: 40,
+                                height: 40,
+                                fontSize: '0.875rem',
+                                fontWeight: 600,
+                              }}
+                            >
+                              {getInitials(employee.name)}
+                            </Avatar>
+                            <Box>
+                              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                {employee.name}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                ID: {employee.id.slice(0, 8)}...
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={employee.role}
+                            size="small"
+                            color={employee.role === 'Schichtleiter' ? 'primary' : 'default'}
+                            sx={{
+                              fontWeight: 500,
+                              borderRadius: 1.5,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                            {employee.hoursPerMonth !== undefined
+                              ? employee.hoursPerMonth.toFixed(1)
+                              : "0.0"}h
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={employee.clinic || 'Elmshorn'}
+                            size="small"
+                            color={employee.clinic === 'Uetersen' ? 'info' : 'default'}
+                            sx={{
+                              fontWeight: 500,
+                              borderRadius: 1.5,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
+                            <Tooltip title="Bearbeiten">
+                              <IconButton
+                                color="primary"
+                                onClick={() => handleEditEmployee(employee)}
+                                disabled={!!editingId && editingId !== employee.id}
+                                sx={{
+                                  borderRadius: 2,
+                                  '&:hover': {
+                                    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                                  },
+                                }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Löschen">
+                              <IconButton
+                                color="error"
+                                onClick={() => handleOpenDeleteDialog(employee)}
+                                disabled={!!editingId}
+                                sx={{
+                                  borderRadius: 2,
+                                  '&:hover': {
+                                    backgroundColor: alpha(theme.palette.error.main, 0.08),
+                                  },
+                                }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
+      </Fade>
 
       {/* Bestätigungsdialog zum Löschen */}
       <Dialog
         open={deleteDialogOpen}
         onClose={handleCloseDeleteDialog}
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+          },
+        }}
       >
-        <DialogTitle>Mitarbeiter löschen</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Mitarbeiter löschen
+          </Typography>
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Möchten Sie den Mitarbeiter "{employeeToDelete?.name}" wirklich löschen?
+            Möchten Sie den Mitarbeiter <strong>"{employeeToDelete?.name}"</strong> wirklich löschen?
             Diese Aktion kann nicht rückgängig gemacht werden.
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} color="primary">
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button 
+            onClick={handleCloseDeleteDialog} 
+            color="primary"
+            sx={{
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
             Abbrechen
           </Button>
-          <Button onClick={handleDeleteEmployee} color="error" autoFocus>
+          <Button 
+            onClick={handleDeleteEmployee} 
+            color="error" 
+            variant="contained"
+            autoFocus
+            sx={{
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+          >
             Löschen
           </Button>
         </DialogActions>
@@ -419,7 +765,10 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         <Alert
           onClose={handleCloseSnackbar}
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ 
+            width: '100%',
+            borderRadius: 2,
+          }}
         >
           {snackbar.message}
         </Alert>

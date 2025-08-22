@@ -1,258 +1,278 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
   Paper,
-  Button,
-  Card,
-  CardContent,
-  CardActions,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  IconButton
+  Container,
+  Fade,
+  useTheme,
+  alpha,
 } from '@mui/material';
 import {
-  CalendarMonth as CalendarIcon,
   People as PeopleIcon,
-  Info as InfoIcon,
-  CheckCircle as CheckIcon,
-  Close as CloseIcon,
-  Rule as RuleIcon
+  Schedule as ScheduleIcon,
+  Assessment as AssessmentIcon,
+  Warning as WarningIcon,
+  TrendingUp as TrendingUpIcon,
+  CalendarMonth as CalendarIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import ShiftRulesDisplay from '../components/ShiftRulesDisplay';
+import { format } from 'date-fns';
+import { de } from 'date-fns/locale';
+
+// Dashboard-Komponenten
+import {
+  StatistikCard,
+  WochenUebersicht,
+  SchnellAktionen,
+  StatusAmpel,
+  createDefaultSchnellAktionen,
+} from '../components/dashboard';
+
+// Hooks und Services
+import { useDashboardData, useDashboardActions } from '../hooks/useDashboardData';
+import { employeeData } from '../data/employeeData';
 
 /**
- * Startseite der Anwendung
+ * Professionelle Dashboard-Startseite
  */
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [rulesDialogOpen, setRulesDialogOpen] = useState(false);
+  const theme = useTheme();
+  const dashboardActions = useDashboardActions();
 
-  const handleOpenRulesDialog = () => {
-    setRulesDialogOpen(true);
-  };
+  // State für aktuelle Daten
+  const [selectedDate] = useState<Date>(new Date());
+  const [currentShiftPlan] = useState(null); // TODO: Aktuellen Schichtplan laden
+  const [constraints] = useState([]); // TODO: Aktuelle Constraints laden
 
-  const handleCloseRulesDialog = () => {
-    setRulesDialogOpen(false);
-  };
+  // Dashboard-Daten laden
+  const { statistiken, aktuelleWoche, statusItems, isLoading } = useDashboardData(
+    employeeData,
+    currentShiftPlan,
+    constraints,
+    selectedDate
+  );
+
+  // Schnellaktionen definieren
+  const schnellAktionen = createDefaultSchnellAktionen(
+    () => navigate('/schichtplanung'),
+    () => navigate('/mitarbeiter'),
+    dashboardActions.exportCurrentPlan,
+    dashboardActions.openSettings,
+    dashboardActions.viewReports,
+    !!currentShiftPlan,
+    statistiken.aktuelleWarnungen
+  );
+
+  // Animationsdelay für Cards
+  const [showCards, setShowCards] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setShowCards(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <Box>
+    <Container maxWidth="xl" sx={{ py: 3 }}>
       {/* Hero-Bereich */}
-      <Paper 
-        elevation={0} 
-        sx={{ 
-          p: { xs: 4, md: 6 }, 
-          mb: 4, 
-          borderRadius: 2,
-          backgroundColor: 'primary.light',
-          backgroundImage: 'linear-gradient(120deg, #e0f7fa 0%, #bbdefb 100%)',
-          textAlign: 'center'
-        }}
-      >
-        <Typography 
-          variant="h3" 
-          component="h1" 
-          gutterBottom
-          sx={{ fontWeight: 'bold', mb: 2 }}
+      <Fade in timeout={800}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 3, md: 4 },
+            mb: 4,
+            borderRadius: 3,
+            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.primary.light, 0.05)} 100%)`,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 4,
+              background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+            },
+          }}
         >
-          Dialysepraxis Schichtplanung
-        </Typography>
-        <Typography 
-          variant="h6" 
-          component="p" 
-          color="text.secondary"
-          sx={{ maxWidth: 700, mx: 'auto', mb: 4 }}
-        >
-          Effiziente Planung und Verwaltung von Schichten für das Personal der Dialysepraxis
-        </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
-          <Button 
-            variant="contained" 
-            size="large" 
-            startIcon={<CalendarIcon />}
-            onClick={() => navigate('/schichtplanung')}
-          >
-            Schichtplanung starten
-          </Button>
-          <Button 
-            variant="outlined" 
-            size="large" 
-            startIcon={<PeopleIcon />}
-            onClick={() => navigate('/mitarbeiter')}
-          >
-            Mitarbeiter verwalten
-          </Button>
-        </Box>
-      </Paper>
-
-      {/* Funktionen */}
-      <Typography 
-        variant="h5" 
-        component="h2" 
-        gutterBottom
-        sx={{ mb: 3, fontWeight: 'medium' }}
-      >
-        Funktionen und Möglichkeiten
-      </Typography>
-      
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-          gap: 3,
-          mb: 6
-        }}
-      >
-        <Card sx={{ height: '100%' }}>
-          <CardContent>
-            <CalendarIcon color="primary" sx={{ fontSize: 40, mb: 2 }} />
-            <Typography variant="h6" component="h3" gutterBottom>
-              Automatische Schichtplanung
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            <Typography
+              variant="h3"
+              component="h1"
+              sx={{
+                fontWeight: 700,
+                mb: 1,
+                background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Dashboard
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Erstellen Sie Schichtpläne unter Berücksichtigung aller Regeln und Vorgaben mit nur einem Klick. Die Anwendung berücksichtigt alle Anforderungen und verteilt die Schichten optimal.
+            <Typography
+              variant="h6"
+              color="text.secondary"
+              sx={{ mb: 2, maxWidth: 600 }}
+            >
+              Willkommen zurück! Hier ist Ihre Übersicht für{' '}
+              {format(selectedDate, 'EEEE, dd. MMMM yyyy', { locale: de })}
             </Typography>
-          </CardContent>
-          <CardActions>
-            <Button size="small" onClick={() => navigate('/schichtplanung')}>
-              Zur Schichtplanung
-            </Button>
-          </CardActions>
-        </Card>
-        
-        <Card sx={{ height: '100%' }}>
-          <CardContent>
-            <PeopleIcon color="primary" sx={{ fontSize: 40, mb: 2 }} />
-            <Typography variant="h6" component="h3" gutterBottom>
-              Mitarbeiterverwaltung
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Verwalten Sie alle Mitarbeiter, deren Rollen und Wochenstunden. Fügen Sie neue Mitarbeiter hinzu, bearbeiten oder entfernen Sie bestehende und halten Sie alles auf dem neuesten Stand.
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button size="small" onClick={() => navigate('/mitarbeiter')}>
-              Mitarbeiter verwalten
-            </Button>
-          </CardActions>
-        </Card>
-        
-        <Card sx={{ height: '100%' }}>
-          <CardContent>
-            <InfoIcon color="primary" sx={{ fontSize: 40, mb: 2 }} />
-            <Typography variant="h6" component="h3" gutterBottom>
-              Excel-Export
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Exportieren Sie Ihre Schichtpläne als Excel-Dateien für den Druck oder die Weitergabe. Die Pläne werden übersichtlich formatiert und sind sofort einsatzbereit.
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button size="small" onClick={() => navigate('/schichtplanung')}>
-              Ausprobieren
-            </Button>
-          </CardActions>
-        </Card>
-      </Box>
-
-      {/* Regeln und Vorgaben */}
-      <Paper sx={{ p: 3, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h5" component="h2" gutterBottom>
-            Berücksichtigte Regeln
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<RuleIcon />}
-            onClick={handleOpenRulesDialog}
-            sx={{ mb: 1 }}
-          >
-            Detaillierte Regeln anzeigen
-          </Button>
-        </Box>
-        <Divider sx={{ mb: 2 }} />
-        <List>
-          <ListItem>
-            <ListItemIcon>
-              <CheckIcon color="success" />
-            </ListItemIcon>
-            <ListItemText 
-              primary="Mitarbeiterkapazitäten" 
-              secondary="Berücksichtigung der Wochenstunden und Rollen jedes Mitarbeiters"
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <CheckIcon color="success" />
-            </ListItemIcon>
-            <ListItemText 
-              primary="Schichtanforderungen" 
-              secondary="Sicherstellung der korrekten Besetzung jeder Schicht (z.B. 4 Pfleger, 1 Schichtleiter, 1 Pflegehelfer)"
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <CheckIcon color="success" />
-            </ListItemIcon>
-            <ListItemText 
-              primary="Spezielle Schichten" 
-              secondary="Korrekte Zuweisung spezieller Schichten wie S00, S und FS an die richtigen Mitarbeiter"
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <CheckIcon color="success" />
-            </ListItemIcon>
-            <ListItemText 
-              primary="Samstagsregel" 
-              secondary="Maximal ein Samstag pro Monat pro Mitarbeiter"
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <CheckIcon color="success" />
-            </ListItemIcon>
-            <ListItemText 
-              primary="Abwechselnde Schichten" 
-              secondary="Vermeidung gleicher Schichten an aufeinanderfolgenden Tagen"
-            />
-          </ListItem>
-        </List>
-      </Paper>
-
-      {/* Dialog für detaillierte Schichtregeln */}
-      <Dialog
-        open={rulesDialogOpen}
-        onClose={handleCloseRulesDialog}
-        maxWidth="md"
-        fullWidth
-        scroll="paper"
-      >
-        <DialogTitle>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6">Detaillierte Schichtregeln</Typography>
-            <IconButton onClick={handleCloseRulesDialog} size="small">
-              <CloseIcon />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <CalendarIcon sx={{ color: 'primary.main', fontSize: '1.2rem' }} />
+                <Typography variant="body2" color="text.secondary">
+                  {format(selectedDate, 'MMMM yyyy', { locale: de })}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PeopleIcon sx={{ color: 'success.main', fontSize: '1.2rem' }} />
+                <Typography variant="body2" color="text.secondary">
+                  {statistiken.mitarbeiterAnzahl} Mitarbeiter aktiv
+                </Typography>
+              </Box>
+            </Box>
           </Box>
-        </DialogTitle>
-        <DialogContent dividers>
-          <ShiftRulesDisplay />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseRulesDialog}>Schließen</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+        </Paper>
+      </Fade>
+
+      {/* KPI-Cards */}
+      <Fade in={showCards} timeout={1000}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)',
+            },
+            gap: 3,
+            mb: 4,
+          }}
+        >
+          <StatistikCard
+            title="Mitarbeiter"
+            value={statistiken.mitarbeiterAnzahl}
+            subtitle="Aktive Mitarbeiter"
+            icon={<PeopleIcon />}
+            color="primary"
+            onClick={() => navigate('/mitarbeiter')}
+            trend={{
+              value: 5,
+              isPositive: true,
+              label: 'vs. letzter Monat',
+            }}
+          />
+          <StatistikCard
+            title="Schichtabdeckung"
+            value={`${statistiken.schichtAbdeckung}%`}
+            subtitle="Geplante Schichten"
+            icon={<ScheduleIcon />}
+            color={statistiken.schichtAbdeckung >= 90 ? 'success' : statistiken.schichtAbdeckung >= 70 ? 'warning' : 'error'}
+            onClick={() => navigate('/schichtplanung')}
+          />
+          <StatistikCard
+            title="Ø Auslastung"
+            value={`${statistiken.durchschnittlicheAuslastung}h`}
+            subtitle="Pro Mitarbeiter/Monat"
+            icon={<TrendingUpIcon />}
+            color={statistiken.durchschnittlicheAuslastung <= 160 ? 'success' : 'warning'}
+          />
+          <StatistikCard
+            title="Warnungen"
+            value={statistiken.aktuelleWarnungen + statistiken.regelverletzungen}
+            subtitle="Aktuelle Probleme"
+            icon={<WarningIcon />}
+            color={statistiken.aktuelleWarnungen + statistiken.regelverletzungen === 0 ? 'success' : 'warning'}
+          />
+        </Box>
+      </Fade>
+
+      {/* Hauptinhalt */}
+      <Fade in={showCards} timeout={1200}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              lg: '2fr 1fr',
+            },
+            gap: 3,
+            mb: 4,
+          }}
+        >
+          {/* Wochenübersicht */}
+          <WochenUebersicht
+            woche={aktuelleWoche}
+            selectedDate={selectedDate}
+            onDateSelect={(date) => {
+              // TODO: Datum auswählen und zur Schichtplanung navigieren
+              navigate('/schichtplanung');
+            }}
+            title="Aktuelle Woche"
+          />
+
+          {/* Schnellaktionen */}
+          <SchnellAktionen
+            aktionen={schnellAktionen}
+            title="Schnellaktionen"
+            maxItems={5}
+          />
+        </Box>
+      </Fade>
+
+      {/* Status-Übersicht */}
+      <Fade in={showCards} timeout={1400}>
+        <Box sx={{ mb: 4 }}>
+          <StatusAmpel
+            statusItems={statusItems}
+            title="System-Status"
+            showProgress={true}
+          />
+        </Box>
+      </Fade>
+
+      {/* Zusätzliche Informationen */}
+      <Fade in={showCards} timeout={1600}>
+        <Box sx={{ mt: 4 }}>
+          <Paper
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              background: alpha(theme.palette.info.main, 0.02),
+              border: `1px solid ${alpha(theme.palette.info.main, 0.1)}`,
+            }}
+          >
+            <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <AssessmentIcon sx={{ color: 'info.main' }} />
+              Wichtige Hinweise
+            </Typography>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  md: 'repeat(3, 1fr)',
+                },
+                gap: 2,
+              }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                <strong>Schichtplanung:</strong> Automatische Generierung berücksichtigt alle Regeln und Vorgaben
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Mitarbeiterverwaltung:</strong> Einfache Verwaltung von Rollen und Arbeitszeiten
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Excel-Export:</strong> Professionelle Schichtpläne für Druck und Weitergabe
+              </Typography>
+            </Box>
+          </Paper>
+        </Box>
+      </Fade>
+    </Container>
   );
 };
 

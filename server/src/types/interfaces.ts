@@ -1,102 +1,26 @@
 /**
+ * Gemeinsame TypeScript-Interfaces für Frontend und Backend
+ * Basiert auf den bestehenden Frontend-Interfaces
+ */
+
+/**
  * Mitarbeiter-Interface
  */
 export interface Employee {
   id: string;
   name: string;
   role: EmployeeRole;
-  hoursPerMonth: number; // Monatliche Sollstunden
-  hoursPerWeek?: number; // Optional: Wöchentliche Sollstunden (wird nicht mehr angezeigt)
-  clinic?: 'Elmshorn' | 'Uetersen'; // Zugehörigkeit zur Praxis
+  hoursPerMonth: number;
+  hoursPerWeek?: number;
+  clinic?: 'Elmshorn' | 'Uetersen';
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 /**
- * Mitarbeiterrollen (Legacy - wird durch RoleDefinition ersetzt)
+ * Mitarbeiterrollen
  */
 export type EmployeeRole = 'Pfleger' | 'Pflegehelfer' | 'Schichtleiter';
-
-/**
- * Erweiterte Rollendefinition
- */
-export interface RoleDefinition {
-  id: string;
-  name: string;
-  displayName: string;
-  description: string;
-  color: string; // Hex-Farbe für UI
-  priority: number; // Niedrigere Zahl = höhere Priorität
-  permissions: RolePermission[];
-  requirements: RoleRequirement[];
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-/**
- * Rollen-Berechtigungen
- */
-export interface RolePermission {
-  id: string;
-  name: string;
-  description: string;
-  category: 'shift_planning' | 'management' | 'administration' | 'reporting';
-}
-
-/**
- * Rollen-Anforderungen
- */
-export interface RoleRequirement {
-  id: string;
-  type: 'certification' | 'experience' | 'training' | 'other';
-  name: string;
-  description: string;
-  required: boolean;
-}
-
-/**
- * Standard-Rollen-Definitionen
- */
-export const DEFAULT_ROLES: RoleDefinition[] = [
-  {
-    id: 'schichtleiter',
-    name: 'Schichtleiter',
-    displayName: 'Schichtleiter/in',
-    description: 'Verantwortlich für die Leitung einer Schicht und Koordination des Teams',
-    color: '#1976d2',
-    priority: 1,
-    permissions: [],
-    requirements: [],
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 'pfleger',
-    name: 'Pfleger',
-    displayName: 'Gesundheits- und Krankenpfleger/in',
-    description: 'Qualifizierte Pflegekraft mit abgeschlossener Ausbildung',
-    color: '#388e3c',
-    priority: 2,
-    permissions: [],
-    requirements: [],
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 'pflegehelfer',
-    name: 'Pflegehelfer',
-    displayName: 'Pflegehelfer/in',
-    description: 'Unterstützende Pflegekraft',
-    color: '#f57c00',
-    priority: 3,
-    permissions: [],
-    requirements: [],
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }
-];
 
 /**
  * Schicht-Interface
@@ -134,6 +58,31 @@ export interface MonthlyShiftPlan {
 }
 
 /**
+ * Schichtplan-Datenbank-Entität
+ */
+export interface ShiftPlanEntity {
+  id: string;
+  year: number;
+  month: number;
+  planData: string; // JSON-serialized MonthlyShiftPlan
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Einzelne Schichtzuweisung
+ */
+export interface ShiftAssignment {
+  id: string;
+  shiftPlanId: string;
+  employeeId: string;
+  date: string; // Format: "DD.MM.YYYY"
+  shiftType: string; // "F", "S", "FS", etc.
+  hours: number;
+  createdAt: Date;
+}
+
+/**
  * Mitarbeiterverfügbarkeit während der Schichtplanung
  */
 export interface EmployeeAvailability {
@@ -160,15 +109,32 @@ export interface ConstraintCheck {
 }
 
 /**
+ * Constraint-Verletzung für Datenbank
+ */
+export interface ConstraintViolation {
+  id: string;
+  shiftPlanId: string;
+  type: 'hard' | 'soft';
+  rule: string;
+  message: string;
+  employeeId?: string;
+  date?: string;
+  createdAt: Date;
+}
+
+/**
  * Konfigurierbare Schichtregeln
  */
 export interface ShiftRules {
+  id?: string;
   minNursesPerShift: number;
   minNurseManagersPerShift: number;
   minHelpers: number;
   maxSaturdaysPerMonth: number;
   maxConsecutiveSameShifts: number;
   weeklyHoursOverflowTolerance: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 /**
@@ -183,7 +149,7 @@ export interface Location {
   phone?: string;
   email?: string;
   manager?: string;
-  capacity: number; // Maximale Anzahl Patienten
+  capacity: number;
   operatingHours: {
     monday: TimeSlot[];
     tuesday: TimeSlot[];
@@ -193,9 +159,11 @@ export interface Location {
     saturday: TimeSlot[];
     sunday: TimeSlot[];
   };
-  specialties: string[]; // Spezialisierungen (z.B. "Hämodialyse", "Peritonealdialyse")
-  equipment: string[]; // Verfügbare Geräte
+  specialties: string[];
+  equipment: string[];
   isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 /**
@@ -211,10 +179,10 @@ export interface TimeSlot {
  */
 export interface LocationStats {
   totalPatients: number;
-  averageUtilization: number; // Auslastung in Prozent
+  averageUtilization: number;
   employeeCount: number;
   monthlyRevenue?: number;
-  patientSatisfaction?: number; // 1-5 Sterne
+  patientSatisfaction?: number;
 }
 
 /**
@@ -293,15 +261,23 @@ export interface PlanningStatistics {
 }
 
 /**
- * Constraint-Verletzung
+ * Validierungsanfrage
  */
-export interface ConstraintViolation {
-  id: string;
-  rule: string;
-  message: string;
-  employeeId?: string;
-  date?: string;
-  severity?: number;
-  isResolved?: boolean;
-  createdAt: Date;
+export interface ValidateShiftPlanRequest {
+  shiftPlan: MonthlyShiftPlan;
+  employeeIds: string[];
+  year: number;
+  month: number;
+}
+
+/**
+ * Validierungsantwort
+ */
+export interface ValidateShiftPlanResponse {
+  isValid: boolean;
+  violations: {
+    hard: ConstraintViolation[];
+    soft: ConstraintViolation[];
+  };
+  suggestions?: string[];
 }

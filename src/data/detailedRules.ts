@@ -47,19 +47,19 @@ export const lateShiftRules: RuleCategory = {
   rules: [
     {
       primary: 'S00 (11:00-18:00) - 7 Stunden',
-      secondary: 'Muss von einem Pfleger besetzt werden'
+      secondary: 'Standort: Elmshorn, Wochentage: Mo, Mi, Fr - Muss von einem Pfleger besetzt werden'
     },
     {
       primary: 'S0 (11:30-18:30) - 7 Stunden',
-      secondary: 'Kann von Schichtleitern, Pflegern und Pflegehelfern besetzt werden'
+      secondary: 'Standort: Elmshorn, Wochentage: Mo, Mi, Fr - Kann von Schichtleitern, Pflegern und Pflegehelfern besetzt werden'
     },
     {
       primary: 'S1 (12:00-19:00) - 7 Stunden',
-      secondary: 'Kann von Schichtleitern und Pflegern besetzt werden'
+      secondary: 'Standort: Elmshorn, Wochentage: Mo, Mi, Fr - Kann von Schichtleitern und Pflegern besetzt werden'
     },
     {
       primary: 'S (12:00-19:00) - 7 Stunden',
-      secondary: 'Muss von einem Pfleger besetzt werden'
+      secondary: 'Standort: Elmshorn, Wochentage: Mo, Mi, Fr - Muss von einem Pfleger besetzt werden'
     },
     {
       primary: 'Schichtleiter-Einschränkung',
@@ -78,7 +78,7 @@ export const earlyShiftRules: RuleCategory = {
   rules: [
     {
       primary: 'F (06:00-13:00) - 7 Stunden',
-      secondary: 'Kann von Pflegern, Schichtleitern und Pflegehelfern besetzt werden'
+      secondary: 'Standort: Elmshorn, Wochentage: Mo, Di, Mi, Do, Fr, Sa, So - Kann von Pflegern, Schichtleitern und Pflegehelfern besetzt werden'
     }
   ]
 };
@@ -89,7 +89,7 @@ export const specialShiftRules: RuleCategory = {
   rules: [
     {
       primary: 'FS (06:45-14:00) - 7,25 Stunden',
-      secondary: 'Kann von einem Pfleger oder Schichtleiter besetzt werden'
+      secondary: 'Standort: Elmshorn, Wochentage: Di, Do, Sa - Kann von einem Pfleger oder Schichtleiter besetzt werden'
     }
   ]
 };
@@ -100,15 +100,11 @@ export const secondClinicRules: RuleCategory = {
   rules: [
     {
       primary: 'Frühschicht (Markiert als 4) - 7 Stunden',
-      secondary: 'Kann von Pflegern und Pflegehelfern besetzt werden, Besetzung: 2 Pfleger und 1 Pflegehelfer'
+      secondary: 'Standort: Uetersen, Wochentage: Mo, Mi, Fr - Kann von Pflegern und Pflegehelfern besetzt werden, Besetzung: 2 Pfleger und 1 Pflegehelfer'
     },
     {
       primary: 'Spätschicht (Markiert als 5) - 7 Stunden',
-      secondary: 'Kann nur von Pflegern besetzt werden, Besetzung: 2 Pfleger'
-    },
-    {
-      primary: 'Schichtleiter (Markiert als 6) - 8 Stunden',
-      secondary: 'Kann nur von Schichtleitern besetzt werden, 1 Schichtleiter pro Tag'
+      secondary: 'Standort: Uetersen, Wochentage: Mo, Mi, Fr - Kann nur von Pflegern besetzt werden, Besetzung: 2 Pfleger'
     },
     {
       primary: 'Überstundentoleranz für Uetersen',

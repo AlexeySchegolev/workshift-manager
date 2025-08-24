@@ -63,12 +63,12 @@ export class EnhancedShiftPlanningService {
   ): ShiftPlanningResult {
     console.log(`Generiere Schichtplan für ${month}/${year} mit ${employees.length} Mitarbeitern`);
     
-    // Mitarbeiter nach Klinik filtern
-    const hauptpraxisEmployees = employees.filter(emp => emp.clinic === 'Elmshorn' || !emp.clinic);
-    const zweitepraxisEmployees = employees.filter(emp => emp.clinic === 'Uetersen');
+    // Mitarbeiter nach Standort filtern
+    const hauptpraxisEmployees = employees.filter(emp => emp.location === 'Standort A' || !emp.location);
+    const zweitepraxisEmployees = employees.filter(emp => emp.location === 'Standort B');
     
-    // Schichtplan für Hauptpraxis erstellen
-    console.log("Generiere Schichtplan für Hauptpraxis (Elmshorn)...");
+    // Schichtplan für Hauptstandort erstellen
+    console.log("Generiere Schichtplan für Hauptstandort (Standort A)...");
     const hauptpraxisResult = this.generatePlanForClinic(hauptpraxisEmployees, year, month);
     
     // Die ersten zwei Samstage des Monats identifizieren
@@ -97,10 +97,10 @@ export class EnhancedShiftPlanningService {
       month
     );
     
-    // Schichtplan für zweite Praxis erstellen (falls benötigt)
+    // Schichtplan für zweiten Standort erstellen (falls benötigt)
     let zweitepraxisResult = null;
     if (zweitepraxisEmployees.length > 0) {
-      console.log("Generiere Schichtplan für zweite Praxis (Uetersen)...");
+      console.log("Generiere Schichtplan für zweiten Standort (Standort B)...");
       zweitepraxisResult = this.generatePlanForClinic(zweitepraxisEmployees, year, month);
     }
     
@@ -117,13 +117,13 @@ export class EnhancedShiftPlanningService {
             combinedPlan[dayKey] = {};
           }
           
-          // Schichten der zweiten Praxis zum kombinierten Plan hinzufügen
+          // Schichten des zweiten Standorts zum kombinierten Plan hinzufügen
           const dayPlan = combinedPlan[dayKey] as DayShiftPlan;
           const zweitepraxisDayPlan = zweitepraxisResult.shiftPlan[dayKey] as DayShiftPlan;
           
           for (const shiftName in zweitepraxisDayPlan) {
-            // Spezielles Präfix für Schichten der zweiten Praxis hinzufügen
-            const zweitepraxisShiftName = `U_${shiftName}`;
+            // Spezielles Präfix für Schichten des zweiten Standorts hinzufügen
+            const zweitepraxisShiftName = `B_${shiftName}`;
             dayPlan[zweitepraxisShiftName] = zweitepraxisDayPlan[shiftName];
           }
         }
@@ -163,7 +163,7 @@ export class EnhancedShiftPlanningService {
   }
   
   /**
-   * Generiert einen Schichtplan für eine Klinik
+   * Generiert einen Schichtplan für einen Standort
    */
   private static generatePlanForClinic(
     employees: Employee[],
@@ -419,7 +419,7 @@ export class EnhancedShiftPlanningService {
   }
   
   /**
-   * Belegt unbesetzte Samstage mit Mitarbeitern aus der zweiten Praxis
+   * Belegt unbesetzte Samstage mit Mitarbeitern aus dem zweiten Standort
    */
   private static belegeSamstageMitZweitepraxisMitarbeitern(
     shiftPlan: MonthlyShiftPlan,
@@ -427,7 +427,7 @@ export class EnhancedShiftPlanningService {
     zweitepraxisEmployees: Employee[],
     unbelegteSamstage: string[]
   ): void {
-    // Sortiere Mitarbeiter der zweiten Praxis nach Verfügbarkeit (weniger ausgelastete zuerst)
+    // Sortiere Mitarbeiter des zweiten Standorts nach Verfügbarkeit (weniger ausgelastete zuerst)
     const sortedZweitepraxisEmployees = [...zweitepraxisEmployees].sort((a, b) => {
       const aWorkload = this.calculateEmployeeWorkload(a, employeeAvailability);
       const bWorkload = this.calculateEmployeeWorkload(b, employeeAvailability);
@@ -436,7 +436,7 @@ export class EnhancedShiftPlanningService {
     
     // Versuche, jeden unbelegten Samstag zu besetzen
     for (const dayKey of unbelegteSamstage) {
-      console.log(`Versuche, unbelegten Samstag ${dayKey} mit Mitarbeitern der zweiten Praxis zu besetzen...`);
+      console.log(`Versuche, unbelegten Samstag ${dayKey} mit Mitarbeitern des zweiten Standorts zu besetzen...`);
       
       // Initialisiere den Tagesplan, falls er nicht existiert
       if (!shiftPlan[dayKey] || shiftPlan[dayKey] === null) {
@@ -445,13 +445,13 @@ export class EnhancedShiftPlanningService {
       
       const dayPlan = shiftPlan[dayKey] as DayShiftPlan;
       
-      // Standard-Samstagschichten für die Hauptpraxis
+      // Standard-Samstagschichten für den Hauptstandort
       if (!dayPlan['F']) dayPlan['F'] = [];
       if (!dayPlan['FS']) dayPlan['FS'] = [];
       
-      // Finde verfügbare Mitarbeiter für FS-Schicht (bevorzugt Pfleger oder Schichtleiter)
+      // Finde verfügbare Mitarbeiter für FS-Schicht (bevorzugt Specialist oder ShiftLeader)
       const fsEligibleEmployees = sortedZweitepraxisEmployees.filter(emp =>
-        (emp.role === 'Pfleger' || emp.role === 'Schichtleiter') &&
+        (emp.role === 'Specialist' || emp.role === 'ShiftLeader') &&
         !this.isEmployeeAssignedOnDay(emp.id, dayKey, employeeAvailability)
       );
       
@@ -474,7 +474,7 @@ export class EnhancedShiftPlanningService {
           7.25 // FS-Schicht: 06:45-14:00 (7.25h)
         );
         
-        console.log(`Samstag ${dayKey}: ${employee.name} (Zweite Praxis) für FS-Schicht eingeteilt`);
+        console.log(`Samstag ${dayKey}: ${employee.name} (Standort B) für FS-Schicht eingeteilt`);
       }
       
       // Versuche, F-Schicht mit weiteren Mitarbeitern zu besetzen
@@ -500,13 +500,13 @@ export class EnhancedShiftPlanningService {
         );
         
         assignedToF++;
-        console.log(`Samstag ${dayKey}: ${employee.name} (Zweite Praxis) für F-Schicht eingeteilt`);
+        console.log(`Samstag ${dayKey}: ${employee.name} (Standort B) für F-Schicht eingeteilt`);
       }
       
       // Wenn keine Schichten besetzt werden konnten, Tag als unbelegt markieren
       const isStillEmpty = (dayPlan['F'].length === 0 && dayPlan['FS'].length === 0);
       if (isStillEmpty) {
-        console.log(`Konnte Samstag ${dayKey} nicht mit Mitarbeitern der zweiten Praxis besetzen`);
+        console.log(`Konnte Samstag ${dayKey} nicht mit Mitarbeitern des zweiten Standorts besetzen`);
       }
     }
   }

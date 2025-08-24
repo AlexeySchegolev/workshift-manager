@@ -1,16 +1,16 @@
 import { ShiftRules } from '../models/interfaces';
 
 /**
- * Standard-Schichtregeln für die Dialysepraxis
+ * Standard-Schichtregeln für die Schichtplanung
  */
 export const defaultRules: ShiftRules = {
-  // Mindestanzahl Pfleger pro Schicht (außer für spezielle Schichten)
+  // Mindestanzahl Fachkräfte pro Schicht (außer für spezielle Schichten)
   minNursesPerShift: 4,
   
   // Mindestanzahl Schichtleiter pro Schicht
   minNurseManagersPerShift: 1,
   
-  // Mindestanzahl Pflegehelfer pro Schicht
+  // Mindestanzahl Hilfskräfte pro Schicht
   minHelpers: 1,
   
   // Maximale Anzahl an Samstagen pro Mitarbeiter und Monat
@@ -27,7 +27,7 @@ export const defaultRules: ShiftRules = {
 };
 
 /**
- * Gelockerte Schichtregeln für die Dialysepraxis
+ * Gelockerte Schichtregeln für die Schichtplanung
  * Werden verwendet, wenn mit den Standardregeln kein vollständiger Plan erstellt werden kann
  */
 export const relaxedRules: ShiftRules = {

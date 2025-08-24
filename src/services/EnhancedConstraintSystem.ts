@@ -148,16 +148,16 @@ export class EnhancedConstraintSystem {
   static getAllowedRolesForShift(shiftName: string): EmployeeRole[] {
     // Rollenerlaubnis für jede Schicht
     const shiftRoles: { [key: string]: EmployeeRole[] } = {
-      'S0': ['Schichtleiter', 'Pfleger', 'Pflegehelfer'],
-      'S1': ['Schichtleiter', 'Pfleger'],
-      'S00': ['Pfleger'],
-      'S': ['Pfleger'],
-      'FS': ['Schichtleiter', 'Pfleger'],
-      'F': ['Schichtleiter', 'Pfleger', 'Pflegehelfer'],
-      // Uetersen-Schichten
-      '4': ['Pfleger', 'Pflegehelfer'],
-      '5': ['Pfleger'],
-      '6': ['Schichtleiter']
+      'S0': ['ShiftLeader', 'Specialist', 'Assistant'],
+      'S1': ['ShiftLeader', 'Specialist'],
+      'S00': ['Specialist'],
+      'S': ['Specialist'],
+      'FS': ['ShiftLeader', 'Specialist'],
+      'F': ['ShiftLeader', 'Specialist', 'Assistant'],
+      // Standort B-Schichten
+      '4': ['Specialist', 'Assistant'],
+      '5': ['Specialist'],
+      '6': ['ShiftLeader']
     };
     
     return shiftRoles[shiftName] || [];
@@ -175,9 +175,9 @@ export class EnhancedConstraintSystem {
       'S1': 7,   // 12:00-19:00
       'S': 7,    // 12:00-19:00
       'FS': 7.25, // 06:45-14:00
-      '4': 7,    // Frühschicht Uetersen
-      '5': 7,    // Spätschicht Uetersen
-      '6': 8     // Schichtleiter Uetersen
+      '4': 7,    // Frühschicht Standort B
+      '5': 7,    // Spätschicht Standort B
+      '6': 8     // ShiftLeader Standort B
     };
     
     return shiftHours[shiftName] || 7; // 7 Stunden als Standardwert
@@ -274,16 +274,16 @@ export class EnhancedConstraintSystem {
     
     // Minimale Besetzungsanforderungen
     const minRequirements = {
-      Pfleger: 4,
-      Schichtleiter: 1,
-      Pflegehelfer: 1
+      Specialist: 4,
+      ShiftLeader: 1,
+      Assistant: 1
     };
     
     // Zähle die tatsächlich eingeteilten Mitarbeiter nach Rolle
     const roleCounts: Record<EmployeeRole, number> = {
-      Pfleger: 0,
-      Schichtleiter: 0,
-      Pflegehelfer: 0
+      Specialist: 0,
+      ShiftLeader: 0,
+      Assistant: 0
     };
     
     // Alle Schichten des Tages durchgehen und Mitarbeiter zählen

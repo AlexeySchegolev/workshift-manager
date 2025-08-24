@@ -32,7 +32,7 @@ export class ShiftPlanningConstraintService {
     // Alle Rollen sind jetzt aktiviert!
     
     // 1) Rolle prüfen - ALLE ROLLEN ERLAUBT
-    if (emp.role !== 'Schichtleiter' && emp.role !== 'Pfleger' && emp.role !== 'Pflegehelfer') {
+    if (emp.role !== 'ShiftLeader' && emp.role !== 'Specialist' && emp.role !== 'Assistant') {
       return false;
     }
     
@@ -118,18 +118,18 @@ export class ShiftPlanningConstraintService {
   /**
    * Prüft, ob ein Mitarbeiter einer Uetersen-Schicht zugewiesen werden kann
    */
-  static canAssignEmployeeToUetersen(
+  static canAssignEmployeeToStandortB(
     emp: Employee,
     employeeAvailability: EmployeeAvailability,
     dayKey: string,
     shiftName: string,
     shift: any
   ): boolean {
-    // VOLLSTÄNDIGE LOGIK: ALLE ROLLEN FÜR UETERSEN
-    // Schichtleiter, Pfleger und Pflegehelfer sind erlaubt
-    
+    // VOLLSTÄNDIGE LOGIK: ALLE ROLLEN FÜR STANDORT B
+    // Schichtleiter, Fachkräfte und Hilfskräfte sind erlaubt
+
     // 1) Rolle prüfen - ALLE ROLLEN ERLAUBT
-    if (emp.role !== 'Schichtleiter' && emp.role !== 'Pfleger' && emp.role !== 'Pflegehelfer') {
+    if (emp.role !== 'ShiftLeader' && emp.role !== 'Specialist' && emp.role !== 'Assistant') {
       return false;
     }
     
@@ -259,11 +259,11 @@ export class ShiftPlanningConstraintService {
         for (const empId of employeeIds) {
           const employee = employees.find(e => e.id === empId);
           if (employee) {
-            if (employee.role === 'Schichtleiter') {
+            if (employee.role === 'ShiftLeader') {
               schichtleiterCount++;
-            } else if (employee.role === 'Pfleger') {
+            } else if (employee.role === 'Specialist') {
               pflegerCount++;
-            } else if (employee.role === 'Pflegehelfer') {
+            } else if (employee.role === 'Assistant') {
               pflegehelferCount++;
             }
           }
@@ -273,7 +273,7 @@ export class ShiftPlanningConstraintService {
     
     checks.push({
       status: 'info',
-      message: `Insgesamt ${schichtleiterCount} Schichtleiter-Schichten, ${pflegerCount} Pfleger-Schichten und ${pflegehelferCount} Pflegehelfer-Schichten von ${totalShiftsAssigned} Gesamtschichten zugewiesen.`
+      message: `Insgesamt ${schichtleiterCount} Schichtleiter-Schichten, ${pflegerCount} Fachkraft-Schichten und ${pflegehelferCount} Hilfskraft-Schichten von ${totalShiftsAssigned} Gesamtschichten zugewiesen.`
     });
     
     // 3. Mitarbeiterzeitstatistik (alle Rollen)
@@ -283,9 +283,9 @@ export class ShiftPlanningConstraintService {
     });
     
     const relevantEmployees = employees.filter(emp =>
-      emp.role === 'Schichtleiter' ||
-      emp.role === 'Pfleger' ||
-      emp.role === 'Pflegehelfer'
+      emp.role === 'ShiftLeader' ||
+      emp.role === 'Specialist' ||
+      emp.role === 'Assistant'
     );
     
     for (const emp of relevantEmployees) {
@@ -349,14 +349,14 @@ export class ShiftPlanningConstraintService {
     const employeesWithSaturdays = Object.entries(saturdayStats)
       .map(([empId, count]) => {
         const emp = employees.find(e => e.id === empId);
-        return { name: emp?.name || empId, clinic: emp?.clinic || 'Unbekannt', count };
+        return { name: emp?.name || empId, location: emp?.location || 'Unbekannt', count };
       })
       .sort((a, b) => b.count - a.count);
     
     if (employeesWithSaturdays.length > 0) {
       checks.push({
         status: 'info',
-        message: `Samstagsschichten pro Mitarbeiter: ${employeesWithSaturdays.map(e => `${e.name} (${e.clinic}): ${e.count}`).join(', ')}`
+        message: `Samstagsschichten pro Mitarbeiter: ${employeesWithSaturdays.map(e => `${e.name} (${e.location}): ${e.count}`).join(', ')}`
       });
     }
     

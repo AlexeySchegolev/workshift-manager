@@ -10,7 +10,7 @@ import { defaultShifts } from '../data/defaultShifts';
 import { ShiftPlanningUtilService } from './ShiftPlanningUtilService';
 import { ShiftPlanningConstraintService } from './ShiftPlanningConstraintService';
 import { ShiftPlanningBacktrackingService } from './ShiftPlanningBacktrackingService';
-import { UetersenShiftPlanningService } from './UetersenShiftPlanningService';
+import { StandortBShiftPlanningService } from './StandortBShiftPlanningService';
 import { EmployeeRoleSortingService } from './EmployeeRoleSortingService';
 
 /**
@@ -32,8 +32,8 @@ export class ShiftPlanningService {
     month: number
   ): { shiftPlan: MonthlyShiftPlan; employeeAvailability: EmployeeAvailability } {
     // Mitarbeiter nach Klinik filtern
-    const elmshornerEmployees = employees.filter(emp => emp.clinic === 'Elmshorn' || !emp.clinic);
-    const uetersenEmployees = employees.filter(emp => emp.clinic === 'Uetersen');
+    const elmshornerEmployees = employees.filter(emp => emp.location === 'Standort A' || !emp.location);
+    const uetersenEmployees = employees.filter(emp => emp.location === 'Standort B');
     
     // ALLE Mitarbeiter für Samstagsplanung (Elmshorn + Uetersen)
     const allEmployeesForSaturdays = [...elmshornerEmployees, ...uetersenEmployees];
@@ -59,7 +59,7 @@ export class ShiftPlanningService {
 
     // Schichtplan für Uetersen erstellen
     console.log("Versuche Schichtplan für Uetersen zu erstellen...");
-    const uetersenResult = UetersenShiftPlanningService.createUetersenShiftPlan(sortedUetersenEmployees, year, month);
+    const uetersenResult = StandortBShiftPlanningService.createStandortBShiftPlan(sortedUetersenEmployees, year, month);
     
     // Beide Pläne zusammenführen
     const combinedShiftPlan = { ...elmshornerResult.shiftPlan };
@@ -187,7 +187,7 @@ export class ShiftPlanningService {
             // 1. Einen Schichtleiter für F-Schicht finden
             let schichtleiterAssigned = false;
             for (const emp of employeesForSaturday) {
-              if (emp.role !== 'Schichtleiter') continue;
+              if (emp.role !== 'ShiftLeader') continue;
               
               if (ShiftPlanningConstraintService.canAssignEmployee(
                 emp,
@@ -222,7 +222,7 @@ export class ShiftPlanningService {
             // 2. 4 Pfleger für F-Schicht finden
             let pflegerAssigned = 0;
             for (const emp of employeesForSaturday) {
-              if (emp.role !== 'Pfleger' || pflegerAssigned >= 4) continue;
+              if (emp.role !== 'Specialist' || pflegerAssigned >= 4) continue;
               
               if (ShiftPlanningConstraintService.canAssignEmployee(
                 emp,
@@ -256,7 +256,7 @@ export class ShiftPlanningService {
             // 3. 1 Pflegehelfer für F-Schicht finden
             let pflegehelferAssigned = 0;
             for (const emp of employeesForSaturday) {
-              if (emp.role !== 'Pflegehelfer' || pflegehelferAssigned >= 1) continue;
+              if (emp.role !== 'Assistant' || pflegehelferAssigned >= 1) continue;
               
               if (ShiftPlanningConstraintService.canAssignEmployee(
                 emp,

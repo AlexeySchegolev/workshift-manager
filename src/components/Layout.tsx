@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { title: 'Dashboard', path: '/', icon: <DashboardIcon />, description: 'Übersicht und Statistiken' },
     { title: 'Schichtplanung', path: '/schichtplanung', icon: <CalendarIcon />, description: 'Schichtpläne erstellen und verwalten' },
     { title: 'Mitarbeiter', path: '/mitarbeiter', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten' },
-    { title: 'Standorte', path: '/standorte', icon: <BusinessIcon />, description: 'Standorte und Praxen verwalten' },
+    { title: 'Standorte', path: '/standorte', icon: <BusinessIcon />, description: 'Standorte und Betriebsstätten verwalten' },
     { title: 'Rollenverwaltung', path: '/rollen', icon: <SettingsIcon />, description: 'Rollen und Berechtigungen verwalten' },
     { title: 'Schichtregeln', path: '/schichtregeln', icon: <RuleIcon />, description: 'Regeln und Vorgaben für die Schichtplanung' }
   ];
@@ -196,7 +196,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 transition: 'all 0.2s ease-in-out',
               }}
             >
-              ShiftCare
+              WorkShift Manager
             </Typography>
           </Box>
           
@@ -296,7 +296,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Container maxWidth="xl">
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              © {new Date().getFullYear()} Dialysepraxis Schichtplanungssystem
+              © {new Date().getFullYear()} Schichtplanungs- und Personalmanagement-System
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Typography variant="caption" color="text.secondary">

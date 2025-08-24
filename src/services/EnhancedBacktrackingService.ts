@@ -403,50 +403,50 @@ export class EnhancedBacktrackingService {
     for (const shiftName of prioritizedShifts) {
       switch (shiftName) {
         case 'S0':
-          // S0 kann von Schichtleitern, Pflegern und Pflegehelfern besetzt werden
+          // S0 kann von ShiftLeadern, Specialists und Assistants besetzt werden
           requirements.set(shiftName, [
-            { role: 'Schichtleiter', count: 1 },
-            { role: 'Pfleger', count: isLongDay ? 1 : 0 },
-            { role: 'Pflegehelfer', count: 1 }
+            { role: 'ShiftLeader', count: 1 },
+            { role: 'Specialist', count: isLongDay ? 1 : 0 },
+            { role: 'Assistant', count: 1 }
           ]);
           break;
           
         case 'S1':
-          // S1 kann von Schichtleitern und Pflegern besetzt werden
+          // S1 kann von ShiftLeadern und Specialists besetzt werden
           requirements.set(shiftName, [
-            { role: 'Pfleger', count: 1 }
+            { role: 'Specialist', count: 1 }
           ]);
           break;
           
         case 'S00':
-          // S00 kann nur von Pflegern besetzt werden
+          // S00 kann nur von Specialists besetzt werden
           requirements.set(shiftName, [
-            { role: 'Pfleger', count: 1 }
+            { role: 'Specialist', count: 1 }
           ]);
           break;
           
         case 'S':
-          // S kann von Pflegern besetzt werden
+          // S kann von Specialists besetzt werden
           requirements.set(shiftName, [
-            { role: 'Pfleger', count: 1 }
+            { role: 'Specialist', count: 1 }
           ]);
           break;
           
         case 'FS':
-          // FS kann von Schichtleitern und Pflegern besetzt werden
+          // FS kann von ShiftLeadern und Specialists besetzt werden
           requirements.set(shiftName, [
-            { role: 'Pfleger', count: 1 }
+            { role: 'Specialist', count: 1 }
           ]);
           break;
           
         case 'F':
           // F kann von allen Rollen besetzt werden
           // An langen Tagen brauchen wir mehr Mitarbeiter als an kurzen
-          const pflegerCount = isLongDay ? 3 : 4;
+          const specialistCount = isLongDay ? 3 : 4;
           requirements.set(shiftName, [
-            { role: 'Pfleger', count: pflegerCount },
-            { role: 'Schichtleiter', count: isLongDay ? 0 : 1 }, // Schichtleiter nur an kurzen Tagen in F
-            { role: 'Pflegehelfer', count: isLongDay ? 0 : 1 }   // Pflegehelfer nur an kurzen Tagen in F
+            { role: 'Specialist', count: specialistCount },
+            { role: 'ShiftLeader', count: isLongDay ? 0 : 1 }, // ShiftLeader nur an kurzen Tagen in F
+            { role: 'Assistant', count: isLongDay ? 0 : 1 }   // Assistant nur an kurzen Tagen in F
           ]);
           break;
           

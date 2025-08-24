@@ -57,7 +57,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   // Standort-Statistiken
   const getLocationStats = (locationId: string): LocationStats => {
     return locationStatsData[locationId as keyof typeof locationStatsData] || {
-      totalPatients: 0,
+      totalClients: 0,
       averageUtilization: 0,
       employeeCount: 0,
     };
@@ -88,7 +88,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
           saturday: [],
           sunday: [],
         },
-        specialties: [],
+        services: [],
         equipment: [],
         isActive: true,
       });
@@ -272,10 +272,10 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 2 }}>
                     <Box sx={{ textAlign: 'center' }}>
                       <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600 }}>
-                        {stats.totalPatients}
+                        {stats.totalClients}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        Patienten
+                        Kunden
                       </Typography>
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
@@ -304,24 +304,24 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Box>
                   </Box>
 
-                  {/* Spezialisierungen */}
+                  {/* Services */}
                   <Box sx={{ mb: 2 }}>
                     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                      Spezialisierungen:
+                      Services:
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {location.specialties.slice(0, 3).map((specialty, index) => (
+                      {location.services.slice(0, 3).map((service, index) => (
                         <Chip
                           key={index}
-                          label={specialty}
+                          label={service}
                           size="small"
                           variant="outlined"
                           sx={{ fontSize: '0.7rem' }}
                         />
                       ))}
-                      {location.specialties.length > 3 && (
+                      {location.services.length > 3 && (
                         <Chip
-                          label={`+${location.specialties.length - 3}`}
+                          label={`+${location.services.length - 3}`}
                           size="small"
                           variant="outlined"
                           sx={{ fontSize: '0.7rem' }}

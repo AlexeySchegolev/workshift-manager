@@ -6,7 +6,7 @@ import { Employee, EmployeeAvailability } from '../models/interfaces';
 export class EmployeeRoleSortingService {
   /**
    * Sortiert Mitarbeiter nach Rolle mit festgelegter Priorität
-   * Reihenfolge: Schichtleiter > Pfleger > Pflegehelfer
+   * Reihenfolge: ShiftLeader > Specialist > Assistant
    */
   static sortEmployeesByRole(employees: Employee[]): Employee[] {
     // Kopie des Arrays erstellen, um das Original nicht zu verändern
@@ -14,9 +14,9 @@ export class EmployeeRoleSortingService {
     
     // Rollenpriorität definieren (niedrigerer Wert = höhere Priorität)
     const rolePriority: { [key: string]: number } = {
-      'Schichtleiter': 1,
-      'Pfleger': 2,
-      'Pflegehelfer': 3
+      'ShiftLeader': 1,
+      'Specialist': 2,
+      'Assistant': 3
     };
     
     // Nach Rolle sortieren
@@ -36,13 +36,13 @@ export class EmployeeRoleSortingService {
    */
   static sortAndShuffleByRole(employees: Employee[], employeeAvailability?: any, currentShiftType?: string): Employee[] {
     // Mitarbeiter nach Rolle gruppieren
-    const schichtleiter = employees.filter(emp => emp.role === 'Schichtleiter');
-    const pfleger = employees.filter(emp => emp.role === 'Pfleger');
-    const pflegehelfer = employees.filter(emp => emp.role === 'Pflegehelfer');
+    const shiftLeaders = employees.filter(emp => emp.role === 'ShiftLeader');
+    const specialists = employees.filter(emp => emp.role === 'Specialist');
+    const assistants = employees.filter(emp => emp.role === 'Assistant');
     const others = employees.filter(emp =>
-      emp.role !== 'Schichtleiter' &&
-      emp.role !== 'Pfleger' &&
-      emp.role !== 'Pflegehelfer'
+      emp.role !== 'ShiftLeader' &&
+      emp.role !== 'Specialist' &&
+      emp.role !== 'Assistant'
     );
     
     // Hilfsfunktion für abwechslungsreiche Sortierung
@@ -99,18 +99,18 @@ export class EmployeeRoleSortingService {
     };
     
     // Abwechslungsreiche Sortierung für ALLE Rollen
-    const sortedSchichtleiter = sortForVariety(schichtleiter);
-    const sortedPfleger = sortForVariety(pfleger);
-    const sortedPflegehelfer = sortForVariety(pflegehelfer);
+    const sortedShiftLeaders = sortForVariety(shiftLeaders);
+    const sortedSpecialists = sortForVariety(specialists);
+    const sortedAssistants = sortForVariety(assistants);
     
     // Nur andere/unbekannte Rollen zufällig mischen
     const shuffledOthers = [...others].sort(() => Math.random() - 0.5);
     
     // Alle Gruppen in der gewünschten Reihenfolge zusammenführen
     return [
-      ...sortedSchichtleiter,
-      ...sortedPfleger,
-      ...sortedPflegehelfer,
+      ...sortedShiftLeaders,
+      ...sortedSpecialists,
+      ...sortedAssistants,
       ...shuffledOthers
     ];
   }
@@ -125,12 +125,12 @@ export class EmployeeRoleSortingService {
   ): Employee[] {
     console.log('=== SAMSTAGS-SORTIERUNG ===');
     
-    const schichtleiter = employees.filter(emp => emp.role === 'Schichtleiter');
-    const pfleger = employees.filter(emp => emp.role === 'Pfleger');
-    const pflegehelfer = employees.filter(emp => emp.role === 'Pflegehelfer');
+    const shiftLeaders = employees.filter(emp => emp.role === 'ShiftLeader');
+    const specialists = employees.filter(emp => emp.role === 'Specialist');
+    const assistants = employees.filter(emp => emp.role === 'Assistant');
     
     // Sortierung nach saturdaysWorked (aufsteigend) - wer weniger Samstage hatte, kommt zuerst
-    const sortedSchichtleiter = schichtleiter.sort((a, b) => {
+    const sortedShiftLeaders = shiftLeaders.sort((a, b) => {
       const aSaturdays = employeeAvailability[a.id]?.saturdaysWorked || 0;
       const bSaturdays = employeeAvailability[b.id]?.saturdaysWorked || 0;
       
@@ -145,7 +145,7 @@ export class EmployeeRoleSortingService {
       return aHours - bHours;
     });
     
-    const sortedPfleger = pfleger.sort((a, b) => {
+    const sortedSpecialists = specialists.sort((a, b) => {
       const aSaturdays = employeeAvailability[a.id]?.saturdaysWorked || 0;
       const bSaturdays = employeeAvailability[b.id]?.saturdaysWorked || 0;
       
@@ -158,7 +158,7 @@ export class EmployeeRoleSortingService {
       return aHours - bHours;
     });
     
-    const sortedPflegehelfer = pflegehelfer.sort((a, b) => {
+    const sortedAssistants = assistants.sort((a, b) => {
       const aSaturdays = employeeAvailability[a.id]?.saturdaysWorked || 0;
       const bSaturdays = employeeAvailability[b.id]?.saturdaysWorked || 0;
       
@@ -172,28 +172,28 @@ export class EmployeeRoleSortingService {
     });
     
     // Debug-Ausgabe
-    console.log('Schichtleiter für Samstag (nach saturdaysWorked sortiert):');
-    sortedSchichtleiter.forEach(emp => {
+    console.log('ShiftLeader für Samstag (nach saturdaysWorked sortiert):');
+    sortedShiftLeaders.forEach(emp => {
       const saturdays = employeeAvailability[emp.id]?.saturdaysWorked || 0;
       const hours = employeeAvailability[emp.id]?.totalHoursAssigned || 0;
-      console.log(`  ${emp.name} (${emp.clinic || 'Elmshorn'}): ${saturdays} Samstage, ${hours}h`);
+      console.log(`  ${emp.name} (${emp.location || 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
     });
     
-    console.log('Pfleger für Samstag (nach saturdaysWorked sortiert):');
-    sortedPfleger.forEach(emp => {
+    console.log('Specialist für Samstag (nach saturdaysWorked sortiert):');
+    sortedSpecialists.forEach(emp => {
       const saturdays = employeeAvailability[emp.id]?.saturdaysWorked || 0;
       const hours = employeeAvailability[emp.id]?.totalHoursAssigned || 0;
-      console.log(`  ${emp.name} (${emp.clinic || 'Elmshorn'}): ${saturdays} Samstage, ${hours}h`);
+      console.log(`  ${emp.name} (${emp.location || 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
     });
     
-    console.log('Pflegehelfer für Samstag (nach saturdaysWorked sortiert):');
-    sortedPflegehelfer.forEach(emp => {
+    console.log('Assistant für Samstag (nach saturdaysWorked sortiert):');
+    sortedAssistants.forEach(emp => {
       const saturdays = employeeAvailability[emp.id]?.saturdaysWorked || 0;
       const hours = employeeAvailability[emp.id]?.totalHoursAssigned || 0;
-      console.log(`  ${emp.name} (${emp.clinic || 'Elmshorn'}): ${saturdays} Samstage, ${hours}h`);
+      console.log(`  ${emp.name} (${emp.location || 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
     });
     
-    // Reihenfolge: Schichtleiter, Pfleger, Pflegehelfer
-    return [...sortedSchichtleiter, ...sortedPfleger, ...sortedPflegehelfer];
+    // Reihenfolge: ShiftLeader, Specialist, Assistant
+    return [...sortedShiftLeaders, ...sortedSpecialists, ...sortedAssistants];
   }
 }

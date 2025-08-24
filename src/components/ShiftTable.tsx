@@ -383,16 +383,16 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                               <Chip
                                 label={emp.role}
                                 size="small"
-                                color={emp.role === 'Schichtleiter' ? 'primary' : 'default'}
+                                color={emp.role === 'ShiftLeader' ? 'primary' : 'default'}
                                 sx={{
                                   height: 18,
                                   fontSize: '0.7rem',
                                   fontWeight: 500,
                                 }}
                               />
-                              {emp.clinic === 'Uetersen' && (
+                              {emp.location === 'Standort B' && (
                                 <Chip
-                                  label="Uetersen"
+                                  label="Standort B"
                                   size="small"
                                   sx={{
                                     height: 18,

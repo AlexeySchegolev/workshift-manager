@@ -55,11 +55,11 @@ const EmployeePage: React.FC = () => {
   // Statistiken berechnen
   const calculateStatistics = () => {
     const totalEmployees = employees.length;
-    const elmshorn = employees.filter(emp => emp.clinic !== 'Uetersen').length;
-    const uetersen = employees.filter(emp => emp.clinic === 'Uetersen').length;
-    const schichtleiter = employees.filter(emp => emp.role === 'Schichtleiter').length;
-    const pfleger = employees.filter(emp => emp.role === 'Pfleger').length;
-    const pflegehelfer = employees.filter(emp => emp.role === 'Pflegehelfer').length;
+    const standortA = employees.filter(emp => emp.location !== 'Standort B').length;
+    const standortB = employees.filter(emp => emp.location === 'Standort B').length;
+    const schichtleiter = employees.filter(emp => emp.role === 'ShiftLeader').length;
+    const specialists = employees.filter(emp => emp.role === 'Specialist').length;
+    const assistants = employees.filter(emp => emp.role === 'Assistant').length;
     
     const totalHours = employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0);
     const avgHours = totalEmployees > 0 ? Math.round(totalHours / totalEmployees) : 0;
@@ -72,11 +72,11 @@ const EmployeePage: React.FC = () => {
 
     return {
       totalEmployees,
-      elmshorn,
-      uetersen,
+      standortA,
+      standortB,
       schichtleiter,
-      pfleger,
-      pflegehelfer,
+      specialists,
+      assistants,
       avgHours,
       totalHours,
       warnings,
@@ -157,13 +157,13 @@ const EmployeePage: React.FC = () => {
       details: stats.schichtleiter < 3 ? ['Mindestens 3 Schichtleiter für kontinuierliche Abdeckung empfohlen'] : undefined,
     } as const,
     {
-      id: 'clinic-distribution',
-      title: 'Praxisverteilung',
-      description: 'Verteilung der Mitarbeiter auf beide Praxen',
-      status: stats.uetersen >= 2 && stats.elmshorn >= 3 ? 'success' : 'warning',
-      value: Math.min(stats.elmshorn, stats.uetersen),
-      maxValue: Math.max(stats.elmshorn, stats.uetersen),
-      details: stats.uetersen < 2 ? ['Zu wenige Mitarbeiter für Uetersen-Praxis'] : undefined,
+      id: 'location-distribution',
+      title: 'Standortverteilung',
+      description: 'Verteilung der Mitarbeiter auf beide Standorte',
+      status: stats.standortB >= 2 && stats.standortA >= 3 ? 'success' : 'warning',
+      value: Math.min(stats.standortA, stats.standortB),
+      maxValue: Math.max(stats.standortA, stats.standortB),
+      details: stats.standortB < 2 ? ['Zu wenige Mitarbeiter für Standort B'] : undefined,
     } as const,
     {
       id: 'working-hours',
@@ -221,7 +221,7 @@ const EmployeePage: React.FC = () => {
               color="text.secondary"
               sx={{ mb: 2, maxWidth: 600 }}
             >
-              Verwalten Sie Ihr Team und optimieren Sie die Personalplanung für beide Praxisstandorte
+              Verwalten Sie Ihr Team und optimieren Sie die Personalplanung für beide Standorte
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -233,7 +233,7 @@ const EmployeePage: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <BusinessIcon sx={{ color: 'info.main', fontSize: '1.2rem' }} />
                 <Typography variant="body2" color="text.secondary">
-                  {stats.elmshorn} Elmshorn • {stats.uetersen} Uetersen
+                  {stats.standortA} Standort A • {stats.standortB} Standort B
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

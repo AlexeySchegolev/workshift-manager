@@ -28,7 +28,7 @@ export interface MitarbeiterAuslastungData {
   id: string;
   name: string;
   role: string;
-  clinic: string;
+  location: string;
   geplantStunden: number;
   sollStunden: number;
   maxStunden: number;
@@ -64,9 +64,9 @@ const MitarbeiterAuslastung: React.FC<MitarbeiterAuslastungProps> = ({
   // Rolle-spezifische Farben
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'Schichtleiter': return theme.palette.primary.main;
-      case 'Pfleger': return theme.palette.success.main;
-      case 'Pflegehelfer': return theme.palette.info.main;
+      case 'ShiftLeader': return theme.palette.primary.main;
+      case 'Specialist': return theme.palette.success.main;
+      case 'Assistant': return theme.palette.info.main;
       default: return theme.palette.grey[500];
     }
   };
@@ -278,9 +278,9 @@ const MitarbeiterAuslastung: React.FC<MitarbeiterAuslastungProps> = ({
                                 color: roleColor,
                               }}
                             />
-                            {mitarbeiter.clinic === 'Uetersen' && (
+                            {mitarbeiter.location === 'Standort B' && (
                               <Chip
-                                label="Uetersen"
+                                label="Standort B"
                                 size="small"
                                 sx={{
                                   height: 18,

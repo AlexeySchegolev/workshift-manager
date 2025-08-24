@@ -5,14 +5,14 @@ import { Location } from '../models/interfaces';
  */
 export const locationData: Location[] = [
   {
-    id: 'elmshorn',
-    name: 'Dialysepraxis Elmshorn',
+    id: 'standort-a',
+    name: 'Standort A',
     address: 'Musterstraße 123',
-    city: 'Elmshorn',
-    postalCode: '25335',
-    phone: '+49 4121 123456',
-    email: 'elmshorn@dialysepraxis.de',
-    manager: 'Dr. Schmidt',
+    city: 'Musterstadt',
+    postalCode: '12345',
+    phone: '+49 123 456789',
+    email: 'standort-a@unternehmen.de',
+    manager: 'Max Mustermann',
     capacity: 24,
     operatingHours: {
       monday: [
@@ -40,24 +40,24 @@ export const locationData: Location[] = [
       ],
       sunday: []
     },
-    specialties: ['Hämodialyse', 'Hämofiltration', 'Hämodiafiltration'],
+    services: ['Service A', 'Service B', 'Service C'],
     equipment: [
-      'Fresenius 5008S',
-      'B. Braun Dialog+',
-      'Wasseraufbereitungsanlage',
+      'Gerät Typ A',
+      'Gerät Typ B',
+      'Spezialausrüstung',
       'Notfallausrüstung'
     ],
     isActive: true
   },
   {
-    id: 'uetersen',
-    name: 'Dialysepraxis Uetersen',
-    address: 'Bahnhofstraße 45',
-    city: 'Uetersen',
-    postalCode: '25436',
-    phone: '+49 4122 987654',
-    email: 'uetersen@dialysepraxis.de',
-    manager: 'Dr. Müller',
+    id: 'standort-b',
+    name: 'Standort B',
+    address: 'Beispielweg 45',
+    city: 'Beispielort',
+    postalCode: '54321',
+    phone: '+49 987 654321',
+    email: 'standort-b@unternehmen.de',
+    manager: 'Maria Musterfrau',
     capacity: 16,
     operatingHours: {
       monday: [
@@ -85,11 +85,11 @@ export const locationData: Location[] = [
       ],
       sunday: []
     },
-    specialties: ['Hämodialyse', 'Peritonealdialyse'],
+    services: ['Service A', 'Service D'],
     equipment: [
-      'Fresenius 4008S',
-      'Gambro AK 200',
-      'Wasseraufbereitungsanlage',
+      'Gerät Typ C',
+      'Gerät Typ D',
+      'Spezialausrüstung',
       'Notfallausrüstung'
     ],
     isActive: true
@@ -100,18 +100,18 @@ export const locationData: Location[] = [
  * Beispiel-Statistiken für Standorte
  */
 export const locationStatsData = {
-  elmshorn: {
-    totalPatients: 85,
+  'standort-a': {
+    totalClients: 85,
     averageUtilization: 92,
     employeeCount: 12,
     monthlyRevenue: 125000,
-    patientSatisfaction: 4.7
+    clientSatisfaction: 4.7
   },
-  uetersen: {
-    totalPatients: 58,
+  'standort-b': {
+    totalClients: 58,
     averageUtilization: 87,
     employeeCount: 8,
     monthlyRevenue: 89000,
-    patientSatisfaction: 4.5
+    clientSatisfaction: 4.5
   }
 };

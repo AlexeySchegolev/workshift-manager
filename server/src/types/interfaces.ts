@@ -12,7 +12,7 @@ export interface Employee {
   role: EmployeeRole;
   hoursPerMonth: number;
   hoursPerWeek?: number;
-  clinic?: 'Elmshorn' | 'Uetersen';
+  location?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -20,7 +20,7 @@ export interface Employee {
 /**
  * Mitarbeiterrollen
  */
-export type EmployeeRole = 'Pfleger' | 'Pflegehelfer' | 'Schichtleiter';
+export type EmployeeRole = 'Specialist' | 'Assistant' | 'ShiftLeader';
 
 /**
  * Schicht-Interface
@@ -159,7 +159,7 @@ export interface Location {
     saturday: TimeSlot[];
     sunday: TimeSlot[];
   };
-  specialties: string[];
+  services: string[];
   equipment: string[];
   isActive: boolean;
   createdAt?: Date;
@@ -178,11 +178,11 @@ export interface TimeSlot {
  * Standort-Statistiken
  */
 export interface LocationStats {
-  totalPatients: number;
+  totalClients: number;
   averageUtilization: number;
   employeeCount: number;
   monthlyRevenue?: number;
-  patientSatisfaction?: number;
+  clientSatisfaction?: number;
 }
 
 /**

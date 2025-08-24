@@ -7,13 +7,13 @@ export interface Employee {
   role: EmployeeRole;
   hoursPerMonth: number; // Monatliche Sollstunden
   hoursPerWeek?: number; // Optional: Wöchentliche Sollstunden (wird nicht mehr angezeigt)
-  clinic?: 'Elmshorn' | 'Uetersen'; // Zugehörigkeit zur Praxis
+  location?: string; // Zugehörigkeit zum Standort
 }
 
 /**
  * Mitarbeiterrollen (Legacy - wird durch RoleDefinition ersetzt)
  */
-export type EmployeeRole = 'Pfleger' | 'Pflegehelfer' | 'Schichtleiter';
+export type EmployeeRole = 'Specialist' | 'Assistant' | 'ShiftLeader';
 
 /**
  * Erweiterte Rollendefinition
@@ -58,8 +58,8 @@ export interface RoleRequirement {
  */
 export const DEFAULT_ROLES: RoleDefinition[] = [
   {
-    id: 'schichtleiter',
-    name: 'Schichtleiter',
+    id: 'shiftleader',
+    name: 'ShiftLeader',
     displayName: 'Schichtleiter/in',
     description: 'Verantwortlich für die Leitung einer Schicht und Koordination des Teams',
     color: '#1976d2',
@@ -71,10 +71,10 @@ export const DEFAULT_ROLES: RoleDefinition[] = [
     updatedAt: new Date()
   },
   {
-    id: 'pfleger',
-    name: 'Pfleger',
-    displayName: 'Gesundheits- und Krankenpfleger/in',
-    description: 'Qualifizierte Pflegekraft mit abgeschlossener Ausbildung',
+    id: 'specialist',
+    name: 'Specialist',
+    displayName: 'Fachkraft',
+    description: 'Qualifizierte Fachkraft mit abgeschlossener Ausbildung',
     color: '#388e3c',
     priority: 2,
     permissions: [],
@@ -84,10 +84,10 @@ export const DEFAULT_ROLES: RoleDefinition[] = [
     updatedAt: new Date()
   },
   {
-    id: 'pflegehelfer',
-    name: 'Pflegehelfer',
-    displayName: 'Pflegehelfer/in',
-    description: 'Unterstützende Pflegekraft',
+    id: 'assistant',
+    name: 'Assistant',
+    displayName: 'Hilfskraft',
+    description: 'Unterstützende Hilfskraft',
     color: '#f57c00',
     priority: 3,
     permissions: [],
@@ -183,7 +183,7 @@ export interface Location {
   phone?: string;
   email?: string;
   manager?: string;
-  capacity: number; // Maximale Anzahl Patienten
+  capacity: number; // Maximale Kapazität (Arbeitsplätze/Kunden)
   operatingHours: {
     monday: TimeSlot[];
     tuesday: TimeSlot[];
@@ -193,8 +193,8 @@ export interface Location {
     saturday: TimeSlot[];
     sunday: TimeSlot[];
   };
-  specialties: string[]; // Spezialisierungen (z.B. "Hämodialyse", "Peritonealdialyse")
-  equipment: string[]; // Verfügbare Geräte
+  services: string[]; // Angebotene Services/Dienstleistungen
+  equipment: string[]; // Verfügbare Ausstattung/Geräte
   isActive: boolean;
 }
 
@@ -210,11 +210,11 @@ export interface TimeSlot {
  * Standort-Statistiken
  */
 export interface LocationStats {
-  totalPatients: number;
+  totalClients: number;
   averageUtilization: number; // Auslastung in Prozent
   employeeCount: number;
   monthlyRevenue?: number;
-  patientSatisfaction?: number; // 1-5 Sterne
+  clientSatisfaction?: number; // 1-5 Sterne
 }
 
 /**

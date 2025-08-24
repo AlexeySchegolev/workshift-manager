@@ -58,7 +58,7 @@ const LocationManagementPage: React.FC = () => {
     const totalLocations = locations.length;
     const totalCapacity = locations.reduce((sum, loc) => sum + loc.capacity, 0);
     
-    let totalPatients = 0;
+    let totalClients = 0;
     let totalEmployees = 0;
     let totalRevenue = 0;
     let avgSatisfaction = 0;
@@ -67,10 +67,10 @@ const LocationManagementPage: React.FC = () => {
     activeLocations.forEach(location => {
       const stats = locationStatsData[location.id as keyof typeof locationStatsData];
       if (stats) {
-        totalPatients += stats.totalPatients;
+        totalClients += stats.totalClients;
         totalEmployees += stats.employeeCount;
         totalRevenue += stats.monthlyRevenue || 0;
-        avgSatisfaction += stats.patientSatisfaction || 0;
+        avgSatisfaction += stats.clientSatisfaction || 0;
         avgUtilization += stats.averageUtilization;
       }
     });
@@ -82,7 +82,7 @@ const LocationManagementPage: React.FC = () => {
       totalLocations,
       activeLocations: activeLocations.length,
       totalCapacity,
-      totalPatients,
+      totalClients,
       totalEmployees,
       totalRevenue,
       avgSatisfaction: Math.round(avgSatisfaction * 10) / 10,
@@ -165,13 +165,13 @@ const LocationManagementPage: React.FC = () => {
                stats.avgUtilization < 70 ? ['Niedrige Auslastung - Optimierungspotential vorhanden'] : undefined,
     } as const,
     {
-      id: 'patient-satisfaction',
-      title: 'Patientenzufriedenheit',
+      id: 'client-satisfaction',
+      title: 'Kundenzufriedenheit',
       description: 'Durchschnittliche Bewertung aller Standorte',
       status: stats.avgSatisfaction >= 4.5 ? 'success' : stats.avgSatisfaction >= 4.0 ? 'warning' : 'error',
       value: stats.avgSatisfaction,
       maxValue: 5,
-      details: stats.avgSatisfaction < 4.0 ? ['Patientenzufriedenheit unter Zielwert - Maßnahmen erforderlich'] : undefined,
+      details: stats.avgSatisfaction < 4.0 ? ['Kundenzufriedenheit unter Zielwert - Maßnahmen erforderlich'] : undefined,
     } as const,
     {
       id: 'employee-distribution',
@@ -229,7 +229,7 @@ const LocationManagementPage: React.FC = () => {
               color="text.secondary"
               sx={{ mb: 2, maxWidth: 600 }}
             >
-              Verwalten Sie alle Dialysepraxis-Standorte zentral und optimieren Sie deren Betrieb
+              Verwalten Sie alle Standorte zentral und optimieren Sie deren Betrieb
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -241,7 +241,7 @@ const LocationManagementPage: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <PeopleIcon sx={{ color: 'success.main', fontSize: '1.2rem' }} />
                 <Typography variant="body2" color="text.secondary">
-                  {stats.totalPatients} Patienten betreut
+                  {stats.totalClients} Kunden betreut
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -298,7 +298,7 @@ const LocationManagementPage: React.FC = () => {
           <StatistikCard
             title="Zufriedenheit"
             value={`${stats.avgSatisfaction}/5`}
-            subtitle="Patientenbewertung"
+            subtitle="Kundenbewertung"
             icon={<StarIcon />}
             color={stats.avgSatisfaction >= 4.5 ? 'success' : stats.avgSatisfaction >= 4.0 ? 'warning' : 'error'}
           />

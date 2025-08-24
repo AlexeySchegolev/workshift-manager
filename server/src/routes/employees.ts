@@ -142,7 +142,7 @@ router.get('/:id', validateParams(UUIDSchema.pick({ id: true })), async (req: an
       role: employee.role,
       hoursPerMonth: employee.hours_per_month,
       hoursPerWeek: employee.hours_per_week,
-      clinic: employee.clinic,
+      location: employee.location,
       createdAt: new Date(employee.created_at),
       updatedAt: new Date(employee.updated_at)
     };
@@ -197,7 +197,7 @@ router.post('/', validateRequestBody(EmployeeCreateSchema), async (req: any, res
       role: newEmployee.role,
       hoursPerMonth: newEmployee.hours_per_month,
       hoursPerWeek: newEmployee.hours_per_week,
-      clinic: newEmployee.clinic,
+      location: newEmployee.location,
       createdAt: new Date(newEmployee.created_at),
       updatedAt: new Date(newEmployee.updated_at)
     };
@@ -294,7 +294,7 @@ router.put('/:id',
         role: updatedEmployee.role,
         hoursPerMonth: updatedEmployee.hours_per_month,
         hoursPerWeek: updatedEmployee.hours_per_week,
-        clinic: updatedEmployee.clinic,
+        location: updatedEmployee.location,
         createdAt: new Date(updatedEmployee.created_at),
         updatedAt: new Date(updatedEmployee.updated_at)
       };

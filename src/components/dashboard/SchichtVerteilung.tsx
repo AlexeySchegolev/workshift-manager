@@ -74,9 +74,9 @@ const SchichtVerteilung: React.FC<SchichtVerteilungProps> = ({
       case 'S1': return 'Spätschicht S1';
       case 'S00': return 'Spätschicht S00';
       case 'FS': return 'Spezialschicht';
-      case '4': return 'Uetersen Früh';
-      case '5': return 'Uetersen Spät';
-      case '6': return 'Uetersen Leitung';
+      case '4': return 'Standort B Früh';
+      case '5': return 'Standort B Spät';
+      case '6': return 'Standort B Leitung';
       default: return schichtTyp;
     }
   };

@@ -14,6 +14,11 @@ export const ConstraintTypeSchema = z.enum(['hard', 'soft']);
 // UUID-Schema
 export const UUIDSchema = z.string().uuid('Ungültige UUID');
 
+// UUID-Parameter-Schema für Routen
+export const UUIDParamsSchema = z.object({
+  id: UUIDSchema
+});
+
 // Datum-Schemas
 export const DateStringSchema = z.string().regex(/^\d{2}\.\d{2}\.\d{4}$/, 'Datum muss im Format DD.MM.YYYY sein');
 export const TimeStringSchema = z.string().regex(/^\d{2}:\d{2}$/, 'Zeit muss im Format HH:MM sein');
@@ -223,8 +228,8 @@ export const ConstraintViolationSchema = z.object({
 
 // Paginierung-Schemas
 export const PaginationSchema = z.object({
-  page: z.number().int().min(1, 'Seite muss mindestens 1 sein').default(1),
-  limit: z.number().int().min(1, 'Limit muss mindestens 1 sein').max(100, 'Limit zu hoch').default(20),
+  page: z.coerce.number().int().min(1, 'Seite muss mindestens 1 sein').default(1),
+  limit: z.coerce.number().int().min(1, 'Limit muss mindestens 1 sein').max(100, 'Limit zu hoch').default(20),
   sortBy: z.string().optional(),
   sortOrder: z.enum(['asc', 'desc']).default('asc')
 });
@@ -251,20 +256,20 @@ export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =
 export const EmployeeQuerySchema = z.object({
   role: EmployeeRoleSchema.optional(),
   clinic: ClinicSchema.optional(),
-  isActive: z.boolean().optional(),
+  isActive: z.coerce.boolean().optional(),
   ...PaginationSchema.shape
 });
 
 export const LocationQuerySchema = z.object({
   city: z.string().optional(),
-  isActive: z.boolean().optional(),
+  isActive: z.coerce.boolean().optional(),
   ...PaginationSchema.shape
 });
 
 export const ShiftPlanQuerySchema = z.object({
-  year: z.number().int().optional(),
-  month: z.number().int().optional(),
-  isFinalized: z.boolean().optional(),
+  year: z.coerce.number().int().optional(),
+  month: z.coerce.number().int().optional(),
+  isFinalized: z.coerce.boolean().optional(),
   ...PaginationSchema.shape
 });
 

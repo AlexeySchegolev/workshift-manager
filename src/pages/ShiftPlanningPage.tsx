@@ -41,7 +41,7 @@ import {
   EmployeeAvailability
 } from '../models/interfaces';
 import { ShiftPlanningService } from '../services/ShiftPlanningService';
-import { employeeData } from '../data/employeeData';
+import { ApiService } from '../services/ApiService';
 
 /**
  * Moderne Schichtplanungs-Seite im Dashboard-Style
@@ -52,8 +52,28 @@ const ShiftPlanningPage: React.FC = () => {
   // Ausgewähltes Datum
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   
-  // Mitarbeiterliste - direkt aus der Datei laden
-  const [employees] = useState<Employee[]>(employeeData);
+  // Mitarbeiterliste - über API laden
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
+  const [employeeError, setEmployeeError] = useState<string | null>(null);
+
+  // Mitarbeiter beim Laden der Komponente abrufen
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        setLoadingEmployees(true);
+        const paginatedResponse = await ApiService.getEmployees({ limit: 100 });
+        setEmployees(paginatedResponse.data); // Extrahiere das Employee[] Array aus der paginierten Response
+      } catch (error) {
+        console.error('Fehler beim Laden der Mitarbeiter:', error);
+        setEmployeeError('Fehler beim Laden der Mitarbeiter');
+      } finally {
+        setLoadingEmployees(false);
+      }
+    };
+
+    loadEmployees();
+  }, []);
   
   // Schichtplan
   const [shiftPlan, setShiftPlan] = useState<MonthlyShiftPlan | null>(null);

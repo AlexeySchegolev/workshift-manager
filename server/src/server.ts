@@ -4,16 +4,18 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import { logger, logStream } from '@/utils/logger';
-import { runMigrations } from '@/database/migrations';
-import { seedDatabase } from '@/database/seed';
-import { dbManager } from '@/database/database';
+import { logger, logStream } from './utils/logger';
+import { runMigrations } from './database/migrations';
+import { seedDatabase } from './database/seed';
+import { dbManager } from './database/database';
 
 // Route-Imports
-import employeeRoutes from '@/routes/employees';
-// import locationRoutes from '@/routes/locations';
-// import shiftRulesRoutes from '@/routes/shift-rules';
-import shiftPlanRoutes from '@/routes/shift-plans';
+import employeeRoutes from './routes/employees';
+import locationRoutes from './routes/locations';
+import roleRoutes from './routes/roles';
+import shiftRulesRoutes from './routes/shift-rules';
+import shiftConfigurationsRoutes from './routes/shift-configurations';
+import shiftPlanRoutes from './routes/shift-plans';
 
 /**
  * Express-Server für die Schichtplanung-Anwendung
@@ -125,7 +127,9 @@ class SchichtplanungServer {
         endpoints: {
           employees: '/api/employees',
           locations: '/api/locations',
+          roles: '/api/roles',
           'shift-rules': '/api/shift-rules',
+          'shift-configurations': '/api/shift-configurations',
           'shift-plans': '/api/shift-plans',
           statistics: '/api/statistics'
         },
@@ -135,8 +139,10 @@ class SchichtplanungServer {
 
     // API-Routen
     this.app.use('/api/employees', employeeRoutes);
-    // this.app.use('/api/locations', locationRoutes);
-    // this.app.use('/api/shift-rules', shiftRulesRoutes);
+    this.app.use('/api/locations', locationRoutes);
+    this.app.use('/api/roles', roleRoutes);
+    this.app.use('/api/shift-rules', shiftRulesRoutes);
+    this.app.use('/api/shift-configurations', shiftConfigurationsRoutes);
     this.app.use('/api/shift-plans', shiftPlanRoutes);
 
     // Temporäre Test-Route

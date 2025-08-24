@@ -1,6 +1,6 @@
-import { 
-  Employee, 
-  MonthlyShiftPlan, 
+import {
+  Employee,
+  MonthlyShiftPlan,
   GenerateShiftPlanRequest,
   GenerateShiftPlanResponse,
   ApiResponse,
@@ -8,6 +8,7 @@ import {
   Location,
   ShiftRules
 } from '../models/interfaces';
+import { ShiftRulesConfiguration } from '../models/shiftRuleInterfaces';
 
 /**
  * API-Service für die Kommunikation mit dem Backend
@@ -276,7 +277,7 @@ export class ApiService {
     limit?: number;
     city?: string;
     isActive?: boolean;
-  }): Promise<PaginatedResponse<Location>> {
+  }): Promise<Location[]> {
     const queryParams = new URLSearchParams();
     
     if (params?.page) queryParams.append('page', params.page.toString());
@@ -285,7 +286,7 @@ export class ApiService {
     if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
 
     const endpoint = `/locations${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.get<PaginatedResponse<Location>>(endpoint);
+    const response = await this.get<Location[]>(endpoint);
     
     if (!response.success || !response.data) {
       throw new Error(response.error || 'Fehler beim Laden der Standorte');
@@ -344,6 +345,104 @@ export class ApiService {
     }
   }
 
+  // ===== ROLLEN API =====
+
+  /**
+   * Alle Rollen abrufen
+   */
+  static async getRoles(params?: {
+    isActive?: boolean;
+  }): Promise<any[]> {
+    const queryParams = new URLSearchParams();
+    
+    if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
+
+    const endpoint = `/roles${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.get<any[]>(endpoint);
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Fehler beim Laden der Rollen');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Einzelne Rolle abrufen
+   */
+  static async getRole(id: string): Promise<any> {
+    const response = await this.get<any>(`/roles/${id}`);
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Rolle nicht gefunden');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Neue Rolle erstellen
+   */
+  static async createRole(roleData: any): Promise<any> {
+    const response = await this.post<any>('/roles', roleData);
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Fehler beim Erstellen der Rolle');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Rolle aktualisieren
+   */
+  static async updateRole(id: string, roleData: any): Promise<any> {
+    const response = await this.put<any>(`/roles/${id}`, roleData);
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Fehler beim Aktualisieren der Rolle');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Rolle deaktivieren
+   */
+  static async deleteRole(id: string): Promise<void> {
+    const response = await this.delete(`/roles/${id}`);
+    
+    if (!response.success) {
+      throw new Error(response.error || 'Fehler beim Löschen der Rolle');
+    }
+  }
+
+  /**
+   * Alle verfügbaren Berechtigungen abrufen
+   */
+  static async getPermissions(): Promise<any[]> {
+    const response = await this.get<any[]>('/roles/permissions');
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Fehler beim Laden der Berechtigungen');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Alle verfügbaren Anforderungen abrufen
+   */
+  static async getRequirements(): Promise<any[]> {
+    const response = await this.get<any[]>('/roles/requirements');
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Fehler beim Laden der Anforderungen');
+    }
+    
+    return response.data;
+  }
+
   // ===== SCHICHTREGELN API =====
 
   /**
@@ -370,6 +469,89 @@ export class ApiService {
     }
     
     return response.data;
+  }
+
+  // ===== SCHICHTREGELN-KONFIGURATION API =====
+
+  /**
+   * Alle Schichtregeln-Konfigurationen abrufen
+   */
+  static async getShiftRulesConfigurations(params?: {
+    isActive?: boolean;
+  }): Promise<ShiftRulesConfiguration[]> {
+    const queryParams = new URLSearchParams();
+    
+    if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
+
+    const endpoint = `/shift-rules/configurations${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const response = await this.get<ShiftRulesConfiguration[]>(endpoint);
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Fehler beim Laden der Schichtregeln-Konfigurationen');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Einzelne Schichtregeln-Konfiguration abrufen
+   */
+  static async getShiftRulesConfiguration(id: string): Promise<ShiftRulesConfiguration> {
+    const response = await this.get<ShiftRulesConfiguration>(`/shift-rules/configurations/${id}`);
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Schichtregeln-Konfiguration nicht gefunden');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Standard-Schichtregeln-Konfiguration abrufen
+   */
+  static async getDefaultShiftRulesConfiguration(): Promise<ShiftRulesConfiguration> {
+    const response = await this.get<ShiftRulesConfiguration>('/shift-configurations');
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Standard-Schichtregeln-Konfiguration nicht gefunden');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Neue Schichtregeln-Konfiguration erstellen
+   */
+  static async createShiftRulesConfiguration(configData: Omit<ShiftRulesConfiguration, 'id' | 'createdAt' | 'updatedAt'>): Promise<ShiftRulesConfiguration> {
+    const response = await this.post<ShiftRulesConfiguration>('/shift-rules/configurations', configData);
+    
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Fehler beim Erstellen der Schichtregeln-Konfiguration');
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * Schichtregeln-Konfiguration aktualisieren
+   */
+  static async updateShiftRulesConfiguration(id: string, configData: Partial<ShiftRulesConfiguration>): Promise<void> {
+    const response = await this.put(`/shift-rules/configurations/${id}`, configData);
+    
+    if (!response.success) {
+      throw new Error(response.error || 'Fehler beim Aktualisieren der Schichtregeln-Konfiguration');
+    }
+  }
+
+  /**
+   * Schichtregeln-Konfiguration deaktivieren
+   */
+  static async deleteShiftRulesConfiguration(id: string): Promise<void> {
+    const response = await this.delete(`/shift-rules/configurations/${id}`);
+    
+    if (!response.success) {
+      throw new Error(response.error || 'Fehler beim Löschen der Schichtregeln-Konfiguration');
+    }
   }
 
   // ===== SYSTEM API =====
@@ -428,9 +610,26 @@ export const useApi = () => {
     updateLocation: ApiService.updateLocation,
     deleteLocation: ApiService.deleteLocation,
     
+    // Rollen
+    getRoles: ApiService.getRoles,
+    getRole: ApiService.getRole,
+    createRole: ApiService.createRole,
+    updateRole: ApiService.updateRole,
+    deleteRole: ApiService.deleteRole,
+    getPermissions: ApiService.getPermissions,
+    getRequirements: ApiService.getRequirements,
+    
     // Schichtregeln
     getShiftRules: ApiService.getShiftRules,
     updateShiftRules: ApiService.updateShiftRules,
+    
+    // Schichtregeln-Konfigurationen
+    getShiftRulesConfigurations: ApiService.getShiftRulesConfigurations,
+    getShiftRulesConfiguration: ApiService.getShiftRulesConfiguration,
+    getDefaultShiftRulesConfiguration: ApiService.getDefaultShiftRulesConfiguration,
+    createShiftRulesConfiguration: ApiService.createShiftRulesConfiguration,
+    updateShiftRulesConfiguration: ApiService.updateShiftRulesConfiguration,
+    deleteShiftRulesConfiguration: ApiService.deleteShiftRulesConfiguration,
     
     // System
     healthCheck: ApiService.healthCheck,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -20,6 +20,8 @@ import {
   Divider,
   useTheme,
   alpha,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import {
   LocationOn as LocationIcon,
@@ -34,7 +36,8 @@ import {
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import { Location, LocationStats } from '../models/interfaces';
-import { locationData, locationStatsData } from '../data/locationData';
+import { locationStatsData } from '../data/locationData';
+import { ApiService } from '../services/ApiService';
 
 interface LocationManagementProps {
   locations?: Location[];
@@ -49,10 +52,33 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   onLocationsChange,
 }) => {
   const theme = useTheme();
-  const [locations, setLocations] = useState<Location[]>(propLocations || locationData);
+  const [locations, setLocations] = useState<Location[]>(propLocations || []);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Standorte von der API laden
+  useEffect(() => {
+    if (!propLocations) {
+      loadLocations();
+    }
+  }, [propLocations]);
+
+  const loadLocations = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await ApiService.getLocations();
+      setLocations(data);
+      onLocationsChange?.(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Fehler beim Laden der Standorte');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Standort-Statistiken
   const getLocationStats = (locationId: string): LocationStats => {
@@ -105,30 +131,52 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   };
 
   // Standort speichern
-  const handleSaveLocation = () => {
+  const handleSaveLocation = async () => {
     if (!selectedLocation) return;
 
-    let updatedLocations: Location[];
-    if (isEditing) {
-      updatedLocations = locations.map(loc =>
-        loc.id === selectedLocation.id ? selectedLocation : loc
-      );
-    } else {
-      const newId = `location_${Date.now()}`;
-      updatedLocations = [...locations, { ...selectedLocation, id: newId }];
-    }
+    try {
+      setLoading(true);
+      setError(null);
 
-    setLocations(updatedLocations);
-    onLocationsChange?.(updatedLocations);
-    handleCloseDialog();
+      if (isEditing) {
+        // Standort aktualisieren
+        const updatedLocation = await ApiService.updateLocation(selectedLocation.id, selectedLocation);
+        const updatedLocations = locations.map(loc =>
+          loc.id === selectedLocation.id ? updatedLocation : loc
+        );
+        setLocations(updatedLocations);
+        onLocationsChange?.(updatedLocations);
+      } else {
+        // Neuen Standort erstellen
+        const newLocation = await ApiService.createLocation(selectedLocation);
+        const updatedLocations = [...locations, newLocation];
+        setLocations(updatedLocations);
+        onLocationsChange?.(updatedLocations);
+      }
+
+      handleCloseDialog();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Fehler beim Speichern des Standorts');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Standort löschen
-  const handleDeleteLocation = (locationId: string) => {
+  const handleDeleteLocation = async (locationId: string) => {
     if (window.confirm('Sind Sie sicher, dass Sie diesen Standort löschen möchten?')) {
-      const updatedLocations = locations.filter(loc => loc.id !== locationId);
-      setLocations(updatedLocations);
-      onLocationsChange?.(updatedLocations);
+      try {
+        setLoading(true);
+        setError(null);
+        await ApiService.deleteLocation(locationId);
+        const updatedLocations = locations.filter(loc => loc.id !== locationId);
+        setLocations(updatedLocations);
+        onLocationsChange?.(updatedLocations);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Fehler beim Löschen des Standorts');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -153,6 +201,13 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
   return (
     <Box>
+      {/* Error Alert */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h5" sx={{ fontWeight: 600 }}>
@@ -163,10 +218,18 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
           startIcon={<AddIcon />}
           onClick={() => handleOpenDialog()}
           sx={{ borderRadius: 2 }}
+          disabled={loading}
         >
           Neuer Standort
         </Button>
       </Box>
+
+      {/* Loading Indicator */}
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <CircularProgress />
+        </Box>
+      )}
 
       {/* Standort-Karten */}
       <Grid container spacing={3}>
@@ -487,15 +550,16 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
           )}
         </DialogContent>
         <DialogActions sx={{ p: 3, pt: 1 }}>
-          <Button onClick={handleCloseDialog}>
+          <Button onClick={handleCloseDialog} disabled={loading}>
             Abbrechen
           </Button>
           <Button
             variant="contained"
             onClick={handleSaveLocation}
             sx={{ borderRadius: 2 }}
+            disabled={loading}
           >
-            {isEditing ? 'Speichern' : 'Erstellen'}
+            {loading ? <CircularProgress size={20} /> : (isEditing ? 'Speichern' : 'Erstellen')}
           </Button>
         </DialogActions>
       </Dialog>

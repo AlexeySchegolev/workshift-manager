@@ -1,15 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
-import { db } from '@/database/database';
-import { 
-  Employee, 
-  MonthlyShiftPlan, 
-  EmployeeAvailability, 
+import { db } from '../database/database';
+import {
+  Employee,
+  MonthlyShiftPlan,
+  EmployeeAvailability,
   GenerateShiftPlanRequest,
   GenerateShiftPlanResponse,
   PlanningStatistics,
   ConstraintViolation
-} from '@/types/interfaces';
-import { loggers } from '@/utils/logger';
+} from '../types/interfaces';
+import { loggers } from '../utils/logger';
 
 /**
  * Backend-Service für Schichtplanung
@@ -110,7 +110,7 @@ export class ShiftPlanningService {
       role: row.role,
       hoursPerMonth: row.hours_per_month,
       hoursPerWeek: row.hours_per_week,
-      clinic: row.clinic,
+      location: row.location,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)
     }));
@@ -219,9 +219,9 @@ export class ShiftPlanningService {
     const isWeekend = dayOfWeek === 6 || dayOfWeek === 0;
 
     // Verfügbare Mitarbeiter nach Rolle sortieren
-    const schichtleiter = employees.filter(emp => emp.role === 'Schichtleiter');
-    const pfleger = employees.filter(emp => emp.role === 'Pfleger');
-    const pflegehelfer = employees.filter(emp => emp.role === 'Pflegehelfer');
+    const schichtleiter = employees.filter(emp => emp.role === 'ShiftLeader');
+    const pfleger = employees.filter(emp => emp.role === 'Specialist');
+    const pflegehelfer = employees.filter(emp => emp.role === 'Assistant');
 
     if (isWeekend) {
       // Wochenend-Schichten (vereinfacht)

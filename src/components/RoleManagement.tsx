@@ -42,7 +42,7 @@ import {
   VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
 import { RoleDefinition, RolePermission, RoleRequirement } from '../models/interfaces';
-import { RoleManagementService } from '../services/RoleManagementService';
+import { ApiService } from '../services/ApiService';
 
 interface RoleFormData {
   name: string;
@@ -85,10 +85,21 @@ const RoleManagement: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setRoles(RoleManagementService.getRoles());
-    setPermissions(RoleManagementService.getPermissions());
-    setRequirements(RoleManagementService.getRequirements());
+  const loadData = async () => {
+    try {
+      const [rolesData, permissionsData, requirementsData] = await Promise.all([
+        ApiService.getRoles(),
+        ApiService.getPermissions(),
+        ApiService.getRequirements()
+      ]);
+      
+      setRoles(rolesData);
+      setPermissions(permissionsData);
+      setRequirements(requirementsData);
+    } catch (error) {
+      showAlert('error', 'Fehler beim Laden der Daten');
+      console.error('Fehler beim Laden der Rollen-Daten:', error);
+    }
   };
 
   const showAlert = (type: 'success' | 'error' | 'warning', message: string) => {
@@ -130,38 +141,26 @@ const RoleManagement: React.FC = () => {
     setEditingRole(null);
   };
 
-  const handleSaveRole = () => {
+  const handleSaveRole = async () => {
     try {
-      const rolePermissions = permissions.filter(p => formData.permissions.includes(p.id));
-      const roleRequirements = requirements.filter(r => formData.requirements.includes(r.id));
+      const roleData = {
+        ...formData,
+        permissions: formData.permissions,
+        requirements: formData.requirements,
+      };
 
       if (editingRole) {
         // Rolle aktualisieren
-        const updatedRole = RoleManagementService.updateRole(editingRole.id, {
-          ...formData,
-          permissions: rolePermissions,
-          requirements: roleRequirements,
-        });
-        
-        if (updatedRole) {
-          showAlert('success', 'Rolle erfolgreich aktualisiert');
-          loadData();
-          handleCloseDialog();
-        } else {
-          showAlert('error', 'Fehler beim Aktualisieren der Rolle');
-        }
+        await ApiService.updateRole(editingRole.id, roleData);
+        showAlert('success', 'Rolle erfolgreich aktualisiert');
       } else {
         // Neue Rolle erstellen
-        const newRole = RoleManagementService.createRole({
-          ...formData,
-          permissions: rolePermissions,
-          requirements: roleRequirements,
-        });
-        
+        await ApiService.createRole(roleData);
         showAlert('success', 'Rolle erfolgreich erstellt');
-        loadData();
-        handleCloseDialog();
       }
+      
+      loadData();
+      handleCloseDialog();
     } catch (error) {
       showAlert('error', 'Fehler beim Speichern der Rolle');
       console.error('Fehler beim Speichern der Rolle:', error);
@@ -173,37 +172,28 @@ const RoleManagement: React.FC = () => {
     setDeleteDialogOpen(true);
   };
 
-  const confirmDeleteRole = () => {
+  const confirmDeleteRole = async () => {
     if (roleToDelete) {
-      // Prüfen ob Rolle verwendet wird
-      if (RoleManagementService.isRoleInUse(roleToDelete.name)) {
-        showAlert('warning', 'Rolle wird noch von Mitarbeitern verwendet und kann nicht gelöscht werden');
-        setDeleteDialogOpen(false);
-        setRoleToDelete(null);
-        return;
-      }
-
-      const success = RoleManagementService.deleteRole(roleToDelete.id);
-      if (success) {
+      try {
+        await ApiService.deleteRole(roleToDelete.id);
         showAlert('success', 'Rolle erfolgreich gelöscht');
         loadData();
-      } else {
-        showAlert('error', 'Fehler beim Löschen der Rolle');
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Fehler beim Löschen der Rolle';
+        showAlert('error', errorMessage);
       }
     }
     setDeleteDialogOpen(false);
     setRoleToDelete(null);
   };
 
-  const handleToggleActive = (role: RoleDefinition) => {
-    const success = role.isActive 
-      ? RoleManagementService.deactivateRole(role.id)
-      : RoleManagementService.activateRole(role.id);
-    
-    if (success) {
+  const handleToggleActive = async (role: RoleDefinition) => {
+    try {
+      const updatedRole = { ...role, isActive: !role.isActive };
+      await ApiService.updateRole(role.id, updatedRole);
       showAlert('success', `Rolle ${role.isActive ? 'deaktiviert' : 'aktiviert'}`);
       loadData();
-    } else {
+    } catch (error) {
       showAlert('error', 'Fehler beim Ändern des Rollenstatus');
     }
   };

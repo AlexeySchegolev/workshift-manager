@@ -31,7 +31,8 @@ import {
 
 // Hooks und Services
 import { useDashboardData, useDashboardActions } from '../hooks/useDashboardData';
-import { employeeData } from '../data/employeeData';
+import { ApiService } from '../services/ApiService';
+import { Employee } from '../models/interfaces';
 
 /**
  * Professionelle Dashboard-Startseite
@@ -45,10 +46,31 @@ const HomePage: React.FC = () => {
   const [selectedDate] = useState<Date>(new Date());
   const [currentShiftPlan] = useState(null); // TODO: Aktuellen Schichtplan laden
   const [constraints] = useState([]); // TODO: Aktuelle Constraints laden
+  
+  // Mitarbeiterliste über API laden
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
+
+  // Mitarbeiter beim Laden der Komponente abrufen
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        setLoadingEmployees(true);
+        const paginatedResponse = await ApiService.getEmployees({ limit: 100 });
+        setEmployees(paginatedResponse.data);
+      } catch (error) {
+        console.error('Fehler beim Laden der Mitarbeiter:', error);
+      } finally {
+        setLoadingEmployees(false);
+      }
+    };
+
+    loadEmployees();
+  }, []);
 
   // Dashboard-Daten laden
   const { statistiken, aktuelleWoche, statusItems, isLoading } = useDashboardData(
-    employeeData,
+    employees, // Jetzt werden die geladenen Mitarbeiter übergeben
     currentShiftPlan,
     constraints,
     selectedDate

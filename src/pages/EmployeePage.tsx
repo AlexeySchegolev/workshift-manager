@@ -29,7 +29,7 @@ import EmployeeManagement from '../components/EmployeeManagement';
 
 // Interfaces
 import { Employee } from '../models/interfaces';
-import { employeeData } from '../data/employeeData';
+import { ApiService } from '../services/ApiService';
 
 /**
  * Moderne Mitarbeiterverwaltungs-Seite im Dashboard-Style
@@ -37,8 +37,28 @@ import { employeeData } from '../data/employeeData';
 const EmployeePage: React.FC = () => {
   const theme = useTheme();
 
-  // Mitarbeiterliste immer direkt aus der Datei laden, nicht aus localStorage
-  const [employees, setEmployees] = useState<Employee[]>(employeeData);
+  // Mitarbeiterliste über API laden
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
+  const [employeeError, setEmployeeError] = useState<string | null>(null);
+
+  // Mitarbeiter beim Laden der Komponente abrufen
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        setLoadingEmployees(true);
+        const paginatedResponse = await ApiService.getEmployees({ limit: 100 });
+        setEmployees(paginatedResponse.data); // Extrahiere das Employee[] Array aus der paginierten Response
+      } catch (error) {
+        console.error('Fehler beim Laden der Mitarbeiter:', error);
+        setEmployeeError('Fehler beim Laden der Mitarbeiter');
+      } finally {
+        setLoadingEmployees(false);
+      }
+    };
+
+    loadEmployees();
+  }, []);
 
   // Animationssteuerung
   const [showCards, setShowCards] = useState(false);

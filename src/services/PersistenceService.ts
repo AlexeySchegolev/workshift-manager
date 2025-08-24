@@ -1,6 +1,6 @@
 import { Employee, MonthlyShiftPlan, ShiftRules } from '../models/interfaces';
 import { defaultRules } from '../data/defaultRules';
-import { employeeData } from '../data/employeeData';
+import { ApiService } from './ApiService';
 
 /**
  * Service zum Speichern und Laden von Daten in/aus localStorage
@@ -23,33 +23,18 @@ export class PersistenceService {
   }
 
   /**
-   * Lädt Mitarbeiter aus dem localStorage
-   * Verwendet Dummy-Mitarbeiter, wenn keine gespeichert sind
+   * Lädt Mitarbeiter über die API
+   * @deprecated Verwenden Sie stattdessen ApiService.getEmployees()
    */
-  static loadEmployees(): Employee[] {
+  static async loadEmployees(): Promise<Employee[]> {
     try {
-      // Zurücksetzen des localStorage bei der ersten Verwendung der neuen Daten
-      const firstRun = localStorage.getItem('firstRunWithRealData');
-      if (!firstRun) {
-        // Markieren, dass wir die echten Daten bereits verwendet haben
-        localStorage.setItem('firstRunWithRealData', 'true');
-        // Mitarbeiterdaten zurücksetzen
-        this.saveEmployees(employeeData);
-        console.log('Reale Mitarbeiterdaten im localStorage initialisiert');
-        return employeeData;
-      }
-      
-      const storedEmployees = localStorage.getItem(this.EMPLOYEES_KEY);
-      if (storedEmployees) {
-        return JSON.parse(storedEmployees);
-      }
+      console.warn('PersistenceService.loadEmployees() ist deprecated. Verwenden Sie ApiService.getEmployees()');
+      const response = await ApiService.getEmployees({ limit: 100 });
+      return response.data;
     } catch (error) {
-      console.error('Fehler beim Laden der Mitarbeiter:', error);
+      console.error('Fehler beim Laden der Mitarbeiter über API:', error);
+      return [];
     }
-    
-    // Reale Mitarbeiterdaten verwenden und gleich im localStorage speichern
-    this.saveEmployees(employeeData);
-    return employeeData;
   }
 
   /**

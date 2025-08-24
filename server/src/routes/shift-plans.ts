@@ -1,16 +1,16 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { db } from '@/database/database';
-import { ShiftPlanningService } from '@/services/ShiftPlanningService';
-import { 
-  validateRequestBody, 
-  validateQuery, 
+import { db } from '../database/database';
+import { ShiftPlanningService } from '../services/ShiftPlanningService';
+import {
+  validateRequestBody,
+  validateQuery,
   validateParams,
   GenerateShiftPlanSchema,
   ShiftPlanQuerySchema,
-  UUIDSchema
-} from '@/validation/schemas';
-import { loggers } from '@/utils/logger';
+  UUIDParamsSchema
+} from '../validation/schemas';
+import { loggers } from '../utils/logger';
 
 const router = express.Router();
 
@@ -230,7 +230,7 @@ router.get('/:year/:month', async (req: any, res: any) => {
  * PUT /api/shift-plans/:id/finalize
  * Schichtplan finalisieren
  */
-router.put('/:id/finalize', validateParams(UUIDSchema.pick({ id: true })), async (req: any, res: any) => {
+router.put('/:id/finalize', validateParams(UUIDParamsSchema), async (req: any, res: any) => {
   try {
     const { id } = req.validatedParams;
     
@@ -269,7 +269,7 @@ router.put('/:id/finalize', validateParams(UUIDSchema.pick({ id: true })), async
  * DELETE /api/shift-plans/:id
  * Schichtplan löschen
  */
-router.delete('/:id', validateParams(UUIDSchema.pick({ id: true })), async (req: any, res: any) => {
+router.delete('/:id', validateParams(UUIDParamsSchema), async (req: any, res: any) => {
   try {
     const { id } = req.validatedParams;
     

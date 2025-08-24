@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS employees (
     role TEXT NOT NULL,
     hours_per_month REAL NOT NULL,
     hours_per_week REAL,
-    clinic TEXT,
+    location TEXT,
     is_active BOOLEAN DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -28,6 +28,22 @@ CREATE TABLE IF NOT EXISTS locations (
     operating_hours TEXT NOT NULL, -- JSON-String mit Öffnungszeiten
     specialties TEXT NOT NULL, -- JSON-Array mit Spezialisierungen
     equipment TEXT NOT NULL, -- JSON-Array mit Ausrüstung
+    is_active BOOLEAN DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Schichtdefinitionen-Tabelle
+CREATE TABLE IF NOT EXISTS shift_definitions (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL, -- "F", "S", "S0", "S1", "FS", etc.
+    display_name TEXT NOT NULL, -- "Frühschicht", "Spätschicht", etc.
+    start_time TEXT NOT NULL, -- Format: "HH:MM"
+    end_time TEXT NOT NULL, -- Format: "HH:MM"
+    hours REAL NOT NULL, -- Berechnete Stunden
+    day_type TEXT NOT NULL CHECK (day_type IN ('longDays', 'shortDays', 'both')),
+    location TEXT, -- "Standort A", "Standort B", oder NULL für beide
+    allowed_roles TEXT NOT NULL, -- JSON-Array mit erlaubten Rollen
     is_active BOOLEAN DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -105,8 +121,13 @@ CREATE TABLE IF NOT EXISTS audit_log (
 
 -- Indizes für bessere Performance
 CREATE INDEX IF NOT EXISTS idx_employees_role ON employees(role);
-CREATE INDEX IF NOT EXISTS idx_employees_clinic ON employees(clinic);
+CREATE INDEX IF NOT EXISTS idx_employees_location ON employees(location);
 CREATE INDEX IF NOT EXISTS idx_employees_active ON employees(is_active);
+
+CREATE INDEX IF NOT EXISTS idx_shift_definitions_name ON shift_definitions(name);
+CREATE INDEX IF NOT EXISTS idx_shift_definitions_day_type ON shift_definitions(day_type);
+CREATE INDEX IF NOT EXISTS idx_shift_definitions_location ON shift_definitions(location);
+CREATE INDEX IF NOT EXISTS idx_shift_definitions_active ON shift_definitions(is_active);
 
 CREATE INDEX IF NOT EXISTS idx_locations_active ON locations(is_active);
 CREATE INDEX IF NOT EXISTS idx_locations_city ON locations(city);
@@ -140,7 +161,14 @@ CREATE TRIGGER IF NOT EXISTS update_locations_timestamp
         UPDATE locations SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
     END;
 
-CREATE TRIGGER IF NOT EXISTS update_shift_rules_timestamp 
+CREATE TRIGGER IF NOT EXISTS update_shift_definitions_timestamp
+    AFTER UPDATE ON shift_definitions
+    FOR EACH ROW
+    BEGIN
+        UPDATE shift_definitions SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    END;
+
+CREATE TRIGGER IF NOT EXISTS update_shift_rules_timestamp
     AFTER UPDATE ON shift_rules
     FOR EACH ROW
     BEGIN
@@ -171,7 +199,7 @@ CREATE TRIGGER IF NOT EXISTS audit_employees_insert
                 'role', NEW.role,
                 'hours_per_month', NEW.hours_per_month,
                 'hours_per_week', NEW.hours_per_week,
-                'clinic', NEW.clinic,
+                'location', NEW.location,
                 'is_active', NEW.is_active
             )
         );
@@ -193,7 +221,7 @@ CREATE TRIGGER IF NOT EXISTS audit_employees_update
                 'role', OLD.role,
                 'hours_per_month', OLD.hours_per_month,
                 'hours_per_week', OLD.hours_per_week,
-                'clinic', OLD.clinic,
+                'location', OLD.location,
                 'is_active', OLD.is_active
             ),
             json_object(
@@ -202,7 +230,7 @@ CREATE TRIGGER IF NOT EXISTS audit_employees_update
                 'role', NEW.role,
                 'hours_per_month', NEW.hours_per_month,
                 'hours_per_week', NEW.hours_per_week,
-                'clinic', NEW.clinic,
+                'location', NEW.location,
                 'is_active', NEW.is_active
             )
         );
@@ -224,7 +252,7 @@ CREATE TRIGGER IF NOT EXISTS audit_employees_delete
                 'role', OLD.role,
                 'hours_per_month', OLD.hours_per_month,
                 'hours_per_week', OLD.hours_per_week,
-                'clinic', OLD.clinic,
+                'location', OLD.location,
                 'is_active', OLD.is_active
             )
         );

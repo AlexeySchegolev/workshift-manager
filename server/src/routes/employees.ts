@@ -1,17 +1,17 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { db } from '@/database/database';
-import { Employee, ApiResponse, PaginatedResponse } from '@/types/interfaces';
-import { 
-  validateRequestBody, 
-  validateQuery, 
+import { db } from '../database/database';
+import { Employee, ApiResponse, PaginatedResponse } from '../types/interfaces';
+import {
+  validateRequestBody,
+  validateQuery,
   validateParams,
   EmployeeCreateSchema,
   EmployeeUpdateSchema,
   EmployeeQuerySchema,
-  UUIDSchema
-} from '@/validation/schemas';
-import { loggers } from '@/utils/logger';
+  UUIDParamsSchema
+} from '../validation/schemas';
+import { loggers } from '../utils/logger';
 
 const router = express.Router();
 
@@ -21,7 +21,7 @@ const router = express.Router();
  */
 router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) => {
   try {
-    const { page, limit, role, clinic, isActive, sortBy, sortOrder } = req.validatedQuery;
+    const { page, limit, role, location, isActive, sortBy, sortOrder } = req.validatedQuery;
     
     // Base Query
     let query = 'SELECT * FROM employees WHERE 1=1';
@@ -33,9 +33,9 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
       params.push(role);
     }
     
-    if (clinic) {
-      query += ' AND clinic = ?';
-      params.push(clinic);
+    if (location) {
+      query += ' AND location = ?';
+      params.push(location);
     }
     
     if (isActive !== undefined) {
@@ -65,9 +65,9 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
       countQuery += ' AND role = ?';
       countParams.push(role);
     }
-    if (clinic) {
-      countQuery += ' AND clinic = ?';
-      countParams.push(clinic);
+    if (location) {
+      countQuery += ' AND location = ?';
+      countParams.push(location);
     }
     if (isActive !== undefined) {
       countQuery += ' AND is_active = ?';
@@ -84,7 +84,7 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
       role: emp.role,
       hoursPerMonth: emp.hours_per_month,
       hoursPerWeek: emp.hours_per_week,
-      clinic: emp.clinic,
+      location: emp.location,
       createdAt: new Date(emp.created_at),
       updatedAt: new Date(emp.updated_at)
     }));
@@ -99,14 +99,14 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
       }
     };
     
-    loggers.api(`${employees.length} Mitarbeiter abgerufen`, { 
-      filters: { role, clinic, isActive },
+    loggers.api(`${employees.length} Mitarbeiter abgerufen`, {
+      filters: { role, location, isActive },
       pagination: { page, limit }
     });
     
     res.json({
       success: true,
-      ...response
+      data: response
     });
     
   } catch (error) {
@@ -122,7 +122,7 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
  * GET /api/employees/:id
  * Einzelnen Mitarbeiter abrufen
  */
-router.get('/:id', validateParams(UUIDSchema.pick({ id: true })), async (req: any, res: any) => {
+router.get('/:id', validateParams(UUIDParamsSchema), async (req: any, res: any) => {
   try {
     const { id } = req.validatedParams;
     
@@ -174,7 +174,7 @@ router.post('/', validateRequestBody(EmployeeCreateSchema), async (req: any, res
     
     const stmt = db.prepare(`
       INSERT INTO employees (
-        id, name, role, hours_per_month, hours_per_week, clinic, is_active
+        id, name, role, hours_per_month, hours_per_week, location, is_active
       ) VALUES (?, ?, ?, ?, ?, ?, 1)
     `);
     
@@ -184,7 +184,7 @@ router.post('/', validateRequestBody(EmployeeCreateSchema), async (req: any, res
       employeeData.role,
       employeeData.hoursPerMonth,
       employeeData.hoursPerWeek || null,
-      employeeData.clinic || null
+      employeeData.location || null
     );
     
     // Erstellten Mitarbeiter abrufen
@@ -223,8 +223,8 @@ router.post('/', validateRequestBody(EmployeeCreateSchema), async (req: any, res
  * PUT /api/employees/:id
  * Mitarbeiter aktualisieren
  */
-router.put('/:id', 
-  validateParams(UUIDSchema.pick({ id: true })),
+router.put('/:id',
+  validateParams(UUIDParamsSchema),
   validateRequestBody(EmployeeUpdateSchema),
   async (req: any, res: any) => {
     try {
@@ -262,9 +262,9 @@ router.put('/:id',
         updateFields.push('hours_per_week = ?');
         updateValues.push(updateData.hoursPerWeek);
       }
-      if (updateData.clinic !== undefined) {
-        updateFields.push('clinic = ?');
-        updateValues.push(updateData.clinic);
+      if (updateData.location !== undefined) {
+        updateFields.push('location = ?');
+        updateValues.push(updateData.location);
       }
       
       if (updateFields.length === 0) {
@@ -321,7 +321,7 @@ router.put('/:id',
  * DELETE /api/employees/:id
  * Mitarbeiter deaktivieren (Soft Delete)
  */
-router.delete('/:id', validateParams(UUIDSchema.pick({ id: true })), async (req: any, res: any) => {
+router.delete('/:id', validateParams(UUIDParamsSchema), async (req: any, res: any) => {
   try {
     const { id } = req.validatedParams;
     
@@ -365,7 +365,7 @@ router.get('/stats', async (req: any, res: any) => {
     const stats = {
       total: 0,
       byRole: {} as Record<string, number>,
-      byClinic: {} as Record<string, number>,
+      byLocation: {} as Record<string, number>,
       averageHoursPerMonth: 0,
       active: 0,
       inactive: 0
@@ -391,16 +391,16 @@ router.get('/stats', async (req: any, res: any) => {
       stats.byRole[row.role] = row.count;
     });
     
-    // Nach Klinik
-    const clinicStmt = db.prepare(`
-      SELECT clinic, COUNT(*) as count 
-      FROM employees 
-      WHERE is_active = 1 AND clinic IS NOT NULL 
-      GROUP BY clinic
+    // Nach Standort
+    const locationStmt = db.prepare(`
+      SELECT location, COUNT(*) as count
+      FROM employees
+      WHERE is_active = 1 AND location IS NOT NULL
+      GROUP BY location
     `);
-    const clinicResults = clinicStmt.all() as { clinic: string; count: number }[];
-    clinicResults.forEach(row => {
-      stats.byClinic[row.clinic] = row.count;
+    const locationResults = locationStmt.all() as { location: string; count: number }[];
+    locationResults.forEach(row => {
+      stats.byLocation[row.location] = row.count;
     });
     
     // Durchschnittliche Stunden

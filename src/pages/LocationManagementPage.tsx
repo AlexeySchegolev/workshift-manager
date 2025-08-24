@@ -29,7 +29,8 @@ import LocationManagement from '../components/LocationManagement';
 
 // Interfaces und Daten
 import { Location } from '../models/interfaces';
-import { locationData, locationStatsData } from '../data/locationData';
+import { locationStatsData } from '../data/locationData';
+import { ApiService } from '../services/ApiService';
 
 /**
  * Moderne Standort-Verwaltungsseite im Dashboard-Style
@@ -37,8 +38,26 @@ import { locationData, locationStatsData } from '../data/locationData';
 const LocationManagementPage: React.FC = () => {
   const theme = useTheme();
 
-  // Standortliste - direkt aus der Datei laden
-  const [locations, setLocations] = useState<Location[]>(locationData);
+  // Standortliste - über API laden
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Standorte beim Laden der Komponente abrufen
+  useEffect(() => {
+    const loadLocations = async () => {
+      try {
+        setLoading(true);
+        const data = await ApiService.getLocations();
+        setLocations(data);
+      } catch (error) {
+        console.error('Fehler beim Laden der Standorte:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadLocations();
+  }, []);
 
   // Animationssteuerung
   const [showCards, setShowCards] = useState(false);

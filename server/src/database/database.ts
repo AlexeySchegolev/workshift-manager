@@ -1,6 +1,9 @@
 import Database from 'better-sqlite3';
 import path from 'path';
-import { logger } from '@/utils/logger';
+import { logger } from '../utils/logger';
+
+// Type alias für bessere TypeScript-Kompatibilität
+export type DatabaseInstance = Database.Database;
 
 /**
  * SQLite-Datenbank-Konfiguration und -Verwaltung
@@ -38,7 +41,7 @@ export class DatabaseManager {
     return DatabaseManager.instance;
   }
 
-  public getDatabase(): Database.Database {
+  public getDatabase(): DatabaseInstance {
     return this.db;
   }
 
@@ -54,7 +57,7 @@ export class DatabaseManager {
    */
   public transaction<T>(fn: (db: Database.Database) => T): T {
     const transaction = this.db.transaction(fn);
-    return transaction();
+    return transaction(this.db);
   }
 
   /**
@@ -67,8 +70,8 @@ export class DatabaseManager {
   /**
    * Führt ein SQL-Statement aus
    */
-  public exec(sql: string): Database.RunResult {
-    return this.db.exec(sql);
+  public exec(sql: string): void {
+    this.db.exec(sql);
   }
 
   /**
@@ -89,11 +92,11 @@ export class DatabaseManager {
    */
   public getStats(): any {
     const stats = {
-      pageCount: this.db.pragma('page_count', { simple: true }),
-      pageSize: this.db.pragma('page_size', { simple: true }),
-      cacheSize: this.db.pragma('cache_size', { simple: true }),
-      journalMode: this.db.pragma('journal_mode', { simple: true }),
-      foreignKeys: this.db.pragma('foreign_keys', { simple: true })
+      pageCount: this.db.pragma('page_count', { simple: true }) as number,
+      pageSize: this.db.pragma('page_size', { simple: true }) as number,
+      cacheSize: this.db.pragma('cache_size', { simple: true }) as number,
+      journalMode: this.db.pragma('journal_mode', { simple: true }) as string,
+      foreignKeys: this.db.pragma('foreign_keys', { simple: true }) as number
     };
 
     return {
@@ -104,5 +107,12 @@ export class DatabaseManager {
 }
 
 // Singleton-Instanz exportieren
-export const db = DatabaseManager.getInstance().getDatabase();
 export const dbManager = DatabaseManager.getInstance();
+
+// Wrapper-Funktion für bessere TypeScript-Kompatibilität
+export function getDb(): DatabaseInstance {
+  return dbManager.getDatabase();
+}
+
+// Direkte Datenbankinstanz für Import-Kompatibilität
+export const db = dbManager.getDatabase();

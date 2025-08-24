@@ -32,7 +32,9 @@ import {
   AccordionSummary,
   AccordionDetails,
   Tooltip,
-  Stack
+  Stack,
+  CircularProgress,
+  Snackbar
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -45,7 +47,8 @@ import {
   LocationOn as LocationIcon,
   ExpandMore as ExpandMoreIcon,
   AccessTime as TimeIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Refresh as RefreshIcon
 } from '@mui/icons-material';
 
 import {
@@ -57,20 +60,26 @@ import {
   GlobalShiftRules
 } from '../models/shiftRuleInterfaces';
 import { DEFAULT_ROLES } from '../models/interfaces';
+import { ApiService } from '../services/ApiService';
 
 interface ShiftRuleManagerProps {
   onSave?: (config: ShiftRulesConfiguration) => void;
-  initialConfig?: ShiftRulesConfiguration;
+  configId?: string; // ID der zu ladenden Konfiguration
 }
 
 const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
   onSave,
-  initialConfig = DEFAULT_SHIFT_RULES_CONFIG
+  configId
 }) => {
-  const [config, setConfig] = useState<ShiftRulesConfiguration>(initialConfig);
+  const [config, setConfig] = useState<ShiftRulesConfiguration | null>(null);
   const [editingShift, setEditingShift] = useState<ConfigurableShiftRule | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isNewShift, setIsNewShift] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [roles, setRoles] = useState<any[]>([]);
 
   const dayTypeLabels: Record<DayType, string> = {
     longDay: 'Lange Tage (Mo, Mi, Fr)',
@@ -88,6 +97,40 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
     Elmshorn: 'Elmshorn',
     Uetersen: 'Uetersen',
     Both: 'Beide Standorte'
+  };
+
+  // Daten laden
+  useEffect(() => {
+    loadData();
+  }, [configId]);
+
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Rollen laden
+      const rolesData = await ApiService.getRoles({ isActive: true });
+      setRoles(rolesData);
+
+      // Konfiguration laden
+      let configData: ShiftRulesConfiguration;
+      if (configId) {
+        configData = await ApiService.getShiftRulesConfiguration(configId);
+      } else {
+        // Standard-Konfiguration laden
+        configData = await ApiService.getDefaultShiftRulesConfiguration();
+      }
+      
+      setConfig(configData);
+    } catch (err) {
+      console.error('Fehler beim Laden der Daten:', err);
+      setError(err instanceof Error ? err.message : 'Fehler beim Laden der Daten');
+      // Fallback auf Standard-Konfiguration
+      setConfig(DEFAULT_SHIFT_RULES_CONFIG);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const createEmptyShift = (): ConfigurableShiftRule => ({
@@ -117,11 +160,14 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
   };
 
   const handleDeleteShift = (shiftId: string) => {
-    setConfig(prev => ({
-      ...prev,
-      shifts: prev.shifts.filter(s => s.id !== shiftId),
-      updatedAt: new Date()
-    }));
+    setConfig(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        shifts: prev.shifts.filter(s => s.id !== shiftId),
+        updatedAt: new Date()
+      };
+    });
   };
 
   const handleSaveShift = () => {
@@ -133,6 +179,7 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
     };
 
     setConfig(prev => {
+      if (!prev) return prev;
       const newShifts = isNewShift
         ? [...prev.shifts, updatedShift]
         : prev.shifts.map(s => s.id === updatedShift.id ? updatedShift : s);
@@ -186,19 +233,46 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
   };
 
   const handleGlobalRulesChange = (field: keyof GlobalShiftRules, value: any) => {
-    setConfig(prev => ({
-      ...prev,
-      globalRules: {
-        ...prev.globalRules,
-        [field]: value
-      },
-      updatedAt: new Date()
-    }));
+    setConfig(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        globalRules: {
+          ...prev.globalRules,
+          [field]: value
+        },
+        updatedAt: new Date()
+      };
+    });
   };
 
-  const handleSaveConfig = () => {
-    if (onSave) {
-      onSave(config);
+  const handleSaveConfig = async () => {
+    if (!config) return;
+    
+    setSaving(true);
+    setError(null);
+    
+    try {
+      if (config.id && config.id !== 'default') {
+        // Bestehende Konfiguration aktualisieren
+        await ApiService.updateShiftRulesConfiguration(config.id, config);
+        setSuccessMessage('Konfiguration erfolgreich aktualisiert');
+      } else {
+        // Neue Konfiguration erstellen
+        const { id, createdAt, updatedAt, ...configWithoutIds } = config;
+        const newConfig = await ApiService.createShiftRulesConfiguration(configWithoutIds);
+        setConfig(newConfig);
+        setSuccessMessage('Konfiguration erfolgreich erstellt');
+      }
+      
+      if (onSave) {
+        onSave(config);
+      }
+    } catch (err) {
+      console.error('Fehler beim Speichern:', err);
+      setError(err instanceof Error ? err.message : 'Fehler beim Speichern der Konfiguration');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -215,6 +289,24 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
     return `${hours}h ${minutes > 0 ? `${minutes}min` : ''}`;
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!config) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">
+          Fehler beim Laden der Schichtregeln-Konfiguration
+        </Alert>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ p: 3 }}>
       {/* Header */}
@@ -225,6 +317,14 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={loadData}
+            disabled={loading}
+          >
+            Neu laden
+          </Button>
+          <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={handleAddShift}
@@ -232,14 +332,22 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
             Neue Schicht
           </Button>
           <Button
-            variant="outlined"
+            variant="contained"
             startIcon={<SaveIcon />}
             onClick={handleSaveConfig}
+            disabled={saving}
           >
-            Konfiguration Speichern
+            {saving ? 'Speichern...' : 'Konfiguration Speichern'}
           </Button>
         </Box>
       </Box>
+
+      {/* Fehler- und Erfolgsmeldungen */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
 
       {/* Globale Regeln */}
       <Accordion sx={{ mb: 3 }}>
@@ -321,12 +429,15 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
                 <Switch
                   checked={shift.isActive}
                   onChange={(e) => {
-                    setConfig(prev => ({
-                      ...prev,
-                      shifts: prev.shifts.map(s => 
-                        s.id === shift.id ? { ...s, isActive: e.target.checked } : s
-                      )
-                    }));
+                    setConfig(prev => {
+                      if (!prev) return prev;
+                      return {
+                        ...prev,
+                        shifts: prev.shifts.map(s =>
+                          s.id === shift.id ? { ...s, isActive: e.target.checked } : s
+                        )
+                      };
+                    });
                   }}
                   size="small"
                 />
@@ -491,12 +602,12 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
                       <Select
                         value={role.roleId}
                         onChange={(e) => {
-                          const selectedRole = DEFAULT_ROLES.find(r => r.id === e.target.value);
+                          const selectedRole = roles.find(r => r.id === e.target.value);
                           handleRoleChange(index, 'roleId', e.target.value);
                           handleRoleChange(index, 'roleName', selectedRole?.name || '');
                         }}
                       >
-                        {DEFAULT_ROLES.map((r) => (
+                        {roles.map((r) => (
                           <MenuItem key={r.id} value={r.id}>
                             {r.displayName}
                           </MenuItem>
@@ -554,6 +665,14 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Snackbar für Erfolgsmeldungen */}
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={6000}
+        onClose={() => setSuccessMessage(null)}
+        message={successMessage}
+      />
     </Box>
   );
 };

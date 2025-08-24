@@ -37,6 +37,20 @@ export class MigrationManager {
       console.log('✓ Initial Schema Migration angewendet');
     }
 
+    // Rollen-Migration
+    if (!appliedMigrations.includes('002_add_roles_table')) {
+      await this.runRolesMigration();
+      this.markMigrationAsApplied('002_add_roles_table');
+      console.log('✓ Rollen-Tabellen Migration angewendet');
+    }
+
+    // Schichtregeln-Konfiguration Migration
+    if (!appliedMigrations.includes('003_add_shift_rules_configuration')) {
+      await this.runShiftRulesConfigurationMigration();
+      this.markMigrationAsApplied('003_add_shift_rules_configuration');
+      console.log('✓ Schichtregeln-Konfiguration Migration angewendet');
+    }
+
     console.log('Alle Migrationen erfolgreich angewendet');
   }
 
@@ -48,22 +62,45 @@ export class MigrationManager {
       const schemaPath = path.join(__dirname, 'schema.sql');
       const schemaSql = readFileSync(schemaPath, 'utf8');
       
-      // Schema in Transaktionen aufteilen für bessere Fehlerbehandlung
-      const statements = schemaSql
-        .split(';')
-        .map(stmt => stmt.trim())
-        .filter(stmt => stmt.length > 0);
-
-      db.transaction(() => {
-        for (const statement of statements) {
-          if (statement.trim()) {
-            db.exec(statement);
-          }
-        }
-      })();
+      // Schema direkt ausführen (SQLite kann mehrere Statements auf einmal verarbeiten)
+      db.exec(schemaSql);
 
     } catch (error) {
       console.error('Fehler beim Ausführen der Schema-Migration:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Führt die Rollen-Migration aus
+   */
+  private static async runRolesMigration(): Promise<void> {
+    try {
+      const migrationPath = path.join(__dirname, 'migrations', '002_add_roles_table.sql');
+      const migrationSql = readFileSync(migrationPath, 'utf8');
+      
+      // Migration ausführen
+      db.exec(migrationSql);
+
+    } catch (error) {
+      console.error('Fehler beim Ausführen der Rollen-Migration:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Führt die Schichtregeln-Konfiguration Migration aus
+   */
+  private static async runShiftRulesConfigurationMigration(): Promise<void> {
+    try {
+      const migrationPath = path.join(__dirname, 'migrations', '003_add_shift_rules_configuration.sql');
+      const migrationSql = readFileSync(migrationPath, 'utf8');
+      
+      // Migration ausführen
+      db.exec(migrationSql);
+
+    } catch (error) {
+      console.error('Fehler beim Ausführen der Schichtregeln-Konfiguration Migration:', error);
       throw error;
     }
   }
@@ -110,7 +147,7 @@ export class MigrationManager {
    */
   public static showMigrationStatus(): void {
     const appliedMigrations = this.getAppliedMigrations();
-    const availableMigrations = ['001_initial_schema']; // Erweitere diese Liste für neue Migrationen
+    const availableMigrations = ['001_initial_schema', '002_add_roles_table', '003_add_shift_rules_configuration']; // Erweitere diese Liste für neue Migrationen
 
     console.log('\n=== Migrations-Status ===');
     for (const migration of availableMigrations) {
@@ -128,8 +165,16 @@ export class MigrationManager {
       // Überprüfe, ob alle wichtigen Tabellen existieren
       const requiredTables = [
         'employees',
-        'locations', 
+        'locations',
+        'roles',
+        'role_permissions',
+        'role_requirements',
         'shift_rules',
+        'shift_rules_configurations',
+        'global_shift_rules',
+        'configurable_shifts',
+        'shift_day_types',
+        'shift_role_requirements',
         'shift_plans',
         'shift_assignments',
         'constraint_violations',
@@ -152,7 +197,7 @@ export class MigrationManager {
       }
 
       // Überprüfe Foreign Key Constraints
-      const pragmaResult = db.pragma('foreign_key_check');
+      const pragmaResult = db.pragma('foreign_key_check') as any[];
       if (pragmaResult.length > 0) {
         console.error('Foreign Key Constraint Verletzungen:', pragmaResult);
         return false;

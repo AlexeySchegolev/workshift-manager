@@ -51,7 +51,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { title: 'Mitarbeiter', path: '/mitarbeiter', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten' },
     { title: 'Standorte', path: '/standorte', icon: <BusinessIcon />, description: 'Standorte und Betriebsstätten verwalten' },
     { title: 'Rollenverwaltung', path: '/rollen', icon: <SettingsIcon />, description: 'Rollen und Berechtigungen verwalten' },
-    { title: 'Schichtregeln', path: '/schichtregeln', icon: <RuleIcon />, description: 'Regeln und Vorgaben für die Schichtplanung' }
+    { title: 'Schichtkonfiguration', path: '/schichtregeln', icon: <RuleIcon />, description: 'Konfiguration und Vorgaben für die Schichtplanung' }
   ];
 
 

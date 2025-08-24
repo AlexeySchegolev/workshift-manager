@@ -63,6 +63,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   useEffect(() => {
     if (!propLocations) {
       loadLocations();
+    } else {
+      setLocations(propLocations);
     }
   }, [propLocations]);
 
@@ -81,7 +83,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   };
 
   // Standort-Statistiken
-  const getLocationStats = (locationId: string): LocationStats => {
+  const getLocationStats = (locationId: number): LocationStats => {
     return locationStatsData[locationId as keyof typeof locationStatsData] || {
       totalClients: 0,
       averageUtilization: 0,
@@ -96,7 +98,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       setIsEditing(true);
     } else {
       setSelectedLocation({
-        id: '',
+        id: 0,
         name: '',
         address: '',
         city: '',
@@ -140,7 +142,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
       if (isEditing) {
         // Standort aktualisieren
-        const updatedLocation = await ApiService.updateLocation(selectedLocation.id, selectedLocation);
+        const updatedLocation = await ApiService.updateLocation(selectedLocation.id.toString(), selectedLocation);
         const updatedLocations = locations.map(loc =>
           loc.id === selectedLocation.id ? updatedLocation : loc
         );
@@ -169,7 +171,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         setLoading(true);
         setError(null);
         await ApiService.deleteLocation(locationId);
-        const updatedLocations = locations.filter(loc => loc.id !== locationId);
+        const updatedLocations = locations.filter(loc => loc.id !== parseInt(locationId));
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
       } catch (err) {
@@ -284,7 +286,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                       </IconButton>
                       <IconButton
                         size="small"
-                        onClick={() => handleDeleteLocation(location.id)}
+                        onClick={() => handleDeleteLocation(location.id.toString())}
                         sx={{ color: 'error.main' }}
                       >
                         <DeleteIcon />

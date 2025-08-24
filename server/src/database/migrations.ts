@@ -51,6 +51,13 @@ export class MigrationManager {
       console.log('✓ Schichtregeln-Konfiguration Migration angewendet');
     }
 
+    // Location Integer ID Migration
+    if (!appliedMigrations.includes('004_update_locations_to_integer_id')) {
+      await this.runLocationIntegerIdMigration();
+      this.markMigrationAsApplied('004_update_locations_to_integer_id');
+      console.log('✓ Location Integer ID Migration angewendet');
+    }
+
     console.log('Alle Migrationen erfolgreich angewendet');
   }
 
@@ -106,6 +113,23 @@ export class MigrationManager {
   }
 
   /**
+   * Führt die Location Integer ID Migration aus
+   */
+  private static async runLocationIntegerIdMigration(): Promise<void> {
+    try {
+      const migrationPath = path.join(__dirname, 'migrations', '004_update_locations_to_integer_id.sql');
+      const migrationSql = readFileSync(migrationPath, 'utf8');
+      
+      // Migration ausführen
+      db.exec(migrationSql);
+
+    } catch (error) {
+      console.error('Fehler beim Ausführen der Location Integer ID Migration:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Ruft alle angewendeten Migrationen ab
    */
   private static getAppliedMigrations(): string[] {
@@ -147,7 +171,7 @@ export class MigrationManager {
    */
   public static showMigrationStatus(): void {
     const appliedMigrations = this.getAppliedMigrations();
-    const availableMigrations = ['001_initial_schema', '002_add_roles_table', '003_add_shift_rules_configuration']; // Erweitere diese Liste für neue Migrationen
+    const availableMigrations = ['001_initial_schema', '002_add_roles_table', '003_add_shift_rules_configuration', '004_update_locations_to_integer_id']; // Erweitere diese Liste für neue Migrationen
 
     console.log('\n=== Migrations-Status ===');
     for (const migration of availableMigrations) {

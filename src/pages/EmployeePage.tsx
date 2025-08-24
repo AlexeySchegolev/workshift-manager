@@ -75,14 +75,14 @@ const EmployeePage: React.FC = () => {
   // Statistiken berechnen
   const calculateStatistics = () => {
     const totalEmployees = employees.length;
-    const standortA = employees.filter(emp => emp.location !== 'Standort B').length;
-    const standortB = employees.filter(emp => emp.location === 'Standort B').length;
+    const standortA = employees.filter(emp => emp.locationId !== 2).length;
+    const standortB = employees.filter(emp => emp.locationId === 2).length;
     const schichtleiter = employees.filter(emp => emp.role === 'ShiftLeader').length;
     const specialists = employees.filter(emp => emp.role === 'Specialist').length;
     const assistants = employees.filter(emp => emp.role === 'Assistant').length;
     
     const totalHours = employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0);
-    const avgHours = totalEmployees > 0 ? Math.round(totalHours / totalEmployees) : 0;
+    const avgHours = totalEmployees > 0 ? Math.ceil((totalHours / totalEmployees) * 10) / 10 : 0;
     
     // Warnungen berechnen
     let warnings = 0;
@@ -259,7 +259,7 @@ const EmployeePage: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <ScheduleIcon sx={{ color: 'warning.main', fontSize: '1.2rem' }} />
                 <Typography variant="body2" color="text.secondary">
-                  Ø {stats.avgHours}h pro Monat
+                  Ø {stats.avgHours.toFixed(1)}h pro Monat
                 </Typography>
               </Box>
             </Box>
@@ -302,14 +302,14 @@ const EmployeePage: React.FC = () => {
           />
           <StatistikCard
             title="Ø Arbeitszeit"
-            value={`${stats.avgHours}h`}
+            value={`${stats.avgHours.toFixed(1)}h`}
             subtitle="Pro Mitarbeiter/Monat"
             icon={<TrendingUpIcon />}
             color={stats.avgHours <= 160 ? 'success' : stats.avgHours <= 170 ? 'warning' : 'error'}
           />
           <StatistikCard
             title="Gesamtstunden"
-            value={`${stats.totalHours}h`}
+            value={`${Math.ceil(stats.totalHours * 10) / 10}h`}
             subtitle="Alle Mitarbeiter/Monat"
             icon={<ScheduleIcon />}
             color="info"

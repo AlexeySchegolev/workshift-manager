@@ -32,8 +32,8 @@ export class ShiftPlanningService {
     month: number
   ): { shiftPlan: MonthlyShiftPlan; employeeAvailability: EmployeeAvailability } {
     // Mitarbeiter nach Klinik filtern
-    const elmshornerEmployees = employees.filter(emp => emp.location === 'Standort A' || !emp.location);
-    const uetersenEmployees = employees.filter(emp => emp.location === 'Standort B');
+    const elmshornerEmployees = employees.filter(emp => emp.locationId === 1 || !emp.locationId);
+    const uetersenEmployees = employees.filter(emp => emp.locationId === 2);
     
     // ALLE Mitarbeiter für Samstagsplanung (Elmshorn + Uetersen)
     const allEmployeesForSaturdays = [...elmshornerEmployees, ...uetersenEmployees];

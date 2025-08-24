@@ -7,7 +7,7 @@ export interface Employee {
   role: EmployeeRole;
   hoursPerMonth: number; // Monatliche Sollstunden
   hoursPerWeek?: number; // Optional: Wöchentliche Sollstunden (wird nicht mehr angezeigt)
-  location?: string; // Zugehörigkeit zum Standort
+  locationId?: number; // Zugehörigkeit zum Standort (Integer ID)
 }
 
 /**
@@ -175,7 +175,7 @@ export interface ShiftRules {
  * Standort-Interface
  */
 export interface Location {
-  id: string;
+  id: number; // Integer ID
   name: string;
   address: string;
   city: string;

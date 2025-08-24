@@ -197,7 +197,7 @@ const HomePage: React.FC = () => {
           />
           <StatistikCard
             title="Ø Auslastung"
-            value={`${statistiken.durchschnittlicheAuslastung}h`}
+            value={`${statistiken.durchschnittlicheAuslastung.toFixed(1)}h`}
             subtitle="Pro Mitarbeiter/Monat"
             icon={<TrendingUpIcon />}
             color={statistiken.durchschnittlicheAuslastung <= 160 ? 'success' : 'warning'}

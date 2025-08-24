@@ -94,8 +94,8 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
   // Statistiken berechnen
   const calculateStats = () => {
     const totalEmployees = employees.length;
-    const standortA = employees.filter(emp => emp.location !== 'Standort B').length;
-    const standortB = employees.filter(emp => emp.location === 'Standort B').length;
+    const standortA = employees.filter(emp => emp.locationId !== 2).length;
+    const standortB = employees.filter(emp => emp.locationId === 2).length;
     const schichtleiter = employees.filter(emp => emp.role === 'ShiftLeader').length;
     const avgHours = employees.length > 0
       ? Math.round(employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0) / employees.length)
@@ -122,9 +122,9 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     setRole(employee.role);
     setHoursPerMonth(employee.hoursPerMonth ?? 0);
     setLocation(
-      employee.location === 'Standort A' || employee.location === 'Standort B' 
-        ? employee.location 
-        : 'Standort A'
+      employee.locationId === 1 ? 'Standort A' :
+      employee.locationId === 2 ? 'Standort B' :
+      'Standort A'
     );
     setEditingId(employee.id);
     setErrors({});
@@ -211,7 +211,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
               role: role as EmployeeRole,
               hoursPerMonth: Number(hoursPerMonth.toFixed(1)),
               hoursPerWeek: Math.round(hoursPerMonth / 4.33),
-              location: location as 'Standort A' | 'Standort B'
+              locationId: location === 'Standort A' ? 1 : location === 'Standort B' ? 2 : 1
             }
           : emp
       );
@@ -228,7 +228,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         name,
         role: role as EmployeeRole,
         hoursPerMonth: Number(hoursPerMonth.toFixed(1)),
-        location: location as 'Standort A' | 'Standort B'
+        locationId: location === 'Standort A' ? 1 : location === 'Standort B' ? 2 : 1
       };
       
       updatedEmployees = [...employees, newEmployee];
@@ -536,9 +536,9 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                         </TableCell>
                         <TableCell>
                           <Chip
-                            label={employee.location || 'Standort A'}
+                            label={employee.locationId === 2 ? 'Standort B' : 'Standort A'}
                             size="small"
-                            color={employee.location === 'Standort B' ? 'info' : 'default'}
+                            color={employee.locationId === 2 ? 'info' : 'default'}
                             sx={{
                               fontWeight: 500,
                               borderRadius: 1.5,

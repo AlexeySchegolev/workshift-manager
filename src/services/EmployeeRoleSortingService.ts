@@ -176,21 +176,21 @@ export class EmployeeRoleSortingService {
     sortedShiftLeaders.forEach(emp => {
       const saturdays = employeeAvailability[emp.id]?.saturdaysWorked || 0;
       const hours = employeeAvailability[emp.id]?.totalHoursAssigned || 0;
-      console.log(`  ${emp.name} (${emp.location || 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
+      console.log(`  ${emp.name} (${emp.locationId ? `Location ${emp.locationId}` : 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
     });
     
     console.log('Specialist für Samstag (nach saturdaysWorked sortiert):');
     sortedSpecialists.forEach(emp => {
       const saturdays = employeeAvailability[emp.id]?.saturdaysWorked || 0;
       const hours = employeeAvailability[emp.id]?.totalHoursAssigned || 0;
-      console.log(`  ${emp.name} (${emp.location || 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
+      console.log(`  ${emp.name} (${emp.locationId ? `Location ${emp.locationId}` : 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
     });
     
     console.log('Assistant für Samstag (nach saturdaysWorked sortiert):');
     sortedAssistants.forEach(emp => {
       const saturdays = employeeAvailability[emp.id]?.saturdaysWorked || 0;
       const hours = employeeAvailability[emp.id]?.totalHoursAssigned || 0;
-      console.log(`  ${emp.name} (${emp.location || 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
+      console.log(`  ${emp.name} (${emp.locationId ? `Location ${emp.locationId}` : 'Standort A'}): ${saturdays} Samstage, ${hours}h`);
     });
     
     // Reihenfolge: ShiftLeader, Specialist, Assistant

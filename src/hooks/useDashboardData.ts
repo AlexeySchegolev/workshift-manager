@@ -50,7 +50,7 @@ export const useDashboardData = (
     let durchschnittlicheAuslastung = 0;
     if (employees.length > 0) {
       const totalHours = employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0);
-      durchschnittlicheAuslastung = Math.round(totalHours / employees.length);
+      durchschnittlicheAuslastung = Math.ceil((totalHours / employees.length) * 10) / 10;
     }
 
     // Warnungen und Regelverletzungen zählen

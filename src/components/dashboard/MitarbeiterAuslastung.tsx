@@ -149,7 +149,7 @@ const MitarbeiterAuslastung: React.FC<MitarbeiterAuslastungProps> = ({
               Gesamtauslastung
             </Typography>
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {gesamtGeplant}h / {gesamtSoll}h
+              {gesamtGeplant.toFixed(1)}h / {gesamtSoll.toFixed(1)}h
             </Typography>
           </Box>
           <LinearProgress
@@ -302,11 +302,11 @@ const MitarbeiterAuslastung: React.FC<MitarbeiterAuslastungProps> = ({
                           
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                             <Typography variant="caption" color="text.secondary">
-                              {mitarbeiter.geplantStunden}h / {mitarbeiter.sollStunden}h geplant
+                              {mitarbeiter.geplantStunden.toFixed(1)}h / {mitarbeiter.sollStunden.toFixed(1)}h geplant
                             </Typography>
                             {maxAuslastungProzent > 100 && (
                               <Typography variant="caption" sx={{ color: 'error.main', fontWeight: 500 }}>
-                                {mitarbeiter.geplantStunden - mitarbeiter.maxStunden}h über Limit
+                                {(mitarbeiter.geplantStunden - mitarbeiter.maxStunden).toFixed(1)}h über Limit
                               </Typography>
                             )}
                           </Box>

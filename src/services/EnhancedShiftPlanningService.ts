@@ -64,8 +64,8 @@ export class EnhancedShiftPlanningService {
     console.log(`Generiere Schichtplan für ${month}/${year} mit ${employees.length} Mitarbeitern`);
     
     // Mitarbeiter nach Standort filtern
-    const hauptpraxisEmployees = employees.filter(emp => emp.location === 'Standort A' || !emp.location);
-    const zweitepraxisEmployees = employees.filter(emp => emp.location === 'Standort B');
+    const hauptpraxisEmployees = employees.filter(emp => emp.locationId === 1 || !emp.locationId);
+    const zweitepraxisEmployees = employees.filter(emp => emp.locationId === 2);
     
     // Schichtplan für Hauptstandort erstellen
     console.log("Generiere Schichtplan für Hauptstandort (Standort A)...");

@@ -23,8 +23,13 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
   try {
     const { page, limit, role, location, isActive, sortBy, sortOrder } = req.validatedQuery;
     
-    // Base Query
-    let query = 'SELECT * FROM employees WHERE 1=1';
+    // Base Query mit JOIN für Location-Namen
+    let query = `
+      SELECT e.*, l.name as location_name
+      FROM employees e
+      LEFT JOIN locations l ON e.location_id = l.id
+      WHERE 1=1
+    `;
     const params: any[] = [];
     
     // Filter anwenden
@@ -34,7 +39,7 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
     }
     
     if (location) {
-      query += ' AND location = ?';
+      query += ' AND location_id = ?';
       params.push(location);
     }
     
@@ -66,7 +71,7 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
       countParams.push(role);
     }
     if (location) {
-      countQuery += ' AND location = ?';
+      countQuery += ' AND location_id = ?';
       countParams.push(location);
     }
     if (isActive !== undefined) {
@@ -84,7 +89,7 @@ router.get('/', validateQuery(EmployeeQuerySchema), async (req: any, res: any) =
       role: emp.role,
       hoursPerMonth: emp.hours_per_month,
       hoursPerWeek: emp.hours_per_week,
-      location: emp.location,
+      locationId: emp.location_id,
       createdAt: new Date(emp.created_at),
       updatedAt: new Date(emp.updated_at)
     }));
@@ -126,7 +131,12 @@ router.get('/:id', validateParams(UUIDParamsSchema), async (req: any, res: any) 
   try {
     const { id } = req.validatedParams;
     
-    const stmt = db.prepare('SELECT * FROM employees WHERE id = ? AND is_active = 1');
+    const stmt = db.prepare(`
+      SELECT e.*, l.name as location_name
+      FROM employees e
+      LEFT JOIN locations l ON e.location_id = l.id
+      WHERE e.id = ? AND e.is_active = 1
+    `);
     const employee = stmt.get(id) as any;
     
     if (!employee) {
@@ -142,7 +152,7 @@ router.get('/:id', validateParams(UUIDParamsSchema), async (req: any, res: any) 
       role: employee.role,
       hoursPerMonth: employee.hours_per_month,
       hoursPerWeek: employee.hours_per_week,
-      location: employee.location,
+      locationId: employee.location_id,
       createdAt: new Date(employee.created_at),
       updatedAt: new Date(employee.updated_at)
     };
@@ -174,7 +184,7 @@ router.post('/', validateRequestBody(EmployeeCreateSchema), async (req: any, res
     
     const stmt = db.prepare(`
       INSERT INTO employees (
-        id, name, role, hours_per_month, hours_per_week, location, is_active
+        id, name, role, hours_per_month, hours_per_week, location_id, is_active
       ) VALUES (?, ?, ?, ?, ?, ?, 1)
     `);
     
@@ -184,11 +194,16 @@ router.post('/', validateRequestBody(EmployeeCreateSchema), async (req: any, res
       employeeData.role,
       employeeData.hoursPerMonth,
       employeeData.hoursPerWeek || null,
-      employeeData.location || null
+      employeeData.locationId || null
     );
     
     // Erstellten Mitarbeiter abrufen
-    const selectStmt = db.prepare('SELECT * FROM employees WHERE id = ?');
+    const selectStmt = db.prepare(`
+      SELECT e.*, l.name as location_name
+      FROM employees e
+      LEFT JOIN locations l ON e.location_id = l.id
+      WHERE e.id = ?
+    `);
     const newEmployee = selectStmt.get(id) as any;
     
     const transformedEmployee: Employee = {
@@ -197,7 +212,7 @@ router.post('/', validateRequestBody(EmployeeCreateSchema), async (req: any, res
       role: newEmployee.role,
       hoursPerMonth: newEmployee.hours_per_month,
       hoursPerWeek: newEmployee.hours_per_week,
-      location: newEmployee.location,
+      locationId: newEmployee.location_id,
       createdAt: new Date(newEmployee.created_at),
       updatedAt: new Date(newEmployee.updated_at)
     };
@@ -262,9 +277,9 @@ router.put('/:id',
         updateFields.push('hours_per_week = ?');
         updateValues.push(updateData.hoursPerWeek);
       }
-      if (updateData.location !== undefined) {
-        updateFields.push('location = ?');
-        updateValues.push(updateData.location);
+      if (updateData.locationId !== undefined) {
+        updateFields.push('location_id = ?');
+        updateValues.push(updateData.locationId);
       }
       
       if (updateFields.length === 0) {
@@ -285,7 +300,12 @@ router.put('/:id',
       updateStmt.run(...updateValues);
       
       // Aktualisierten Mitarbeiter abrufen
-      const selectStmt = db.prepare('SELECT * FROM employees WHERE id = ?');
+      const selectStmt = db.prepare(`
+        SELECT e.*, l.name as location_name
+        FROM employees e
+        LEFT JOIN locations l ON e.location_id = l.id
+        WHERE e.id = ?
+      `);
       const updatedEmployee = selectStmt.get(id) as any;
       
       const transformedEmployee: Employee = {
@@ -294,7 +314,7 @@ router.put('/:id',
         role: updatedEmployee.role,
         hoursPerMonth: updatedEmployee.hours_per_month,
         hoursPerWeek: updatedEmployee.hours_per_week,
-        location: updatedEmployee.location,
+        locationId: updatedEmployee.location_id,
         createdAt: new Date(updatedEmployee.created_at),
         updatedAt: new Date(updatedEmployee.updated_at)
       };
@@ -393,14 +413,15 @@ router.get('/stats', async (req: any, res: any) => {
     
     // Nach Standort
     const locationStmt = db.prepare(`
-      SELECT location, COUNT(*) as count
-      FROM employees
-      WHERE is_active = 1 AND location IS NOT NULL
-      GROUP BY location
+      SELECT l.name as location_name, COUNT(*) as count
+      FROM employees e
+      LEFT JOIN locations l ON e.location_id = l.id
+      WHERE e.is_active = 1 AND e.location_id IS NOT NULL
+      GROUP BY l.name
     `);
-    const locationResults = locationStmt.all() as { location: string; count: number }[];
+    const locationResults = locationStmt.all() as { location_name: string; count: number }[];
     locationResults.forEach(row => {
-      stats.byLocation[row.location] = row.count;
+      stats.byLocation[row.location_name] = row.count;
     });
     
     // Durchschnittliche Stunden

@@ -127,7 +127,7 @@ export class StandortBShiftPlanningService {
         }
         
         // Fachkräfte für Standort B sortieren (abwechslungsreiche Verteilung)
-        const standortBPfleger = employees.filter(emp => emp.role === 'Specialist' && emp.location === 'Standort B');
+        const standortBPfleger = employees.filter(emp => emp.role === 'Specialist' && emp.locationId === 2);
         const sortedStandortBPfleger = EmployeeRoleSortingService.sortAndShuffleByRole(
           standortBPfleger,
           employeeAvailability,

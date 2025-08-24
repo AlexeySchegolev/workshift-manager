@@ -390,7 +390,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                   fontWeight: 500,
                                 }}
                               />
-                              {emp.location === 'Standort B' && (
+                              {emp.locationId === 2 && (
                                 <Chip
                                   label="Standort B"
                                   size="small"

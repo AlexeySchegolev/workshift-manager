@@ -5,7 +5,7 @@ import { Location } from '../models/interfaces';
  */
 export const locationData: Location[] = [
   {
-    id: 'standort-a',
+    id: 1,
     name: 'Standort A',
     address: 'Musterstraße 123',
     city: 'Musterstadt',
@@ -50,7 +50,7 @@ export const locationData: Location[] = [
     isActive: true
   },
   {
-    id: 'standort-b',
+    id: 2,
     name: 'Standort B',
     address: 'Beispielweg 45',
     city: 'Beispielort',
@@ -100,14 +100,14 @@ export const locationData: Location[] = [
  * Beispiel-Statistiken für Standorte
  */
 export const locationStatsData = {
-  'standort-a': {
+  1: {
     totalClients: 85,
     averageUtilization: 92,
     employeeCount: 12,
     monthlyRevenue: 125000,
     clientSatisfaction: 4.7
   },
-  'standort-b': {
+  2: {
     totalClients: 58,
     averageUtilization: 87,
     employeeCount: 8,

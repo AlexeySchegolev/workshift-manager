@@ -29,7 +29,7 @@ export const EmployeeCreateSchema = z.object({
   role: EmployeeRoleSchema,
   hoursPerMonth: z.number().positive('Monatsstunden müssen positiv sein').max(200, 'Zu viele Monatsstunden'),
   hoursPerWeek: z.number().positive('Wochenstunden müssen positiv sein').max(50, 'Zu viele Wochenstunden').optional(),
-  clinic: ClinicSchema.optional()
+  locationId: z.number().int().positive('Location ID muss eine positive Zahl sein').optional()
 });
 
 export const EmployeeUpdateSchema = EmployeeCreateSchema.partial();
@@ -40,7 +40,7 @@ export const EmployeeResponseSchema = z.object({
   role: EmployeeRoleSchema,
   hoursPerMonth: z.number(),
   hoursPerWeek: z.number().optional(),
-  clinic: ClinicSchema.optional(),
+  locationId: z.number().int().optional(),
   createdAt: z.date(),
   updatedAt: z.date()
 });
@@ -78,7 +78,7 @@ export const LocationCreateSchema = z.object({
 export const LocationUpdateSchema = LocationCreateSchema.partial();
 
 export const LocationResponseSchema = z.object({
-  id: UUIDSchema,
+  id: z.number().int(),
   name: z.string(),
   address: z.string(),
   city: z.string(),
@@ -255,7 +255,7 @@ export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =
 // Query-Parameter-Schemas
 export const EmployeeQuerySchema = z.object({
   role: EmployeeRoleSchema.optional(),
-  clinic: ClinicSchema.optional(),
+  location: z.coerce.number().int().optional(),
   isActive: z.coerce.boolean().optional(),
   ...PaginationSchema.shape
 });
@@ -278,7 +278,7 @@ export const StatisticsQuerySchema = z.object({
   year: z.number().int().min(2020).max(2030),
   month: z.number().int().min(1).max(12).optional(),
   employeeId: UUIDSchema.optional(),
-  locationId: UUIDSchema.optional()
+  locationId: z.number().int().optional()
 });
 
 /**

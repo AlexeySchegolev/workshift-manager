@@ -12,38 +12,38 @@ import { Employee, Location, ShiftRules } from '@/types/interfaces';
  */
 const employeeData: Omit<Employee, 'id'>[] = [
   // Schichtleiter
-  { name: "Sonja M.", role: "ShiftLeader", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort B" },
-  { name: "Andrea K.", role: "ShiftLeader", hoursPerWeek: 36, hoursPerMonth: 156.0, location: "Standort A" },
-  { name: "Christina L.", role: "ShiftLeader", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" },
-  { name: "Uta S.", role: "ShiftLeader", hoursPerWeek: 28, hoursPerMonth: 121.3, location: "Standort A" },
-  { name: "Simone R.", role: "ShiftLeader", hoursPerWeek: 29, hoursPerMonth: 126.0, location: "Standort A" },
+  { name: "Sonja M.", role: "ShiftLeader", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 2 },
+  { name: "Andrea K.", role: "ShiftLeader", hoursPerWeek: 36, hoursPerMonth: 156.0, locationId: 1 },
+  { name: "Christina L.", role: "ShiftLeader", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 },
+  { name: "Uta S.", role: "ShiftLeader", hoursPerWeek: 28, hoursPerMonth: 121.3, locationId: 1 },
+  { name: "Simone R.", role: "ShiftLeader", hoursPerWeek: 29, hoursPerMonth: 126.0, locationId: 1 },
   
   // Fachkräfte
-  { name: "Andrea B.", role: "Specialist", hoursPerWeek: 28, hoursPerMonth: 121.33, location: "Standort A" },
-  { name: "Sabrina H.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 152.0, location: "Standort A" },
-  { name: "Kay W.", role: "Specialist", hoursPerWeek: 33, hoursPerMonth: 142.5, location: "Standort B" },
-  { name: "Esther T.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" },
-  { name: "Annika F.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.1, location: "Standort A" },
-  { name: "Alina G.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort B" },
-  { name: "Britta N.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" },
-  { name: "Saskia P.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" },
-  { name: "Natalia V.", role: "Specialist", hoursPerWeek: 28, hoursPerMonth: 121.3, location: "Standort A" },
-  { name: "Marina D.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" },
-  { name: "Sandra J.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort B" },
-  { name: "Susann C.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" },
-  { name: "Mandy E.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort B" },
-  { name: "Eugenia A.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" },
-  { name: "Silke B.", role: "Specialist", hoursPerWeek: 24, hoursPerMonth: 106.2, location: "Standort B" },
-  { name: "Nisa O.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" },
-  { name: "Tobias M.", role: "Specialist", hoursPerWeek: 28, hoursPerMonth: 123.1, location: "Standort A" },
+  { name: "Andrea B.", role: "Specialist", hoursPerWeek: 28, hoursPerMonth: 121.33, locationId: 1 },
+  { name: "Sabrina H.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 152.0, locationId: 1 },
+  { name: "Kay W.", role: "Specialist", hoursPerWeek: 33, hoursPerMonth: 142.5, locationId: 2 },
+  { name: "Esther T.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 },
+  { name: "Annika F.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.1, locationId: 1 },
+  { name: "Alina G.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 2 },
+  { name: "Britta N.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 },
+  { name: "Saskia P.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 },
+  { name: "Natalia V.", role: "Specialist", hoursPerWeek: 28, hoursPerMonth: 121.3, locationId: 1 },
+  { name: "Marina D.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 },
+  { name: "Sandra J.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 2 },
+  { name: "Susann C.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 },
+  { name: "Mandy E.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 2 },
+  { name: "Eugenia A.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 },
+  { name: "Silke B.", role: "Specialist", hoursPerWeek: 24, hoursPerMonth: 106.2, locationId: 2 },
+  { name: "Nisa O.", role: "Specialist", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 },
+  { name: "Tobias M.", role: "Specialist", hoursPerWeek: 28, hoursPerMonth: 123.1, locationId: 1 },
   
   // Hilfskräfte
-  { name: "Silke K.", role: "Assistant", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort B" },
-  { name: "Karen L.", role: "Assistant", hoursPerWeek: 23, hoursPerMonth: 99.4, location: "Standort A" },
-  { name: "Birgit S.", role: "Assistant", hoursPerWeek: 31, hoursPerMonth: 135.0, location: "Standort A" },
-  { name: "Birgit W.", role: "Assistant", hoursPerWeek: 28, hoursPerMonth: 121.0, location: "Standort A" },
-  { name: "Jessica R.", role: "Assistant", hoursPerWeek: 39, hoursPerMonth: 169.1, location: "Standort A" },
-  { name: "Nurye T.", role: "Assistant", hoursPerWeek: 35, hoursPerMonth: 151.7, location: "Standort A" }
+  { name: "Silke K.", role: "Assistant", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 2 },
+  { name: "Karen L.", role: "Assistant", hoursPerWeek: 23, hoursPerMonth: 99.4, locationId: 1 },
+  { name: "Birgit S.", role: "Assistant", hoursPerWeek: 31, hoursPerMonth: 135.0, locationId: 1 },
+  { name: "Birgit W.", role: "Assistant", hoursPerWeek: 28, hoursPerMonth: 121.0, locationId: 1 },
+  { name: "Jessica R.", role: "Assistant", hoursPerWeek: 39, hoursPerMonth: 169.1, locationId: 1 },
+  { name: "Nurye T.", role: "Assistant", hoursPerWeek: 35, hoursPerMonth: 151.7, locationId: 1 }
 ];
 
 /**
@@ -144,7 +144,7 @@ const locationData: Omit<Location, 'id'>[] = [
  * Schichtdefinitionen (aus src/data/defaultShifts.ts)
  */
 const shiftDefinitionsData = [
-  // Standort A - Lange Tage (Mo, Mi, Fr)
+  // Standort A (ID: 1) - Lange Tage (Mo, Mi, Fr)
   {
     name: "F",
     display_name: "Frühschicht",
@@ -152,7 +152,7 @@ const shiftDefinitionsData = [
     end_time: "13:00",
     hours: 7,
     day_type: "longDays",
-    location: "Standort A",
+    location_id: 1,
     allowed_roles: JSON.stringify(["Specialist", "ShiftLeader", "Assistant"])
   },
   {
@@ -162,11 +162,11 @@ const shiftDefinitionsData = [
     end_time: "19:00",
     hours: 7,
     day_type: "longDays",
-    location: "Standort A",
+    location_id: 1,
     allowed_roles: JSON.stringify(["Specialist", "ShiftLeader"])
   },
   
-  // Standort A - Kurze Tage (Di, Do, Sa)
+  // Standort A (ID: 1) - Kurze Tage (Di, Do, Sa)
   {
     name: "F",
     display_name: "Frühschicht",
@@ -174,11 +174,11 @@ const shiftDefinitionsData = [
     end_time: "13:00",
     hours: 7,
     day_type: "shortDays",
-    location: "Standort A",
+    location_id: 1,
     allowed_roles: JSON.stringify(["Specialist", "ShiftLeader", "Assistant"])
   },
   
-  // Standort B - Lange Tage (Mo, Mi, Fr)
+  // Standort B (ID: 2) - Lange Tage (Mo, Mi, Fr)
   {
     name: "4",
     display_name: "Frühschicht Standort B",
@@ -186,7 +186,7 @@ const shiftDefinitionsData = [
     end_time: "13:00",
     hours: 7,
     day_type: "longDays",
-    location: "Standort B",
+    location_id: 2,
     allowed_roles: JSON.stringify(["Specialist", "Assistant"])
   },
   {
@@ -196,7 +196,7 @@ const shiftDefinitionsData = [
     end_time: "19:00",
     hours: 7,
     day_type: "longDays",
-    location: "Standort B",
+    location_id: 2,
     allowed_roles: JSON.stringify(["Specialist"])
   },
   {
@@ -206,7 +206,7 @@ const shiftDefinitionsData = [
     end_time: "16:00",
     hours: 10,
     day_type: "longDays",
-    location: "Standort B",
+    location_id: 2,
     allowed_roles: JSON.stringify(["ShiftLeader"])
   }
 ];
@@ -333,13 +333,13 @@ export class SeedManager {
   private static async seedEmployees(): Promise<void> {
     const stmt = db.prepare(`
       INSERT OR IGNORE INTO employees (
-        id, name, role, hours_per_month, hours_per_week, location, is_active
+        id, name, role, hours_per_month, hours_per_week, location_id, is_active
       ) VALUES (?, ?, ?, ?, ?, ?, 1)
     `);
 
     const insertMany = db.transaction((employees: any[]) => {
       for (const emp of employees) {
-        stmt.run(emp.id, emp.name, emp.role, emp.hoursPerMonth, emp.hoursPerWeek, emp.location);
+        stmt.run(emp.id, emp.name, emp.role, emp.hoursPerMonth, emp.hoursPerWeek, emp.locationId);
       }
     });
 
@@ -382,8 +382,8 @@ export class SeedManager {
       }
     });
 
-    const locationsWithIds = locationData.map(loc => ({
-      id: loc.name === 'Dialysepraxis Elmshorn' ? 'elmshorn' : 'uetersen',
+    const locationsWithIds = locationData.map((loc, index) => ({
+      id: index + 1, // Integer IDs: 1 für Elmshorn, 2 für Uetersen
       ...loc
     }));
 
@@ -494,7 +494,7 @@ export class SeedManager {
   private static async seedShiftDefinitions(): Promise<void> {
     const stmt = db.prepare(`
       INSERT OR IGNORE INTO shift_definitions (
-        id, name, display_name, start_time, end_time, hours, day_type, location, allowed_roles, is_active
+        id, name, display_name, start_time, end_time, hours, day_type, location_id, allowed_roles, is_active
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `);
 
@@ -508,7 +508,7 @@ export class SeedManager {
           def.end_time,
           def.hours,
           def.day_type,
-          def.location,
+          def.location_id,
           def.allowed_roles
         );
       }

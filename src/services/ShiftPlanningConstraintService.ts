@@ -349,7 +349,7 @@ export class ShiftPlanningConstraintService {
     const employeesWithSaturdays = Object.entries(saturdayStats)
       .map(([empId, count]) => {
         const emp = employees.find(e => e.id === empId);
-        return { name: emp?.name || empId, location: emp?.location || 'Unbekannt', count };
+        return { name: emp?.name || empId, location: emp?.locationId ? `Location ${emp.locationId}` : 'Unbekannt', count };
       })
       .sort((a, b) => b.count - a.count);
     

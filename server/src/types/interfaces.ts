@@ -12,7 +12,7 @@ export interface Employee {
   role: EmployeeRole;
   hoursPerMonth: number;
   hoursPerWeek?: number;
-  location?: string;
+  locationId?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -141,7 +141,7 @@ export interface ShiftRules {
  * Standort-Interface
  */
 export interface Location {
-  id: string;
+  id: number;
   name: string;
   address: string;
   city: string;

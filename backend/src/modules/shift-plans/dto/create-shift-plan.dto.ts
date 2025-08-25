@@ -1,7 +1,6 @@
-import { IsInt, IsOptional, IsBoolean, IsString, IsObject, Min, Max, ValidateNested } from 'class-validator';
+import { IsInt, IsOptional, IsBoolean, IsString, IsObject, Min, Max } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { MonthlyShiftPlan } from '../../../database/entities/shift-plan.entity';
+import { MonthlyShiftPlan } from '@/database/entities';
 
 export class CreateShiftPlanDto {
   @ApiProperty({ 
@@ -29,6 +28,7 @@ export class CreateShiftPlanDto {
   @ApiPropertyOptional({ 
     description: 'Monthly shift plan data structure',
     type: 'object',
+    additionalProperties: true,
     example: {
       '01.12.2024': {
         'F': ['employee-uuid-1', 'employee-uuid-2'],
@@ -146,7 +146,8 @@ export class ValidateShiftPlanDto {
 
   @ApiProperty({ 
     description: 'Monthly shift plan data to validate',
-    type: 'object'
+    type: 'object',
+    additionalProperties: true
   })
   @IsObject()
   planData: MonthlyShiftPlan;

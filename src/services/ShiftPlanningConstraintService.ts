@@ -5,7 +5,6 @@ import {
   DayShiftPlan,
   ConstraintCheck
 } from '../models/interfaces';
-import { getActiveRuleBase } from '../data/allRules';
 
 // Export leeres Objekt, damit die Datei als Modul erkannt wird
 export {};

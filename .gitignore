@@ -46,6 +46,18 @@ pids
 *.seed
 *.pid.lock
 
+# PostgreSQL data and logs
+/server/logs
+*.log
+pg_data/
+postgres_data/
+
+# Old SQLite artifacts (no longer used)
+/server/data
+/server/backups
+*.db
+*.db-*
+
 # JetBrains
 .idea
 .aiignore

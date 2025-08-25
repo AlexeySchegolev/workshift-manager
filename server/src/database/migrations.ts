@@ -1,9 +1,10 @@
 import { readFileSync } from 'fs';
 import path from 'path';
-import { db } from './database';
+import { dbManager } from './database';
+import { logger } from '../utils/logger';
 
 /**
- * Datenbank-Migrations-System
+ * PostgreSQL-Datenbank-Migrations-System
  */
 export class MigrationManager {
   private static readonly MIGRATION_TABLE = 'schema_migrations';
@@ -11,12 +12,12 @@ export class MigrationManager {
   /**
    * Initialisiert das Migrations-System
    */
-  public static init(): void {
+  public static async init(): Promise<void> {
     // Migrations-Tabelle erstellen falls sie nicht existiert
-    db.exec(`
+    await dbManager.query(`
       CREATE TABLE IF NOT EXISTS ${this.MIGRATION_TABLE} (
-        version TEXT PRIMARY KEY,
-        applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        version VARCHAR(255) PRIMARY KEY,
+        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
   }
@@ -25,40 +26,40 @@ export class MigrationManager {
    * Führt alle ausstehenden Migrationen aus
    */
   public static async runMigrations(): Promise<void> {
-    this.init();
+    await this.init();
 
-    const appliedMigrations = this.getAppliedMigrations();
-    console.log(`Bereits angewendete Migrationen: ${appliedMigrations.length}`);
+    const appliedMigrations = await this.getAppliedMigrations();
+    logger.info(`Bereits angewendete Migrationen: ${appliedMigrations.length}`);
 
     // Schema-Migration (Initial)
     if (!appliedMigrations.includes('001_initial_schema')) {
       await this.runSchemaMigration();
-      this.markMigrationAsApplied('001_initial_schema');
-      console.log('✓ Initial Schema Migration angewendet');
+      await this.markMigrationAsApplied('001_initial_schema');
+      logger.info('✓ Initial Schema Migration angewendet');
     }
 
     // Rollen-Migration
     if (!appliedMigrations.includes('002_add_roles_table')) {
       await this.runRolesMigration();
-      this.markMigrationAsApplied('002_add_roles_table');
-      console.log('✓ Rollen-Tabellen Migration angewendet');
+      await this.markMigrationAsApplied('002_add_roles_table');
+      logger.info('✓ Rollen-Tabellen Migration angewendet');
     }
 
     // Schichtregeln-Konfiguration Migration
     if (!appliedMigrations.includes('003_add_shift_rules_configuration')) {
       await this.runShiftRulesConfigurationMigration();
-      this.markMigrationAsApplied('003_add_shift_rules_configuration');
-      console.log('✓ Schichtregeln-Konfiguration Migration angewendet');
+      await this.markMigrationAsApplied('003_add_shift_rules_configuration');
+      logger.info('✓ Schichtregeln-Konfiguration Migration angewendet');
     }
 
     // Location Integer ID Migration
     if (!appliedMigrations.includes('004_update_locations_to_integer_id')) {
       await this.runLocationIntegerIdMigration();
-      this.markMigrationAsApplied('004_update_locations_to_integer_id');
-      console.log('✓ Location Integer ID Migration angewendet');
+      await this.markMigrationAsApplied('004_update_locations_to_integer_id');
+      logger.info('✓ Location Integer ID Migration angewendet');
     }
 
-    console.log('Alle Migrationen erfolgreich angewendet');
+    logger.info('Alle Migrationen erfolgreich angewendet');
   }
 
   /**
@@ -69,11 +70,25 @@ export class MigrationManager {
       const schemaPath = path.join(__dirname, 'schema.sql');
       const schemaSql = readFileSync(schemaPath, 'utf8');
       
-      // Schema direkt ausführen (SQLite kann mehrere Statements auf einmal verarbeiten)
-      db.exec(schemaSql);
+      // PostgreSQL Schema Statement für Statement ausführen
+      // Splitte das Schema in einzelne Statements (getrennt durch Semikolon)
+      const statements = schemaSql
+        .split(';')
+        .map(stmt => stmt.trim())
+        .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
+
+      logger.info(`Führe ${statements.length} Schema-Statements aus...`);
+
+      for (const statement of statements) {
+        if (statement.length > 0) {
+          await dbManager.query(statement);
+        }
+      }
+
+      logger.info('Schema erfolgreich initialisiert');
 
     } catch (error) {
-      console.error('Fehler beim Ausführen der Schema-Migration:', error);
+      logger.error('Fehler beim Ausführen der Schema-Migration:', error);
       throw error;
     }
   }

@@ -1,118 +1,155 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import { Pool, PoolClient, QueryResult } from 'pg';
 import { logger } from '../utils/logger';
-
-// Type alias für bessere TypeScript-Kompatibilität
-export type DatabaseInstance = Database.Database;
+import { validateDatabaseConfig, validateTestDatabaseConfig, DatabaseConfig } from '../config/database';
 
 /**
- * SQLite-Datenbank-Konfiguration und -Verwaltung
+ * PostgreSQL-Datenbank-Konfiguration und -Verwaltung
  */
 export class DatabaseManager {
   private static instance: DatabaseManager;
-  private db: Database.Database;
+  private pool: Pool;
+  private config: DatabaseConfig;
 
-  private constructor() {
-    const dbPath = process.env.NODE_ENV === 'production' 
-      ? path.join(process.cwd(), 'data', 'schichtplanung.db')
-      : path.join(process.cwd(), 'data', 'schichtplanung.dev.db');
-
-    // Stelle sicher, dass das data-Verzeichnis existiert
-    const fs = require('fs');
-    const dataDir = path.dirname(dbPath);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-
-    this.db = new Database(dbPath);
-    this.db.pragma('journal_mode = WAL');
-    this.db.pragma('foreign_keys = ON');
-    this.db.pragma('synchronous = NORMAL');
-    this.db.pragma('cache_size = 1000');
-    this.db.pragma('temp_store = memory');
-
-    logger.info(`Datenbank initialisiert: ${dbPath}`);
-  }
-
-  public static getInstance(): DatabaseManager {
-    if (!DatabaseManager.instance) {
-      DatabaseManager.instance = new DatabaseManager();
-    }
-    return DatabaseManager.instance;
-  }
-
-  public getDatabase(): DatabaseInstance {
-    return this.db;
-  }
-
-  public close(): void {
-    if (this.db) {
-      this.db.close();
-      logger.info('Datenbankverbindung geschlossen');
-    }
-  }
-
-  /**
-   * Führt eine Transaktion aus
-   */
-  public transaction<T>(fn: (db: Database.Database) => T): T {
-    const transaction = this.db.transaction(fn);
-    return transaction(this.db);
-  }
-
-  /**
-   * Bereitet ein Statement vor
-   */
-  public prepare(sql: string): Database.Statement {
-    return this.db.prepare(sql);
-  }
-
-  /**
-   * Führt ein SQL-Statement aus
-   */
-  public exec(sql: string): void {
-    this.db.exec(sql);
-  }
-
-  /**
-   * Backup der Datenbank erstellen
-   */
-  public backup(backupPath: string): void {
+  private constructor(isTestEnvironment: boolean = false) {
     try {
-      this.db.backup(backupPath);
-      logger.info(`Backup erstellt: ${backupPath}`);
+      // Strikte Konfigurationsvalidierung ohne Fallback-Werte
+      this.config = isTestEnvironment 
+        ? validateTestDatabaseConfig() 
+        : validateDatabaseConfig();
+
+      this.pool = new Pool({
+        host: this.config.host,
+        port: this.config.port,
+        database: this.config.database,
+        user: this.config.user,
+        password: this.config.password,
+        ssl: this.config.ssl,
+        max: this.config.maxConnections,
+        idleTimeoutMillis: this.config.idleTimeout,
+        connectionTimeoutMillis: this.config.connectionTimeout,
+      });
+
+      // Event-Handler für Pool-Events
+      this.pool.on('error', (err) => {
+        logger.error('Unerwarteter Fehler im PostgreSQL-Pool:', err);
+      });
+
+      this.pool.on('connect', (client) => {
+        logger.debug('Neue PostgreSQL-Verbindung hergestellt');
+      });
+
+      this.pool.on('remove', (client) => {
+        logger.debug('PostgreSQL-Verbindung aus Pool entfernt');
+      });
+
+      logger.info('PostgreSQL-Datenbank-Pool initialisiert', {
+        host: this.config.host,
+        port: this.config.port,
+        database: this.config.database,
+        maxConnections: this.config.maxConnections
+      });
+
     } catch (error) {
-      logger.error('Fehler beim Erstellen des Backups:', error);
+      logger.error('Fehler bei der Datenbank-Initialisierung:', error);
       throw error;
     }
   }
 
-  /**
-   * Datenbankstatistiken abrufen
-   */
-  public getStats(): any {
-    const stats = {
-      pageCount: this.db.pragma('page_count', { simple: true }) as number,
-      pageSize: this.db.pragma('page_size', { simple: true }) as number,
-      cacheSize: this.db.pragma('cache_size', { simple: true }) as number,
-      journalMode: this.db.pragma('journal_mode', { simple: true }) as string,
-      foreignKeys: this.db.pragma('foreign_keys', { simple: true }) as number
-    };
+  public static getInstance(isTestEnvironment: boolean = false): DatabaseManager {
+    if (!DatabaseManager.instance) {
+      DatabaseManager.instance = new DatabaseManager(isTestEnvironment);
+    }
+    return DatabaseManager.instance;
+  }
 
+  public async query(text: string, params?: any[]): Promise<QueryResult> {
+    const startTime = Date.now();
+    const client = await this.pool.connect();
+    
+    try {
+      const result = await client.query(text, params);
+      const duration = Date.now() - startTime;
+      
+      logger.debug('SQL-Query ausgeführt', {
+        query: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+        duration: `${duration}ms`,
+        rowCount: result.rowCount
+      });
+      
+      return result;
+    } catch (error) {
+      logger.error('Fehler bei SQL-Query:', {
+        query: text,
+        params: params,
+        error: error
+      });
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  public async transaction<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
+    const client = await this.pool.connect();
+    
+    try {
+      await client.query('BEGIN');
+      logger.debug('Transaktion gestartet');
+      
+      const result = await fn(client);
+      
+      await client.query('COMMIT');
+      logger.debug('Transaktion erfolgreich beendet');
+      
+      return result;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      logger.error('Transaktion zurückgerollt:', error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  public async healthCheck(): Promise<boolean> {
+    try {
+      const result = await this.query('SELECT 1 as health_check');
+      return result.rows.length === 1;
+    } catch (error) {
+      logger.error('Gesundheitsprüfung der Datenbank fehlgeschlagen:', error);
+      return false;
+    }
+  }
+
+  public async close(): Promise<void> {
+    await this.pool.end();
+    logger.info('PostgreSQL-Pool geschlossen');
+  }
+
+  public getPoolStats() {
     return {
-      ...stats,
-      databaseSize: (stats.pageCount * stats.pageSize) / 1024 / 1024 // MB
+      totalCount: this.pool.totalCount,
+      idleCount: this.pool.idleCount,
+      waitingCount: this.pool.waitingCount
     };
+  }
+
+  public getConfig(): DatabaseConfig {
+    return { ...this.config };
+  }
+
+  /**
+   * Führt ein SQL-Statement aus (für Migrations)
+   */
+  public async exec(sql: string): Promise<void> {
+    await this.query(sql);
   }
 }
 
 // Singleton-Instanz exportieren
-export const dbManager = DatabaseManager.getInstance();
+export const dbManager = DatabaseManager.getInstance(process.env.NODE_ENV === 'test');
 
-// Wrapper-Funktion für bessere TypeScript-Kompatibilität
-export function getDb(): DatabaseInstance {
-  return dbManager.getDatabase();
+// Wrapper-Funktion für Kompatibilität
+export async function getDb(): Promise<DatabaseManager> {
+  return dbManager;
 }
-
-// Direkte Datenbankinstanz für Import-Kompatibilität
-export const db = dbManager.getDatabase();

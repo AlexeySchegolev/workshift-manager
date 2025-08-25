@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: workshift-postgres
+    environment:
+      POSTGRES_DB: workshift_manager
+      POSTGRES_USER: workshift_user
+      POSTGRES_PASSWORD: workshift_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/src/database/init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workshift_user -d workshift_manager"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - workshift-network
+
+  postgres_test:
+    image: postgres:15-alpine
+    container_name: workshift-postgres-test
+    environment:
+      POSTGRES_DB: workshift_manager_test
+      POSTGRES_USER: workshift_user
+      POSTGRES_PASSWORD: workshift_password
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workshift_user -d workshift_manager_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - workshift-network
+
+volumes:
+  postgres_data:
+
+networks:
+  workshift-network:
+    driver: bridge

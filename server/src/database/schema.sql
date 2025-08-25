@@ -1,93 +1,106 @@
 -- Schichtplanung Datenbank Schema
--- SQLite-Datenbank für die Schichtplanung-Anwendung
+-- PostgreSQL-Datenbank für die Schichtplanung-Anwendung
+
+-- UUID-Extension aktivieren
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Trigger-Funktion für updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Standorte-Tabelle (zuerst wegen Foreign Key Dependencies)
+CREATE TABLE IF NOT EXISTS locations (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address TEXT NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    phone VARCHAR(50),
+    email VARCHAR(255),
+    manager VARCHAR(255),
+    capacity INTEGER NOT NULL DEFAULT 0 CHECK (capacity >= 0),
+    operating_hours JSONB NOT NULL,
+    specialties JSONB NOT NULL,
+    equipment JSONB NOT NULL,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Mitarbeiter-Tabelle
 CREATE TABLE IF NOT EXISTS employees (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    role TEXT NOT NULL,
-    hours_per_month REAL NOT NULL,
-    hours_per_week REAL,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    role VARCHAR(100) NOT NULL,
+    hours_per_month DECIMAL(5,2) NOT NULL CHECK (hours_per_month > 0),
+    hours_per_week DECIMAL(5,2) CHECK (hours_per_week > 0),
     location_id INTEGER,
-    is_active BOOLEAN DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (location_id) REFERENCES locations(id)
-);
-
--- Standorte-Tabelle
-CREATE TABLE IF NOT EXISTS locations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    address TEXT NOT NULL,
-    city TEXT NOT NULL,
-    postal_code TEXT NOT NULL,
-    phone TEXT,
-    email TEXT,
-    manager TEXT,
-    capacity INTEGER NOT NULL DEFAULT 0,
-    operating_hours TEXT NOT NULL, -- JSON-String mit Öffnungszeiten
-    specialties TEXT NOT NULL, -- JSON-Array mit Spezialisierungen
-    equipment TEXT NOT NULL, -- JSON-Array mit Ausrüstung
-    is_active BOOLEAN DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE SET NULL
 );
 
 -- Schichtdefinitionen-Tabelle
 CREATE TABLE IF NOT EXISTS shift_definitions (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL, -- "F", "S", "S0", "S1", "FS", etc.
-    display_name TEXT NOT NULL, -- "Frühschicht", "Spätschicht", etc.
-    start_time TEXT NOT NULL, -- Format: "HH:MM"
-    end_time TEXT NOT NULL, -- Format: "HH:MM"
-    hours REAL NOT NULL, -- Berechnete Stunden
-    day_type TEXT NOT NULL CHECK (day_type IN ('longDays', 'shortDays', 'both')),
-    location_id INTEGER, -- Foreign Key zu locations Tabelle, oder NULL für beide
-    allowed_roles TEXT NOT NULL, -- JSON-Array mit erlaubten Rollen
-    is_active BOOLEAN DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (location_id) REFERENCES locations(id)
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(10) NOT NULL,
+    display_name VARCHAR(100) NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    hours DECIMAL(4,2) NOT NULL CHECK (hours > 0),
+    day_type VARCHAR(20) NOT NULL CHECK (day_type IN ('longDays', 'shortDays', 'both')),
+    location_id INTEGER,
+    allowed_roles JSONB NOT NULL,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE,
+    UNIQUE(name, location_id)
 );
 
 -- Schichtregeln-Tabelle
 CREATE TABLE IF NOT EXISTS shift_rules (
-    id TEXT PRIMARY KEY,
-    min_nurses_per_shift INTEGER NOT NULL DEFAULT 4,
-    min_nurse_managers_per_shift INTEGER NOT NULL DEFAULT 1,
-    min_helpers INTEGER NOT NULL DEFAULT 1,
-    max_saturdays_per_month INTEGER NOT NULL DEFAULT 1,
-    max_consecutive_same_shifts INTEGER NOT NULL DEFAULT 0,
-    weekly_hours_overflow_tolerance REAL NOT NULL DEFAULT 0.1,
-    is_active BOOLEAN DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    min_nurses_per_shift INTEGER NOT NULL DEFAULT 4 CHECK (min_nurses_per_shift >= 0),
+    min_nurse_managers_per_shift INTEGER NOT NULL DEFAULT 1 CHECK (min_nurse_managers_per_shift >= 0),
+    min_helpers INTEGER NOT NULL DEFAULT 1 CHECK (min_helpers >= 0),
+    max_saturdays_per_month INTEGER NOT NULL DEFAULT 1 CHECK (max_saturdays_per_month >= 0),
+    max_consecutive_same_shifts INTEGER NOT NULL DEFAULT 0 CHECK (max_consecutive_same_shifts >= 0),
+    weekly_hours_overflow_tolerance DECIMAL(3,2) NOT NULL DEFAULT 0.1 CHECK (weekly_hours_overflow_tolerance >= 0),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Schichtpläne-Tabelle
 CREATE TABLE IF NOT EXISTS shift_plans (
-    id TEXT PRIMARY KEY,
-    year INTEGER NOT NULL,
-    month INTEGER NOT NULL,
-    plan_data TEXT NOT NULL, -- JSON-serialized MonthlyShiftPlan
-    employee_availability TEXT, -- JSON-serialized EmployeeAvailability
-    statistics TEXT, -- JSON-serialized PlanningStatistics
-    is_finalized BOOLEAN DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    year INTEGER NOT NULL CHECK (year >= 2000 AND year <= 2100),
+    month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
+    plan_data JSONB NOT NULL,
+    employee_availability JSONB,
+    statistics JSONB,
+    is_finalized BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(year, month)
 );
 
 -- Einzelne Schichtzuweisungen-Tabelle
 CREATE TABLE IF NOT EXISTS shift_assignments (
-    id TEXT PRIMARY KEY,
-    shift_plan_id TEXT NOT NULL,
-    employee_id TEXT NOT NULL,
-    date TEXT NOT NULL, -- Format: "DD.MM.YYYY"
-    shift_type TEXT NOT NULL, -- "F", "S", "FS", etc.
-    hours REAL NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    shift_plan_id UUID NOT NULL,
+    employee_id UUID NOT NULL,
+    date DATE NOT NULL,
+    shift_type VARCHAR(10) NOT NULL,
+    hours DECIMAL(4,2) NOT NULL CHECK (hours > 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (shift_plan_id) REFERENCES shift_plans(id) ON DELETE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
     UNIQUE(shift_plan_id, employee_id, date)
@@ -95,16 +108,16 @@ CREATE TABLE IF NOT EXISTS shift_assignments (
 
 -- Constraint-Verletzungen-Tabelle
 CREATE TABLE IF NOT EXISTS constraint_violations (
-    id TEXT PRIMARY KEY,
-    shift_plan_id TEXT NOT NULL,
-    type TEXT NOT NULL CHECK (type IN ('hard', 'soft')),
-    rule TEXT NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    shift_plan_id UUID NOT NULL,
+    type VARCHAR(10) NOT NULL CHECK (type IN ('hard', 'soft')),
+    rule VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
-    employee_id TEXT,
-    date TEXT, -- Format: "DD.MM.YYYY"
-    severity INTEGER DEFAULT 1, -- 1=niedrig, 2=mittel, 3=hoch
-    is_resolved BOOLEAN DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    employee_id UUID,
+    date DATE,
+    severity INTEGER DEFAULT 1 CHECK (severity IN (1, 2, 3)),
+    is_resolved BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (shift_plan_id) REFERENCES shift_plans(id) ON DELETE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL
 );

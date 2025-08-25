@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getDatabaseConfig } from './config/database.config';
+import { SeederService } from './database/seeds/seeder.service';
 
 // Import modules
 import { EmployeesModule } from './modules/employees/employees.module';
@@ -21,7 +22,6 @@ import { ShiftRulesModule } from './modules/shift-rules/shift-rules.module';
     
     // Database module
     TypeOrmModule.forRootAsync({
-      inject: [ConfigModule],
       useFactory: async () => getDatabaseConfig(),
     }),
     
@@ -34,6 +34,14 @@ import { ShiftRulesModule } from './modules/shift-rules/shift-rules.module';
     // ShiftsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [SeederService],
 })
-export class AppModule {}
+export class AppModule implements OnApplicationBootstrap {
+  constructor(private readonly seederService: SeederService) {}
+
+  async onApplicationBootstrap() {
+    if (process.env.NODE_ENV === 'development') {
+      await this.seederService.seed();
+    }
+  }
+}

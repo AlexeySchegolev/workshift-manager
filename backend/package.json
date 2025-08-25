@@ -6,8 +6,8 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
+    "start:dev": "npm run db:reset && nest start --watch",
+    "start:debug": "npm run db:reset && nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
@@ -15,11 +15,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:setup": "cd .. && docker-compose up -d && npm run db:wait",
+    "db:setup": "cd .. && docker compose up -d && cd backend && npm run db:wait",
     "db:wait": "wait-port 5432",
-    "db:reset": "cd .. && docker-compose down -v && docker-compose up -d && npm run db:wait",
-    "docker:up": "cd .. && docker-compose up -d",
-    "docker:down": "cd .. && docker-compose down"
+    "db:reset": "cd .. && docker compose down -v && docker compose up -d && cd backend && npm run db:wait",
+    "seed": "npm run build && node dist/database/seeds/seed.js",
+    "docker:up": "cd .. && docker compose up -d",
+    "docker:down": "cd .. && docker compose down"
   },
   "keywords": [],
   "author": "",
@@ -59,6 +60,7 @@
     "nodemon": "^3.1.10",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "wait-port": "^1.1.0"
   }
 }

@@ -36,7 +36,6 @@ import {
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import { Location, LocationStats } from '../models/interfaces';
-import { locationStatsData } from '../data/locationData';
 import { ApiService } from '../services/ApiService';
 
 interface LocationManagementProps {
@@ -84,10 +83,12 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
   // Standort-Statistiken
   const getLocationStats = (locationId: number): LocationStats => {
-    return locationStatsData[locationId as keyof typeof locationStatsData] || {
-      totalClients: 0,
-      averageUtilization: 0,
-      employeeCount: 0,
+    // TODO: Statistiken aus der Datenbank laden
+    // Temporäre Standardwerte bis DB-Integration implementiert ist
+    return {
+      totalClients: 25,
+      averageUtilization: 85,
+      employeeCount: 8,
     };
   };
 

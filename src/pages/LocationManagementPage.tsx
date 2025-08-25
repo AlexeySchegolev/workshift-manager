@@ -29,7 +29,6 @@ import LocationManagement from '../components/LocationManagement';
 
 // Interfaces und Daten
 import { Location } from '../models/interfaces';
-import { locationStatsData } from '../data/locationData';
 import { ApiService } from '../services/ApiService';
 
 /**
@@ -84,14 +83,21 @@ const LocationManagementPage: React.FC = () => {
     let avgUtilization = 0;
 
     activeLocations.forEach(location => {
-      const stats = locationStatsData[location.id as keyof typeof locationStatsData];
-      if (stats) {
-        totalClients += stats.totalClients;
-        totalEmployees += stats.employeeCount;
-        totalRevenue += stats.monthlyRevenue || 0;
-        avgSatisfaction += stats.clientSatisfaction || 0;
-        avgUtilization += stats.averageUtilization;
-      }
+      // TODO: Statistiken aus der Datenbank laden
+      // Temporäre Standardwerte bis DB-Integration implementiert ist
+      const defaultStats = {
+        totalClients: 25,
+        employeeCount: 8,
+        monthlyRevenue: 15000,
+        clientSatisfaction: 4.2,
+        averageUtilization: 85
+      };
+      
+      totalClients += defaultStats.totalClients;
+      totalEmployees += defaultStats.employeeCount;
+      totalRevenue += defaultStats.monthlyRevenue;
+      avgSatisfaction += defaultStats.clientSatisfaction;
+      avgUtilization += defaultStats.averageUtilization;
     });
 
     avgSatisfaction = activeLocations.length > 0 ? avgSatisfaction / activeLocations.length : 0;

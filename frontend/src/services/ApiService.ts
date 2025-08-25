@@ -1,6 +1,5 @@
 import {
   Employee,
-  MonthlyShiftPlan,
   GenerateShiftPlanRequest,
   GenerateShiftPlanResponse,
   ApiResponse,
@@ -14,7 +13,7 @@ import { ShiftRulesConfiguration } from '../models/shiftRuleInterfaces';
  * API-Service für die Kommunikation mit dem Backend
  */
 export class ApiService {
-  private static readonly BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+  private static readonly BASE_URL = import.meta.env.VITE_API_URL;
   
   /**
    * Allgemeine HTTP-Request-Methode
@@ -561,7 +560,7 @@ export class ApiService {
    */
   static async healthCheck(): Promise<any> {
     try {
-      const response = await fetch(`${this.BASE_URL.replace('/api', '')}/health`);
+      const response = await fetch(`${this.BASE_URL?.replace('/api', '')}/health`);
       return await response.json();
     } catch (error) {
       throw new Error('Server nicht erreichbar');

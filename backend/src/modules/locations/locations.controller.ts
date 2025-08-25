@@ -23,7 +23,7 @@ import {
 import { LocationsService } from './locations.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
-import { Location } from '../../database/entities/location.entity';
+import { LocationResponseDto } from './dto/location-response.dto';
 
 @ApiTags('locations')
 @Controller('api/locations')
@@ -38,12 +38,12 @@ export class LocationsController {
   @ApiResponse({ 
     status: 201, 
     description: 'Location created successfully',
-    type: Location
+    type: LocationResponseDto
   })
   @ApiBadRequestResponse({ 
     description: 'Invalid input data'
   })
-  async create(@Body() createLocationDto: CreateLocationDto): Promise<Location> {
+  async create(@Body() createLocationDto: CreateLocationDto): Promise<LocationResponseDto> {
     return this.locationsService.create(createLocationDto);
   }
 
@@ -67,12 +67,12 @@ export class LocationsController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of all locations',
-    type: [Location]
+    type: [LocationResponseDto]
   })
   async findAll(
     @Query('includeEmployees') includeEmployees: string = 'true',
     @Query('activeOnly') activeOnly: string = 'false'
-  ): Promise<Location[]> {
+  ): Promise<LocationResponseDto[]> {
     const include = includeEmployees === 'true';
     const onlyActive = activeOnly === 'true';
     
@@ -122,9 +122,9 @@ export class LocationsController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of matching locations',
-    type: [Location]
+    type: [LocationResponseDto]
   })
-  async search(@Query('q') query: string): Promise<Location[]> {
+  async search(@Query('q') query: string): Promise<LocationResponseDto[]> {
     return this.locationsService.searchLocations(query);
   }
 
@@ -141,9 +141,9 @@ export class LocationsController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of locations in the city',
-    type: [Location]
+    type: [LocationResponseDto]
   })
-  async findByCity(@Param('city') city: string): Promise<Location[]> {
+  async findByCity(@Param('city') city: string): Promise<LocationResponseDto[]> {
     return this.locationsService.findByCity(city);
   }
 
@@ -166,7 +166,7 @@ export class LocationsController {
   @ApiResponse({ 
     status: 200, 
     description: 'Location found',
-    type: Location
+    type: LocationResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Location not found'
@@ -174,7 +174,7 @@ export class LocationsController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Query('includeEmployees') includeEmployees: string = 'true'
-  ): Promise<Location> {
+  ): Promise<LocationResponseDto> {
     const include = includeEmployees === 'true';
     return this.locationsService.findOne(id, include);
   }
@@ -228,7 +228,7 @@ export class LocationsController {
   @ApiResponse({ 
     status: 200, 
     description: 'Location updated successfully',
-    type: Location
+    type: LocationResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Location not found'
@@ -239,7 +239,7 @@ export class LocationsController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLocationDto: UpdateLocationDto
-  ): Promise<Location> {
+  ): Promise<LocationResponseDto> {
     return this.locationsService.update(id, updateLocationDto);
   }
 
@@ -256,12 +256,12 @@ export class LocationsController {
   @ApiResponse({ 
     status: 200, 
     description: 'Location activated successfully',
-    type: Location
+    type: LocationResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Location not found'
   })
-  async activate(@Param('id', ParseIntPipe) id: number): Promise<Location> {
+  async activate(@Param('id', ParseIntPipe) id: number): Promise<LocationResponseDto> {
     return this.locationsService.activate(id);
   }
 
@@ -278,12 +278,12 @@ export class LocationsController {
   @ApiResponse({ 
     status: 200, 
     description: 'Location deactivated successfully',
-    type: Location
+    type: LocationResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Location not found'
   })
-  async deactivate(@Param('id', ParseIntPipe) id: number): Promise<Location> {
+  async deactivate(@Param('id', ParseIntPipe) id: number): Promise<LocationResponseDto> {
     return this.locationsService.deactivate(id);
   }
 

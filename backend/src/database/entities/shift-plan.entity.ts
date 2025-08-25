@@ -3,11 +3,13 @@ import { ShiftAssignment } from './shift-assignment.entity';
 import { ConstraintViolation } from './constraint-violation.entity';
 
 export interface DayShiftPlan {
-  [shiftName: string]: string[];  // Schichtname -> Array von Mitarbeiter-IDs
+  /** Shift name mapped to array of employee IDs */
+  [shiftName: string]: string[];
 }
 
 export interface MonthlyShiftPlan {
-  [dateKey: string]: DayShiftPlan | null;  // Format: "DD.MM.YYYY"
+  /** Date key in DD.MM.YYYY format mapped to day shift plan */
+  [dateKey: string]: DayShiftPlan | null;
 }
 
 @Entity('shift_plans')

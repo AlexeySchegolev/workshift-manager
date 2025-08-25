@@ -24,6 +24,7 @@ import {
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeeResponseDto } from './dto/employee-response.dto';
 import { Employee } from '@/database/entities';
 
 @ApiTags('employees')
@@ -39,12 +40,12 @@ export class EmployeesController {
   @ApiResponse({ 
     status: 201, 
     description: 'Employee created successfully',
-    type: Employee
+    type: EmployeeResponseDto
   })
   @ApiBadRequestResponse({ 
     description: 'Invalid input data or location not found'
   })
-  async create(@Body() createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
+  async create(@Body() createEmployeeDto: CreateEmployeeDto): Promise<EmployeeResponseDto> {
     return this.employeesService.create(createEmployeeDto);
   }
 
@@ -62,11 +63,11 @@ export class EmployeesController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of all employees',
-    type: [Employee]
+    type: [EmployeeResponseDto]
   })
   async findAll(
     @Query('includeRelations') includeRelations: string = 'true'
-  ): Promise<Employee[]> {
+  ): Promise<EmployeeResponseDto[]> {
     const include = includeRelations === 'true';
     return this.employeesService.findAll(include);
   }
@@ -105,11 +106,11 @@ export class EmployeesController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of employees at the location',
-    type: [Employee]
+    type: [EmployeeResponseDto]
   })
   async findByLocation(
     @Param('locationId', ParseIntPipe) locationId: number
-  ): Promise<Employee[]> {
+  ): Promise<EmployeeResponseDto[]> {
     return this.employeesService.findByLocation(locationId);
   }
 
@@ -126,9 +127,9 @@ export class EmployeesController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of employees with the specified role',
-    type: [Employee]
+    type: [EmployeeResponseDto]
   })
-  async findByRole(@Param('role') role: string): Promise<Employee[]> {
+  async findByRole(@Param('role') role: string): Promise<EmployeeResponseDto[]> {
     return this.employeesService.findByRole(role);
   }
 
@@ -152,7 +153,7 @@ export class EmployeesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Employee found',
-    type: Employee
+    type: EmployeeResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Employee not found'
@@ -160,7 +161,7 @@ export class EmployeesController {
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
     @Query('includeRelations') includeRelations: string = 'true'
-  ): Promise<Employee> {
+  ): Promise<EmployeeResponseDto> {
     const include = includeRelations === 'true';
     return this.employeesService.findOne(id, include);
   }
@@ -179,7 +180,7 @@ export class EmployeesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Employee updated successfully',
-    type: Employee
+    type: EmployeeResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Employee not found'
@@ -190,7 +191,7 @@ export class EmployeesController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto
-  ): Promise<Employee> {
+  ): Promise<EmployeeResponseDto> {
     return this.employeesService.update(id, updateEmployeeDto);
   }
 

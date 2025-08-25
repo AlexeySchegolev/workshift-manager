@@ -36,7 +36,6 @@ import {
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import { Location, LocationStats } from '../models/interfaces';
-import { ApiService } from '../services/ApiService';
 
 interface LocationManagementProps {
   locations?: Location[];
@@ -57,6 +56,11 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Generated API client instance
+  const api = new Api({
+    baseURL: 'http://localhost:3001'
+  });
 
   // Standorte von der API laden
   useEffect(() => {
@@ -71,7 +75,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     try {
       setLoading(true);
       setError(null);
-      const data = await ApiService.getLocations();
+      const response = await api.api.locationsControllerFindAll();
+      const data = response.data as Location[];
       setLocations(data);
       onLocationsChange?.(data);
     } catch (err) {
@@ -143,7 +148,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
       if (isEditing) {
         // Standort aktualisieren
-        const updatedLocation = await ApiService.updateLocation(selectedLocation.id.toString(), selectedLocation);
+        const response = await api.api.locationsControllerUpdate(selectedLocation.id, selectedLocation as UpdateLocationDto);
+        const updatedLocation = response.data as Location;
         const updatedLocations = locations.map(loc =>
           loc.id === selectedLocation.id ? updatedLocation : loc
         );
@@ -151,7 +157,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         onLocationsChange?.(updatedLocations);
       } else {
         // Neuen Standort erstellen
-        const newLocation = await ApiService.createLocation(selectedLocation);
+        const response = await api.api.locationsControllerCreate(selectedLocation as CreateLocationDto);
+        const newLocation = response.data as Location;
         const updatedLocations = [...locations, newLocation];
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
@@ -171,7 +178,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       try {
         setLoading(true);
         setError(null);
-        await ApiService.deleteLocation(locationId);
+        await api.api.locationsControllerRemove(parseInt(locationId));
         const updatedLocations = locations.filter(loc => loc.id !== parseInt(locationId));
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);

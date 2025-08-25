@@ -1,0 +1,109 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+export interface DayShiftPlan {
+  /** Shift name mapped to array of employee IDs */
+  [shiftName: string]: string[];
+}
+
+export interface MonthlyShiftPlan {
+  /** Date key in DD.MM.YYYY format mapped to day shift plan */
+  [dateKey: string]: DayShiftPlan | null;
+}
+
+export class ShiftAssignmentResponseDto {
+  @ApiProperty({
+    description: 'Unique identifier for the shift assignment',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
+  })
+  id: string;
+}
+
+export class ConstraintViolationResponseDto {
+  @ApiProperty({
+    description: 'Unique identifier for the constraint violation',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
+  })
+  id: string;
+}
+
+export class ShiftPlanResponseDto {
+  @ApiProperty({
+    description: 'Unique identifier for the shift plan',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
+  })
+  id: string;
+
+  @ApiProperty({
+    description: 'Year for the shift plan',
+    example: 2024,
+    minimum: 2020,
+    maximum: 2030,
+  })
+  year: number;
+
+  @ApiProperty({
+    description: 'Month for the shift plan (1-12)',
+    example: 12,
+    minimum: 1,
+    maximum: 12,
+  })
+  month: number;
+
+  @ApiPropertyOptional({
+    description: 'Shift plan data organized by date and shift',
+    type: 'object',
+    additionalProperties: true,
+    example: {
+      '01.12.2024': {
+        'Morning': ['employee-id-1', 'employee-id-2'],
+        'Evening': ['employee-id-3', 'employee-id-4']
+      },
+      '02.12.2024': {
+        'Morning': ['employee-id-2', 'employee-id-3'],
+        'Evening': ['employee-id-1', 'employee-id-4']
+      }
+    },
+  })
+  planData: MonthlyShiftPlan;
+
+  @ApiProperty({
+    description: 'Whether the shift plan is published',
+    example: false,
+    default: false,
+  })
+  isPublished: boolean;
+
+  @ApiPropertyOptional({
+    description: 'User ID who created this shift plan',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
+  })
+  createdBy?: string;
+
+  @ApiProperty({
+    description: 'Shift assignments for this plan',
+    type: () => [ShiftAssignmentResponseDto],
+  })
+  assignments: ShiftAssignmentResponseDto[];
+
+  @ApiProperty({
+    description: 'Constraint violations for this plan',
+    type: () => [ConstraintViolationResponseDto],
+  })
+  violations: ConstraintViolationResponseDto[];
+
+  @ApiProperty({
+    description: 'Date when the shift plan was created',
+    example: '2024-01-15T10:30:00Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Date when the shift plan was last updated',
+    example: '2024-01-15T10:30:00Z',
+  })
+  updatedAt: Date;
+}

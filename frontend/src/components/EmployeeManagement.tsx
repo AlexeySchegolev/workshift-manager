@@ -41,13 +41,13 @@ import {
   Save as SaveIcon,
   People as PeopleIcon,
   PersonAdd as PersonAddIcon,
-  Business as BusinessIcon,
-  Schedule as ScheduleIcon,
-  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Employee, EmployeeRole } from '../models/interfaces';
+import { Employee } from '../models/interfaces';
+import { CreateEmployeeDto } from "@/api/data-contracts";
+
+type EmployeeRole = CreateEmployeeDto['role'];
 
 interface EmployeeManagementProps {
   employees: Employee[];

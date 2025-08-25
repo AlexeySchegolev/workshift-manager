@@ -23,6 +23,7 @@ import {
 import { ShiftRulesService } from './shift-rules.service';
 import { CreateShiftRulesDto } from './dto/create-shift-rules.dto';
 import { UpdateShiftRulesDto } from './dto/update-shift-rules.dto';
+import { ShiftRulesResponseDto } from './dto/shift-rules-response.dto';
 import { ShiftRules } from '@/database/entities';
 
 @ApiTags('shift-rules')
@@ -38,12 +39,12 @@ export class ShiftRulesController {
   @ApiResponse({ 
     status: 201, 
     description: 'Shift rules created successfully',
-    type: ShiftRules
+    type: ShiftRulesResponseDto
   })
   @ApiBadRequestResponse({ 
     description: 'Invalid input data or rule validation failed'
   })
-  async create(@Body() createShiftRulesDto: CreateShiftRulesDto): Promise<ShiftRules> {
+  async create(@Body() createShiftRulesDto: CreateShiftRulesDto): Promise<ShiftRulesResponseDto> {
     return this.shiftRulesService.create(createShiftRulesDto);
   }
 
@@ -61,11 +62,11 @@ export class ShiftRulesController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of shift rules',
-    type: [ShiftRules]
+    type: [ShiftRulesResponseDto]
   })
   async findAll(
     @Query('activeOnly') activeOnly: string = 'false'
-  ): Promise<ShiftRules[]> {
+  ): Promise<ShiftRulesResponseDto[]> {
     const onlyActive = activeOnly === 'true';
     return this.shiftRulesService.findAll(onlyActive);
   }
@@ -100,9 +101,9 @@ export class ShiftRulesController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of active shift rules',
-    type: [ShiftRules]
+    type: [ShiftRulesResponseDto]
   })
-  async findActive(): Promise<ShiftRules[]> {
+  async findActive(): Promise<ShiftRulesResponseDto[]> {
     return this.shiftRulesService.findActive();
   }
 
@@ -114,12 +115,12 @@ export class ShiftRulesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Default shift rules',
-    type: ShiftRules
+    type: ShiftRulesResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'No active shift rules found'
   })
-  async findDefault(): Promise<ShiftRules | null> {
+  async findDefault(): Promise<ShiftRulesResponseDto | null> {
     return this.shiftRulesService.findDefault();
   }
 
@@ -137,12 +138,12 @@ export class ShiftRulesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift rules found',
-    type: ShiftRules
+    type: ShiftRulesResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift rules not found'
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftRules> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftRulesResponseDto> {
     return this.shiftRulesService.findOne(id);
   }
 
@@ -160,7 +161,7 @@ export class ShiftRulesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift rules updated successfully',
-    type: ShiftRules
+    type: ShiftRulesResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift rules not found'
@@ -171,7 +172,7 @@ export class ShiftRulesController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateShiftRulesDto: UpdateShiftRulesDto
-  ): Promise<ShiftRules> {
+  ): Promise<ShiftRulesResponseDto> {
     return this.shiftRulesService.update(id, updateShiftRulesDto);
   }
 
@@ -189,12 +190,12 @@ export class ShiftRulesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift rules activated successfully',
-    type: ShiftRules
+    type: ShiftRulesResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift rules not found'
   })
-  async activate(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftRules> {
+  async activate(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftRulesResponseDto> {
     return this.shiftRulesService.activate(id);
   }
 
@@ -212,12 +213,12 @@ export class ShiftRulesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift rules deactivated successfully',
-    type: ShiftRules
+    type: ShiftRulesResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift rules not found'
   })
-  async deactivate(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftRules> {
+  async deactivate(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftRulesResponseDto> {
     return this.shiftRulesService.deactivate(id);
   }
 

@@ -2,17 +2,26 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { Employee } from './employee.entity';
 
 export interface TimeSlot {
-  start: string; // Format: "HH:MM"
-  end: string;   // Format: "HH:MM"
+  /** Start time in HH:MM format */
+  start: string;
+  /** End time in HH:MM format */
+  end: string;
 }
 
 export interface OperatingHours {
+  /** Monday operating hours */
   monday: TimeSlot[];
+  /** Tuesday operating hours */
   tuesday: TimeSlot[];
+  /** Wednesday operating hours */
   wednesday: TimeSlot[];
+  /** Thursday operating hours */
   thursday: TimeSlot[];
+  /** Friday operating hours */
   friday: TimeSlot[];
+  /** Saturday operating hours */
   saturday: TimeSlot[];
+  /** Sunday operating hours */
   sunday: TimeSlot[];
 }
 

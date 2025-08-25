@@ -14,13 +14,6 @@ import {
   Select,
   MenuItem,
   Chip,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Switch,
   FormControlLabel,
   Card,
@@ -31,8 +24,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Tooltip,
-  Stack,
   CircularProgress,
   Snackbar
 } from '@mui/material';
@@ -59,8 +50,7 @@ import {
   DEFAULT_SHIFT_RULES_CONFIG,
   GlobalShiftRules
 } from '../models/shiftRuleInterfaces';
-import { DEFAULT_ROLES } from '../models/interfaces';
-import { ApiService } from '../services/ApiService';
+import { Api, CreateShiftRulesDto, UpdateShiftRulesDto } from '../api/Api';
 
 interface ShiftRuleManagerProps {
   onSave?: (config: ShiftRulesConfiguration) => void;
@@ -80,6 +70,11 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [roles, setRoles] = useState<any[]>([]);
+  
+  // Generated API client instance
+  const api = new Api({
+    baseURL: 'http://localhost:3001'
+  });
 
   const dayTypeLabels: Record<DayType, string> = {
     longDay: 'Lange Tage (Mo, Mi, Fr)',
@@ -109,20 +104,23 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
     setError(null);
     
     try {
-      // Rollen laden
-      const rolesData = await ApiService.getRoles({ isActive: true });
+      // Rollen laden (placeholder since no role API client available yet)
+      const rolesData: any[] = []; // TODO: implement roles API when available
       setRoles(rolesData);
 
-      // Konfiguration laden
-      let configData: ShiftRulesConfiguration;
+      // Shift Rules laden
+      let configData: any;
       if (configId) {
-        configData = await ApiService.getShiftRulesConfiguration(configId);
+        const response = await api.api.shiftRulesControllerFindOne(configId);
+        configData = response.data;
       } else {
-        // Standard-Konfiguration laden
-        configData = await ApiService.getDefaultShiftRulesConfiguration();
+        // Standard-Shift-Rules laden
+        const response = await api.api.shiftRulesControllerFindDefault();
+        configData = response.data;
       }
       
-      setConfig(configData);
+      // Convert to expected format if needed
+      setConfig(configData as ShiftRulesConfiguration || DEFAULT_SHIFT_RULES_CONFIG);
     } catch (err) {
       console.error('Fehler beim Laden der Daten:', err);
       setError(err instanceof Error ? err.message : 'Fehler beim Laden der Daten');
@@ -255,13 +253,14 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
     try {
       if (config.id && config.id !== 'default') {
         // Bestehende Konfiguration aktualisieren
-        await ApiService.updateShiftRulesConfiguration(config.id, config);
+        const response = await api.api.shiftRulesControllerUpdate(config.id, config as UpdateShiftRulesDto);
         setSuccessMessage('Konfiguration erfolgreich aktualisiert');
       } else {
         // Neue Konfiguration erstellen
         const { id, createdAt, updatedAt, ...configWithoutIds } = config;
-        const newConfig = await ApiService.createShiftRulesConfiguration(configWithoutIds);
-        setConfig(newConfig);
+        const response = await api.api.shiftRulesControllerCreate(configWithoutIds as unknown as CreateShiftRulesDto);
+        const newConfig = response.data;
+        setConfig(newConfig as ShiftRulesConfiguration);
         setSuccessMessage('Konfiguration erfolgreich erstellt');
       }
       

@@ -24,7 +24,7 @@ import {
 import { ShiftPlansService } from './shift-plans.service';
 import { CreateShiftPlanDto, GenerateShiftPlanDto, ValidateShiftPlanDto } from './dto/create-shift-plan.dto';
 import { UpdateShiftPlanDto } from './dto/update-shift-plan.dto';
-import { ShiftPlan } from '../../database/entities/shift-plan.entity';
+import { ShiftPlanResponseDto } from './dto/shift-plan-response.dto';
 
 @ApiTags('shift-plans')
 @Controller('api/shift-plans')
@@ -39,12 +39,12 @@ export class ShiftPlansController {
   @ApiResponse({ 
     status: 201, 
     description: 'Shift plan created successfully',
-    type: ShiftPlan
+    type: ShiftPlanResponseDto
   })
   @ApiBadRequestResponse({ 
     description: 'Invalid input data or shift plan already exists for this period'
   })
-  async create(@Body() createShiftPlanDto: CreateShiftPlanDto): Promise<ShiftPlan> {
+  async create(@Body() createShiftPlanDto: CreateShiftPlanDto): Promise<ShiftPlanResponseDto> {
     return this.shiftPlansService.create(createShiftPlanDto);
   }
 
@@ -110,11 +110,11 @@ export class ShiftPlansController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of all shift plans',
-    type: [ShiftPlan]
+    type: [ShiftPlanResponseDto]
   })
   async findAll(
     @Query('includeRelations') includeRelations: string = 'true'
-  ): Promise<ShiftPlan[]> {
+  ): Promise<ShiftPlanResponseDto[]> {
     const include = includeRelations === 'true';
     return this.shiftPlansService.findAll(include);
   }
@@ -160,7 +160,7 @@ export class ShiftPlansController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift plan found',
-    type: ShiftPlan
+    type: ShiftPlanResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift plan not found for the specified period'
@@ -168,7 +168,7 @@ export class ShiftPlansController {
   async findByMonthYear(
     @Param('year', ParseIntPipe) year: number,
     @Param('month', ParseIntPipe) month: number
-  ): Promise<ShiftPlan> {
+  ): Promise<ShiftPlanResponseDto> {
     return this.shiftPlansService.findByMonthYear(year, month);
   }
 
@@ -192,7 +192,7 @@ export class ShiftPlansController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift plan found',
-    type: ShiftPlan
+    type: ShiftPlanResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift plan not found'
@@ -200,7 +200,7 @@ export class ShiftPlansController {
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
     @Query('includeRelations') includeRelations: string = 'true'
-  ): Promise<ShiftPlan> {
+  ): Promise<ShiftPlanResponseDto> {
     const include = includeRelations === 'true';
     return this.shiftPlansService.findOne(id, include);
   }
@@ -219,7 +219,7 @@ export class ShiftPlansController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift plan updated successfully',
-    type: ShiftPlan
+    type: ShiftPlanResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift plan not found'
@@ -230,7 +230,7 @@ export class ShiftPlansController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateShiftPlanDto: UpdateShiftPlanDto
-  ): Promise<ShiftPlan> {
+  ): Promise<ShiftPlanResponseDto> {
     return this.shiftPlansService.update(id, updateShiftPlanDto);
   }
 
@@ -248,7 +248,7 @@ export class ShiftPlansController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift plan published successfully',
-    type: ShiftPlan
+    type: ShiftPlanResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift plan not found'
@@ -256,7 +256,7 @@ export class ShiftPlansController {
   @ApiBadRequestResponse({ 
     description: 'Cannot publish empty shift plan'
   })
-  async publish(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftPlan> {
+  async publish(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftPlanResponseDto> {
     return this.shiftPlansService.publish(id);
   }
 
@@ -274,12 +274,12 @@ export class ShiftPlansController {
   @ApiResponse({ 
     status: 200, 
     description: 'Shift plan unpublished successfully',
-    type: ShiftPlan
+    type: ShiftPlanResponseDto
   })
   @ApiNotFoundResponse({ 
     description: 'Shift plan not found'
   })
-  async unpublish(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftPlan> {
+  async unpublish(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftPlanResponseDto> {
     return this.shiftPlansService.unpublish(id);
   }
 

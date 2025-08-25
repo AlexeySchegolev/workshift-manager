@@ -48,23 +48,6 @@ export class PersistenceService {
     }
   }
 
-  /**
-   * Lädt Schichtregeln aus dem localStorage
-   * Verwendet Standard-Regeln, wenn keine gespeichert sind
-   */
-  static loadRules(): ShiftRules {
-    try {
-      const storedRules = localStorage.getItem(this.RULES_KEY);
-      if (storedRules) {
-        return JSON.parse(storedRules);
-      }
-    } catch (error) {
-      console.error('Fehler beim Laden der Schichtregeln:', error);
-    }
-    
-    // Standard-Regeln verwenden
-    return defaultRules;
-  }
 
   /**
    * Speichert einen Schichtplan für einen bestimmten Monat im localStorage

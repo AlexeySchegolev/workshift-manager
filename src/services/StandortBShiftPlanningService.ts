@@ -4,7 +4,6 @@ import {
   MonthlyShiftPlan,
   DayShiftPlan,
 } from '../models/interfaces';
-import { relaxedRules } from '../data/defaultRules';
 import { standortBShifts } from '../data/defaultShifts';
 import { ShiftPlanningUtilService } from './ShiftPlanningUtilService';
 import { ShiftPlanningConstraintService } from './ShiftPlanningConstraintService';

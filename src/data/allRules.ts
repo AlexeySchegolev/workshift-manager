@@ -1,7 +1,6 @@
 import { ShiftRules } from '../models/interfaces';
 import { defaultRules, relaxedRules } from './defaultRules';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { allRuleCategories } from './detailedRules';
 
 // Export leeres Objekt, damit die Datei als Modul erkannt wird
 export {};

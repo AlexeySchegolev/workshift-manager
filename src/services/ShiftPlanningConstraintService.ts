@@ -2,7 +2,6 @@ import {
   Employee,
   EmployeeAvailability,
   MonthlyShiftPlan,
-  DayShiftPlan,
   ConstraintCheck
 } from '../models/interfaces';
 

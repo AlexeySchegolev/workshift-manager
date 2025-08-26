@@ -32,7 +32,7 @@ export class LocationService extends BaseService {
   /**
    * Get location by ID
    */
-  async getLocationById(id: number, options?: {
+  async getLocationById(id: string, options?: {
     includeEmployees?: boolean;
   }): Promise<LocationResponseDto> {
     const response = await this.locationsApi.locationsControllerFindOne(id, options);
@@ -50,7 +50,7 @@ export class LocationService extends BaseService {
   /**
    * Update an existing location
    */
-  async updateLocation(id: number, locationData: UpdateLocationDto): Promise<LocationResponseDto> {
+  async updateLocation(id: string, locationData: UpdateLocationDto): Promise<LocationResponseDto> {
     const response = await this.locationsApi.locationsControllerUpdate(id, locationData);
     return response.data;
   }
@@ -58,14 +58,14 @@ export class LocationService extends BaseService {
   /**
    * Delete a location
    */
-  async deleteLocation(id: number): Promise<void> {
+  async deleteLocation(id: string): Promise<void> {
     await this.locationsApi.locationsControllerRemove(id);
   }
 
   /**
    * Activate a location
    */
-  async activateLocation(id: number): Promise<LocationResponseDto> {
+  async activateLocation(id: string): Promise<LocationResponseDto> {
     const response = await this.locationsApi.locationsControllerActivate(id);
     return response.data;
   }
@@ -73,7 +73,7 @@ export class LocationService extends BaseService {
   /**
    * Deactivate a location
    */
-  async deactivateLocation(id: number): Promise<LocationResponseDto> {
+  async deactivateLocation(id: string): Promise<LocationResponseDto> {
     const response = await this.locationsApi.locationsControllerDeactivate(id);
     return response.data;
   }
@@ -102,7 +102,7 @@ export class LocationService extends BaseService {
   /**
    * Get detailed location statistics
    */
-  async getLocationDetailedStats(id: number): Promise<{
+  async getLocationDetailedStats(id: string): Promise<{
     employeeCount?: number;
     equipmentCount?: number;
     serviceCount?: number;

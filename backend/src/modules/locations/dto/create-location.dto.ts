@@ -1,7 +1,7 @@
-import { IsString, IsInt, IsOptional, IsEmail, IsBoolean, IsArray, ValidateNested, Min, Max } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsEmail, IsBoolean, IsArray, ValidateNested, Min, Max, IsEnum, IsNumber, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { TimeSlot, OperatingHours } from '../../../database/entities/location.entity';
+import { TimeSlot, OperatingHours, LocationStatus } from '../../../database/entities/location.entity';
 
 class TimeSlotDto implements TimeSlot {
   @ApiProperty({ 
@@ -101,6 +101,13 @@ class OperatingHoursDto implements OperatingHours {
 }
 
 export class CreateLocationDto {
+  @ApiProperty({
+    description: 'ID der Organisation',
+    example: 'uuid-string'
+  })
+  @IsUUID()
+  organizationId: string;
+
   @ApiProperty({ 
     description: 'Location name', 
     example: 'Hauptstandort Berlin',
@@ -109,6 +116,24 @@ export class CreateLocationDto {
   })
   @IsString()
   name: string;
+
+  @ApiPropertyOptional({
+    description: 'Short identifier code for location',
+    example: 'BER-01',
+    maxLength: 100
+  })
+  @IsOptional()
+  @IsString()
+  code?: string;
+
+  @ApiPropertyOptional({
+    description: 'Description of the location',
+    example: 'Hauptstandort mit vollständiger Dialyse-Ausstattung',
+    maxLength: 500
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
 
   @ApiProperty({ 
     description: 'Street address',
@@ -134,6 +159,41 @@ export class CreateLocationDto {
   @IsString()
   postalCode: string;
 
+  @ApiPropertyOptional({
+    description: 'State or region',
+    example: 'Berlin',
+    maxLength: 100
+  })
+  @IsOptional()
+  @IsString()
+  state?: string;
+
+  @ApiPropertyOptional({
+    description: 'Country',
+    example: 'Germany',
+    default: 'Germany',
+    maxLength: 100
+  })
+  @IsOptional()
+  @IsString()
+  country?: string;
+
+  @ApiPropertyOptional({
+    description: 'Latitude coordinate',
+    example: 52.5200
+  })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 8 })
+  latitude?: number;
+
+  @ApiPropertyOptional({
+    description: 'Longitude coordinate', 
+    example: 13.4050
+  })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 8 })
+  longitude?: number;
+
   @ApiPropertyOptional({ 
     description: 'Phone number',
     example: '+49 30 12345678',
@@ -152,25 +212,130 @@ export class CreateLocationDto {
   @IsEmail()
   email?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: 'Manager name',
     example: 'Max Mustermann',
     maxLength: 255
   })
   @IsOptional()
   @IsString()
-  manager?: string;
+  managerName?: string;
+
+  @ApiPropertyOptional({
+    description: 'Manager email address',
+    example: 'max.mustermann@workshift.de',
+    maxLength: 255
+  })
+  @IsOptional()
+  @IsEmail()
+  managerEmail?: string;
+
+  @ApiPropertyOptional({
+    description: 'Manager phone number',
+    example: '+49 30 12345679',
+    maxLength: 20
+  })
+  @IsOptional()
+  @IsString()
+  managerPhone?: string;
 
   @ApiProperty({ 
-    description: 'Location capacity (number of people)',
+    description: 'Maximum location capacity (number of people)',
     example: 50,
     minimum: 1,
-    maximum: 1000
+    maximum: 2000
   })
   @IsInt()
   @Min(1)
-  @Max(1000)
-  capacity: number;
+  @Max(2000)
+  maxCapacity: number;
+
+  @ApiPropertyOptional({
+    description: 'Current capacity usage',
+    example: 35,
+    minimum: 0
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  currentCapacity?: number;
+
+  @ApiPropertyOptional({
+    description: 'Location status',
+    enum: LocationStatus,
+    example: LocationStatus.ACTIVE
+  })
+  @IsOptional()
+  @IsEnum(LocationStatus)
+  status?: LocationStatus;
+
+  @ApiPropertyOptional({
+    description: 'Floor area in square meters',
+    example: 250.5
+  })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  floorArea?: number;
+
+  @ApiPropertyOptional({
+    description: 'Number of rooms',
+    example: 12,
+    minimum: 0
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  numberOfRooms?: number;
+
+  @ApiPropertyOptional({
+    description: 'Number of beds',
+    example: 25,
+    minimum: 0
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  numberOfBeds?: number;
+
+  @ApiPropertyOptional({
+    description: 'Number of parking spaces',
+    example: 30,
+    minimum: 0
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  parkingSpaces?: number;
+
+  @ApiPropertyOptional({
+    description: 'Accessibility features available',
+    example: ['Rollstuhlzugang', 'Aufzug', 'Behindertengerechte Toiletten'],
+    type: [String]
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  accessibilityFeatures?: string[];
+
+  @ApiPropertyOptional({
+    description: 'Safety features available',
+    example: ['Brandmeldeanlage', 'Notausgang', 'Erste-Hilfe-Station'],
+    type: [String]
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  safetyFeatures?: string[];
+
+  @ApiPropertyOptional({
+    description: 'Timezone for this location',
+    example: 'Europe/Berlin',
+    default: 'Europe/Berlin',
+    maxLength: 50
+  })
+  @IsOptional()
+  @IsString()
+  timezone?: string;
 
   @ApiPropertyOptional({ 
     description: 'Operating hours for each day of the week',

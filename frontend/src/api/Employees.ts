@@ -21,20 +21,26 @@ import {
   ConstraintViolationResponseDto,
   CreateEmployeeDto,
   CreateLocationDto,
+  CreateOrganizationDto,
   CreateShiftPlanDto,
   CreateShiftRulesDto,
+  CreateUserDto,
   EmployeeResponseDto,
   GenerateShiftPlanDto,
   LocationResponseDto,
   OperatingHoursDto,
+  OrganizationResponseDto,
   ShiftAssignmentResponseDto,
   ShiftPlanResponseDto,
   ShiftRulesResponseDto,
   TimeSlotDto,
   UpdateEmployeeDto,
   UpdateLocationDto,
+  UpdateOrganizationDto,
   UpdateShiftPlanDto,
   UpdateShiftRulesDto,
+  UpdateUserDto,
+  UserResponseDto,
   ValidateShiftPlanDto,
 } from "./data-contracts";
 
@@ -94,7 +100,7 @@ export class Employees<SecurityDataType = unknown> {
    * @request GET:/api/employees/by-location/{locationId}
    */
   employeesControllerFindByLocation = (
-    locationId: number,
+    locationId: string,
     params: RequestParams = {}
   ) =>
     this.http.request<EmployeeResponseDto[], any>({

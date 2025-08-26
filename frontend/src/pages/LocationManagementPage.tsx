@@ -74,7 +74,7 @@ const LocationManagementPage: React.FC = () => {
   const calculateOverallStatistics = () => {
     const activeLocations = locations.filter(loc => loc.isActive);
     const totalLocations = locations.length;
-    const totalCapacity = locations.reduce((sum, loc) => sum + loc.capacity, 0);
+    const totalCapacity = locations.reduce((sum, loc) => sum + loc.maxCapacity, 0);
     
     let totalClients = 0;
     let totalEmployees = 0;

@@ -1,8 +1,32 @@
-import { IsInt, IsOptional, IsBoolean, IsString, IsObject, Min, Max } from 'class-validator';
+import { IsInt, IsOptional, IsBoolean, IsString, IsObject, Min, Max, IsEnum, IsUUID, IsDateString, IsNumber } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { MonthlyShiftPlan } from '@/database/entities';
+import { MonthlyShiftPlan, ShiftPlanStatus, ApprovalStatus } from '@/database/entities';
 
 export class CreateShiftPlanDto {
+  @ApiProperty({
+    description: 'ID der Organisation',
+    example: 'uuid-string'
+  })
+  @IsUUID()
+  organizationId: string;
+
+  @ApiProperty({
+    description: 'Name des Schichtplans',
+    example: 'Dezember 2024 Schichtplan',
+    maxLength: 255
+  })
+  @IsString()
+  name: string;
+
+  @ApiPropertyOptional({
+    description: 'Beschreibung des Schichtplans',
+    example: 'Weihnachtszeit Schichtplan mit erhöhtem Personalbedarf',
+    maxLength: 500
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
   @ApiProperty({ 
     description: 'Year for the shift plan',
     example: 2024,
@@ -25,6 +49,38 @@ export class CreateShiftPlanDto {
   @Max(12)
   month: number;
 
+  @ApiProperty({
+    description: 'Start date of planning period',
+    example: '2024-12-01'
+  })
+  @IsDateString()
+  planningPeriodStart: string;
+
+  @ApiProperty({
+    description: 'End date of planning period',
+    example: '2024-12-31'
+  })
+  @IsDateString()
+  planningPeriodEnd: string;
+
+  @ApiPropertyOptional({
+    description: 'Status of the shift plan',
+    enum: ShiftPlanStatus,
+    example: ShiftPlanStatus.DRAFT
+  })
+  @IsOptional()
+  @IsEnum(ShiftPlanStatus)
+  status?: ShiftPlanStatus;
+
+  @ApiPropertyOptional({
+    description: 'Approval status',
+    enum: ApprovalStatus,
+    example: ApprovalStatus.PENDING
+  })
+  @IsOptional()
+  @IsEnum(ApprovalStatus)
+  approvalStatus?: ApprovalStatus;
+
   @ApiPropertyOptional({ 
     description: 'Monthly shift plan data structure',
     type: 'object',
@@ -45,6 +101,64 @@ export class CreateShiftPlanDto {
   @IsObject()
   planData?: MonthlyShiftPlan;
 
+  @ApiPropertyOptional({
+    description: 'Metadata for the shift plan',
+    type: 'object',
+    additionalProperties: true,
+    example: { generatedBy: 'system', version: '1.0' }
+  })
+  @IsOptional()
+  @IsObject()
+  metadata?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    description: 'Total number of shifts in the plan',
+    example: 150,
+    minimum: 0
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  totalShifts?: number;
+
+  @ApiPropertyOptional({
+    description: 'Total hours in the shift plan',
+    example: 1200.50
+  })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  totalHours?: number;
+
+  @ApiPropertyOptional({
+    description: 'Total number of employees in the plan',
+    example: 25,
+    minimum: 0
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  totalEmployees?: number;
+
+  @ApiPropertyOptional({
+    description: 'Coverage percentage',
+    example: 95.5,
+    minimum: 0,
+    maximum: 100
+  })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  coveragePercentage?: number;
+
+  @ApiPropertyOptional({
+    description: 'Number of constraint violations',
+    example: 2,
+    minimum: 0
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  constraintViolations?: number;
+
   @ApiPropertyOptional({ 
     description: 'Whether this shift plan is published',
     example: false,
@@ -54,8 +168,9 @@ export class CreateShiftPlanDto {
   @IsBoolean()
   isPublished?: boolean;
 
-  @ApiPropertyOptional({ 
-    description: 'User ID who created this shift plan'
+  @ApiPropertyOptional({
+    description: 'ID of user who created this shift plan',
+    example: 'uuid-string'
   })
   @IsOptional()
   @IsString()

@@ -9,6 +9,12 @@ export class EmployeeResponseDto {
   id: string;
 
   @ApiProperty({
+    description: 'ID der Organisation',
+    example: 'uuid-string'
+  })
+  organizationId: string;
+
+  @ApiProperty({
     description: 'Mitarbeiternummer',
     example: 'EMP001'
   })
@@ -43,6 +49,12 @@ export class EmployeeResponseDto {
     example: '+49 89 1234-001'
   })
   phoneNumber?: string;
+
+  @ApiPropertyOptional({
+    description: 'Geburtsdatum',
+    example: '1985-03-15'
+  })
+  dateOfBirth?: Date;
 
   @ApiProperty({
     description: 'Einstellungsdatum',
@@ -112,6 +124,42 @@ export class EmployeeResponseDto {
   })
   supervisorId?: string;
 
+  @ApiPropertyOptional({
+    description: 'Name des Notfallkontakts',
+    example: 'Maria Schneider'
+  })
+  emergencyContactName?: string;
+
+  @ApiPropertyOptional({
+    description: 'Telefonnummer des Notfallkontakts',
+    example: '+49 89 1234-002'
+  })
+  emergencyContactPhone?: string;
+
+  @ApiPropertyOptional({
+    description: 'Adresse',
+    example: 'Musterstraße 123'
+  })
+  address?: string;
+
+  @ApiPropertyOptional({
+    description: 'Stadt',
+    example: 'München'
+  })
+  city?: string;
+
+  @ApiPropertyOptional({
+    description: 'Postleitzahl',
+    example: '80331'
+  })
+  postalCode?: string;
+
+  @ApiPropertyOptional({
+    description: 'Land',
+    example: 'Deutschland'
+  })
+  country?: string;
+
   @ApiProperty({
     description: 'Zertifizierungen',
     example: ['Krankenpflege-Ausbildung', 'Erste Hilfe']
@@ -129,6 +177,12 @@ export class EmployeeResponseDto {
     example: ['Deutsch', 'Englisch']
   })
   languages: string[];
+
+  @ApiPropertyOptional({
+    description: 'URL des Profilbilds',
+    example: 'https://example.com/profile.jpg'
+  })
+  profilePictureUrl?: string;
 
   @ApiPropertyOptional({
     description: 'Notizen',
@@ -165,6 +219,24 @@ export class EmployeeResponseDto {
     example: '2023-06-15T14:30:00Z'
   })
   updatedAt: Date;
+
+  @ApiPropertyOptional({
+    description: 'ID des Benutzers der den Eintrag erstellt hat',
+    example: 'uuid-string'
+  })
+  createdBy?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID des Benutzers der den Eintrag zuletzt geändert hat',
+    example: 'uuid-string'
+  })
+  updatedBy?: string;
+
+  @ApiPropertyOptional({
+    description: 'Löschzeitpunkt (Soft Delete)',
+    example: '2023-12-31T23:59:59Z'
+  })
+  deletedAt?: Date;
 
   // Optional relations
   @ApiPropertyOptional({

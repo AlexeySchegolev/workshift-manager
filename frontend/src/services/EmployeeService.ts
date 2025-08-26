@@ -64,7 +64,7 @@ export class EmployeeService extends BaseService {
   /**
    * Get employees by location
    */
-  async getEmployeesByLocation(locationId: number): Promise<EmployeeResponseDto[]> {
+  async getEmployeesByLocation(locationId: string): Promise<EmployeeResponseDto[]> {
     const response = await this.employeesApi.employeesControllerFindByLocation(locationId);
     return response.data;
   }

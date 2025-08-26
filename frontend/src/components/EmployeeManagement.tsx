@@ -44,10 +44,7 @@ import {
 } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Employee } from '../models/interfaces';
-import { CreateEmployeeDto } from "@/api/data-contracts";
-
-type EmployeeRole = CreateEmployeeDto['role'];
+import { Employee, EmployeeRole } from '../models/interfaces';
 
 interface EmployeeManagementProps {
   employees: Employee[];
@@ -260,7 +257,10 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
   };
 
   // Avatar-Initialen generieren
-  const getInitials = (name: string) => {
+  const getInitials = (name: string | undefined | null) => {
+    if (!name || typeof name !== 'string') {
+      return '??';
+    }
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 

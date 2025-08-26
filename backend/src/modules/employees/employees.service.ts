@@ -41,7 +41,18 @@ export class EmployeesService {
     this.logger.log('Retrieving all employees');
     
     const options = includeRelations ? {
-      relations: ['location', 'roles', 'shiftAssignments']
+      relations: [
+        'organization',
+        'location', 
+        'primaryRole',
+        'roles', 
+        'supervisor',
+        'subordinates',
+        'shiftAssignments',
+        'availabilities',
+        'shiftPreferences',
+        'workTimeConstraints'
+      ]
     } : {};
 
     return this.employeeRepository.find(options);
@@ -52,7 +63,18 @@ export class EmployeesService {
 
     const options = includeRelations ? {
       where: { id },
-      relations: ['location', 'roles', 'shiftAssignments']
+      relations: [
+        'organization',
+        'location', 
+        'primaryRole',
+        'roles', 
+        'supervisor',
+        'subordinates',
+        'shiftAssignments',
+        'availabilities',
+        'shiftPreferences',
+        'workTimeConstraints'
+      ]
     } : { where: { id } };
 
     const employee = await this.employeeRepository.findOne(options);

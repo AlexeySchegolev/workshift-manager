@@ -21,20 +21,26 @@ import {
   ConstraintViolationResponseDto,
   CreateEmployeeDto,
   CreateLocationDto,
+  CreateOrganizationDto,
   CreateShiftPlanDto,
   CreateShiftRulesDto,
+  CreateUserDto,
   EmployeeResponseDto,
   GenerateShiftPlanDto,
   LocationResponseDto,
   OperatingHoursDto,
+  OrganizationResponseDto,
   ShiftAssignmentResponseDto,
   ShiftPlanResponseDto,
   ShiftRulesResponseDto,
   TimeSlotDto,
   UpdateEmployeeDto,
   UpdateLocationDto,
+  UpdateOrganizationDto,
   UpdateShiftPlanDto,
   UpdateShiftRulesDto,
+  UpdateUserDto,
+  UserResponseDto,
   ValidateShiftPlanDto,
 } from "./data-contracts";
 
@@ -53,7 +59,7 @@ export class Locations<SecurityDataType = unknown> {
    * @summary Activate location
    * @request POST:/api/locations/{id}/activate
    */
-  locationsControllerActivate = (id: number, params: RequestParams = {}) =>
+  locationsControllerActivate = (id: string, params: RequestParams = {}) =>
     this.http.request<LocationResponseDto, void>({
       path: `/api/locations/${id}/activate`,
       method: "POST",
@@ -86,7 +92,7 @@ export class Locations<SecurityDataType = unknown> {
    * @summary Deactivate location
    * @request POST:/api/locations/{id}/deactivate
    */
-  locationsControllerDeactivate = (id: number, params: RequestParams = {}) =>
+  locationsControllerDeactivate = (id: string, params: RequestParams = {}) =>
     this.http.request<LocationResponseDto, void>({
       path: `/api/locations/${id}/deactivate`,
       method: "POST",
@@ -138,7 +144,7 @@ export class Locations<SecurityDataType = unknown> {
    * @request GET:/api/locations/{id}
    */
   locationsControllerFindOne = (
-    id: number,
+    id: string,
     query?: {
       /** Include employee relationships in response */
       includeEmployees?: boolean;
@@ -160,7 +166,7 @@ export class Locations<SecurityDataType = unknown> {
    * @request GET:/api/locations/{id}/stats
    */
   locationsControllerGetLocationWithStats = (
-    id: number,
+    id: string,
     params: RequestParams = {}
   ) =>
     this.http.request<
@@ -209,7 +215,7 @@ export class Locations<SecurityDataType = unknown> {
    * @summary Delete location
    * @request DELETE:/api/locations/{id}
    */
-  locationsControllerRemove = (id: number, params: RequestParams = {}) =>
+  locationsControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/locations/${id}`,
       method: "DELETE",
@@ -244,7 +250,7 @@ export class Locations<SecurityDataType = unknown> {
    * @request PATCH:/api/locations/{id}
    */
   locationsControllerUpdate = (
-    id: number,
+    id: string,
     data: UpdateLocationDto,
     params: RequestParams = {}
   ) =>

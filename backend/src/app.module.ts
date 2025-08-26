@@ -11,6 +11,8 @@ import { LocationsModule } from './modules/locations/locations.module';
 // import { ShiftsModule } from './modules/shifts/shifts.module';
 import { ShiftPlansModule } from './modules/shift-plans/shift-plans.module';
 import { ShiftRulesModule } from './modules/shift-rules/shift-rules.module';
+import { UsersModule } from './modules/users/users.module';
+import { OrganizationsModule } from './modules/organizations/organizations.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { ShiftRulesModule } from './modules/shift-rules/shift-rules.module';
     LocationsModule,
     ShiftRulesModule,
     ShiftPlansModule,
+    UsersModule,
+    OrganizationsModule,
     // RolesModule,
     // ShiftsModule,
   ],

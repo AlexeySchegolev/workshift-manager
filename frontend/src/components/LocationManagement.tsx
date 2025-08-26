@@ -83,7 +83,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   };
 
   // Standort-Statistiken
-  const getLocationStats = (locationId: number): LocationStats => {
+  const getLocationStats = (locationId: string): LocationStats => {
     // TODO: Statistiken aus der Datenbank laden
     // Temporäre Standardwerte bis DB-Integration implementiert ist
     return {
@@ -100,15 +100,22 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       setIsEditing(true);
     } else {
       setSelectedLocation({
-        id: 0,
+        id: '',
+        organizationId: '',
         name: '',
         address: '',
         city: '',
         postalCode: '',
+        country: 'Germany',
         phone: '',
         email: '',
-        manager: '',
-        capacity: 0,
+        managerName: '',
+        maxCapacity: 0,
+        currentCapacity: 0,
+        status: 'active',
+        timezone: 'Europe/Berlin',
+        accessibilityFeatures: [],
+        safetyFeatures: [],
         operatingHours: {
           monday: [],
           tuesday: [],
@@ -175,8 +182,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       try {
         setLoading(true);
         setError(null);
-        await locationService.deleteLocation(parseInt(locationId));
-        const updatedLocations = locations.filter(loc => loc.id !== parseInt(locationId));
+        await locationService.deleteLocation(locationId);
+        const updatedLocations = locations.filter(loc => loc.id !== locationId);
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
       } catch (err) {
@@ -327,11 +334,11 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                   )}
 
                   {/* Manager */}
-                  {location.manager && (
+                  {location.managerName && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                       <PersonIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
                       <Typography variant="body2" color="text.secondary">
-                        Leitung: {location.manager}
+                        Leitung: {location.managerName}
                       </Typography>
                     </Box>
                   )}
@@ -358,7 +365,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
                       <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>
-                        {location.capacity}
+                        {location.maxCapacity}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         Kapazität
@@ -464,10 +471,10 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                   <TextField
                     fullWidth
                     label="Manager"
-                    value={selectedLocation.manager || ''}
+                    value={selectedLocation.managerName || ''}
                     onChange={(e) => setSelectedLocation({
                       ...selectedLocation,
-                      manager: e.target.value
+                      managerName: e.target.value
                     })}
                   />
                 </Grid>
@@ -531,10 +538,10 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     fullWidth
                     label="Kapazität"
                     type="number"
-                    value={selectedLocation.capacity}
+                    value={selectedLocation.maxCapacity}
                     onChange={(e) => setSelectedLocation({
                       ...selectedLocation,
-                      capacity: parseInt(e.target.value) || 0
+                      maxCapacity: parseInt(e.target.value) || 0
                     })}
                   />
                 </Grid>

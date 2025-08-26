@@ -189,9 +189,17 @@ export class ShiftPlansService {
         createdBy: generateDto.createdBy
       });
     } else {
+      const planName = `Schichtplan ${generateDto.month}/${generateDto.year}`;
+      const planningPeriodStart = new Date(generateDto.year, generateDto.month - 1, 1);
+      const planningPeriodEnd = new Date(generateDto.year, generateDto.month, 0);
+      
       shiftPlan = await this.create({
+        organizationId: 'default-org-id', // TODO: Get from context/user
+        name: planName,
         year: generateDto.year,
         month: generateDto.month,
+        planningPeriodStart: planningPeriodStart.toISOString().split('T')[0],
+        planningPeriodEnd: planningPeriodEnd.toISOString().split('T')[0],
         planData,
         createdBy: generateDto.createdBy
       });

@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { LocationStatus } from '../../../database/entities/location.entity';
 
 export interface TimeSlot {
   /** Start time in HH:MM format */
@@ -64,11 +65,29 @@ export class LocationResponseDto {
   id: string;
 
   @ApiProperty({
+    description: 'Organization ID',
+    example: 'uuid-string'
+  })
+  organizationId: string;
+
+  @ApiProperty({
     description: 'Location name',
     example: 'Berlin Office',
     maxLength: 255,
   })
   name: string;
+
+  @ApiPropertyOptional({
+    description: 'Short identifier code for location',
+    example: 'BER-01'
+  })
+  code?: string;
+
+  @ApiPropertyOptional({
+    description: 'Description of the location',
+    example: 'Hauptstandort mit vollständiger Dialyse-Ausstattung'
+  })
+  description?: string;
 
   @ApiProperty({
     description: 'Location address',
@@ -92,6 +111,30 @@ export class LocationResponseDto {
   postalCode: string;
 
   @ApiPropertyOptional({
+    description: 'State or region',
+    example: 'Berlin'
+  })
+  state?: string;
+
+  @ApiProperty({
+    description: 'Country',
+    example: 'Germany'
+  })
+  country: string;
+
+  @ApiPropertyOptional({
+    description: 'Latitude coordinate',
+    example: 52.5200
+  })
+  latitude?: number;
+
+  @ApiPropertyOptional({
+    description: 'Longitude coordinate',
+    example: 13.4050
+  })
+  longitude?: number;
+
+  @ApiPropertyOptional({
     description: 'Phone number',
     example: '+49 30 12345678',
     maxLength: 20,
@@ -107,10 +150,21 @@ export class LocationResponseDto {
 
   @ApiPropertyOptional({
     description: 'Manager name',
-    example: 'Anna Schmidt',
-    maxLength: 255,
+    example: 'Anna Schmidt'
   })
-  manager?: string;
+  managerName?: string;
+
+  @ApiPropertyOptional({
+    description: 'Manager email address',
+    example: 'anna.schmidt@workshift.de'
+  })
+  managerEmail?: string;
+
+  @ApiPropertyOptional({
+    description: 'Manager phone number',
+    example: '+49 30 12345679'
+  })
+  managerPhone?: string;
 
   @ApiProperty({
     description: 'Maximum capacity (number of people)',
@@ -125,6 +179,57 @@ export class LocationResponseDto {
     minimum: 0,
   })
   currentCapacity: number;
+
+  @ApiProperty({
+    description: 'Location status',
+    enum: LocationStatus,
+    example: LocationStatus.ACTIVE
+  })
+  status: LocationStatus;
+
+  @ApiPropertyOptional({
+    description: 'Floor area in square meters',
+    example: 250.5
+  })
+  floorArea?: number;
+
+  @ApiPropertyOptional({
+    description: 'Number of rooms',
+    example: 12
+  })
+  numberOfRooms?: number;
+
+  @ApiPropertyOptional({
+    description: 'Number of beds',
+    example: 25
+  })
+  numberOfBeds?: number;
+
+  @ApiPropertyOptional({
+    description: 'Number of parking spaces',
+    example: 30
+  })
+  parkingSpaces?: number;
+
+  @ApiProperty({
+    description: 'Accessibility features available',
+    example: ['Rollstuhlzugang', 'Aufzug', 'Behindertengerechte Toiletten'],
+    type: [String]
+  })
+  accessibilityFeatures: string[];
+
+  @ApiProperty({
+    description: 'Safety features available',
+    example: ['Brandmeldeanlage', 'Notausgang', 'Erste-Hilfe-Station'],
+    type: [String]
+  })
+  safetyFeatures: string[];
+
+  @ApiProperty({
+    description: 'Timezone for this location',
+    example: 'Europe/Berlin'
+  })
+  timezone: string;
 
   @ApiProperty({
     description: 'Operating hours for each day of the week',
@@ -180,4 +285,22 @@ export class LocationResponseDto {
     example: '2024-01-15T10:30:00Z',
   })
   updatedAt: Date;
+
+  @ApiPropertyOptional({
+    description: 'ID of user who created this location',
+    example: 'uuid-string'
+  })
+  createdBy?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID of user who last updated this location',
+    example: 'uuid-string'
+  })
+  updatedBy?: string;
+
+  @ApiPropertyOptional({
+    description: 'Deletion timestamp (soft delete)',
+    example: '2024-01-15T10:30:00Z'
+  })
+  deletedAt?: Date;
 }

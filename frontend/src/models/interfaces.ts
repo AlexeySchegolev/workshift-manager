@@ -1,102 +1,4 @@
-/**
- * Mitarbeiter-Interface
- */
-export interface Employee {
-  id: string;
-  name: string;
-  role: EmployeeRole;
-  hoursPerMonth: number; // Monatliche Sollstunden
-  hoursPerWeek?: number; // Optional: Wöchentliche Sollstunden (wird nicht mehr angezeigt)
-  locationId?: number; // Zugehörigkeit zum Standort (Integer ID)
-}
-
-/**
- * Mitarbeiterrollen (Legacy - wird durch RoleDefinition ersetzt)
- */
-export type EmployeeRole = 'Specialist' | 'Assistant' | 'ShiftLeader';
-
-/**
- * Erweiterte Rollendefinition
- */
-export interface RoleDefinition {
-  id: string;
-  name: string;
-  displayName: string;
-  description: string;
-  color: string; // Hex-Farbe für UI
-  priority: number; // Niedrigere Zahl = höhere Priorität
-  permissions: RolePermission[];
-  requirements: RoleRequirement[];
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-/**
- * Rollen-Berechtigungen
- */
-export interface RolePermission {
-  id: string;
-  name: string;
-  description: string;
-  category: 'shift_planning' | 'management' | 'administration' | 'reporting';
-}
-
-/**
- * Rollen-Anforderungen
- */
-export interface RoleRequirement {
-  id: string;
-  type: 'certification' | 'experience' | 'training' | 'other';
-  name: string;
-  description: string;
-  required: boolean;
-}
-
-/**
- * Standard-Rollen-Definitionen
- */
-export const DEFAULT_ROLES: RoleDefinition[] = [
-  {
-    id: 'shiftleader',
-    name: 'ShiftLeader',
-    displayName: 'Schichtleiter/in',
-    description: 'Verantwortlich für die Leitung einer Schicht und Koordination des Teams',
-    color: '#1976d2',
-    priority: 1,
-    permissions: [],
-    requirements: [],
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 'specialist',
-    name: 'Specialist',
-    displayName: 'Fachkraft',
-    description: 'Qualifizierte Fachkraft mit abgeschlossener Ausbildung',
-    color: '#388e3c',
-    priority: 2,
-    permissions: [],
-    requirements: [],
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 'assistant',
-    name: 'Assistant',
-    displayName: 'Hilfskraft',
-    description: 'Unterstützende Hilfskraft',
-    color: '#f57c00',
-    priority: 3,
-    permissions: [],
-    requirements: [],
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }
-];
+import {RoleResponseDto} from "@/api/data-contracts.ts";
 
 /**
  * Schicht-Interface
@@ -104,7 +6,7 @@ export const DEFAULT_ROLES: RoleDefinition[] = [
 export interface Shift {
   start: string;  // Format: "HH:MM"
   end: string;    // Format: "HH:MM"
-  roles: EmployeeRole[];  // Erlaubte Rollen für diese Schicht
+  roles: RoleResponseDto[];  // Erlaubte Rollen für diese Schicht
 }
 
 /**
@@ -172,41 +74,6 @@ export interface ShiftRules {
 }
 
 /**
- * Standort-Interface
- */
-export interface Location {
-  id: number; // Integer ID
-  name: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  phone?: string;
-  email?: string;
-  manager?: string;
-  capacity: number; // Maximale Kapazität (Arbeitsplätze/Kunden)
-  operatingHours: {
-    monday: TimeSlot[];
-    tuesday: TimeSlot[];
-    wednesday: TimeSlot[];
-    thursday: TimeSlot[];
-    friday: TimeSlot[];
-    saturday: TimeSlot[];
-    sunday: TimeSlot[];
-  };
-  services: string[]; // Angebotene Services/Dienstleistungen
-  equipment: string[]; // Verfügbare Ausstattung/Geräte
-  isActive: boolean;
-}
-
-/**
- * Zeitslot für Öffnungszeiten
- */
-export interface TimeSlot {
-  start: string; // Format: "HH:MM"
-  end: string;   // Format: "HH:MM"
-}
-
-/**
  * Standort-Statistiken
  */
 export interface LocationStats {
@@ -225,83 +92,4 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
   message?: string;
-}
-
-/**
- * Paginierung
- */
-export interface PaginationParams {
-  page: number;
-  limit: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
-/**
- * Schichtplan-Generierung Request
- */
-export interface GenerateShiftPlanRequest {
-  year: number;
-  month: number;
-  employeeIds?: string[];
-  useRelaxedRules?: boolean;
-}
-
-/**
- * Schichtplan-Generierung Response
- */
-export interface GenerateShiftPlanResponse {
-  shiftPlan: MonthlyShiftPlan;
-  employeeAvailability: EmployeeAvailability;
-  violations: {
-    hard: ConstraintViolation[];
-    soft: ConstraintViolation[];
-  };
-  statistics: PlanningStatistics;
-}
-
-/**
- * Planungsstatistiken
- */
-export interface PlanningStatistics {
-  completeDays: number;
-  incompleteDays: number;
-  completionRate: number;
-  averageWorkload: number;
-  workloadDistribution: {
-    employeeId: string;
-    name: string;
-    assignedHours: number;
-    targetHours: number;
-    percentage: number;
-  }[];
-  saturdayDistribution: {
-    employeeId: string;
-    name: string;
-    count: number;
-  }[];
-}
-
-/**
- * Constraint-Verletzung
- */
-export interface ConstraintViolation {
-  id: string;
-  rule: string;
-  message: string;
-  employeeId?: string;
-  date?: string;
-  severity?: number;
-  isResolved?: boolean;
-  createdAt: Date;
 }

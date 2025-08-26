@@ -1,5 +1,4 @@
 import {
-  Employee,
   ShiftDefinitions,
   MonthlyShiftPlan,
   EmployeeAvailability,
@@ -12,6 +11,7 @@ import { ShiftPlanningConstraintService } from './ShiftPlanningConstraintService
 import { ShiftPlanningBacktrackingService } from './ShiftPlanningBacktrackingService';
 import { StandortBShiftPlanningService } from './StandortBShiftPlanningService';
 import { EmployeeRoleSortingService } from './EmployeeRoleSortingService';
+import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 
 /**
  * Hauptservice für die Schichtplanung
@@ -27,13 +27,13 @@ export class ShiftPlanningService {
    * @returns Generierter Schichtplan und finale Mitarbeiterverfügbarkeit
    */
   static generateShiftPlan(
-    employees: Employee[],
+    employees: EmployeeResponseDto[],
     year: number,
     month: number
   ): { shiftPlan: MonthlyShiftPlan; employeeAvailability: EmployeeAvailability } {
     // Mitarbeiter nach Klinik filtern
-    const elmshornerEmployees = employees.filter(emp => emp.locationId === 1 || !emp.locationId);
-    const uetersenEmployees = employees.filter(emp => emp.locationId === 2);
+    const elmshornerEmployees = employees.filter(emp => emp.locationId === "1" || !emp.locationId);
+    const uetersenEmployees = employees.filter(emp => emp.locationId === "2");
     
     // ALLE Mitarbeiter für Samstagsplanung (Elmshorn + Uetersen)
     const allEmployeesForSaturdays = [...elmshornerEmployees, ...uetersenEmployees];
@@ -106,8 +106,8 @@ export class ShiftPlanningService {
    * @returns Generierter Schichtplan und Mitarbeiterverfügbarkeit
    */
   private static runPlanningAttempt(
-    employees: Employee[],
-    allEmployeesForSaturdays: Employee[],
+    employees: EmployeeResponseDto[],
+    allEmployeesForSaturdays: EmployeeResponseDto[],
     shifts: ShiftDefinitions,
     year: number,
     month: number,
@@ -365,7 +365,7 @@ export class ShiftPlanningService {
    */
   static checkConstraints(
     shiftPlan: MonthlyShiftPlan,
-    employees: Employee[],
+    employees: EmployeeResponseDto[],
     employeeAvailability: EmployeeAvailability
   ): ConstraintCheck[] {
     return ShiftPlanningConstraintService.checkConstraints(shiftPlan, employees, employeeAvailability);

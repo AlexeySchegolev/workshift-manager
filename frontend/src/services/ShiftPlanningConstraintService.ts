@@ -1,9 +1,9 @@
 import {
-  Employee,
   EmployeeAvailability,
   MonthlyShiftPlan,
   ConstraintCheck
 } from '../models/interfaces';
+import {EmployeeResponseDto, RoleResponseDto} from "@/api/data-contracts.ts";
 
 // Export leeres Objekt, damit die Datei als Modul erkannt wird
 export {};
@@ -17,8 +17,8 @@ export class ShiftPlanningConstraintService {
    * Verwendet die zentrale Regelstruktur für konsistente Entscheidungen
    */
   static canAssignEmployee(
-    emp: Employee,
-    validRoles: string[],
+    emp: EmployeeResponseDto,
+    validRoles: RoleResponseDto[],
     employeeAvailability: EmployeeAvailability,
     dayKey: string,
     weekday: number,
@@ -30,11 +30,11 @@ export class ShiftPlanningConstraintService {
     // Alle Rollen sind jetzt aktiviert!
     
     // 1) Rolle prüfen - ALLE ROLLEN ERLAUBT
-    if (emp.role !== 'ShiftLeader' && emp.role !== 'Specialist' && emp.role !== 'Assistant') {
+    if (emp.primaryRole?.type !== 'shift_leader' && emp.primaryRole?.type !== 'specialist' && emp.primaryRole?.type !== 'assistant') {
       return false;
     }
     
-    if (!validRoles.includes(emp.role)) {
+    if (!validRoles.includes(emp.primaryRole)) {
       return false;
     }
     
@@ -117,7 +117,7 @@ export class ShiftPlanningConstraintService {
    * Prüft, ob ein Mitarbeiter einer Uetersen-Schicht zugewiesen werden kann
    */
   static canAssignEmployeeToStandortB(
-    emp: Employee,
+    emp: EmployeeResponseDto,
     employeeAvailability: EmployeeAvailability,
     dayKey: string,
     shiftName: string,
@@ -127,7 +127,7 @@ export class ShiftPlanningConstraintService {
     // Schichtleiter, Fachkräfte und Hilfskräfte sind erlaubt
 
     // 1) Rolle prüfen - ALLE ROLLEN ERLAUBT
-    if (emp.role !== 'ShiftLeader' && emp.role !== 'Specialist' && emp.role !== 'Assistant') {
+    if (emp.primaryRole?.type !== 'shift_leader' && emp.primaryRole?.type !== 'specialist' && emp.primaryRole?.type !== 'assistant') {
       return false;
     }
     
@@ -201,7 +201,7 @@ export class ShiftPlanningConstraintService {
    */
   static checkConstraints(
     shiftPlan: MonthlyShiftPlan,
-    employees: Employee[],
+    employees: EmployeeResponseDto[],
     employeeAvailability: EmployeeAvailability
   ): ConstraintCheck[] {
     const checks: ConstraintCheck[] = [];
@@ -257,11 +257,11 @@ export class ShiftPlanningConstraintService {
         for (const empId of employeeIds) {
           const employee = employees.find(e => e.id === empId);
           if (employee) {
-            if (employee.role === 'ShiftLeader') {
+            if (employee.primaryRoleId === 'ShiftLeader') {
               schichtleiterCount++;
-            } else if (employee.role === 'Specialist') {
+            } else if (employee.primaryRoleId === 'Specialist') {
               pflegerCount++;
-            } else if (employee.role === 'Assistant') {
+            } else if (employee.primaryRoleId === 'Assistant') {
               pflegehelferCount++;
             }
           }
@@ -281,9 +281,9 @@ export class ShiftPlanningConstraintService {
     });
     
     const relevantEmployees = employees.filter(emp =>
-      emp.role === 'ShiftLeader' ||
-      emp.role === 'Specialist' ||
-      emp.role === 'Assistant'
+      emp.primaryRoleId === 'ShiftLeader' ||
+      emp.primaryRoleId === 'Specialist' ||
+      emp.primaryRoleId === 'Assistant'
     );
     
     for (const emp of relevantEmployees) {
@@ -291,7 +291,7 @@ export class ShiftPlanningConstraintService {
       if (!availability) {
         checks.push({
           status: 'info',
-          message: `${emp.name} (${emp.role}): Keine Schichten zugewiesen`
+          message: `${emp.lastName} (${emp.primaryRoleId}): Keine Schichten zugewiesen`
         });
         continue;
       }
@@ -303,7 +303,7 @@ export class ShiftPlanningConstraintService {
       
       checks.push({
         status: 'info',
-        message: `${emp.name} (${emp.role}): ${shiftsCount} Schichten, ${totalHours.toFixed(1)}h (${percentage}% der Sollstunden)`
+        message: `${emp.lastName} (${emp.primaryRoleId}): ${shiftsCount} Schichten, ${totalHours.toFixed(1)}h (${percentage}% der Sollstunden)`
       });
     }
     
@@ -347,7 +347,7 @@ export class ShiftPlanningConstraintService {
     const employeesWithSaturdays = Object.entries(saturdayStats)
       .map(([empId, count]) => {
         const emp = employees.find(e => e.id === empId);
-        return { name: emp?.name || empId, location: emp?.locationId ? `Location ${emp.locationId}` : 'Unbekannt', count };
+        return { name: emp?.lastName || empId, location: emp?.locationId ? `Location ${emp.locationId}` : 'Unbekannt', count };
       })
       .sort((a, b) => b.count - a.count);
     

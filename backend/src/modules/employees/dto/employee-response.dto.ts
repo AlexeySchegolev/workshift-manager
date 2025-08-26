@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { EmployeeStatus, ContractType } from '../../../database/entities/employee.entity';
+import { LocationResponseDto } from '../../locations/dto/location-response.dto';
+import { RoleResponseDto } from '../../roles/dto/role-response.dto';
 
 export class EmployeeResponseDto {
   @ApiProperty({
@@ -240,27 +242,32 @@ export class EmployeeResponseDto {
 
   // Optional relations
   @ApiPropertyOptional({
-    description: 'Standort-Informationen'
+    description: 'Standort-Informationen',
+    type: () => LocationResponseDto
   })
-  location?: any;
+  location?: LocationResponseDto;
 
   @ApiPropertyOptional({
-    description: 'Hauptrolle-Informationen'
+    description: 'Hauptrolle-Informationen',
+    type: () => RoleResponseDto
   })
-  primaryRole?: any;
+  primaryRole?: RoleResponseDto;
 
   @ApiPropertyOptional({
-    description: 'Alle Rollen des Mitarbeiters'
+    description: 'Alle Rollen des Mitarbeiters',
+    type: () => [RoleResponseDto]
   })
-  roles?: any[];
+  roles?: RoleResponseDto[];
 
   @ApiPropertyOptional({
-    description: 'Vorgesetzter-Informationen'
+    description: 'Vorgesetzter-Informationen',
+    type: () => EmployeeResponseDto
   })
-  supervisor?: any;
+  supervisor?: EmployeeResponseDto;
 
   @ApiPropertyOptional({
-    description: 'Untergebene Mitarbeiter'
+    description: 'Untergebene Mitarbeiter',
+    type: () => [EmployeeResponseDto]
   })
-  subordinates?: any[];
+  subordinates?: EmployeeResponseDto[];
 }

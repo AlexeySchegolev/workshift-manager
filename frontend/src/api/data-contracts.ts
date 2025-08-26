@@ -464,6 +464,131 @@ export interface CreateOrganizationDto {
   website?: string;
 }
 
+export interface CreateRoleDto {
+  /**
+   * Kann an Feiertagen arbeiten
+   * @example false
+   */
+  canWorkHolidays?: boolean;
+  /**
+   * Kann Nachtschichten arbeiten
+   * @example true
+   */
+  canWorkNights?: boolean;
+  /**
+   * Kann Wochenendschichten arbeiten
+   * @example true
+   */
+  canWorkWeekends?: boolean;
+  /**
+   * Farbcode für UI-Anzeige (Hex)
+   * @example "#1976d2"
+   */
+  colorCode?: string;
+  /**
+   * Erstellt von (Benutzer-ID)
+   * @example "123e4567-e89b-12d3-a456-426614174001"
+   */
+  createdBy?: string;
+  /**
+   * Beschreibung der Rolle
+   * @example "Qualifizierte Fachkraft für die Durchführung von Dialysebehandlungen"
+   */
+  description?: string;
+  /**
+   * Stundensatz in Euro
+   * @example 25.5
+   */
+  hourlyRate?: number;
+  /**
+   * Rolle ist aktiv
+   * @example true
+   */
+  isActive?: boolean;
+  /**
+   * Maximale aufeinanderfolgende Arbeitstage
+   * @example 5
+   */
+  maxConsecutiveDays?: number;
+  /**
+   * Maximale monatliche Arbeitszeit
+   * @example 160
+   */
+  maxMonthlyHours?: number;
+  /**
+   * Maximale wöchentliche Arbeitszeit
+   * @example 40
+   */
+  maxWeeklyHours?: number;
+  /**
+   * Mindest-Berufserfahrung in Monaten
+   * @example 12
+   */
+  minExperienceMonths?: number;
+  /**
+   * Mindest-Ruhezeit zwischen Schichten in Stunden
+   * @example 11
+   */
+  minRestHours?: number;
+  /**
+   * Name der Rolle
+   * @example "Fachkraft Dialyse"
+   */
+  name: string;
+  /**
+   * ID der Organisation
+   * @example "123e4567-e89b-12d3-a456-426614174000"
+   */
+  organizationId: string;
+  /**
+   * Überstundensatz in Euro
+   * @example 31.88
+   */
+  overtimeRate?: number;
+  /**
+   * Berechtigungen
+   * @example ["view_patient_data","manage_dialysis_machines"]
+   */
+  permissions?: string[];
+  /**
+   * Prioritätslevel der Rolle (1-10, höher = wichtiger)
+   * @example 5
+   */
+  priorityLevel?: number;
+  /**
+   * Erforderliche Zertifizierungen
+   * @example ["Dialyse-Grundkurs","Hygiene-Schulung"]
+   */
+  requiredCertifications?: string[];
+  /**
+   * Erforderliche Fähigkeiten
+   * @example ["Patientenbetreuung","Maschinenbedienung"]
+   */
+  requiredSkills?: string[];
+  /**
+   * Status der Rolle
+   * @example "active"
+   */
+  status?: "active" | "inactive" | "deprecated";
+  /**
+   * Typ der Rolle
+   * @example "specialist"
+   */
+  type:
+    | "specialist"
+    | "assistant"
+    | "shift_leader"
+    | "nurse"
+    | "nurse_manager"
+    | "helper"
+    | "doctor"
+    | "technician"
+    | "administrator"
+    | "cleaner"
+    | "security"
+    | "other";
+}
+
 export interface CreateShiftPlanDto {
   /**
    * Approval status
@@ -849,7 +974,7 @@ export interface EmployeeResponseDto {
    */
   lastName: string;
   /** Standort-Informationen */
-  location?: object;
+  location?: LocationResponseDto;
   /**
    * ID des Standorts
    * @example "uuid-string"
@@ -881,7 +1006,7 @@ export interface EmployeeResponseDto {
    */
   postalCode?: string;
   /** Hauptrolle-Informationen */
-  primaryRole?: object;
+  primaryRole?: RoleResponseDto;
   /**
    * ID der Hauptrolle
    * @example "uuid-string"
@@ -893,7 +1018,7 @@ export interface EmployeeResponseDto {
    */
   profilePictureUrl?: string;
   /** Alle Rollen des Mitarbeiters */
-  roles?: string[];
+  roles?: RoleResponseDto[];
   /**
    * Fähigkeiten
    * @example ["Patientenbetreuung","Teamarbeit"]
@@ -905,9 +1030,9 @@ export interface EmployeeResponseDto {
    */
   status: "active" | "inactive" | "on_leave" | "terminated" | "suspended";
   /** Untergebene Mitarbeiter */
-  subordinates?: string[];
+  subordinates?: EmployeeResponseDto[];
   /** Vorgesetzter-Informationen */
-  supervisor?: object;
+  supervisor?: EmployeeResponseDto;
   /**
    * ID des Vorgesetzten
    * @example "uuid-string"
@@ -1348,6 +1473,169 @@ export interface OrganizationResponseDto {
    * @example "https://www.dialyse-berlin.de"
    */
   website?: string;
+}
+
+export interface RoleResponseDto {
+  /**
+   * Kann an Feiertagen arbeiten
+   * @example false
+   */
+  canWorkHolidays: boolean;
+  /**
+   * Kann Nachtschichten arbeiten
+   * @example true
+   */
+  canWorkNights: boolean;
+  /**
+   * Kann Wochenendschichten arbeiten
+   * @example true
+   */
+  canWorkWeekends: boolean;
+  /**
+   * Farbcode für UI-Anzeige (Hex)
+   * @example "#1976d2"
+   */
+  colorCode?: string;
+  /**
+   * Erstellt am
+   * @format date-time
+   * @example "2024-01-01T12:00:00Z"
+   */
+  createdAt: string;
+  /**
+   * Erstellt von (Benutzer-ID)
+   * @example "123e4567-e89b-12d3-a456-426614174002"
+   */
+  createdBy?: string;
+  /**
+   * Gelöscht am
+   * @format date-time
+   * @example null
+   */
+  deletedAt?: string;
+  /**
+   * Beschreibung der Rolle
+   * @example "Qualifizierte Fachkraft für die Durchführung von Dialysebehandlungen"
+   */
+  description?: string;
+  /**
+   * Anzeigename der Rolle (berechnet)
+   * @example "Fachkraft Dialyse (specialist)"
+   */
+  displayName: string;
+  /**
+   * Stundensatz in Euro
+   * @example 25.5
+   */
+  hourlyRate?: number;
+  /**
+   * Eindeutige ID der Rolle
+   * @example "123e4567-e89b-12d3-a456-426614174000"
+   */
+  id: string;
+  /**
+   * Rolle ist aktiv
+   * @example true
+   */
+  isActive: boolean;
+  /**
+   * Rolle ist verfügbar (berechnet)
+   * @example true
+   */
+  isAvailable: boolean;
+  /**
+   * Maximale aufeinanderfolgende Arbeitstage
+   * @example 6
+   */
+  maxConsecutiveDays: number;
+  /**
+   * Maximale monatliche Arbeitszeit
+   * @example 160
+   */
+  maxMonthlyHours: number;
+  /**
+   * Maximale wöchentliche Arbeitszeit
+   * @example 40
+   */
+  maxWeeklyHours: number;
+  /**
+   * Mindest-Berufserfahrung in Monaten
+   * @example 12
+   */
+  minExperienceMonths: number;
+  /**
+   * Mindest-Ruhezeit zwischen Schichten in Stunden
+   * @example 11
+   */
+  minRestHours: number;
+  /**
+   * Name der Rolle
+   * @example "Fachkraft Dialyse"
+   */
+  name: string;
+  /**
+   * ID der Organisation
+   * @example "123e4567-e89b-12d3-a456-426614174001"
+   */
+  organizationId: string;
+  /**
+   * Überstundensatz in Euro
+   * @example 31.88
+   */
+  overtimeRate?: number;
+  /**
+   * Berechtigungen
+   * @example ["view_patient_data","manage_dialysis_machines"]
+   */
+  permissions: string[];
+  /**
+   * Prioritätslevel der Rolle (1-10, höher = wichtiger)
+   * @example 1
+   */
+  priorityLevel: number;
+  /**
+   * Erforderliche Zertifizierungen
+   * @example ["Dialyse-Grundkurs","Hygiene-Schulung"]
+   */
+  requiredCertifications: string[];
+  /**
+   * Erforderliche Fähigkeiten
+   * @example ["Patientenbetreuung","Maschinenbedienung"]
+   */
+  requiredSkills: string[];
+  /**
+   * Status der Rolle
+   * @example "active"
+   */
+  status: "active" | "inactive" | "deprecated";
+  /**
+   * Typ der Rolle
+   * @example "specialist"
+   */
+  type:
+    | "specialist"
+    | "assistant"
+    | "shift_leader"
+    | "nurse"
+    | "nurse_manager"
+    | "helper"
+    | "doctor"
+    | "technician"
+    | "administrator"
+    | "cleaner"
+    | "security"
+    | "other";
+  /**
+   * Aktualisiert am
+   * @format date-time
+   * @example "2024-02-01T12:00:00Z"
+   */
+  updatedAt: string;
+  /**
+   * Aktualisiert von (Benutzer-ID)
+   * @example "123e4567-e89b-12d3-a456-426614174003"
+   */
+  updatedBy?: string;
 }
 
 export interface ShiftAssignmentResponseDto {
@@ -1981,6 +2269,136 @@ export interface UpdateOrganizationDto {
    * @example "https://www.dialyse-berlin.de"
    */
   website?: string;
+}
+
+export interface UpdateRoleDto {
+  /**
+   * Kann an Feiertagen arbeiten
+   * @example false
+   */
+  canWorkHolidays?: boolean;
+  /**
+   * Kann Nachtschichten arbeiten
+   * @example true
+   */
+  canWorkNights?: boolean;
+  /**
+   * Kann Wochenendschichten arbeiten
+   * @example true
+   */
+  canWorkWeekends?: boolean;
+  /**
+   * Farbcode für UI-Anzeige (Hex)
+   * @example "#1976d2"
+   */
+  colorCode?: string;
+  /**
+   * Erstellt von (Benutzer-ID)
+   * @example "123e4567-e89b-12d3-a456-426614174001"
+   */
+  createdBy?: string;
+  /**
+   * Beschreibung der Rolle
+   * @example "Qualifizierte Fachkraft für die Durchführung von Dialysebehandlungen"
+   */
+  description?: string;
+  /**
+   * Stundensatz in Euro
+   * @example 25.5
+   */
+  hourlyRate?: number;
+  /**
+   * Rolle ist aktiv
+   * @example true
+   */
+  isActive?: boolean;
+  /**
+   * Maximale aufeinanderfolgende Arbeitstage
+   * @example 5
+   */
+  maxConsecutiveDays?: number;
+  /**
+   * Maximale monatliche Arbeitszeit
+   * @example 160
+   */
+  maxMonthlyHours?: number;
+  /**
+   * Maximale wöchentliche Arbeitszeit
+   * @example 40
+   */
+  maxWeeklyHours?: number;
+  /**
+   * Mindest-Berufserfahrung in Monaten
+   * @example 12
+   */
+  minExperienceMonths?: number;
+  /**
+   * Mindest-Ruhezeit zwischen Schichten in Stunden
+   * @example 11
+   */
+  minRestHours?: number;
+  /**
+   * Name der Rolle
+   * @example "Fachkraft Dialyse"
+   */
+  name?: string;
+  /**
+   * ID der Organisation
+   * @example "123e4567-e89b-12d3-a456-426614174000"
+   */
+  organizationId?: string;
+  /**
+   * Überstundensatz in Euro
+   * @example 31.88
+   */
+  overtimeRate?: number;
+  /**
+   * Berechtigungen
+   * @example ["view_patient_data","manage_dialysis_machines"]
+   */
+  permissions?: string[];
+  /**
+   * Prioritätslevel der Rolle (1-10, höher = wichtiger)
+   * @example 5
+   */
+  priorityLevel?: number;
+  /**
+   * Erforderliche Zertifizierungen
+   * @example ["Dialyse-Grundkurs","Hygiene-Schulung"]
+   */
+  requiredCertifications?: string[];
+  /**
+   * Erforderliche Fähigkeiten
+   * @example ["Patientenbetreuung","Maschinenbedienung"]
+   */
+  requiredSkills?: string[];
+  /**
+   * Status der Rolle
+   * @example "active"
+   */
+  status?: "active" | "inactive" | "deprecated";
+  /**
+   * Typ der Rolle
+   * @example "specialist"
+   */
+  type?:
+    | "specialist"
+    | "assistant"
+    | "shift_leader"
+    | "nurse"
+    | "nurse_manager"
+    | "helper"
+    | "doctor"
+    | "technician"
+    | "administrator"
+    | "cleaner"
+    | "security"
+    | "other";
+  /**
+   * Aktualisiert von (Benutzer-ID)
+   * @example "123e4567-e89b-12d3-a456-426614174001"
+   */
+  updatedBy?: string;
 }
 
 export interface UpdateShiftPlanDto {

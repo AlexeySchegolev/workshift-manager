@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { LocationStatus } from '../../../database/entities/location.entity';
+import { EmployeeResponseDto } from '../../employees/dto/employee-response.dto';
 
 export interface TimeSlot {
   /** Start time in HH:MM format */
@@ -25,36 +26,6 @@ export interface OperatingHours {
   sunday: TimeSlot[];
 }
 
-export class EmployeeResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the employee',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-    format: 'uuid',
-  })
-  id: string;
-
-  @ApiProperty({
-    description: 'Employee first name',
-    example: 'Max',
-    minLength: 1,
-    maxLength: 100,
-  })
-  firstName: string;
-
-  @ApiProperty({
-    description: 'Employee last name',
-    example: 'Mustermann',
-    minLength: 1,
-    maxLength: 100,
-  })
-  lastName: string;
-
-  @ApiProperty({
-    description: 'Employee full name',
-    example: 'Max Mustermann',
-  })
-  fullName: string;
-}
 
 export class LocationResponseDto {
   @ApiProperty({

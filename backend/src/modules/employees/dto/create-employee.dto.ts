@@ -1,56 +1,123 @@
-import { IsString, IsEnum, IsInt, IsOptional, Min, Max, IsPositive } from 'class-validator';
+import { IsString, IsEnum, IsNumber, IsOptional, Min, Max, IsEmail, IsUUID, IsArray, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EmployeeRole } from '../../../database/entities/employee.entity';
+import { EmployeeStatus, ContractType } from '../../../database/entities/employee.entity';
 
 export class CreateEmployeeDto {
-  @ApiProperty({ 
-    description: 'Employee name', 
-    example: 'Max Mustermann',
-    minLength: 2,
-    maxLength: 255
+  @ApiProperty({
+    description: 'Vorname des Mitarbeiters',
+    example: 'Anna'
   })
   @IsString()
-  name: string;
+  firstName: string;
 
-  @ApiProperty({ 
-    description: 'Employee role',
-    enum: EmployeeRole,
-    example: EmployeeRole.ASSISTANT
+  @ApiProperty({
+    description: 'Nachname des Mitarbeiters',
+    example: 'Schneider'
   })
-  @IsEnum(EmployeeRole)
-  role: EmployeeRole;
+  @IsString()
+  lastName: string;
 
-  @ApiProperty({ 
-    description: 'Hours per month the employee should work',
+  @ApiProperty({
+    description: 'E-Mail-Adresse des Mitarbeiters',
+    example: 'anna.schneider@dialyse-praxis.de'
+  })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({
+    description: 'Mitarbeiternummer',
+    example: 'EMP001'
+  })
+  @IsString()
+  employeeNumber: string;
+
+  @ApiPropertyOptional({
+    description: 'Telefonnummer',
+    example: '+49 89 1234-001'
+  })
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @ApiProperty({
+    description: 'Einstellungsdatum',
+    example: '2020-01-15'
+  })
+  @IsDateString()
+  hireDate: string;
+
+  @ApiPropertyOptional({
+    description: 'Status des Mitarbeiters',
+    enum: EmployeeStatus,
+    example: EmployeeStatus.ACTIVE
+  })
+  @IsOptional()
+  @IsEnum(EmployeeStatus)
+  status?: EmployeeStatus;
+
+  @ApiPropertyOptional({
+    description: 'Vertragstyp',
+    enum: ContractType,
+    example: ContractType.FULL_TIME
+  })
+  @IsOptional()
+  @IsEnum(ContractType)
+  contractType?: ContractType;
+
+  @ApiProperty({
+    description: 'Arbeitsstunden pro Monat',
     example: 160,
     minimum: 1,
-    maximum: 300
+    maximum: 200
   })
-  @IsInt()
-  @IsPositive()
+  @IsNumber()
   @Min(1)
-  @Max(300)
+  @Max(200)
   hoursPerMonth: number;
 
-  @ApiPropertyOptional({ 
-    description: 'Hours per week (optional)',
+  @ApiPropertyOptional({
+    description: 'Arbeitsstunden pro Woche',
     example: 40,
     minimum: 1,
-    maximum: 60
+    maximum: 50
   })
   @IsOptional()
-  @IsInt()
-  @IsPositive()
+  @IsNumber()
   @Min(1)
-  @Max(60)
+  @Max(50)
   hoursPerWeek?: number;
 
-  @ApiPropertyOptional({ 
-    description: 'Location ID where employee is assigned',
-    example: 1
+  @ApiPropertyOptional({
+    description: 'ID des Standorts',
+    example: 'uuid-string'
   })
   @IsOptional()
-  @IsInt()
-  @IsPositive()
-  locationId?: number;
+  @IsUUID()
+  locationId?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID der Hauptrolle',
+    example: 'uuid-string'
+  })
+  @IsOptional()
+  @IsUUID()
+  primaryRoleId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Zertifizierungen',
+    example: ['Krankenpflege-Ausbildung', 'Erste Hilfe']
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  certifications?: string[];
+
+  @ApiPropertyOptional({
+    description: 'Fähigkeiten',
+    example: ['Patientenbetreuung', 'Teamarbeit']
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  skills?: string[];
 }

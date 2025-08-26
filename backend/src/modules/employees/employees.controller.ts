@@ -98,10 +98,11 @@ export class EmployeesController {
     summary: 'Get employees by location',
     description: 'Retrieves all employees assigned to a specific location'
   })
-  @ApiParam({ 
-    name: 'locationId', 
-    type: 'number',
-    description: 'Location ID'
+  @ApiParam({
+    name: 'locationId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
   })
   @ApiResponse({ 
     status: 200, 
@@ -109,7 +110,7 @@ export class EmployeesController {
     type: [EmployeeResponseDto]
   })
   async findByLocation(
-    @Param('locationId', ParseIntPipe) locationId: number
+    @Param('locationId', ParseUUIDPipe) locationId: string
   ): Promise<EmployeeResponseDto[]> {
     return this.employeesService.findByLocation(locationId);
   }

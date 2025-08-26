@@ -18,7 +18,7 @@ export class EmployeesService {
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
-    this.logger.log(`Creating new employee: ${createEmployeeDto.name}`);
+    this.logger.log(`Creating new employee: ${createEmployeeDto.firstName} ${createEmployeeDto.lastName}`);
 
     // Validate location exists if provided
     if (createEmployeeDto.locationId) {
@@ -41,7 +41,7 @@ export class EmployeesService {
     this.logger.log('Retrieving all employees');
     
     const options = includeRelations ? {
-      relations: ['location', 'shiftAssignments']
+      relations: ['location', 'roles', 'shiftAssignments']
     } : {};
 
     return this.employeeRepository.find(options);
@@ -52,7 +52,7 @@ export class EmployeesService {
 
     const options = includeRelations ? {
       where: { id },
-      relations: ['location', 'shiftAssignments']
+      relations: ['location', 'roles', 'shiftAssignments']
     } : { where: { id } };
 
     const employee = await this.employeeRepository.findOne(options);
@@ -97,7 +97,7 @@ export class EmployeesService {
     this.logger.log(`Employee with ID ${id} deleted successfully`);
   }
 
-  async findByLocation(locationId: number): Promise<Employee[]> {
+  async findByLocation(locationId: string): Promise<Employee[]> {
     this.logger.log(`Retrieving employees for location ID: ${locationId}`);
 
     return this.employeeRepository.find({
@@ -106,12 +106,16 @@ export class EmployeesService {
     });
   }
 
-  async findByRole(role: string): Promise<Employee[]> {
-    this.logger.log(`Retrieving employees with role: ${role}`);
+  async findByRole(roleName: string): Promise<Employee[]> {
+    this.logger.log(`Retrieving employees with role: ${roleName}`);
 
     return this.employeeRepository.find({
-      where: { role: role as any },
-      relations: ['location']
+      where: {
+        roles: {
+          name: roleName
+        }
+      },
+      relations: ['location', 'roles']
     });
   }
 
@@ -122,7 +126,7 @@ export class EmployeesService {
   }> {
     this.logger.log('Generating employee statistics');
 
-    const employees = await this.employeeRepository.find({ relations: ['location'] });
+    const employees = await this.employeeRepository.find({ relations: ['location', 'roles'] });
     
     const stats = {
       total: employees.length,
@@ -131,8 +135,14 @@ export class EmployeesService {
     };
 
     employees.forEach(employee => {
-      // Count by role
-      stats.byRole[employee.role] = (stats.byRole[employee.role] || 0) + 1;
+      // Count by role - handle multiple roles per employee
+      if (employee.roles && employee.roles.length > 0) {
+        employee.roles.forEach(role => {
+          stats.byRole[role.name] = (stats.byRole[role.name] || 0) + 1;
+        });
+      } else {
+        stats.byRole['Unassigned'] = (stats.byRole['Unassigned'] || 0) + 1;
+      }
       
       // Count by location
       const locationName = employee.location?.name || 'Unassigned';

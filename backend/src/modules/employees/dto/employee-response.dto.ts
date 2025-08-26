@@ -1,117 +1,194 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EmployeeRole } from '../../../database/entities/employee.entity';
-
-export class LocationResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the location',
-    example: 1,
-  })
-  id: number;
-
-  @ApiProperty({
-    description: 'Location name',
-    example: 'Berlin Office',
-    maxLength: 255,
-  })
-  name: string;
-
-  @ApiProperty({
-    description: 'Location address',
-    example: 'Musterstraße 123',
-    maxLength: 500,
-  })
-  address: string;
-
-  @ApiProperty({
-    description: 'City where the location is situated',
-    example: 'Berlin',
-    maxLength: 100,
-  })
-  city: string;
-
-  @ApiProperty({
-    description: 'Postal code',
-    example: '10115',
-    maxLength: 10,
-  })
-  postalCode: string;
-}
-
-export class ShiftAssignmentResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the shift assignment',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-    format: 'uuid',
-  })
-  id: string;
-}
+import { EmployeeStatus, ContractType } from '../../../database/entities/employee.entity';
 
 export class EmployeeResponseDto {
   @ApiProperty({
-    description: 'Unique identifier for the employee',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-    format: 'uuid',
+    description: 'Eindeutige ID des Mitarbeiters',
+    example: 'uuid-string'
   })
   id: string;
 
   @ApiProperty({
-    description: 'Employee name',
-    example: 'Max Mustermann',
-    minLength: 2,
-    maxLength: 255,
+    description: 'Mitarbeiternummer',
+    example: 'EMP001'
   })
-  name: string;
+  employeeNumber: string;
 
   @ApiProperty({
-    description: 'Employee role',
-    enum: EmployeeRole,
-    example: EmployeeRole.ASSISTANT,
+    description: 'Vorname des Mitarbeiters',
+    example: 'Anna'
   })
-  role: EmployeeRole;
+  firstName: string;
 
   @ApiProperty({
-    description: 'Hours per month the employee should work',
-    example: 160,
-    minimum: 1,
-    maximum: 300,
+    description: 'Nachname des Mitarbeiters',
+    example: 'Schneider'
+  })
+  lastName: string;
+
+  @ApiProperty({
+    description: 'Vollständiger Name des Mitarbeiters',
+    example: 'Anna Schneider'
+  })
+  fullName: string;
+
+  @ApiProperty({
+    description: 'E-Mail-Adresse des Mitarbeiters',
+    example: 'anna.schneider@dialyse-praxis.de'
+  })
+  email: string;
+
+  @ApiPropertyOptional({
+    description: 'Telefonnummer',
+    example: '+49 89 1234-001'
+  })
+  phoneNumber?: string;
+
+  @ApiProperty({
+    description: 'Einstellungsdatum',
+    example: '2020-01-15'
+  })
+  hireDate: Date;
+
+  @ApiPropertyOptional({
+    description: 'Kündigungsdatum',
+    example: '2023-12-31'
+  })
+  terminationDate?: Date;
+
+  @ApiProperty({
+    description: 'Status des Mitarbeiters',
+    enum: EmployeeStatus,
+    example: EmployeeStatus.ACTIVE
+  })
+  status: EmployeeStatus;
+
+  @ApiProperty({
+    description: 'Vertragstyp',
+    enum: ContractType,
+    example: ContractType.FULL_TIME
+  })
+  contractType: ContractType;
+
+  @ApiProperty({
+    description: 'Arbeitsstunden pro Monat',
+    example: 160
   })
   hoursPerMonth: number;
 
   @ApiPropertyOptional({
-    description: 'Hours per week (optional)',
-    example: 40,
-    minimum: 1,
-    maximum: 60,
+    description: 'Arbeitsstunden pro Woche',
+    example: 40
   })
   hoursPerWeek?: number;
 
   @ApiPropertyOptional({
-    description: 'Location ID where employee is assigned',
-    example: 1,
+    description: 'Stundenlohn',
+    example: 28.50
   })
-  locationId?: number;
+  hourlyRate?: number;
 
   @ApiPropertyOptional({
-    description: 'Location where the employee is assigned',
-    type: () => LocationResponseDto,
+    description: 'Überstundenlohn',
+    example: 35.60
   })
-  location?: LocationResponseDto;
+  overtimeRate?: number;
+
+  @ApiPropertyOptional({
+    description: 'ID des Standorts',
+    example: 'uuid-string'
+  })
+  locationId?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID der Hauptrolle',
+    example: 'uuid-string'
+  })
+  primaryRoleId?: string;
+
+  @ApiPropertyOptional({
+    description: 'ID des Vorgesetzten',
+    example: 'uuid-string'
+  })
+  supervisorId?: string;
 
   @ApiProperty({
-    description: 'Shift assignments for this employee',
-    type: () => [ShiftAssignmentResponseDto],
+    description: 'Zertifizierungen',
+    example: ['Krankenpflege-Ausbildung', 'Erste Hilfe']
   })
-  shiftAssignments: ShiftAssignmentResponseDto[];
+  certifications: string[];
 
   @ApiProperty({
-    description: 'Date when the employee was created',
-    example: '2024-01-15T10:30:00Z',
+    description: 'Fähigkeiten',
+    example: ['Patientenbetreuung', 'Teamarbeit']
+  })
+  skills: string[];
+
+  @ApiProperty({
+    description: 'Sprachen',
+    example: ['Deutsch', 'Englisch']
+  })
+  languages: string[];
+
+  @ApiPropertyOptional({
+    description: 'Notizen',
+    example: 'Erfahrener Mitarbeiter mit Spezialisierung auf Dialyse'
+  })
+  notes?: string;
+
+  @ApiProperty({
+    description: 'Ist der Mitarbeiter aktiv',
+    example: true
+  })
+  isActive: boolean;
+
+  @ApiProperty({
+    description: 'Ist der Mitarbeiter verfügbar',
+    example: true
+  })
+  isAvailable: boolean;
+
+  @ApiProperty({
+    description: 'Jahre im Dienst',
+    example: 3
+  })
+  yearsOfService: number;
+
+  @ApiProperty({
+    description: 'Erstellungsdatum',
+    example: '2020-01-15T10:00:00Z'
   })
   createdAt: Date;
 
   @ApiProperty({
-    description: 'Date when the employee was last updated',
-    example: '2024-01-15T10:30:00Z',
+    description: 'Letztes Änderungsdatum',
+    example: '2023-06-15T14:30:00Z'
   })
   updatedAt: Date;
+
+  // Optional relations
+  @ApiPropertyOptional({
+    description: 'Standort-Informationen'
+  })
+  location?: any;
+
+  @ApiPropertyOptional({
+    description: 'Hauptrolle-Informationen'
+  })
+  primaryRole?: any;
+
+  @ApiPropertyOptional({
+    description: 'Alle Rollen des Mitarbeiters'
+  })
+  roles?: any[];
+
+  @ApiPropertyOptional({
+    description: 'Vorgesetzter-Informationen'
+  })
+  supervisor?: any;
+
+  @ApiPropertyOptional({
+    description: 'Untergebene Mitarbeiter'
+  })
+  subordinates?: any[];
 }

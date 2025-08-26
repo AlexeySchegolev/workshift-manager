@@ -33,20 +33,35 @@ export class EmployeeResponseDto {
   id: string;
 
   @ApiProperty({
-    description: 'Employee name',
-    example: 'Max Mustermann',
-    minLength: 2,
-    maxLength: 255,
+    description: 'Employee first name',
+    example: 'Max',
+    minLength: 1,
+    maxLength: 100,
   })
-  name: string;
+  firstName: string;
+
+  @ApiProperty({
+    description: 'Employee last name',
+    example: 'Mustermann',
+    minLength: 1,
+    maxLength: 100,
+  })
+  lastName: string;
+
+  @ApiProperty({
+    description: 'Employee full name',
+    example: 'Max Mustermann',
+  })
+  fullName: string;
 }
 
 export class LocationResponseDto {
   @ApiProperty({
     description: 'Unique identifier for the location',
-    example: 1,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
   })
-  id: number;
+  id: string;
 
   @ApiProperty({
     description: 'Location name',
@@ -98,11 +113,18 @@ export class LocationResponseDto {
   manager?: string;
 
   @ApiProperty({
-    description: 'Location capacity (number of people)',
+    description: 'Maximum capacity (number of people)',
     example: 50,
     minimum: 1,
   })
-  capacity: number;
+  maxCapacity: number;
+
+  @ApiProperty({
+    description: 'Current capacity (number of people currently)',
+    example: 25,
+    minimum: 0,
+  })
+  currentCapacity: number;
 
   @ApiProperty({
     description: 'Operating hours for each day of the week',

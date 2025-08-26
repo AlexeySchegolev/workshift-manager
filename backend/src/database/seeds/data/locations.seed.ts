@@ -1,4 +1,4 @@
-import { OperatingHours } from '../../entities/location.entity';
+import { OperatingHours, LocationStatus } from '../../entities/location.entity';
 
 const standardOperatingHours: OperatingHours = {
   monday: [{ start: '06:00', end: '22:00' }],
@@ -22,55 +22,53 @@ const fullTimeOperatingHours: OperatingHours = {
 
 export const locationsSeedData = [
   {
-    name: 'Kardiologie Station 3A',
+    organizationId: '1', // Will be replaced with actual organization ID during seeding
+    name: 'Dialyse Station A',
+    code: 'DSA',
+    description: 'Hauptstation für Dialyse-Behandlungen mit 12 Plätzen',
     address: 'Universitätsklinikum, Gebäude A3',
     city: 'München',
     postalCode: '80336',
+    country: 'Deutschland',
     phone: '+49 89 4400-3301',
-    email: 'kardiologie.3a@klinikum-muenchen.de',
-    manager: 'Dr. Schmidt',
-    capacity: 24,
+    email: 'dialyse.a@dialyse-praxis.de',
+    managerName: 'Dr. Schmidt',
+    managerEmail: 'dr.schmidt@dialyse-praxis.de',
+    managerPhone: '+49 89 4400-3302',
+    maxCapacity: 12,
+    currentCapacity: 0,
+    status: LocationStatus.ACTIVE,
     operatingHours: fullTimeOperatingHours,
-    services: ['Herzkatheterlabor', 'EKG-Diagnostik', 'Echokardiographie', 'Herzschrittmacher'],
-    equipment: ['Defibrillator', 'EKG-Gerät', 'Ultraschall', 'Monitoring-System']
+    services: ['Hämodialyse', 'Peritonealdialyse', 'Hämofiltration', 'Patientenberatung'],
+    equipment: ['Dialyse-Maschinen', 'Wasseraufbereitung', 'Monitoring-System', 'Notfall-Equipment'],
+    accessibilityFeatures: ['Rollstuhlgerecht', 'Behindertentoilette', 'Aufzug'],
+    safetyFeatures: ['Notausgang', 'Brandmelder', 'Erste-Hilfe-Station'],
+    isActive: true,
+    timezone: 'Europe/Berlin'
   },
   {
-    name: 'Intensivstation ICU-1',
+    organizationId: '1',
+    name: 'Dialyse Station B',
+    code: 'DSB',
+    description: 'Zusätzliche Station für Dialyse-Behandlungen mit 8 Plätzen',
     address: 'Universitätsklinikum, Gebäude B2',
     city: 'München',
     postalCode: '80336',
+    country: 'Deutschland',
     phone: '+49 89 4400-2201',
-    email: 'icu1@klinikum-muenchen.de',
-    manager: 'Prof. Dr. Weber',
-    capacity: 16,
+    email: 'dialyse.b@dialyse-praxis.de',
+    managerName: 'Prof. Dr. Weber',
+    managerEmail: 'prof.weber@dialyse-praxis.de',
+    managerPhone: '+49 89 4400-2202',
+    maxCapacity: 8,
+    currentCapacity: 0,
+    status: LocationStatus.ACTIVE,
     operatingHours: fullTimeOperatingHours,
-    services: ['Intensivpflege', 'Beatmungstherapie', 'Dialyse', '24h-Monitoring'],
-    equipment: ['Beatmungsgerät', 'Dialyse-Maschine', 'Defibrillator', 'Infusionspumpen']
-  },
-  {
-    name: 'Chirurgie Ambulanz',
-    address: 'Medizinisches Zentrum, Erdgeschoss',
-    city: 'München',
-    postalCode: '80337',
-    phone: '+49 89 4400-4101',
-    email: 'chirurgie.ambulanz@klinikum-muenchen.de',
-    manager: 'Dr. Müller',
-    capacity: 12,
-    operatingHours: standardOperatingHours,
-    services: ['Ambulante OPs', 'Wundversorgung', 'Nachsorge', 'Beratung'],
-    equipment: ['OP-Tisch', 'Chirurgie-Instrumente', 'Röntgengerät', 'Sterilisation']
-  },
-  {
-    name: 'Notaufnahme',
-    address: 'Universitätsklinikum, Erdgeschoss Haupteingang',
-    city: 'München',
-    postalCode: '80336',
-    phone: '+49 89 4400-1100',
-    email: 'notaufnahme@klinikum-muenchen.de',
-    manager: 'Dr. Fischer',
-    capacity: 20,
-    operatingHours: fullTimeOperatingHours,
-    services: ['Notfallversorgung', 'Trauma-Behandlung', 'Triage', 'Erstversorgung'],
-    equipment: ['Notfall-Equipment', 'Röntgen', 'CT', 'Defibrillator', 'Beatmungsgerät']
+    services: ['Hämodialyse', 'Notfall-Dialyse', '24h-Monitoring'],
+    equipment: ['Dialyse-Maschinen', 'Intensiv-Monitoring', 'Notfall-Equipment'],
+    accessibilityFeatures: ['Rollstuhlgerecht', 'Behindertentoilette'],
+    safetyFeatures: ['Notausgang', 'Brandmelder', 'Erste-Hilfe-Station', 'Defibrillator'],
+    isActive: true,
+    timezone: 'Europe/Berlin'
   }
 ];

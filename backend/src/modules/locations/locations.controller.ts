@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -152,10 +153,11 @@ export class LocationsController {
     summary: 'Get location by ID',
     description: 'Retrieves a specific location by its ID with optional employee data'
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: 'number',
-    description: 'Location ID'
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
   })
   @ApiQuery({
     name: 'includeEmployees',
@@ -172,7 +174,7 @@ export class LocationsController {
     description: 'Location not found'
   })
   async findOne(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Query('includeEmployees') includeEmployees: string = 'true'
   ): Promise<LocationResponseDto> {
     const include = includeEmployees === 'true';
@@ -184,10 +186,11 @@ export class LocationsController {
     summary: 'Get detailed location statistics',
     description: 'Retrieves detailed statistics for a specific location including utilization rates'
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: 'number',
-    description: 'Location ID'
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
   })
   @ApiResponse({ 
     status: 200, 
@@ -211,7 +214,7 @@ export class LocationsController {
   @ApiNotFoundResponse({ 
     description: 'Location not found'
   })
-  async getLocationWithStats(@Param('id', ParseIntPipe) id: number) {
+  async getLocationWithStats(@Param('id', ParseUUIDPipe) id: string) {
     return this.locationsService.getLocationWithStats(id);
   }
 
@@ -220,10 +223,11 @@ export class LocationsController {
     summary: 'Update location',
     description: 'Updates an existing location with the provided information'
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: 'number',
-    description: 'Location ID'
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
   })
   @ApiResponse({ 
     status: 200, 
@@ -237,7 +241,7 @@ export class LocationsController {
     description: 'Invalid input data'
   })
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateLocationDto: UpdateLocationDto
   ): Promise<LocationResponseDto> {
     return this.locationsService.update(id, updateLocationDto);
@@ -248,10 +252,11 @@ export class LocationsController {
     summary: 'Activate location',
     description: 'Activates a location, making it available for operations'
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: 'number',
-    description: 'Location ID'
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
   })
   @ApiResponse({ 
     status: 200, 
@@ -261,7 +266,7 @@ export class LocationsController {
   @ApiNotFoundResponse({ 
     description: 'Location not found'
   })
-  async activate(@Param('id', ParseIntPipe) id: number): Promise<LocationResponseDto> {
+  async activate(@Param('id', ParseUUIDPipe) id: string): Promise<LocationResponseDto> {
     return this.locationsService.activate(id);
   }
 
@@ -270,10 +275,11 @@ export class LocationsController {
     summary: 'Deactivate location',
     description: 'Deactivates a location, making it unavailable for new operations'
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: 'number',
-    description: 'Location ID'
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
   })
   @ApiResponse({ 
     status: 200, 
@@ -283,7 +289,7 @@ export class LocationsController {
   @ApiNotFoundResponse({ 
     description: 'Location not found'
   })
-  async deactivate(@Param('id', ParseIntPipe) id: number): Promise<LocationResponseDto> {
+  async deactivate(@Param('id', ParseUUIDPipe) id: string): Promise<LocationResponseDto> {
     return this.locationsService.deactivate(id);
   }
 
@@ -293,10 +299,11 @@ export class LocationsController {
     summary: 'Delete location',
     description: 'Deletes a location by its ID. Location must not have assigned employees.'
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: 'number',
-    description: 'Location ID'
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
   })
   @ApiResponse({ 
     status: 204, 
@@ -305,7 +312,7 @@ export class LocationsController {
   @ApiNotFoundResponse({ 
     description: 'Location not found or has assigned employees'
   })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.locationsService.remove(id);
   }
 }

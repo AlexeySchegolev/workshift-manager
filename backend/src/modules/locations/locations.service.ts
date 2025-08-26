@@ -73,7 +73,7 @@ export class LocationsService {
     return this.locationRepository.find(options);
   }
 
-  async findOne(id: number, includeEmployees: boolean = true): Promise<Location> {
+  async findOne(id: string, includeEmployees: boolean = true): Promise<Location> {
     this.logger.log(`Retrieving location with ID: ${id}`);
 
     const options = includeEmployees ? {
@@ -91,7 +91,7 @@ export class LocationsService {
     return location;
   }
 
-  async update(id: number, updateLocationDto: UpdateLocationDto): Promise<Location> {
+  async update(id: string, updateLocationDto: UpdateLocationDto): Promise<Location> {
     this.logger.log(`Updating location with ID: ${id}`);
 
     // Validate location exists
@@ -104,7 +104,7 @@ export class LocationsService {
     return updatedLocation;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     this.logger.log(`Deleting location with ID: ${id}`);
 
     const location = await this.findOne(id, true);
@@ -122,14 +122,14 @@ export class LocationsService {
     this.logger.log(`Location with ID ${id} deleted successfully`);
   }
 
-  async activate(id: number): Promise<Location> {
+  async activate(id: string): Promise<Location> {
     this.logger.log(`Activating location with ID: ${id}`);
     
     await this.locationRepository.update(id, { isActive: true });
     return this.findOne(id);
   }
 
-  async deactivate(id: number): Promise<Location> {
+  async deactivate(id: string): Promise<Location> {
     this.logger.log(`Deactivating location with ID: ${id}`);
     
     await this.locationRepository.update(id, { isActive: false });
@@ -163,7 +163,7 @@ export class LocationsService {
       total: locations.length,
       active: locations.filter(l => l.isActive).length,
       inactive: locations.filter(l => !l.isActive).length,
-      totalCapacity: locations.reduce((sum, l) => sum + l.capacity, 0),
+      totalCapacity: locations.reduce((sum, l) => sum + l.maxCapacity, 0),
       totalEmployees: locations.reduce((sum, l) => sum + (l.employees?.length || 0), 0),
       byCity: {} as Record<string, number>,
       utilizationRate: 0
@@ -182,7 +182,7 @@ export class LocationsService {
     return stats;
   }
 
-  async getLocationWithStats(id: number): Promise<Location & {
+  async getLocationWithStats(id: string): Promise<Location & {
     employeeCount: number;
     utilizationRate: number;
     serviceCount: number;
@@ -193,16 +193,15 @@ export class LocationsService {
     const location = await this.findOne(id, true);
     
     const employeeCount = location.employees?.length || 0;
-    const utilizationRate = location.capacity > 0 ? 
-      Math.round((employeeCount / location.capacity) * 100) : 0;
+    const utilizationRate = location.maxCapacity > 0 ?
+      Math.round((employeeCount / location.maxCapacity) * 100) : 0;
 
-    return {
-      ...location,
+    return Object.assign(location, {
       employeeCount,
       utilizationRate,
       serviceCount: location.services?.length || 0,
       equipmentCount: location.equipment?.length || 0,
-    };
+    });
   }
 
   async searchLocations(query: string): Promise<Location[]> {

@@ -5,7 +5,7 @@ import { ShiftPlan, MonthlyShiftPlan, DayShiftPlan } from '../../database/entiti
 import { Employee } from '../../database/entities/employee.entity';
 import { ShiftRules } from '../../database/entities/shift-rules.entity';
 import { ShiftAssignment } from '../../database/entities/shift-assignment.entity';
-import { ConstraintViolation, ViolationType } from '../../database/entities/constraint-violation.entity';
+import { ConstraintViolation, ViolationType, ConstraintCategory } from '../../database/entities/constraint-violation.entity';
 import { CreateShiftPlanDto, GenerateShiftPlanDto, ValidateShiftPlanDto } from './dto/create-shift-plan.dto';
 import { UpdateShiftPlanDto } from './dto/update-shift-plan.dto';
 
@@ -353,9 +353,11 @@ export class ShiftPlansService {
         if (assignedEmployees.length < rules.minNursesPerShift) {
           violations.push(this.constraintViolationRepository.create({
             type: ViolationType.HARD,
-            rule: 'MIN_STAFFING',
+            category: ConstraintCategory.STAFFING,
+            ruleCode: 'MIN_STAFFING',
+            ruleName: 'Minimum Staffing Requirement',
             message: `${shiftType} shift on ${date} has only ${assignedEmployees.length} employees, minimum required is ${rules.minNursesPerShift}`,
-            date,
+            violationDate: new Date(date.split('.').reverse().join('-')),
             shiftType,
             severity: 5
           }));

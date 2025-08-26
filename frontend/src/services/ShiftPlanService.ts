@@ -5,8 +5,7 @@ import {
   UpdateShiftPlanDto, 
   ShiftPlanResponseDto,
   GenerateShiftPlanDto,
-  ValidateShiftPlanDto,
-  ShiftAssignmentResponseDto
+  ValidateShiftPlanDto
 } from '../api/data-contracts';
 
 /**

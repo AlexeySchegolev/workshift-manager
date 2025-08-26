@@ -28,7 +28,7 @@ import {
 import LocationManagement from '../components/LocationManagement';
 
 // Interfaces und Daten
-import { Location } from '../models/interfaces';
+import { LocationResponseDto } from '../api/data-contracts';
 import { ApiService } from '../services/ApiService';
 
 /**
@@ -38,7 +38,7 @@ const LocationManagementPage: React.FC = () => {
   const theme = useTheme();
 
   // Standortliste - über API laden
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<LocationResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Standorte beim Laden der Komponente abrufen
@@ -47,7 +47,7 @@ const LocationManagementPage: React.FC = () => {
       try {
         setLoading(true);
         const data = await ApiService.getLocations();
-        setLocations(data);
+        setLocations(data as unknown as LocationResponseDto[]);
       } catch (error) {
         console.error('Fehler beim Laden der Standorte:', error);
       } finally {
@@ -66,7 +66,7 @@ const LocationManagementPage: React.FC = () => {
   }, []);
 
   // Standorte aktualisieren
-  const handleLocationsChange = (updatedLocations: Location[]) => {
+  const handleLocationsChange = (updatedLocations: LocationResponseDto[]) => {
     setLocations(updatedLocations);
   };
 

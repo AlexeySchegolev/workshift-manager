@@ -35,11 +35,13 @@ import {
   Business as BusinessIcon,
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
-import { Location, LocationStats } from '../models/interfaces';
+import { LocationStats } from '../models/interfaces';
+import { locationService } from '@/services';
+import { CreateLocationDto, UpdateLocationDto, LocationResponseDto } from '../api/data-contracts';
 
 interface LocationManagementProps {
-  locations?: Location[];
-  onLocationsChange?: (locations: Location[]) => void;
+  locations?: LocationResponseDto[];
+  onLocationsChange?: (locations: LocationResponseDto[]) => void;
 }
 
 /**
@@ -50,17 +52,12 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   onLocationsChange,
 }) => {
   const theme = useTheme();
-  const [locations, setLocations] = useState<Location[]>(propLocations || []);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [locations, setLocations] = useState<LocationResponseDto[]>(propLocations || []);
+  const [selectedLocation, setSelectedLocation] = useState<LocationResponseDto | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // Generated API client instance
-  const api = new Api({
-    baseURL: 'http://localhost:3001'
-  });
 
   // Standorte von der API laden
   useEffect(() => {
@@ -75,8 +72,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     try {
       setLoading(true);
       setError(null);
-      const response = await api.api.locationsControllerFindAll();
-      const data = response.data as Location[];
+      const data = await locationService.getAllLocations();
       setLocations(data);
       onLocationsChange?.(data);
     } catch (err) {
@@ -98,7 +94,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   };
 
   // Dialog öffnen
-  const handleOpenDialog = (location?: Location) => {
+  const handleOpenDialog = (location?: LocationResponseDto) => {
     if (location) {
       setSelectedLocation(location);
       setIsEditing(true);
@@ -125,6 +121,9 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         services: [],
         equipment: [],
         isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        employees: [],
       });
       setIsEditing(false);
     }
@@ -148,8 +147,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
       if (isEditing) {
         // Standort aktualisieren
-        const response = await api.api.locationsControllerUpdate(selectedLocation.id, selectedLocation as UpdateLocationDto);
-        const updatedLocation = response.data as Location;
+        const updatedLocation = await locationService.updateLocation(selectedLocation.id, selectedLocation as UpdateLocationDto);
         const updatedLocations = locations.map(loc =>
           loc.id === selectedLocation.id ? updatedLocation : loc
         );
@@ -157,8 +155,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         onLocationsChange?.(updatedLocations);
       } else {
         // Neuen Standort erstellen
-        const response = await api.api.locationsControllerCreate(selectedLocation as CreateLocationDto);
-        const newLocation = response.data as Location;
+        const newLocation = await locationService.createLocation(selectedLocation as CreateLocationDto);
         const updatedLocations = [...locations, newLocation];
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
@@ -178,7 +175,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       try {
         setLoading(true);
         setError(null);
-        await api.api.locationsControllerRemove(parseInt(locationId));
+        await locationService.deleteLocation(parseInt(locationId));
         const updatedLocations = locations.filter(loc => loc.id !== parseInt(locationId));
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
@@ -191,21 +188,21 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   };
 
   // Öffnungszeiten formatieren
-  const formatOperatingHours = (location: Location): string => {
+  const formatOperatingHours = (location: LocationResponseDto): string => {
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
     
     const activeDays = days
       .map((day, index) => ({
         name: dayNames[index],
-        slots: location.operatingHours[day as keyof typeof location.operatingHours]
+        slots: location.operatingHours[day] || []
       }))
-      .filter(day => day.slots.length > 0);
+      .filter(day => Array.isArray(day.slots) && day.slots.length > 0);
 
     if (activeDays.length === 0) return 'Geschlossen';
     
     return activeDays
-      .map(day => `${day.name}: ${day.slots.map(slot => `${slot.start}-${slot.end}`).join(', ')}`)
+      .map(day => `${day.name}: ${day.slots.map((slot: any) => `${slot.start}-${slot.end}`).join(', ')}`)
       .join(' • ');
   };
 

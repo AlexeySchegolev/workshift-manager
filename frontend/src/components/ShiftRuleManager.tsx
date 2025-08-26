@@ -50,7 +50,8 @@ import {
   DEFAULT_SHIFT_RULES_CONFIG,
   GlobalShiftRules
 } from '../models/shiftRuleInterfaces';
-import { Api, CreateShiftRulesDto, UpdateShiftRulesDto } from '../api/Api';
+import { shiftRuleService } from '@/services';
+import { CreateShiftRulesDto, UpdateShiftRulesDto, ShiftRulesResponseDto } from '../api/data-contracts';
 
 interface ShiftRuleManagerProps {
   onSave?: (config: ShiftRulesConfiguration) => void;
@@ -70,11 +71,6 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [roles, setRoles] = useState<any[]>([]);
-  
-  // Generated API client instance
-  const api = new Api({
-    baseURL: 'http://localhost:3001'
-  });
 
   const dayTypeLabels: Record<DayType, string> = {
     longDay: 'Lange Tage (Mo, Mi, Fr)',
@@ -111,12 +107,11 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
       // Shift Rules laden
       let configData: any;
       if (configId) {
-        const response = await api.api.shiftRulesControllerFindOne(configId);
-        configData = response.data;
+        configData = await shiftRuleService.getShiftRuleById(configId);
       } else {
         // Standard-Shift-Rules laden
-        const response = await api.api.shiftRulesControllerFindDefault();
-        configData = response.data;
+        const defaultRules = await shiftRuleService.getDefaultShiftRules();
+        configData = defaultRules.length > 0 ? defaultRules[0] : null;
       }
       
       // Convert to expected format if needed
@@ -253,14 +248,13 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
     try {
       if (config.id && config.id !== 'default') {
         // Bestehende Konfiguration aktualisieren
-        const response = await api.api.shiftRulesControllerUpdate(config.id, config as UpdateShiftRulesDto);
+        await shiftRuleService.updateShiftRule(config.id, config as UpdateShiftRulesDto);
         setSuccessMessage('Konfiguration erfolgreich aktualisiert');
       } else {
         // Neue Konfiguration erstellen
         const { id, createdAt, updatedAt, ...configWithoutIds } = config;
-        const response = await api.api.shiftRulesControllerCreate(configWithoutIds as unknown as CreateShiftRulesDto);
-        const newConfig = response.data;
-        setConfig(newConfig as ShiftRulesConfiguration);
+        const newConfig = await shiftRuleService.createShiftRule(configWithoutIds as unknown as CreateShiftRulesDto);
+        setConfig(newConfig as unknown as ShiftRulesConfiguration);
         setSuccessMessage('Konfiguration erfolgreich erstellt');
       }
       

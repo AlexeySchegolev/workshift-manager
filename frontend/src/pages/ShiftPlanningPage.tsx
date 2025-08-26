@@ -62,8 +62,8 @@ const ShiftPlanningPage: React.FC = () => {
     const loadEmployees = async () => {
       try {
         setLoadingEmployees(true);
-        const paginatedResponse = await ApiService.getEmployees({ limit: 100 });
-        setEmployees(paginatedResponse.data); // Extrahiere das Employee[] Array aus der paginierten Response
+        const employees = await ApiService.getEmployees({ limit: 100 });
+        setEmployees(employees);
       } catch (error) {
         console.error('Fehler beim Laden der Mitarbeiter:', error);
         setEmployeeError('Fehler beim Laden der Mitarbeiter');

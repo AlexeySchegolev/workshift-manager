@@ -93,7 +93,7 @@ export class ApiService {
     role?: string;
     clinic?: string;
     isActive?: boolean;
-  }): Promise<PaginatedResponse<Employee>> {
+  }): Promise<Employee[]> {
     const queryParams = new URLSearchParams();
     
     if (params?.page) queryParams.append('page', params.page.toString());
@@ -103,13 +103,19 @@ export class ApiService {
     if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
 
     const endpoint = `/employees${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    const response = await this.get<PaginatedResponse<Employee>>(endpoint);
+    const response = await this.get<Employee[]>(endpoint);
     
-    if (!response.success || !response.data) {
-      throw new Error(response.error || 'Fehler beim Laden der Mitarbeiter');
+    // Backend gibt direkt ein Array zurück
+    if (Array.isArray(response)) {
+      return response;
     }
     
-    return response.data;
+    // Fallback für den Fall, dass es eine ApiResponse ist
+    if (response && typeof response === 'object' && 'data' in response && Array.isArray(response.data)) {
+      return response.data;
+    }
+    
+    throw new Error('Unerwartetes Response-Format vom Server');
   }
 
   /**

@@ -56,8 +56,8 @@ const HomePage: React.FC = () => {
     const loadEmployees = async () => {
       try {
         setLoadingEmployees(true);
-        const paginatedResponse = await ApiService.getEmployees({ limit: 100 });
-        setEmployees(paginatedResponse.data);
+        const employees = await ApiService.getEmployees({ limit: 100 });
+        setEmployees(employees);
       } catch (error) {
         console.error('Fehler beim Laden der Mitarbeiter:', error);
       } finally {

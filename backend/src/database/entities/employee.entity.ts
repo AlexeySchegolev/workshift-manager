@@ -70,16 +70,16 @@ export class Employee {
   })
   contractType: ContractType;
 
-  @Column({ name: 'hours_per_month', type: 'decimal', precision: 5, scale: 2 })
+  @Column({ name: 'hours_per_month', type: 'decimal', precision: 5, scale: 2, transformer: { to: (value) => value, from: (value) => parseFloat(value) } })
   hoursPerMonth: number;
 
-  @Column({ name: 'hours_per_week', type: 'decimal', precision: 5, scale: 2, nullable: true })
+  @Column({ name: 'hours_per_week', type: 'decimal', precision: 5, scale: 2, nullable: true, transformer: { to: (value) => value, from: (value) => value ? parseFloat(value) : value } })
   hoursPerWeek?: number;
 
-  @Column({ name: 'hourly_rate', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({ name: 'hourly_rate', type: 'decimal', precision: 10, scale: 2, nullable: true, transformer: { to: (value) => value, from: (value) => value ? parseFloat(value) : value } })
   hourlyRate?: number;
 
-  @Column({ name: 'overtime_rate', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({ name: 'overtime_rate', type: 'decimal', precision: 10, scale: 2, nullable: true, transformer: { to: (value) => value, from: (value) => value ? parseFloat(value) : value } })
   overtimeRate?: number;
 
   @Column({ name: 'location_id', type: 'uuid', nullable: true })

@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { LocationStatus } from '../../../database/entities/location.entity';
 import { EmployeeResponseDto } from '../../employees/dto/employee-response.dto';
+import { LocationStatsDto } from './location-stats.dto';
 
 export interface TimeSlot {
   /** Start time in HH:MM format */
@@ -274,4 +275,10 @@ export class LocationResponseDto {
     example: '2024-01-15T10:30:00Z'
   })
   deletedAt?: Date;
+
+  @ApiPropertyOptional({
+    description: 'Location statistics and metrics',
+    type: () => LocationStatsDto
+  })
+  stats?: LocationStatsDto;
 }

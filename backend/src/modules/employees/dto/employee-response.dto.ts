@@ -40,6 +40,12 @@ export class EmployeeResponseDto {
   })
   fullName: string;
 
+  @ApiPropertyOptional({
+    description: 'Anzeigename für UI (alias for fullName)',
+    example: 'Anna Schneider'
+  })
+  displayName?: string;
+
   @ApiProperty({
     description: 'E-Mail-Adresse des Mitarbeiters',
     example: 'anna.schneider@dialyse-praxis.de'

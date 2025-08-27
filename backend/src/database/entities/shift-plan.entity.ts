@@ -4,6 +4,8 @@ import { User } from './user.entity';
 import { Shift } from './shift.entity';
 import { ShiftAssignment } from './shift-assignment.entity';
 import { ConstraintViolation } from './constraint-violation.entity';
+import { ShiftPlanningAvailability } from './shift-planning-availability.entity';
+import { PlanningStatistics } from './planning-statistics.entity';
 
 export interface DayShiftPlan {
   /** Shift name mapped to array of employee IDs */
@@ -145,6 +147,24 @@ export class ShiftPlan {
   })
   generationParameters: Record<string, any>;
 
+  @Column({ name: 'planning_algorithm', type: 'varchar', length: 50, default: 'enhanced_backtracking' })
+  planningAlgorithm: string;
+
+  @Column({ name: 'planning_configuration', type: 'jsonb', default: {} })
+  planningConfiguration: Record<string, any>;
+
+  @Column({ name: 'optimization_level', type: 'enum', enum: ['basic', 'standard', 'advanced'], default: 'standard' })
+  optimizationLevel: string;
+
+  @Column({ name: 'planning_statistics', type: 'jsonb', default: {} })
+  planningStatistics: Record<string, any>;
+
+  @Column({ name: 'generation_time_ms', type: 'integer', nullable: true })
+  generationTimeMs?: number;
+
+  @Column({ name: 'planning_attempts', type: 'integer', default: 1 })
+  planningAttempts: number;
+
   @Column({ name: 'created_by', type: 'uuid', nullable: true })
   createdBy?: string;
 
@@ -183,6 +203,12 @@ export class ShiftPlan {
 
   @OneToMany(() => ConstraintViolation, violation => violation.shiftPlan)
   violations: ConstraintViolation[];
+
+  @OneToMany(() => ShiftPlanningAvailability, availability => availability.shiftPlan)
+  shiftPlanningAvailabilities: ShiftPlanningAvailability[];
+
+  @OneToMany(() => PlanningStatistics, statistics => statistics.shiftPlan)
+  planningStatisticsRecords: PlanningStatistics[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

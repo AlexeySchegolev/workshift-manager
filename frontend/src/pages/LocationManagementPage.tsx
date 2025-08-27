@@ -29,7 +29,7 @@ import LocationManagement from '../components/LocationManagement';
 
 // Interfaces und Daten
 import { LocationResponseDto } from '../api/data-contracts';
-import { ApiService } from '../services/ApiService';
+import { locationService } from '../services';
 
 /**
  * Moderne Standort-Verwaltungsseite im Dashboard-Style
@@ -46,8 +46,8 @@ const LocationManagementPage: React.FC = () => {
     const loadLocations = async () => {
       try {
         setLoading(true);
-        const data = await ApiService.getLocations();
-        setLocations(data as unknown as LocationResponseDto[]);
+        const data = await locationService.getAllLocations();
+        setLocations(data);
       } catch (error) {
         console.error('Fehler beim Laden der Standorte:', error);
       } finally {

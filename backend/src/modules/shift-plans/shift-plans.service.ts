@@ -422,4 +422,68 @@ export class ShiftPlansService {
     
     return activeRules.length > 0 ? activeRules[0] : null;
   }
+
+  async getEmployeesForPlan(shiftPlanId: string): Promise<Employee[]> {
+    // Get all employees that are potentially available for this shift plan
+    // In a more sophisticated implementation, this would filter based on
+    // location, roles, availability, etc.
+    return this.employeeRepository.find({
+      where: { isActive: true },
+      relations: ['roles', 'location']
+    });
+  }
+
+  async getDetailedStatistics(shiftPlanId: string): Promise<any> {
+    const shiftPlan = await this.findOne(shiftPlanId, true);
+    if (!shiftPlan) {
+      throw new NotFoundException(`Shift plan with ID ${shiftPlanId} not found`);
+    }
+
+    const employees = await this.getEmployeesForPlan(shiftPlanId);
+    const assignments = await this.shiftAssignmentRepository.find({
+      where: { shiftPlanId },
+      relations: ['employee', 'shift']
+    });
+
+    const violations = await this.constraintViolationRepository.find({
+      where: { shiftPlanId }
+    });
+
+    // Calculate detailed statistics
+    const stats = {
+      shiftPlanId,
+      totalEmployees: employees.length,
+      totalAssignments: assignments.length,
+      totalViolations: violations.length,
+      hardViolations: violations.filter(v => v.type === ViolationType.HARD).length,
+      softViolations: violations.filter(v => v.type === ViolationType.SOFT).length,
+      coveragePercentage: shiftPlan.coveragePercentage,
+      totalHours: shiftPlan.totalHours,
+      employeeUtilization: assignments.reduce((acc, assignment) => {
+        const empId = assignment.employee.id;
+        acc[empId] = (acc[empId] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      violationsByCategory: violations.reduce((acc, violation) => {
+        acc[violation.category] = (acc[violation.category] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      averageShiftsPerEmployee: employees.length > 0 ? assignments.length / employees.length : 0,
+      planCompleteness: this.calculatePlanCompleteness(shiftPlan.planData)
+    };
+
+    return stats;
+  }
+
+  private calculatePlanCompleteness(planData: MonthlyShiftPlan): number {
+    if (!planData) return 0;
+    
+    const totalDays = Object.keys(planData).length;
+    const completeDays = Object.values(planData).filter(dayPlan => {
+      if (!dayPlan) return false;
+      return Object.values(dayPlan).some(shifts => shifts.length > 0);
+    }).length;
+    
+    return totalDays > 0 ? (completeDays / totalDays) * 100 : 0;
+  }
 }

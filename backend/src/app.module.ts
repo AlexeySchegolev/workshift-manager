@@ -8,7 +8,7 @@ import { SeederService } from './database/seeds/seeder.service';
 import { EmployeesModule } from './modules/employees/employees.module';
 import { LocationsModule } from './modules/locations/locations.module';
 import { RolesModule } from './modules/roles/roles.module';
-// import { ShiftsModule } from './modules/shifts/shifts.module';
+import { ShiftsModule } from './modules/shifts/shifts.module';
 import { ShiftPlansModule } from './modules/shift-plans/shift-plans.module';
 import { ShiftRulesModule } from './modules/shift-rules/shift-rules.module';
 import { UsersModule } from './modules/users/users.module';
@@ -35,7 +35,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
     UsersModule,
     OrganizationsModule,
     RolesModule,
-    // ShiftsModule,
+    ShiftsModule,
   ],
   controllers: [],
   providers: [SeederService],

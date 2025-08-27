@@ -106,7 +106,8 @@ export class RoleService extends BaseService {
    */
   async getRoleCountByOrganization(organizationId: string): Promise<{ count: number }> {
     const response = await this.rolesApi.rolesControllerCountByOrganization(organizationId);
-    return response.data;
+    // TODO: Ensure API response always includes count property
+    return { count: response.data?.count ?? 0 };
   }
 
   /**

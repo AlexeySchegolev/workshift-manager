@@ -589,6 +589,203 @@ export interface CreateRoleDto {
     | "other";
 }
 
+export interface CreateShiftDto {
+  /**
+   * Break duration in minutes
+   * @min 0
+   * @default 30
+   * @example 30
+   */
+  breakDuration: number;
+  /**
+   * Color code for UI display (hex format)
+   * @pattern ^#[0-9A-F]{6}$
+   * @example "#FF5722"
+   */
+  colorCode?: string;
+  /**
+   * User ID who is creating this shift
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440005"
+   */
+  createdBy?: string;
+  /**
+   * Description of the shift
+   * @maxLength 500
+   * @example "Regular morning shift covering basic operations"
+   */
+  description?: string;
+  /**
+   * End time of the shift
+   * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
+   * @example "16:00"
+   */
+  endTime: string;
+  /**
+   * Holiday rate multiplier
+   * @min 1
+   * @example 2
+   */
+  holidayRate?: number;
+  /**
+   * Whether this shift is active
+   * @default true
+   * @example true
+   */
+  isActive: boolean;
+  /**
+   * Whether this shift is on a holiday
+   * @default false
+   * @example false
+   */
+  isHoliday: boolean;
+  /**
+   * Whether this shift counts as overtime
+   * @default false
+   * @example false
+   */
+  isOvertime: boolean;
+  /**
+   * Whether this is a recurring shift
+   * @default false
+   * @example false
+   */
+  isRecurring: boolean;
+  /**
+   * Whether this shift is on a weekend
+   * @default false
+   * @example false
+   */
+  isWeekend: boolean;
+  /**
+   * Location ID where this shift takes place
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440002"
+   */
+  locationId: string;
+  /**
+   * Maximum number of employees allowed
+   * @min 1
+   * @default 10
+   * @example 5
+   */
+  maxEmployees: number;
+  /**
+   * Minimum number of employees required
+   * @min 1
+   * @default 1
+   * @example 2
+   */
+  minEmployees: number;
+  /**
+   * Name of the shift
+   * @maxLength 100
+   * @example "Morning Shift"
+   */
+  name: string;
+  /**
+   * Additional notes for this shift
+   * @example "Special requirements: Extra attention to patient in room 204"
+   */
+  notes?: string;
+  /**
+   * Organization ID this shift belongs to
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440001"
+   */
+  organizationId: string;
+  /**
+   * Overtime rate multiplier
+   * @min 1
+   * @example 1.5
+   */
+  overtimeRate?: number;
+  /**
+   * Priority level of the shift
+   * @default 2
+   * @example 2
+   */
+  priority: 1 | 2 | 3 | 4 | 5;
+  /**
+   * End date for recurrence
+   * @format date
+   * @example "2024-12-31"
+   */
+  recurrenceEndDate?: string;
+  /**
+   * Recurrence pattern (e.g., weekly, monthly)
+   * @example "weekly"
+   */
+  recurrencePattern?: string;
+  /**
+   * Required certifications for this shift
+   * @default []
+   * @example ["Nursing License","BLS Certification"]
+   */
+  requiredCertifications: string[];
+  /**
+   * Required skills for this shift
+   * @default []
+   * @example ["CPR","First Aid","Patient Care"]
+   */
+  requiredSkills: string[];
+  /**
+   * Role requirements for this shift
+   * @default []
+   * @example [{"roleId":"550e8400-e29b-41d4-a716-446655440004","requiredCount":2,"minCount":1,"maxCount":3,"priority":3}]
+   */
+  roleRequirements: ShiftRoleRequirementDto[];
+  /**
+   * Date when the shift takes place
+   * @format date
+   * @example "2024-01-15"
+   */
+  shiftDate: string;
+  /**
+   * Shift plan ID this shift belongs to (optional)
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440003"
+   */
+  shiftPlanId?: string;
+  /**
+   * Start time of the shift
+   * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
+   * @example "08:00"
+   */
+  startTime: string;
+  /**
+   * Current status of the shift
+   * @default "draft"
+   * @example "draft"
+   */
+  status: "draft" | "published" | "active" | "completed" | "cancelled";
+  /**
+   * Total hours for this shift
+   * @min 0
+   * @example 8
+   */
+  totalHours: number;
+  /**
+   * Type of the shift
+   * @example "morning"
+   */
+  type:
+    | "morning"
+    | "afternoon"
+    | "evening"
+    | "night"
+    | "full_day"
+    | "split"
+    | "on_call"
+    | "overtime";
+  /**
+   * Weekend rate multiplier
+   * @min 1
+   * @example 1.25
+   */
+  weekendRate?: number;
+}
+
 export interface CreateShiftPlanDto {
   /**
    * Approval status
@@ -897,6 +1094,11 @@ export interface EmployeeResponseDto {
    * @example "2023-12-31T23:59:59Z"
    */
   deletedAt?: string;
+  /**
+   * Anzeigename für UI (alias for fullName)
+   * @example "Anna Schneider"
+   */
+  displayName?: string;
   /**
    * E-Mail-Adresse des Mitarbeiters
    * @example "anna.schneider@dialyse-praxis.de"
@@ -1271,6 +1473,8 @@ export interface LocationResponseDto {
    * @example "Berlin"
    */
   state?: string;
+  /** Location statistics and metrics */
+  stats?: LocationStatsDto;
   /**
    * Location status
    * @example "active"
@@ -1292,6 +1496,60 @@ export interface LocationResponseDto {
    * @example "uuid-string"
    */
   updatedBy?: string;
+}
+
+export interface LocationStatsDto {
+  /**
+   * Number of active shifts at this location
+   * @min 0
+   * @example 12
+   */
+  activeShifts: number;
+  /**
+   * Average staffing percentage across all shifts
+   * @min 0
+   * @example 92.3
+   */
+  averageStaffing: number;
+  /**
+   * Average utilization percentage of the location
+   * @min 0
+   * @max 100
+   * @example 85.5
+   */
+  averageUtilization: number;
+  /**
+   * Client satisfaction rating (1-5 stars)
+   * @min 1
+   * @max 5
+   * @example 4.2
+   */
+  clientSatisfaction?: number;
+  /**
+   * Number of employees assigned to this location
+   * @min 0
+   * @example 8
+   */
+  employeeCount: number;
+  /**
+   * Monthly revenue generated at this location
+   * @min 0
+   * @example 15000
+   */
+  monthlyRevenue?: number;
+  /**
+   * Current occupancy rate as percentage of max capacity
+   * @min 0
+   * @max 100
+   * @example 78.5
+   */
+  occupancyRate: number;
+  /**
+   * Total number of clients at this location
+   * @min 0
+   * @example 25
+   */
+  totalClients: number;
 }
 
 export interface OperatingHoursDto {
@@ -1701,6 +1959,296 @@ export interface ShiftPlanResponseDto {
    * @example 2024
    */
   year: number;
+}
+
+export interface ShiftResponseDto {
+  /**
+   * Break duration in minutes
+   * @min 0
+   * @example 30
+   */
+  breakDuration: number;
+  /**
+   * Color code for UI display (hex format)
+   * @pattern ^#[0-9A-F]{6}$
+   * @example "#FF5722"
+   */
+  colorCode?: string;
+  /**
+   * Date when the shift was created
+   * @format date-time
+   * @example "2024-01-15T10:30:00Z"
+   */
+  createdAt: string;
+  /**
+   * User ID who created this shift
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440005"
+   */
+  createdBy?: string;
+  /**
+   * Current number of assigned employees
+   * @min 0
+   * @example 3
+   */
+  currentEmployees: number;
+  /**
+   * Date when the shift was deleted (soft delete)
+   * @format date-time
+   * @example "2024-01-20T09:15:00Z"
+   */
+  deletedAt?: string;
+  /**
+   * Description of the shift
+   * @maxLength 500
+   * @example "Regular morning shift covering basic operations"
+   */
+  description?: string;
+  /**
+   * Duration of the shift in hours
+   * @min 0
+   * @example 8
+   */
+  duration: number;
+  /**
+   * Effective working hours (excluding breaks)
+   * @min 0
+   * @example 7.5
+   */
+  effectiveHours: number;
+  /**
+   * End time of the shift
+   * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
+   * @example "16:00"
+   */
+  endTime: string;
+  /**
+   * Holiday rate multiplier
+   * @example 2
+   */
+  holidayRate?: number;
+  /**
+   * Unique identifier for the shift
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440000"
+   */
+  id: string;
+  /**
+   * Whether this shift is active
+   * @example true
+   */
+  isActive: boolean;
+  /**
+   * Whether the shift is available for assignment
+   * @example true
+   */
+  isAvailable: boolean;
+  /**
+   * Whether the shift is fully staffed
+   * @example true
+   */
+  isFullyStaffed: boolean;
+  /**
+   * Whether this shift is on a holiday
+   * @example false
+   */
+  isHoliday: boolean;
+  /**
+   * Whether the shift is over-staffed
+   * @example false
+   */
+  isOverStaffed: boolean;
+  /**
+   * Whether this shift counts as overtime
+   * @example false
+   */
+  isOvertime: boolean;
+  /**
+   * Whether this is a recurring shift
+   * @example false
+   */
+  isRecurring: boolean;
+  /**
+   * Whether this shift is on a weekend
+   * @example false
+   */
+  isWeekend: boolean;
+  /** Location where this shift takes place */
+  location?: LocationResponseDto;
+  /**
+   * Location ID where this shift takes place
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440002"
+   */
+  locationId: string;
+  /**
+   * Maximum number of employees allowed
+   * @min 1
+   * @example 5
+   */
+  maxEmployees: number;
+  /**
+   * Minimum number of employees required
+   * @min 1
+   * @example 2
+   */
+  minEmployees: number;
+  /**
+   * Name of the shift
+   * @maxLength 100
+   * @example "Morning Shift"
+   */
+  name: string;
+  /**
+   * Additional notes for this shift
+   * @example "Special requirements: Extra attention to patient in room 204"
+   */
+  notes?: string;
+  /** Organization this shift belongs to */
+  organization?: OrganizationResponseDto;
+  /**
+   * Organization ID this shift belongs to
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440001"
+   */
+  organizationId: string;
+  /**
+   * Overtime rate multiplier
+   * @example 1.5
+   */
+  overtimeRate?: number;
+  /**
+   * Priority level of the shift
+   * @example 2
+   */
+  priority: 1 | 2 | 3 | 4 | 5;
+  /**
+   * End date for recurrence
+   * @format date
+   * @example "2024-12-31"
+   */
+  recurrenceEndDate?: string;
+  /**
+   * Recurrence pattern (e.g., weekly, monthly)
+   * @example "weekly"
+   */
+  recurrencePattern?: string;
+  /**
+   * Required certifications for this shift
+   * @example ["Nursing License","BLS Certification"]
+   */
+  requiredCertifications: string[];
+  /** Required roles for this shift */
+  requiredRoles?: RoleResponseDto[];
+  /**
+   * Required skills for this shift
+   * @example ["CPR","First Aid","Patient Care"]
+   */
+  requiredSkills: string[];
+  /**
+   * Role requirements for this shift
+   * @example [{"roleId":"550e8400-e29b-41d4-a716-446655440004","requiredCount":2,"minCount":1,"maxCount":3,"priority":3}]
+   */
+  roleRequirements: ShiftRoleRequirementDto[];
+  /**
+   * Date when the shift takes place
+   * @format date
+   * @example "2024-01-15"
+   */
+  shiftDate: string;
+  /**
+   * Shift plan ID this shift belongs to (optional)
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440003"
+   */
+  shiftPlanId?: string;
+  /**
+   * Staffing percentage (current/minimum * 100)
+   * @min 0
+   * @example 150
+   */
+  staffingPercentage: number;
+  /**
+   * Start time of the shift
+   * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
+   * @example "08:00"
+   */
+  startTime: string;
+  /**
+   * Current status of the shift
+   * @example "published"
+   */
+  status: "draft" | "published" | "active" | "completed" | "cancelled";
+  /**
+   * Total hours for this shift
+   * @min 0
+   * @example 8
+   */
+  totalHours: number;
+  /**
+   * Type of the shift
+   * @example "morning"
+   */
+  type:
+    | "morning"
+    | "afternoon"
+    | "evening"
+    | "night"
+    | "full_day"
+    | "split"
+    | "on_call"
+    | "overtime";
+  /**
+   * Date when the shift was last updated
+   * @format date-time
+   * @example "2024-01-15T14:45:00Z"
+   */
+  updatedAt: string;
+  /**
+   * User ID who last updated this shift
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440006"
+   */
+  updatedBy?: string;
+  /**
+   * Weekend rate multiplier
+   * @example 1.25
+   */
+  weekendRate?: number;
+}
+
+export interface ShiftRoleRequirementDto {
+  /**
+   * Maximum number of employees with this role
+   * @min 0
+   * @example 3
+   */
+  maxCount: number;
+  /**
+   * Minimum number of employees with this role
+   * @min 0
+   * @example 1
+   */
+  minCount: number;
+  /**
+   * Priority level for this role requirement (1 = lowest, 5 = highest)
+   * @min 1
+   * @max 5
+   * @example 3
+   */
+  priority: number;
+  /**
+   * Required number of employees with this role
+   * @min 0
+   * @example 2
+   */
+  requiredCount: number;
+  /**
+   * Role ID for this requirement
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440000"
+   */
+  roleId: string;
 }
 
 export interface ShiftRulesResponseDto {
@@ -2399,6 +2947,209 @@ export interface UpdateRoleDto {
    * @example "123e4567-e89b-12d3-a456-426614174001"
    */
   updatedBy?: string;
+}
+
+export interface UpdateShiftDto {
+  /**
+   * Break duration in minutes
+   * @min 0
+   * @default 30
+   * @example 30
+   */
+  breakDuration?: number;
+  /**
+   * Color code for UI display (hex format)
+   * @pattern ^#[0-9A-F]{6}$
+   * @example "#FF5722"
+   */
+  colorCode?: string;
+  /**
+   * User ID who is creating this shift
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440005"
+   */
+  createdBy?: string;
+  /**
+   * Description of the shift
+   * @maxLength 500
+   * @example "Regular morning shift covering basic operations"
+   */
+  description?: string;
+  /**
+   * End time of the shift
+   * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
+   * @example "16:00"
+   */
+  endTime?: string;
+  /**
+   * Holiday rate multiplier
+   * @min 1
+   * @example 2
+   */
+  holidayRate?: number;
+  /**
+   * Whether this shift is active
+   * @default true
+   * @example true
+   */
+  isActive?: boolean;
+  /**
+   * Whether this shift is on a holiday
+   * @default false
+   * @example false
+   */
+  isHoliday?: boolean;
+  /**
+   * Whether this shift counts as overtime
+   * @default false
+   * @example false
+   */
+  isOvertime?: boolean;
+  /**
+   * Whether this is a recurring shift
+   * @default false
+   * @example false
+   */
+  isRecurring?: boolean;
+  /**
+   * Whether this shift is on a weekend
+   * @default false
+   * @example false
+   */
+  isWeekend?: boolean;
+  /**
+   * Location ID where this shift takes place
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440002"
+   */
+  locationId?: string;
+  /**
+   * Maximum number of employees allowed
+   * @min 1
+   * @default 10
+   * @example 5
+   */
+  maxEmployees?: number;
+  /**
+   * Minimum number of employees required
+   * @min 1
+   * @default 1
+   * @example 2
+   */
+  minEmployees?: number;
+  /**
+   * Name of the shift
+   * @maxLength 100
+   * @example "Morning Shift"
+   */
+  name?: string;
+  /**
+   * Additional notes for this shift
+   * @example "Special requirements: Extra attention to patient in room 204"
+   */
+  notes?: string;
+  /**
+   * Organization ID this shift belongs to
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440001"
+   */
+  organizationId?: string;
+  /**
+   * Overtime rate multiplier
+   * @min 1
+   * @example 1.5
+   */
+  overtimeRate?: number;
+  /**
+   * Priority level of the shift
+   * @default 2
+   * @example 2
+   */
+  priority?: 1 | 2 | 3 | 4 | 5;
+  /**
+   * End date for recurrence
+   * @format date
+   * @example "2024-12-31"
+   */
+  recurrenceEndDate?: string;
+  /**
+   * Recurrence pattern (e.g., weekly, monthly)
+   * @example "weekly"
+   */
+  recurrencePattern?: string;
+  /**
+   * Required certifications for this shift
+   * @default []
+   * @example ["Nursing License","BLS Certification"]
+   */
+  requiredCertifications?: string[];
+  /**
+   * Required skills for this shift
+   * @default []
+   * @example ["CPR","First Aid","Patient Care"]
+   */
+  requiredSkills?: string[];
+  /**
+   * Role requirements for this shift
+   * @default []
+   * @example [{"roleId":"550e8400-e29b-41d4-a716-446655440004","requiredCount":2,"minCount":1,"maxCount":3,"priority":3}]
+   */
+  roleRequirements?: ShiftRoleRequirementDto[];
+  /**
+   * Date when the shift takes place
+   * @format date
+   * @example "2024-01-15"
+   */
+  shiftDate?: string;
+  /**
+   * Shift plan ID this shift belongs to (optional)
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440003"
+   */
+  shiftPlanId?: string;
+  /**
+   * Start time of the shift
+   * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
+   * @example "08:00"
+   */
+  startTime?: string;
+  /**
+   * Current status of the shift
+   * @default "draft"
+   * @example "draft"
+   */
+  status?: "draft" | "published" | "active" | "completed" | "cancelled";
+  /**
+   * Total hours for this shift
+   * @min 0
+   * @example 8
+   */
+  totalHours?: number;
+  /**
+   * Type of the shift
+   * @example "morning"
+   */
+  type?:
+    | "morning"
+    | "afternoon"
+    | "evening"
+    | "night"
+    | "full_day"
+    | "split"
+    | "on_call"
+    | "overtime";
+  /**
+   * User ID who is updating this shift
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440006"
+   */
+  updatedBy?: string;
+  /**
+   * Weekend rate multiplier
+   * @min 1
+   * @example 1.25
+   */
+  weekendRate?: number;
 }
 
 export interface UpdateShiftPlanDto {

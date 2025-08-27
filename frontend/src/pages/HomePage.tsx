@@ -31,8 +31,8 @@ import {
 
 // Hooks und Services
 import { useDashboardData, useDashboardActions } from '../hooks/useDashboardData';
-import { ApiService } from '../services/ApiService';
-import { Employee } from '../models/interfaces';
+import { employeeService } from '../services';
+import { EmployeeResponseDto } from '../api/data-contracts';
 
 /**
  * Professionelle Dashboard-Startseite
@@ -48,7 +48,7 @@ const HomePage: React.FC = () => {
   const [constraints] = useState([]); // TODO: Aktuelle Constraints laden
   
   // Mitarbeiterliste über API laden
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
   const [loadingEmployees, setLoadingEmployees] = useState(true);
 
   // Mitarbeiter beim Laden der Komponente abrufen
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
     const loadEmployees = async () => {
       try {
         setLoadingEmployees(true);
-        const employees = await ApiService.getEmployees({ limit: 100 });
+        const employees = await employeeService.getAllEmployees();
         setEmployees(employees);
       } catch (error) {
         console.error('Fehler beim Laden der Mitarbeiter:', error);

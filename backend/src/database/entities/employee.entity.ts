@@ -6,6 +6,7 @@ import { ShiftAssignment } from './shift-assignment.entity';
 import { EmployeeAvailability } from './employee-availability.entity';
 import { ShiftPreference } from './shift-preference.entity';
 import { WorkTimeConstraint } from './work-time-constraint.entity';
+import { ShiftPlanningAvailability } from './shift-planning-availability.entity';
 
 export enum EmployeeStatus {
   ACTIVE = 'active',
@@ -72,6 +73,18 @@ export class Employee {
 
   @Column({ name: 'hours_per_month', type: 'decimal', precision: 5, scale: 2, transformer: { to: (value) => value, from: (value) => parseFloat(value) } })
   hoursPerMonth: number;
+
+  @Column({ name: 'max_consecutive_days', type: 'integer', default: 5 })
+  maxConsecutiveDays: number;
+
+  @Column({ name: 'preferred_shift_types', type: 'jsonb', default: [] })
+  preferredShiftTypes: string[];
+
+  @Column({ name: 'saturday_availability', type: 'boolean', default: true })
+  saturdayAvailability: boolean;
+
+  @Column({ name: 'sunday_availability', type: 'boolean', default: false })
+  sundayAvailability: boolean;
 
   @Column({ name: 'hours_per_week', type: 'decimal', precision: 5, scale: 2, nullable: true, transformer: { to: (value) => value, from: (value) => value ? parseFloat(value) : value } })
   hoursPerWeek?: number;
@@ -178,6 +191,9 @@ export class Employee {
 
   @OneToMany(() => WorkTimeConstraint, constraint => constraint.employee)
   workTimeConstraints: WorkTimeConstraint[];
+
+  @OneToMany(() => ShiftPlanningAvailability, availability => availability.employee)
+  shiftPlanningAvailabilities: ShiftPlanningAvailability[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

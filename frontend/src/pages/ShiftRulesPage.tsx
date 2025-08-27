@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 
 import ShiftRuleManager from '../components/ShiftRuleManager';
+import { ShiftRulesResponseDto } from '../api/data-contracts';
 
 /**
  * Seite zur Anzeige aller Schichtregeln
@@ -15,7 +16,7 @@ import ShiftRuleManager from '../components/ShiftRuleManager';
  */
 const ShiftRulesPage: React.FC = () => {
 
-  const handleSaveConfiguration = (config: ShiftRulesConfiguration) => {
+  const handleSaveConfiguration = (config: ShiftRulesResponseDto) => {
     // Hier würde die Konfiguration gespeichert werden
     console.log('Schichtregeln-Konfiguration gespeichert:', config);
     // TODO: Integration mit Backend/LocalStorage

@@ -31,6 +31,8 @@ import { ConstraintValidationResultDto, BulkValidationRequestDto, ValidationConf
 import { ShiftPlanningAlgorithmService } from './services/shift-planning-algorithm.service';
 import { ConstraintValidationService } from './services/constraint-validation.service';
 import { EmployeeAvailabilityService } from '../employees/services/employee-availability.service';
+import { ExcelExportService } from './services/excel-export.service';
+import { ExcelExportRequestDto, MultipleExcelExportRequestDto, ExcelExportResultDto } from './dto/excel-export.dto';
 
 @ApiTags('shift-plans')
 @Controller('api/shift-plans')
@@ -40,6 +42,7 @@ export class ShiftPlansController {
     private readonly shiftPlanningAlgorithmService: ShiftPlanningAlgorithmService,
     private readonly constraintValidationService: ConstraintValidationService,
     private readonly employeeAvailabilityService: EmployeeAvailabilityService,
+    private readonly excelExportService: ExcelExportService,
   ) {}
 
   @Post()
@@ -555,5 +558,145 @@ export class ShiftPlansController {
   })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.shiftPlansService.remove(id);
+  }
+
+  @Post(':id/export/excel')
+  @ApiOperation({
+    summary: 'Export shift plan to Excel',
+    description: 'Export a single shift plan to Excel format with customizable options'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Shift plan ID to export',
+    type: 'string',
+    format: 'uuid'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Excel file generated successfully',
+    type: ExcelExportResultDto,
+    headers: {
+      'Content-Type': {
+        description: 'MIME type of the Excel file',
+        schema: { type: 'string', example: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      },
+      'Content-Disposition': {
+        description: 'File download disposition',
+        schema: { type: 'string', example: 'attachment; filename="schichtplan-2024-12.xlsx"' }
+      }
+    }
+  })
+  @ApiNotFoundResponse({
+    description: 'Shift plan not found'
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid export options or export failed'
+  })
+  async exportToExcel(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() request?: ExcelExportRequestDto
+  ): Promise<{ 
+    buffer: Buffer; 
+    filename: string; 
+    mimeType: string;
+    metadata: any;
+  }> {
+    const options = request?.options || {};
+    const result = await this.excelExportService.exportShiftPlanToExcel(id, options);
+    
+    return {
+      buffer: result.buffer,
+      filename: result.filename,
+      mimeType: result.mimeType,
+      metadata: result.metadata
+    };
+  }
+
+  @Post('export/excel/multiple')
+  @ApiOperation({
+    summary: 'Export multiple shift plans to Excel',
+    description: 'Export multiple shift plans to a single Excel file with separate worksheets'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Excel file with multiple shift plans generated successfully',
+    type: ExcelExportResultDto
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid shift plan IDs or export options'
+  })
+  async exportMultipleToExcel(
+    @Body() request: MultipleExcelExportRequestDto
+  ): Promise<{ 
+    buffer: Buffer; 
+    filename: string; 
+    mimeType: string;
+    metadata: any;
+  }> {
+    const options = request.options || {};
+    const result = await this.excelExportService.exportMultipleShiftPlans(request.shiftPlanIds, options);
+    
+    return {
+      buffer: result.buffer,
+      filename: result.filename,
+      mimeType: result.mimeType,
+      metadata: result.metadata
+    };
+  }
+
+  @Get(':id/export/excel/download')
+  @ApiOperation({
+    summary: 'Download shift plan as Excel file',
+    description: 'Download a shift plan as an Excel file directly'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Shift plan ID to download',
+    type: 'string',
+    format: 'uuid'
+  })
+  @ApiQuery({
+    name: 'includeStatistics',
+    required: false,
+    type: Boolean,
+    description: 'Include statistics worksheet'
+  })
+  @ApiQuery({
+    name: 'includeEmployeeDetails',
+    required: false,
+    type: Boolean,
+    description: 'Include employee details worksheet'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Excel file download',
+    content: {
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+        schema: {
+          type: 'string',
+          format: 'binary'
+        }
+      }
+    }
+  })
+  async downloadExcel(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('includeStatistics') includeStatistics: string = 'false',
+    @Query('includeEmployeeDetails') includeEmployeeDetails: string = 'false'
+  ) {
+    const options = {
+      includeStatistics: includeStatistics === 'true',
+      includeEmployeeDetails: includeEmployeeDetails === 'true'
+    };
+    
+    const result = await this.excelExportService.exportShiftPlanToExcel(id, options);
+    
+    return {
+      buffer: result.buffer,
+      filename: result.filename,
+      mimeType: result.mimeType,
+      size: result.size,
+      generatedAt: result.generatedAt
+    };
   }
 }

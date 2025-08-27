@@ -8,6 +8,8 @@ export { RoleService } from './RoleService';
 export { ShiftPlanService } from './ShiftPlanService';
 export { ShiftRuleService } from './ShiftRuleService';
 export { ShiftService } from './ShiftService';
+export { ExcelExportService } from './ExcelExportService';
+export { ShiftPlanningService } from './ShiftPlanningService';
 
 // Service instances for direct use
 // These instances use the centralized base URL configuration from env.local
@@ -17,6 +19,8 @@ import { RoleService } from './RoleService';
 import { ShiftPlanService } from './ShiftPlanService';
 import { ShiftRuleService } from './ShiftRuleService';
 import { ShiftService } from './ShiftService';
+import { ExcelExportService } from './ExcelExportService';
+import { ShiftPlanningService } from './ShiftPlanningService';
 
 export const locationService = new LocationService();
 export const employeeService = new EmployeeService();
@@ -24,3 +28,5 @@ export const roleService = new RoleService();
 export const shiftPlanService = new ShiftPlanService();
 export const shiftRuleService = new ShiftRuleService();
 export const shiftService = new ShiftService();
+export const excelExportService = new ExcelExportService();
+export const shiftPlanningService = new ShiftPlanningService();

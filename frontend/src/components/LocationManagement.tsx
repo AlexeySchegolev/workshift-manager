@@ -35,9 +35,8 @@ import {
   Business as BusinessIcon,
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
-import { LocationStats } from '../models/interfaces';
 import { locationService } from '@/services';
-import { CreateLocationDto, UpdateLocationDto, LocationResponseDto } from '../api/data-contracts';
+import {CreateLocationDto, UpdateLocationDto, LocationResponseDto, LocationStatsDto} from '../api/data-contracts';
 
 interface LocationManagementProps {
   locations?: LocationResponseDto[];
@@ -83,13 +82,18 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   };
 
   // Standort-Statistiken
-  const getLocationStats = (locationId: string): LocationStats => {
+  const getLocationStats = (locationId: string): LocationStatsDto => {
     // TODO: Statistiken aus der Datenbank laden
     // Temporäre Standardwerte bis DB-Integration implementiert ist
     return {
-      totalClients: 25,
+      activeShifts: 12,
+      averageStaffing: 92.3,
       averageUtilization: 85,
       employeeCount: 8,
+      occupancyRate: 78.5,
+      totalClients: 25,
+      clientSatisfaction: 4.2,
+      monthlyRevenue: 15000,
     };
   };
 

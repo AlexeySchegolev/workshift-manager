@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ShiftPlan, MonthlyShiftPlan, DayShiftPlan } from '../../database/entities/shift-plan.entity';
-import { Employee } from '../../database/entities/employee.entity';
-import { ShiftRules } from '../../database/entities/shift-rules.entity';
-import { ShiftAssignment } from '../../database/entities/shift-assignment.entity';
-import { ConstraintViolation, ViolationType, ConstraintCategory } from '../../database/entities/constraint-violation.entity';
-import { CreateShiftPlanDto, GenerateShiftPlanDto, ValidateShiftPlanDto } from './dto/create-shift-plan.dto';
-import { UpdateShiftPlanDto } from './dto/update-shift-plan.dto';
+import {BadRequestException, Injectable, Logger, NotFoundException} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository} from 'typeorm';
+import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from '../../database/entities/shift-plan.entity';
+import {Employee} from '../../database/entities/employee.entity';
+import {ShiftRules} from '../../database/entities/shift-rules.entity';
+import {ShiftAssignment} from '../../database/entities/shift-assignment.entity';
+import {
+    ConstraintCategory,
+    ConstraintViolation,
+    ViolationType
+} from '../../database/entities/constraint-violation.entity';
+import {CreateShiftPlanDto, GenerateShiftPlanDto, ValidateShiftPlanDto} from './dto/create-shift-plan.dto';
+import {UpdateShiftPlanDto} from './dto/update-shift-plan.dto';
 
 @Injectable()
 export class ShiftPlansService {
@@ -450,29 +454,27 @@ export class ShiftPlansService {
     });
 
     // Calculate detailed statistics
-    const stats = {
-      shiftPlanId,
-      totalEmployees: employees.length,
-      totalAssignments: assignments.length,
-      totalViolations: violations.length,
-      hardViolations: violations.filter(v => v.type === ViolationType.HARD).length,
-      softViolations: violations.filter(v => v.type === ViolationType.SOFT).length,
-      coveragePercentage: shiftPlan.coveragePercentage,
-      totalHours: shiftPlan.totalHours,
-      employeeUtilization: assignments.reduce((acc, assignment) => {
-        const empId = assignment.employee.id;
-        acc[empId] = (acc[empId] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      violationsByCategory: violations.reduce((acc, violation) => {
-        acc[violation.category] = (acc[violation.category] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      averageShiftsPerEmployee: employees.length > 0 ? assignments.length / employees.length : 0,
-      planCompleteness: this.calculatePlanCompleteness(shiftPlan.planData)
+      return {
+        shiftPlanId,
+        totalEmployees: employees.length,
+        totalAssignments: assignments.length,
+        totalViolations: violations.length,
+        hardViolations: violations.filter(v => v.type === ViolationType.HARD).length,
+        softViolations: violations.filter(v => v.type === ViolationType.SOFT).length,
+        coveragePercentage: shiftPlan.coveragePercentage,
+        totalHours: shiftPlan.totalHours,
+        employeeUtilization: assignments.reduce((acc, assignment) => {
+            const empId = assignment.employee.id;
+            acc[empId] = (acc[empId] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>),
+        violationsByCategory: violations.reduce((acc, violation) => {
+            acc[violation.category] = (acc[violation.category] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>),
+        averageShiftsPerEmployee: employees.length > 0 ? assignments.length / employees.length : 0,
+        planCompleteness: this.calculatePlanCompleteness(shiftPlan.planData)
     };
-
-    return stats;
   }
 
   private calculatePlanCompleteness(planData: MonthlyShiftPlan): number {

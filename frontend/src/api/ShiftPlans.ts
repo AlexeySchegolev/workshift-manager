@@ -18,7 +18,14 @@ import {
   HttpResponse,
 } from "./http-client";
 import {
+  AdditionalColumnDto,
+  AdvancedPlanningOptionsDto,
+  BulkValidationRequestDto,
+  ConstraintValidationResultDto,
+  ConstraintViolationDto,
   ConstraintViolationResponseDto,
+  ConstraintViolationsSummaryDto,
+  ConstraintWeightsDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
@@ -27,15 +34,27 @@ import {
   CreateShiftPlanDto,
   CreateShiftRulesDto,
   CreateUserDto,
+  DateRangeDto,
   EmployeeResponseDto,
+  EmployeeUtilizationDto,
+  ExcelExportMetadataDto,
+  ExcelExportOptionsDto,
+  ExcelExportRequestDto,
+  ExcelExportResultDto,
   GenerateShiftPlanDto,
   LocationResponseDto,
   LocationStatsDto,
+  MultipleExcelExportRequestDto,
   OperatingHoursDto,
+  OptimizationCriteriaDto,
   OrganizationResponseDto,
+  PlanningPerformanceDto,
+  QualityMetricsDto,
   RoleResponseDto,
   ShiftAssignmentResponseDto,
+  ShiftDistributionDto,
   ShiftPlanResponseDto,
+  ShiftPlanStatisticsDto,
   ShiftResponseDto,
   ShiftRoleRequirementDto,
   ShiftRulesResponseDto,
@@ -50,6 +69,9 @@ import {
   UpdateUserDto,
   UserResponseDto,
   ValidateShiftPlanDto,
+  ValidationConfigDto,
+  ValidationRecommendationDto,
+  ValidationStatisticsDto,
 } from "./data-contracts";
 
 export class ShiftPlans<SecurityDataType = unknown> {
@@ -60,6 +82,24 @@ export class ShiftPlans<SecurityDataType = unknown> {
   }
 
   /**
+   * @description Validate constraints for multiple shift plans in a single request
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerBulkValidateShiftPlans
+   * @summary Bulk validate multiple shift plans
+   * @request POST:/api/shift-plans/bulk-validate
+   */
+  shiftPlansControllerBulkValidateShiftPlans = (
+    data: BulkValidationRequestDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<void, any>({
+      path: `/api/shift-plans/bulk-validate`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    }); /**
    * @description Creates a new shift plan for a specific month and year
    *
    * @tags shift-plans
@@ -73,6 +113,68 @@ export class ShiftPlans<SecurityDataType = unknown> {
   ) =>
     this.http.request<ShiftPlanResponseDto, void>({
       path: `/api/shift-plans`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    }); /**
+   * @description Download a shift plan as an Excel file directly
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerDownloadExcel
+   * @summary Download shift plan as Excel file
+   * @request GET:/api/shift-plans/{id}/export/excel/download
+   */
+  shiftPlansControllerDownloadExcel = (
+    id: string,
+    query?: {
+      /** Include employee details worksheet */
+      includeEmployeeDetails?: boolean;
+      /** Include statistics worksheet */
+      includeStatistics?: boolean;
+    },
+    params: RequestParams = {}
+  ) =>
+    this.http.request<File, any>({
+      path: `/api/shift-plans/${id}/export/excel/download`,
+      method: "GET",
+      query: query,
+      ...params,
+    }); /**
+   * @description Export multiple shift plans to a single Excel file with separate worksheets
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerExportMultipleToExcel
+   * @summary Export multiple shift plans to Excel
+   * @request POST:/api/shift-plans/export/excel/multiple
+   */
+  shiftPlansControllerExportMultipleToExcel = (
+    data: MultipleExcelExportRequestDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ExcelExportResultDto, void>({
+      path: `/api/shift-plans/export/excel/multiple`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    }); /**
+   * @description Export a single shift plan to Excel format with customizable options
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerExportToExcel
+   * @summary Export shift plan to Excel
+   * @request POST:/api/shift-plans/{id}/export/excel
+   */
+  shiftPlansControllerExportToExcel = (
+    id: string,
+    data: ExcelExportRequestDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ExcelExportResultDto, void>({
+      path: `/api/shift-plans/${id}/export/excel`,
       method: "POST",
       body: data,
       type: ContentType.Json,
@@ -166,6 +268,43 @@ export class ShiftPlans<SecurityDataType = unknown> {
       format: "json",
       ...params,
     }); /**
+   * @description Generate a shift plan using advanced algorithms with comprehensive options
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerGenerateAdvancedShiftPlan
+   * @summary Generate advanced shift plan
+   * @request POST:/api/shift-plans/{id}/generate-advanced
+   */
+  shiftPlansControllerGenerateAdvancedShiftPlan = (
+    id: string,
+    data: AdvancedPlanningOptionsDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<object, any>({
+      path: `/api/shift-plans/${id}/generate-advanced`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    }); /**
+   * @description Retrieve detailed statistics and analytics for a shift plan
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerGetShiftPlanStatistics
+   * @summary Get comprehensive shift plan statistics
+   * @request GET:/api/shift-plans/{id}/statistics
+   */
+  shiftPlansControllerGetShiftPlanStatistics = (
+    id: string,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ShiftPlanStatisticsDto, any>({
+      path: `/api/shift-plans/${id}/statistics`,
+      method: "GET",
+      format: "json",
+      ...params,
+    }); /**
    * @description Retrieves statistics about shift plans including counts and current/next month plans
    *
    * @tags shift-plans
@@ -187,6 +326,25 @@ export class ShiftPlans<SecurityDataType = unknown> {
       path: `/api/shift-plans/stats`,
       method: "GET",
       format: "json",
+      ...params,
+    }); /**
+   * @description Optimize an existing shift plan to improve quality metrics
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerOptimizeShiftPlan
+   * @summary Optimize existing shift plan
+   * @request POST:/api/shift-plans/{id}/optimize
+   */
+  shiftPlansControllerOptimizeShiftPlan = (
+    id: string,
+    data: OptimizationCriteriaDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<void, any>({
+      path: `/api/shift-plans/${id}/optimize`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
       ...params,
     }); /**
    * @description Publishes a shift plan, making it active and visible to employees
@@ -270,6 +428,26 @@ export class ShiftPlans<SecurityDataType = unknown> {
       void
     >({
       path: `/api/shift-plans/validate`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    }); /**
+   * @description Perform comprehensive constraint validation on a shift plan
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerValidateShiftPlanConstraints
+   * @summary Validate shift plan constraints
+   * @request POST:/api/shift-plans/{id}/validate-constraints
+   */
+  shiftPlansControllerValidateShiftPlanConstraints = (
+    id: string,
+    data: ValidationConfigDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ConstraintValidationResultDto, any>({
+      path: `/api/shift-plans/${id}/validate-constraints`,
       method: "POST",
       body: data,
       type: ContentType.Json,

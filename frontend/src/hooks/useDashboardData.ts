@@ -1,10 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Employee, MonthlyShiftPlan, ConstraintCheck } from '../models/interfaces';
-import { ShiftPlanningService } from '../services/ShiftPlanningService';
+import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays, isToday } from 'date-fns';
-import { de } from 'date-fns/locale';
-import { WochenTag } from '../components/dashboard/WochenUebersicht';
-import { StatusItem } from '../components/dashboard/StatusAmpel';
+import { WochenTag } from '@/components/dashboard';
+import { StatusItem } from '@/components/dashboard';
+import { Employee, MonthlyShiftPlan, ConstraintCheck } from '../types';
 
 export interface DashboardStatistiken {
   mitarbeiterAnzahl: number;

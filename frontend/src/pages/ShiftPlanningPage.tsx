@@ -28,14 +28,10 @@ import {
 import MonthSelector from '../components/MonthSelector';
 import ShiftTable from '../components/ShiftTable';
 import PlanungsValidierung from '../components/PlanungsValidierung';
-import {
-    MonthlyShiftPlan,
-    ConstraintCheck,
-    EmployeeAvailability
-} from '../models/interfaces';
-import {ShiftPlanningService} from '../services/ShiftPlanningService';
 import {EmployeeService} from "@/services";
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
+import { MonthlyShiftPlan, ConstraintCheck, EmployeeAvailability } from '../types';
+import { shiftPlanningService } from '../services';
 
 /**
  * Moderne Schichtplanungs-Seite im Dashboard-Style
@@ -146,16 +142,14 @@ const ShiftPlanningPage: React.FC = () => {
                 const parsedPlan = JSON.parse(storedPlan);
                 setShiftPlan(parsedPlan);
 
-                let employeeAvailability: EmployeeAvailability = {};
+                let employeeAvailability: EmployeeAvailability[] = [];
                 if (storedAvailability) {
                     employeeAvailability = JSON.parse(storedAvailability);
                 }
 
-                const newConstraints = ShiftPlanningService.checkConstraints(
-                    parsedPlan,
-                    employees,
-                    employeeAvailability
-                );
+                // TODO: Implement constraint checking with backend integration
+                // For now, set empty constraints to avoid async issues in useEffect
+                const newConstraints: ConstraintCheck[] = [];
                 setConstraints(newConstraints);
             } catch (error) {
                 console.error('Fehler beim Laden des Schichtplans aus dem sessionStorage:', error);
@@ -195,17 +189,16 @@ const ShiftPlanningPage: React.FC = () => {
             const year = selectedDate.getFullYear();
             const month = selectedDate.getMonth() + 1;
 
-            const {shiftPlan: generatedPlan, employeeAvailability} =
-                ShiftPlanningService.generateShiftPlan(
-                    employees,
-                    year,
-                    month
-                );
-
-            const newConstraints = ShiftPlanningService.checkConstraints(
-                generatedPlan,
+            // TODO: Implement actual shift plan generation with backend integration
+            const generatedPlan = await shiftPlanningService.generateOptimalPlan(
+                { algorithm: 'basic', constraints: ['basic_constraints'], priorities: ['coverage'] },
                 employees,
-                employeeAvailability
+                [] // empty availability array for now
+            );
+
+            const newConstraints = await shiftPlanningService.validatePlan(
+                generatedPlan,
+                ['basic_constraints']
             );
 
             setShiftPlan(generatedPlan);
@@ -215,7 +208,7 @@ const ShiftPlanningPage: React.FC = () => {
             const availabilityKey = getSessionKey(selectedDate, 'availability');
 
             sessionStorage.setItem(planKey, JSON.stringify(generatedPlan));
-            sessionStorage.setItem(availabilityKey, JSON.stringify(employeeAvailability));
+            sessionStorage.setItem(availabilityKey, JSON.stringify([])); // TODO: Store actual availability data
         } catch (error) {
             console.error('Fehler beim Generieren des Schichtplans:', error);
             alert('Der Schichtplan konnte nicht generiert werden.');

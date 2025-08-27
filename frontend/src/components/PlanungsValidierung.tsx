@@ -32,8 +32,6 @@ import {
   Info as InfoIcon,
 } from '@mui/icons-material';
 
-import { allRuleCategories } from '../data/detailedRules';
-
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -98,6 +96,90 @@ const PlanungsValidierung: React.FC = () => {
     if (title.includes('Uetersen')) return 'secondary';
     return 'primary';
   };
+
+  // Rule category interface
+  interface Rule {
+    primary: string;
+    secondary: string;
+  }
+
+  interface RuleCategory {
+    title: string;
+    rules: Rule[];
+  }
+
+  // TODO: Load rule categories from backend service
+  const allRuleCategories: RuleCategory[] = [
+    {
+      title: 'Allgemeine Regeln',
+      rules: [
+        {
+          primary: 'Mindestbesetzung',
+          secondary: 'Jede Schicht muss mindestens mit der erforderlichen Anzahl Mitarbeiter besetzt sein'
+        },
+        {
+          primary: 'Maximale Arbeitszeit',
+          secondary: 'Die tägliche und wöchentliche Höchstarbeitszeit darf nicht überschritten werden'
+        },
+        {
+          primary: 'Ruhezeiten',
+          secondary: 'Zwischen zwei Schichten müssen die gesetzlichen Ruhezeiten eingehalten werden'
+        }
+      ]
+    },
+    {
+      title: 'Frühschicht Regeln',
+      rules: [
+        {
+          primary: 'Frühschicht Besetzung',
+          secondary: 'Frühschichten müssen mit qualifizierten Mitarbeitern besetzt werden'
+        },
+        {
+          primary: 'Frühe Ankunftszeit',
+          secondary: 'Mitarbeiter müssen rechtzeitig vor Schichtbeginn eintreffen'
+        }
+      ]
+    },
+    {
+      title: 'Spätschicht Regeln',
+      rules: [
+        {
+          primary: 'Spätschicht Besetzung',
+          secondary: 'Spätschichten erfordern erfahrene Mitarbeiter für Nachtdienst'
+        },
+        {
+          primary: 'Übergabezeit',
+          secondary: 'Ausreichende Überlappung für Schichtübergabe einplanen'
+        }
+      ]
+    },
+    {
+      title: 'Spezielle Regeln',
+      rules: [
+        {
+          primary: 'Urlaubsvertretung',
+          secondary: 'Bei Urlaub muss eine qualifizierte Vertretung eingeplant werden'
+        },
+        {
+          primary: 'Fortbildungen',
+          secondary: 'Fortbildungszeiten müssen in der Schichtplanung berücksichtigt werden'
+        }
+      ]
+    },
+    {
+      title: 'Uetersen Spezific',
+      rules: [
+        {
+          primary: 'Standort-spezifische Regeln',
+          secondary: 'Besondere Anforderungen für den Standort Uetersen'
+        },
+        {
+          primary: 'Lokale Bestimmungen',
+          secondary: 'Einhaltung lokaler Arbeitsrichtlinien und Bestimmungen'
+        }
+      ]
+    }
+  ];
 
   // Tab-Ansicht für Desktop
   const renderTabView = () => (

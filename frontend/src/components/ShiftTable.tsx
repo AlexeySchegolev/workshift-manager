@@ -36,20 +36,15 @@ import {
 } from '@mui/icons-material';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
-
-import {
-    MonthlyShiftPlan,
-    DayShiftPlan,
-    ConstraintCheck,
-    ConstraintStatus
-} from '../models/interfaces';
-import {ExcelExportService} from '../services/ExcelExportService';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
+import { MonthlyShiftPlan, ConstraintCheck, ConstraintStatus, DayShiftPlan } from '../types';
+import { excelExportService } from '../services';
 
 interface ShiftTableProps {
     employees: EmployeeResponseDto[];
     selectedDate: Date;
     shiftPlan: MonthlyShiftPlan | null;
+    shiftPlanId?: string | null; // Optional shift plan ID for Excel export
     constraints: ConstraintCheck[];
     isLoading: boolean;
     onGeneratePlan: () => void;
@@ -62,6 +57,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                    employees,
                                                    selectedDate,
                                                    shiftPlan,
+                                                   shiftPlanId,
                                                    constraints,
                                                    isLoading,
                                                    onGeneratePlan
@@ -85,17 +81,25 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
 
     // Funktion zum Exportieren des Schichtplans
     const handleExportToExcel = async () => {
-        if (!shiftPlan) return;
+        if (!shiftPlan || !shiftPlanId) {
+            alert('Kein Schichtplan zum Exportieren verfügbar.');
+            return;
+        }
 
         try {
-            const blob = await ExcelExportService.exportShiftPlan(
-                shiftPlan,
-                employees,
-                selectedDate.getFullYear(),
-                selectedDate.getMonth() + 1
+            const blob = await excelExportService.exportShiftPlan(
+                shiftPlanId,
+                { 
+                    includeStatistics: true, 
+                    includePlanning: true, 
+                    dateRange: { 
+                        start: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
+                        end: new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
+                    }
+                }
             );
 
-            ExcelExportService.saveExcelFile(blob, `Schichtplan_${monthName}.xlsx`);
+            excelExportService.downloadBlob(blob, `Schichtplan_${monthName}.xlsx`);
         } catch (error) {
             console.error('Fehler beim Exportieren des Schichtplans:', error);
             alert('Der Schichtplan konnte nicht exportiert werden.');
@@ -147,7 +151,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
     // Funktion zum Rendern der Statusfarbe für Constraints
     const getConstraintColor = (status: ConstraintStatus): 'success' | 'warning' | 'error' | 'default' => {
         switch (status) {
-            case 'ok':
+            case 'success':
                 return 'success';
             case 'warning':
                 return 'warning';
@@ -161,7 +165,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
     // Constraint-Icon basierend auf Status
     const getConstraintIcon = (status: ConstraintStatus) => {
         switch (status) {
-            case 'ok':
+            case 'success':
                 return <CheckCircleIcon sx={{fontSize: '1rem'}}/>;
             case 'warning':
                 return <WarningIcon sx={{fontSize: '1rem'}}/>;

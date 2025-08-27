@@ -36,16 +36,15 @@ import {
 } from '@mui/icons-material';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
-import {EmployeeResponseDto} from "@/api/data-contracts.ts";
-import { MonthlyShiftPlan, ConstraintCheck, ConstraintStatus, DayShiftPlan } from '../types';
-import { excelExportService } from '../services';
+import {ConstraintViolationDto, EmployeeResponseDto, MonthlyShiftPlanDto} from "@/api/data-contracts.ts";
+import { excelExportService } from '@/services';
 
 interface ShiftTableProps {
     employees: EmployeeResponseDto[];
     selectedDate: Date;
-    shiftPlan: MonthlyShiftPlan | null;
+    shiftPlan: MonthlyShiftPlanDto | null;
     shiftPlanId?: string | null; // Optional shift plan ID for Excel export
-    constraints: ConstraintCheck[];
+    constraints: ConstraintViolationDto[];
     isLoading: boolean;
     onGeneratePlan: () => void;
 }
@@ -149,13 +148,14 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
     };
 
     // Funktion zum Rendern der Statusfarbe für Constraints
-    const getConstraintColor = (status: ConstraintStatus): 'success' | 'warning' | 'error' | 'default' => {
-        switch (status) {
-            case 'success':
+    const getConstraintColor = (type: "hard" | "soft" | "warning" | "info"): 'success' | 'warning' | 'error' | 'default' => {
+        switch (type) {
+            case 'info':
                 return 'success';
             case 'warning':
                 return 'warning';
-            case 'violation':
+            case 'hard':
+            case 'soft':
                 return 'error';
             default:
                 return 'default';
@@ -163,13 +163,14 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
     };
 
     // Constraint-Icon basierend auf Status
-    const getConstraintIcon = (status: ConstraintStatus) => {
-        switch (status) {
-            case 'success':
+    const getConstraintIcon = (type: "hard" | "soft" | "warning" | "info") => {
+        switch (type) {
+            case 'info':
                 return <CheckCircleIcon sx={{fontSize: '1rem'}}/>;
             case 'warning':
                 return <WarningIcon sx={{fontSize: '1rem'}}/>;
-            case 'violation':
+            case 'hard':
+            case 'soft':
                 return <ErrorIcon sx={{fontSize: '1rem'}}/>;
             default:
                 return <WarningIcon sx={{fontSize: '1rem'}}/>;
@@ -447,12 +448,12 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                 </TableCell>
 
                                                 {sortedDays.map(dayKey => {
-                                                    const dayPlan = shiftPlan[dayKey] as DayShiftPlan;
+                                                    const dayPlan = (shiftPlan as Record<string, any>)?.[dayKey] as Record<string, string[]> | null;
                                                     let assignedShift = '';
 
                                                     if (dayPlan) {
                                                         for (const shiftName in dayPlan) {
-                                                            if (dayPlan[shiftName].includes(emp.id)) {
+                                                            if (dayPlan[shiftName]?.includes(emp.id)) {
                                                                 assignedShift = shiftName;
                                                                 break;
                                                             }
@@ -468,7 +469,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                             key={`${emp.id}-${dayKey}`}
                                                             align="center"
                                                             sx={{
-                                                                backgroundColor: shiftPlan[dayKey] === null
+                                                                backgroundColor: (shiftPlan as Record<string, any>)?.[dayKey] === null
                                                                     ? alpha(theme.palette.grey[500], 0.1)
                                                                     : assignedShift
                                                                         ? getShiftBackgroundColor(assignedShift)
@@ -481,7 +482,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                                 position: 'relative',
                                                             }}
                                                         >
-                                                            {shiftPlan[dayKey] === null ? (
+                                                            {(shiftPlan as Record<string, any>)?.[dayKey] === null ? (
                                                                 <Typography
                                                                     variant="caption"
                                                                     sx={{
@@ -572,14 +573,14 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                 borderRadius: 2,
                                                 mb: 1,
                                                 backgroundColor: alpha(
-                                                    constraint.status === 'violation' ? theme.palette.error.main :
-                                                        constraint.status === 'warning' ? theme.palette.warning.main :
+                                                    constraint.type === 'hard' || constraint.type === 'soft' ? theme.palette.error.main :
+                                                        constraint.type === 'warning' ? theme.palette.warning.main :
                                                             theme.palette.success.main,
                                                     0.05
                                                 ),
                                                 border: `1px solid ${alpha(
-                                                    constraint.status === 'violation' ? theme.palette.error.main :
-                                                        constraint.status === 'warning' ? theme.palette.warning.main :
+                                                    constraint.type === 'hard' || constraint.type === 'soft' ? theme.palette.error.main :
+                                                        constraint.type === 'warning' ? theme.palette.warning.main :
                                                             theme.palette.success.main,
                                                     0.2
                                                 )}`,
@@ -592,13 +593,13 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                 primary={
                                                     <Box sx={{display: 'flex', alignItems: 'center', gap: 1.5}}>
                                                         <Chip
-                                                            icon={getConstraintIcon(constraint.status)}
+                                                            icon={getConstraintIcon(constraint.type)}
                                                             label={
-                                                                constraint.status === 'violation' ? 'Fehler' :
-                                                                    constraint.status === 'warning' ? 'Warnung' :
+                                                                constraint.type === 'hard' || constraint.type === 'soft' ? 'Fehler' :
+                                                                    constraint.type === 'warning' ? 'Warnung' :
                                                                         'OK'
                                                             }
-                                                            color={getConstraintColor(constraint.status)}
+                                                            color={getConstraintColor(constraint.type)}
                                                             size="small"
                                                             sx={{
                                                                 fontWeight: 600,

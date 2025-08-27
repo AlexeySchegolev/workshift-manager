@@ -1,5 +1,25 @@
 import { BaseService } from './BaseService';
-import { ShiftPlanningOptions, EmployeeAvailability, MonthlyShiftPlan } from '../types';
+import { AdvancedPlanningOptionsDto } from '../api/data-contracts';
+
+// Temporary type definitions until DTOs are properly generated
+interface DayShiftPlan {
+  [shiftName: string]: string[];
+}
+
+interface MonthlyShiftPlan {
+  [dateKey: string]: DayShiftPlan | null;
+}
+
+interface EmployeeAvailability {
+  employeeId: string;
+  date: string;
+  available: boolean;
+  shifts: string[];
+  preferences?: string[];
+  constraints?: string[];
+}
+
+type ShiftPlanningOptions = AdvancedPlanningOptionsDto;
 import { ShiftPlans } from '../api/ShiftPlans';
 import {
   GenerateShiftPlanDto,
@@ -38,7 +58,7 @@ export class ShiftPlanningService extends BaseService {
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
         employeeIds: employees.map(emp => emp.id),
-        useRelaxedRules: options.algorithm === 'basic'
+        useRelaxedRules: options.optimizationLevel === 'basic'
       };
 
       const response = await this.shiftPlansApi.shiftPlansControllerGenerate(generateDto);
@@ -174,28 +194,5 @@ export class ShiftPlanningService extends BaseService {
     });
     
     return Array.from(employeeIds);
-  }
-
-  /**
-   * Get available planning algorithms
-   * @returns List of available algorithms
-   */
-  getAvailableAlgorithms(): string[] {
-    // TODO: Return actual available algorithms
-    return ['basic', 'advanced', 'ai'];
-  }
-
-  /**
-   * Get default planning constraints
-   * @returns Default constraints
-   */
-  getDefaultConstraints(): string[] {
-    // TODO: Return actual default constraints
-    return [
-      'max_hours_per_week',
-      'min_rest_time',
-      'skill_requirements',
-      'availability'
-    ];
   }
 }

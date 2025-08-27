@@ -1,5 +1,4 @@
 import {BaseService} from './BaseService';
-import {ExcelExportOptions} from '../types';
 import {ShiftPlans} from '../api/ShiftPlans';
 import {
     ExcelExportRequestDto,
@@ -7,6 +6,17 @@ import {
     MultipleExcelExportRequestDto,
     ExcelExportResultDto
 } from '../api/data-contracts';
+
+// Frontend interface for simplified API usage
+interface ExcelExportOptions {
+  includeStatistics?: boolean;
+  includePlanning?: boolean;
+  includeConstraints?: boolean;
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+}
 
 /**
  * Service for Excel export functionality using backend API endpoints

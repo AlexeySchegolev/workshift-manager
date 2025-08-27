@@ -35,6 +35,8 @@ import {
   CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
+  DayShiftPlanDto,
+  EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
   EmployeeUtilizationDto,
   ExcelExportMetadataDto,
@@ -44,6 +46,7 @@ import {
   GenerateShiftPlanDto,
   LocationResponseDto,
   LocationStatsDto,
+  MonthlyShiftPlanDto,
   MultipleExcelExportRequestDto,
   OperatingHoursDto,
   OptimizationCriteriaDto,
@@ -280,7 +283,7 @@ export class ShiftPlans<SecurityDataType = unknown> {
     data: AdvancedPlanningOptionsDto,
     params: RequestParams = {}
   ) =>
-    this.http.request<object, any>({
+    this.http.request<DayShiftPlanDto, any>({
       path: `/api/shift-plans/${id}/generate-advanced`,
       method: "POST",
       body: data,

@@ -29,9 +29,9 @@ import MonthSelector from '../components/MonthSelector';
 import ShiftTable from '../components/ShiftTable';
 import PlanungsValidierung from '../components/PlanungsValidierung';
 import {EmployeeService} from "@/services";
-import {EmployeeResponseDto} from "@/api/data-contracts.ts";
-import { MonthlyShiftPlan, ConstraintCheck, EmployeeAvailability } from '../types';
-import { shiftPlanningService } from '../services';
+import {ConstraintViolationDto, EmployeeResponseDto, MonthlyShiftPlanDto, EmployeeAvailabilityResponseDto} from "@/api/data-contracts.ts";
+
+import { shiftPlanningService } from '@/services';
 
 /**
  * Moderne Schichtplanungs-Seite im Dashboard-Style
@@ -60,10 +60,10 @@ const ShiftPlanningPage: React.FC = () => {
     }, []);
 
     // Schichtplan
-    const [shiftPlan, setShiftPlan] = useState<MonthlyShiftPlan | null>(null);
+    const [shiftPlan, setShiftPlan] = useState<MonthlyShiftPlanDto | null>(null);
 
     // Regelverletzungen
-    const [constraints, setConstraints] = useState<ConstraintCheck[]>([]);
+    const [constraints, setConstraints] = useState<ConstraintViolationDto[]>([]);
 
     // Lade-Zustand
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -101,7 +101,7 @@ const ShiftPlanningPage: React.FC = () => {
         if (shiftPlan) {
             Object.values(shiftPlan).forEach(dayPlan => {
                 if (dayPlan) {
-                    Object.values(dayPlan).forEach(shiftEmployees => {
+                    Object.values(dayPlan as Record<string, string[]>).forEach(shiftEmployees => {
                         plannedShifts += shiftEmployees.length;
                     });
                 }
@@ -110,8 +110,8 @@ const ShiftPlanningPage: React.FC = () => {
         }
 
         constraints.forEach(constraint => {
-            if (constraint.status === 'violation') violations++;
-            if (constraint.status === 'warning') warnings++;
+            if (constraint.type === 'hard' || constraint.type === 'soft') violations++;
+            if (constraint.type === 'warning') warnings++;
         });
 
         const coverage = totalPossibleShifts > 0 ? Math.round((plannedShifts / totalPossibleShifts) * 100) : 0;
@@ -142,14 +142,14 @@ const ShiftPlanningPage: React.FC = () => {
                 const parsedPlan = JSON.parse(storedPlan);
                 setShiftPlan(parsedPlan);
 
-                let employeeAvailability: EmployeeAvailability[] = [];
+                let employeeAvailability: EmployeeAvailabilityResponseDto[] = [];
                 if (storedAvailability) {
                     employeeAvailability = JSON.parse(storedAvailability);
                 }
 
                 // TODO: Implement constraint checking with backend integration
                 // For now, set empty constraints to avoid async issues in useEffect
-                const newConstraints: ConstraintCheck[] = [];
+                const newConstraints: ConstraintViolationDto[] = [];
                 setConstraints(newConstraints);
             } catch (error) {
                 console.error('Fehler beim Laden des Schichtplans aus dem sessionStorage:', error);
@@ -191,7 +191,17 @@ const ShiftPlanningPage: React.FC = () => {
 
             // TODO: Implement actual shift plan generation with backend integration
             const generatedPlan = await shiftPlanningService.generateOptimalPlan(
-                { algorithm: 'basic', constraints: ['basic_constraints'], priorities: ['coverage'] },
+                { 
+                    algorithm: 'mixed',
+                    optimizationLevel: 'standard',
+                    allowOvertime: false,
+                    consecutiveDaysLimit: 5,
+                    maxPlanningAttempts: 3,
+                    strictMode: true,
+                    weeklyHoursFlexibility: 0.1,
+                    employeeSortingStrategy: 'workload_balancing',
+                    saturdayDistributionMode: 'fair'
+                },
                 employees,
                 [] // empty availability array for now
             );

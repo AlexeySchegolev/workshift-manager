@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import * as compression from 'compression';
 import * as morgan from 'morgan';
 import { AppModule } from './app.module';
+import {DayShiftPlanDto} from "@/modules/shift-plans/dto/day-shift-plan.dto";
+import {MonthlyShiftPlanDto} from "@/modules/shift-plans/dto/monthly-shift-plan.dto";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,7 +36,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   
-  const options = {};
+  const options = {extraModels : [DayShiftPlanDto, MonthlyShiftPlanDto]};
   
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api/docs', app, document);

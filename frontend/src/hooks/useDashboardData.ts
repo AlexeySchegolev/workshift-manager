@@ -2,7 +2,27 @@ import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays, isToday } from 'date-fns';
 import { WochenTag } from '@/components/dashboard';
 import { StatusItem } from '@/components/dashboard';
-import { Employee, MonthlyShiftPlan, ConstraintCheck } from '../types';
+import { EmployeeResponseDto } from '../api/data-contracts';
+
+// Temporary type definitions until DTOs are properly generated
+interface DayShiftPlan {
+  [shiftName: string]: string[];
+}
+
+interface MonthlyShiftPlan {
+  [dateKey: string]: DayShiftPlan | null;
+}
+
+interface ConstraintCheck {
+  id: string;
+  status: 'warning' | 'violation' | 'success';
+  message: string;
+  severity?: 'low' | 'medium' | 'high';
+  rule?: string;
+  affectedEmployees?: string[];
+}
+
+type Employee = EmployeeResponseDto;
 
 export interface DashboardStatistiken {
   mitarbeiterAnzahl: number;

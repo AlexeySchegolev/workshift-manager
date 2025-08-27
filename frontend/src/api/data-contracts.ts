@@ -1354,12 +1354,316 @@ export interface DateRangeDto {
   start: string;
 }
 
+export type DayShiftPlanDto = object;
+
+export interface EmployeeAvailabilityResponseDto {
+  /**
+   * Grund für Abwesenheit
+   * @example "vacation"
+   */
+  absenceReason?:
+    | "vacation"
+    | "sick_leave"
+    | "personal_leave"
+    | "maternity_leave"
+    | "paternity_leave"
+    | "bereavement"
+    | "jury_duty"
+    | "military_duty"
+    | "training"
+    | "conference"
+    | "unpaid_leave"
+    | "sabbatical"
+    | "medical_appointment"
+    | "family_emergency"
+    | "religious_observance"
+    | "other";
+  /**
+   * Betrifft Lohnabrechnung
+   * @example false
+   */
+  affectsPayroll: boolean;
+  /**
+   * Genehmigungsdatum
+   * @format date-time
+   * @example "2024-01-15T10:30:00Z"
+   */
+  approvedAt?: string;
+  /**
+   * Genehmigt von (Benutzer-ID)
+   * @example "user-uuid"
+   */
+  approvedBy?: string;
+  /**
+   * Angehängte Dokumente (URLs oder IDs)
+   * @example []
+   */
+  attachedDocuments: string[];
+  /**
+   * Erstellungsdatum
+   * @format date-time
+   * @example "2024-01-01T00:00:00Z"
+   */
+  createdAt: string;
+  /**
+   * Erstellt von (Benutzer-ID)
+   * @example "user-uuid"
+   */
+  createdBy?: string;
+  /**
+   * Datumsbereich als Text
+   * @example "15.01.2024 - 20.01.2024"
+   */
+  dateRange: string;
+  /**
+   * Löschzeitpunkt (Soft Delete)
+   * @format date-time
+   * @example "2023-12-31T23:59:59Z"
+   */
+  deletedAt?: string;
+  /**
+   * Anzeigename für Grund
+   * @example "Verfügbar"
+   */
+  displayReason: string;
+  /**
+   * Dokumentation bereitgestellt
+   * @example false
+   */
+  documentationProvided: boolean;
+  /**
+   * Dokumentation erforderlich
+   * @example false
+   */
+  documentationRequired: boolean;
+  /**
+   * Dauer in Tagen
+   * @example 5
+   */
+  duration: number;
+  /**
+   * ID des Mitarbeiters
+   * @example "uuid-string"
+   */
+  employeeId: string;
+  /**
+   * Enddatum des Verfügbarkeitszeitraums
+   * @format date
+   * @example "2024-01-20"
+   */
+  endDate?: string;
+  /**
+   * Endzeit für teilweise Tagesverfügbarkeit (HH:MM)
+   * @example "17:00"
+   */
+  endTime?: string;
+  /**
+   * Ausgeschlossene Standorte
+   * @example ["location-uuid-3"]
+   */
+  excludedLocations: string[];
+  /**
+   * Ausgeschlossene Schichtarten
+   * @example ["N"]
+   */
+  excludedShiftTypes: string[];
+  /**
+   * Eindeutige ID des Verfügbarkeitsdatensatzes
+   * @example "uuid-string"
+   */
+  id: string;
+  /**
+   * Interne Notizen (nur für Manager sichtbar)
+   * @example "Interne Bemerkungen"
+   */
+  internalNotes?: string;
+  /**
+   * Ist Abwesenheit
+   * @example false
+   */
+  isAbsence: boolean;
+  /**
+   * Ist aktiv
+   * @example true
+   */
+  isActive: boolean;
+  /**
+   * Ganztägige Verfügbarkeit
+   * @example true
+   */
+  isAllDay: boolean;
+  /**
+   * Ist momentan aktiv
+   * @example true
+   */
+  isCurrentlyActive: boolean;
+  /**
+   * Notfall
+   * @example false
+   */
+  isEmergency: boolean;
+  /**
+   * Ist abgelaufen
+   * @example false
+   */
+  isExpired: boolean;
+  /**
+   * Wartet auf Genehmigung
+   * @example false
+   */
+  isPending: boolean;
+  /**
+   * Wiederkehrende Verfügbarkeit
+   * @example false
+   */
+  isRecurring: boolean;
+  /**
+   * Maximale Stunden pro Tag
+   * @example 8
+   */
+  maxHoursPerDay?: number;
+  /**
+   * Maximale Stunden pro Woche
+   * @example 40
+   */
+  maxHoursPerWeek?: number;
+  /**
+   * Benötigt Genehmigung
+   * @example false
+   */
+  needsApproval: boolean;
+  /**
+   * Notizen
+   * @example "Zusätzliche Informationen"
+   */
+  notes?: string;
+  /**
+   * Benachrichtigung gesendet
+   * @example false
+   */
+  notificationSent: boolean;
+  /**
+   * Bevorzugte Standorte
+   * @example ["location-uuid-1","location-uuid-2"]
+   */
+  preferredLocations: string[];
+  /**
+   * Bevorzugte Schichtarten
+   * @example ["F","S"]
+   */
+  preferredShiftTypes: string[];
+  /**
+   * Prioritätsstufe (1-5, höher = wichtiger)
+   * @example 1
+   */
+  priorityLevel: number;
+  /**
+   * Detaillierte Begründung
+   * @example "Arzttermin am Vormittag"
+   */
+  reasonDescription?: string;
+  /**
+   * Wiederholungstage (0=Sonntag, 1=Montag, usw.)
+   * @example [1,2,3,4,5]
+   */
+  recurrenceDays: number[];
+  /**
+   * Enddatum der Wiederholung
+   * @format date
+   * @example "2024-12-31"
+   */
+  recurrenceEndDate?: string;
+  /**
+   * Wiederholungsintervall (z.B. alle 2 Wochen)
+   * @example 1
+   */
+  recurrenceInterval: number;
+  /**
+   * Wiederholungsmuster
+   * @example "none"
+   */
+  recurrencePattern: "none" | "daily" | "weekly" | "monthly" | "yearly";
+  /**
+   * Ablehnungsdatum
+   * @format date-time
+   * @example "2024-01-15T10:30:00Z"
+   */
+  rejectedAt?: string;
+  /**
+   * Abgelehnt von (Benutzer-ID)
+   * @example "user-uuid"
+   */
+  rejectedBy?: string;
+  /**
+   * Ablehnungsgrund
+   * @example "Personalbesetzung bereits ausreichend"
+   */
+  rejectionReason?: string;
+  /**
+   * Erinnerung gesendet
+   * @example false
+   */
+  reminderSent: boolean;
+  /**
+   * Benötigt Genehmigung
+   * @example false
+   */
+  requiresApproval: boolean;
+  /**
+   * Startdatum des Verfügbarkeitszeitraums
+   * @format date
+   * @example "2024-01-15"
+   */
+  startDate: string;
+  /**
+   * Startzeit für teilweise Tagesverfügbarkeit (HH:MM)
+   * @example "09:00"
+   */
+  startTime?: string;
+  /**
+   * Status der Verfügbarkeit
+   * @example "active"
+   */
+  status: "active" | "pending" | "approved" | "rejected" | "expired";
+  /**
+   * Einreichungsdatum
+   * @format date-time
+   * @example "2024-01-15T09:00:00Z"
+   */
+  submittedAt?: string;
+  /**
+   * Zeitbereich als Text
+   * @example "09:00 - 17:00"
+   */
+  timeRange: string;
+  /**
+   * Art der Verfügbarkeit
+   * @example "available"
+   */
+  type: "available" | "unavailable" | "preferred" | "limited";
+  /**
+   * Letztes Änderungsdatum
+   * @format date-time
+   * @example "2024-01-15T10:30:00Z"
+   */
+  updatedAt: string;
+  /**
+   * Geändert von (Benutzer-ID)
+   * @example "user-uuid"
+   */
+  updatedBy?: string;
+  /** Wöchentliche Verfügbarkeitszeiten */
+  weeklyAvailability?: Record<string, any>;
+}
+
 export interface EmployeeResponseDto {
   /**
    * Adresse
    * @example "Musterstraße 123"
    */
   address?: string;
+  /** Verfügbarkeitsangaben des Mitarbeiters */
+  availabilities?: EmployeeAvailabilityResponseDto[];
   /**
    * Zertifizierungen
    * @example ["Krankenpflege-Ausbildung","Erste Hilfe"]
@@ -2015,6 +2319,8 @@ export interface LocationStatsDto {
    */
   totalClients: number;
 }
+
+export type MonthlyShiftPlanDto = object;
 
 export interface MultipleExcelExportRequestDto {
   /** Export-Optionen für alle Schichtpläne */

@@ -41,41 +41,49 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
+import { roleService } from '../services';
+import { CreateRoleDto, UpdateRoleDto, RoleResponseDto } from '../api/data-contracts';
 
 interface RoleFormData {
   name: string;
-  displayName: string;
   description: string;
-  color: string;
-  priority: number;
+  colorCode: string;
+  priorityLevel: number;
   permissions: string[];
-  requirements: string[];
+  requiredCertifications: string[];
+  requiredSkills: string[];
   isActive: boolean;
+  organizationId: string;
+  type: 'specialist' | 'assistant' | 'shift_leader' | 'nurse' | 'nurse_manager' | 'helper' | 'doctor' | 'technician' | 'administrator' | 'cleaner' | 'security' | 'other';
 }
 
 /**
  * Komponente für die Verwaltung von Rollen
  */
 const RoleManagement: React.FC = () => {
-  const [roles, setRoles] = useState<RoleDefinition[]>([]);
-  const [permissions, setPermissions] = useState<RolePermission[]>([]);
-  const [requirements, setRequirements] = useState<RoleRequirement[]>([]);
+  const [roles, setRoles] = useState<RoleResponseDto[]>([]);
+  const [availablePermissions, setAvailablePermissions] = useState<string[]>([]);
+  const [availableCertifications, setAvailableCertifications] = useState<string[]>([]);
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingRole, setEditingRole] = useState<RoleDefinition | null>(null);
+  const [editingRole, setEditingRole] = useState<RoleResponseDto | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [roleToDelete, setRoleToDelete] = useState<RoleDefinition | null>(null);
+  const [roleToDelete, setRoleToDelete] = useState<RoleResponseDto | null>(null);
   const [alert, setAlert] = useState<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null);
   const [showInactive, setShowInactive] = useState(false);
 
+
   const [formData, setFormData] = useState<RoleFormData>({
     name: '',
-    displayName: '',
     description: '',
-    color: '#1976d2',
-    priority: 1,
+    colorCode: '#1976d2',
+    priorityLevel: 1,
     permissions: [],
-    requirements: [],
+    requiredCertifications: [],
+    requiredSkills: [],
     isActive: true,
+    organizationId: '', // TODO: Get from context or props
+    type: 'other',
   });
 
   // Daten laden
@@ -85,15 +93,14 @@ const RoleManagement: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [rolesData, permissionsData, requirementsData] = await Promise.all([
-        ApiService.getRoles(),
-        ApiService.getPermissions(),
-        ApiService.getRequirements()
-      ]);
+      // Load roles from backend using service
+      const roles = await roleService.getAllRoles({ includeRelations: true });
+      setRoles(roles);
       
-      setRoles(rolesData);
-      setPermissions(permissionsData);
-      setRequirements(requirementsData);
+      // Extract unique permissions, certifications, and skills using service helper methods
+      setAvailablePermissions(roleService.extractAvailablePermissions(roles));
+      setAvailableCertifications(roleService.extractAvailableCertifications(roles));
+      setAvailableSkills(roleService.extractAvailableSkills(roles));
     } catch (error) {
       showAlert('error', 'Fehler beim Laden der Daten');
       console.error('Fehler beim Laden der Rollen-Daten:', error);
@@ -105,30 +112,34 @@ const RoleManagement: React.FC = () => {
     setTimeout(() => setAlert(null), 5000);
   };
 
-  const handleOpenDialog = (role?: RoleDefinition) => {
+  const handleOpenDialog = (role?: RoleResponseDto) => {
     if (role) {
       setEditingRole(role);
       setFormData({
         name: role.name,
-        displayName: role.displayName,
-        description: role.description,
-        color: role.color,
-        priority: role.priority,
-        permissions: role.permissions.map(p => p.id),
-        requirements: role.requirements.map(r => r.id),
+        description: role.description || '',
+        colorCode: role.colorCode || '#1976d2',
+        priorityLevel: role.priorityLevel,
+        permissions: role.permissions,
+        requiredCertifications: role.requiredCertifications,
+        requiredSkills: role.requiredSkills,
         isActive: role.isActive,
+        organizationId: role.organizationId,
+        type: role.type,
       });
     } else {
       setEditingRole(null);
       setFormData({
         name: '',
-        displayName: '',
         description: '',
-        color: '#1976d2',
-        priority: Math.max(...roles.map(r => r.priority), 0) + 1,
+        colorCode: '#1976d2',
+        priorityLevel: Math.max(...roles.map(r => r.priorityLevel), 0) + 1,
         permissions: [],
-        requirements: [],
+        requiredCertifications: [],
+        requiredSkills: [],
         isActive: true,
+        organizationId: '', // TODO: Get from context or props
+        type: 'other',
       });
     }
     setDialogOpen(true);
@@ -141,19 +152,38 @@ const RoleManagement: React.FC = () => {
 
   const handleSaveRole = async () => {
     try {
-      const roleData = {
-        ...formData,
-        permissions: formData.permissions,
-        requirements: formData.requirements,
-      };
-
       if (editingRole) {
         // Rolle aktualisieren
-        await ApiService.updateRole(editingRole.id, roleData);
+        const updateData: UpdateRoleDto = {
+          name: formData.name,
+          description: formData.description,
+          colorCode: formData.colorCode,
+          priorityLevel: formData.priorityLevel,
+          permissions: formData.permissions,
+          requiredCertifications: formData.requiredCertifications,
+          requiredSkills: formData.requiredSkills,
+          isActive: formData.isActive,
+          type: formData.type,
+        };
+        
+        await roleService.updateRole(editingRole.id, updateData);
         showAlert('success', 'Rolle erfolgreich aktualisiert');
       } else {
         // Neue Rolle erstellen
-        await ApiService.createRole(roleData);
+        const createData: CreateRoleDto = {
+          name: formData.name,
+          description: formData.description,
+          colorCode: formData.colorCode,
+          priorityLevel: formData.priorityLevel,
+          permissions: formData.permissions,
+          requiredCertifications: formData.requiredCertifications,
+          requiredSkills: formData.requiredSkills,
+          isActive: formData.isActive,
+          organizationId: formData.organizationId,
+          type: formData.type,
+        };
+        
+        await roleService.createRole(createData);
         showAlert('success', 'Rolle erfolgreich erstellt');
       }
       
@@ -165,7 +195,7 @@ const RoleManagement: React.FC = () => {
     }
   };
 
-  const handleDeleteRole = (role: RoleDefinition) => {
+  const handleDeleteRole = (role: RoleResponseDto) => {
     setRoleToDelete(role);
     setDeleteDialogOpen(true);
   };
@@ -173,7 +203,7 @@ const RoleManagement: React.FC = () => {
   const confirmDeleteRole = async () => {
     if (roleToDelete) {
       try {
-        await ApiService.deleteRole(roleToDelete.id);
+        await roleService.deleteRole(roleToDelete.id);
         showAlert('success', 'Rolle erfolgreich gelöscht');
         loadData();
       } catch (error) {
@@ -185,10 +215,12 @@ const RoleManagement: React.FC = () => {
     setRoleToDelete(null);
   };
 
-  const handleToggleActive = async (role: RoleDefinition) => {
+  const handleToggleActive = async (role: RoleResponseDto) => {
     try {
-      const updatedRole = { ...role, isActive: !role.isActive };
-      await ApiService.updateRole(role.id, updatedRole);
+      const updateData: UpdateRoleDto = {
+        isActive: !role.isActive,
+      };
+      await roleService.updateRole(role.id, updateData);
       showAlert('success', `Rolle ${role.isActive ? 'deaktiviert' : 'aktiviert'}`);
       loadData();
     } catch (error) {
@@ -197,22 +229,8 @@ const RoleManagement: React.FC = () => {
   };
 
   const filteredRoles = showInactive ? roles : roles.filter(role => role.isActive);
-  const sortedRoles = filteredRoles.sort((a, b) => a.priority - b.priority);
+  const sortedRoles = filteredRoles.sort((a, b) => a.priorityLevel - b.priorityLevel);
 
-  const getPermissionsByCategory = (categoryPermissions: RolePermission[]) => {
-    const categories = ['shift_planning', 'management', 'administration', 'reporting'] as const;
-    return categories.reduce((acc, category) => {
-      acc[category] = categoryPermissions.filter(p => p.category === category);
-      return acc;
-    }, {} as Record<string, RolePermission[]>);
-  };
-
-  const categoryLabels = {
-    shift_planning: 'Schichtplanung',
-    management: 'Verwaltung',
-    administration: 'Administration',
-    reporting: 'Berichte'
-  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -257,14 +275,14 @@ const RoleManagement: React.FC = () => {
             sx={{ 
               height: '100%',
               opacity: role.isActive ? 1 : 0.6,
-              border: `2px solid ${role.color}20`,
+              border: `2px solid ${role.colorCode || '#1976d2'}20`,
             }}
           >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Avatar
                   sx={{
-                    bgcolor: role.color,
+                    bgcolor: role.colorCode || '#1976d2',
                     mr: 2,
                     width: 40,
                     height: 40,
@@ -277,7 +295,7 @@ const RoleManagement: React.FC = () => {
                     {role.displayName}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Priorität: {role.priority}
+                    Priorität: {role.priorityLevel}
                   </Typography>
                 </Box>
                 <Box>
@@ -327,10 +345,10 @@ const RoleManagement: React.FC = () => {
                 <AccordionDetails>
                   {role.permissions.length > 0 ? (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {role.permissions.map((permission) => (
+                      {role.permissions.map((permission, index) => (
                         <Chip
-                          key={permission.id}
-                          label={permission.name}
+                          key={index}
+                          label={permission}
                           size="small"
                           variant="outlined"
                         />
@@ -349,33 +367,56 @@ const RoleManagement: React.FC = () => {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <AssignmentIcon fontSize="small" />
                     <Typography variant="body2">
-                      Anforderungen ({role.requirements.length})
+                      Zertifizierungen ({role.requiredCertifications.length})
                     </Typography>
                   </Box>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {role.requirements.length > 0 ? (
-                    <List dense>
-                      {role.requirements.map((requirement) => (
-                        <ListItem key={requirement.id} sx={{ px: 0 }}>
-                          <ListItemText
-                            primary={requirement.name}
-                            secondary={requirement.description}
-                          />
-                          {requirement.required && (
-                            <Chip
-                              label="Erforderlich"
-                              size="small"
-                              color="error"
-                              variant="outlined"
-                            />
-                          )}
-                        </ListItem>
+                  {role.requiredCertifications.length > 0 ? (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {role.requiredCertifications.map((certification, index) => (
+                        <Chip
+                          key={index}
+                          label={certification}
+                          size="small"
+                          color="primary"
+                          variant="outlined"
+                        />
                       ))}
-                    </List>
+                    </Box>
                   ) : (
                     <Typography variant="body2" color="text.secondary">
-                      Keine Anforderungen definiert
+                      Keine Zertifizierungen erforderlich
+                    </Typography>
+                  )}
+                </AccordionDetails>
+              </Accordion>
+
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <AssignmentIcon fontSize="small" />
+                    <Typography variant="body2">
+                      Fähigkeiten ({role.requiredSkills.length})
+                    </Typography>
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {role.requiredSkills.length > 0 ? (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {role.requiredSkills.map((skill, index) => (
+                        <Chip
+                          key={index}
+                          label={skill}
+                          size="small"
+                          color="secondary"
+                          variant="outlined"
+                        />
+                      ))}
+                    </Box>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">
+                      Keine besonderen Fähigkeiten erforderlich
                     </Typography>
                   )}
                 </AccordionDetails>
@@ -400,13 +441,26 @@ const RoleManagement: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
-              <TextField
-                fullWidth
-                label="Anzeigename"
-                value={formData.displayName}
-                onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                required
-              />
+              <FormControl fullWidth required>
+                <InputLabel>Rollentyp</InputLabel>
+                <Select
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                >
+                  <MenuItem value="specialist">Spezialist</MenuItem>
+                  <MenuItem value="assistant">Assistent</MenuItem>
+                  <MenuItem value="shift_leader">Schichtleiter</MenuItem>
+                  <MenuItem value="nurse">Krankenpfleger</MenuItem>
+                  <MenuItem value="nurse_manager">Pflegeleitung</MenuItem>
+                  <MenuItem value="helper">Hilfskraft</MenuItem>
+                  <MenuItem value="doctor">Arzt</MenuItem>
+                  <MenuItem value="technician">Techniker</MenuItem>
+                  <MenuItem value="administrator">Administrator</MenuItem>
+                  <MenuItem value="cleaner">Reinigungskraft</MenuItem>
+                  <MenuItem value="security">Sicherheitsdienst</MenuItem>
+                  <MenuItem value="other">Sonstiges</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
             
             <TextField
@@ -423,16 +477,17 @@ const RoleManagement: React.FC = () => {
                 fullWidth
                 label="Farbe"
                 type="color"
-                value={formData.color}
-                onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                value={formData.colorCode}
+                onChange={(e) => setFormData({ ...formData, colorCode: e.target.value })}
               />
               <TextField
                 fullWidth
-                label="Priorität"
+                label="Prioritätslevel"
                 type="number"
-                value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) || 1 })}
-                inputProps={{ min: 1 }}
+                value={formData.priorityLevel}
+                onChange={(e) => setFormData({ ...formData, priorityLevel: parseInt(e.target.value) || 1 })}
+                inputProps={{ min: 1, max: 10 }}
+                helperText="1-10, höher = wichtiger"
               />
             </Box>
             
@@ -444,50 +499,59 @@ const RoleManagement: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, permissions: e.target.value as string[] })}
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {selected.map((value) => {
-                      const permission = permissions.find(p => p.id === value);
-                      return (
-                        <Chip key={value} label={permission?.name || value} size="small" />
-                      );
-                    })}
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} size="small" />
+                    ))}
                   </Box>
                 )}
               >
-                {Object.entries(getPermissionsByCategory(permissions)).map(([category, categoryPermissions]) => [
-                  <MenuItem key={`${category}-header`} disabled>
-                    <Typography variant="subtitle2" color="primary">
-                      {categoryLabels[category as keyof typeof categoryLabels]}
-                    </Typography>
-                  </MenuItem>,
-                  ...categoryPermissions.map((permission) => (
-                    <MenuItem key={permission.id} value={permission.id}>
-                      {permission.name}
-                    </MenuItem>
-                  ))
-                ])}
+                {availablePermissions.map((permission) => (
+                  <MenuItem key={permission} value={permission}>
+                    {permission}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             
             <FormControl fullWidth>
-              <InputLabel>Anforderungen</InputLabel>
+              <InputLabel>Erforderliche Zertifizierungen</InputLabel>
               <Select
                 multiple
-                value={formData.requirements}
-                onChange={(e) => setFormData({ ...formData, requirements: e.target.value as string[] })}
+                value={formData.requiredCertifications}
+                onChange={(e) => setFormData({ ...formData, requiredCertifications: e.target.value as string[] })}
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {selected.map((value) => {
-                      const requirement = requirements.find(r => r.id === value);
-                      return (
-                        <Chip key={value} label={requirement?.name || value} size="small" />
-                      );
-                    })}
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} size="small" color="primary" />
+                    ))}
                   </Box>
                 )}
               >
-                {requirements.map((requirement) => (
-                  <MenuItem key={requirement.id} value={requirement.id}>
-                    {requirement.name} {requirement.required && '(Erforderlich)'}
+                {availableCertifications.map((certification) => (
+                  <MenuItem key={certification} value={certification}>
+                    {certification}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Erforderliche Fähigkeiten</InputLabel>
+              <Select
+                multiple
+                value={formData.requiredSkills}
+                onChange={(e) => setFormData({ ...formData, requiredSkills: e.target.value as string[] })}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} size="small" color="secondary" />
+                    ))}
+                  </Box>
+                )}
+              >
+                {availableSkills.map((skill) => (
+                  <MenuItem key={skill} value={skill}>
+                    {skill}
                   </MenuItem>
                 ))}
               </Select>

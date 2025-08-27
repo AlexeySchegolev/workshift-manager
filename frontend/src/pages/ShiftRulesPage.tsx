@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 
 import ShiftRuleManager from '../components/ShiftRuleManager';
-import { ShiftRulesConfiguration } from '../models/shiftRuleInterfaces';
 
 /**
  * Seite zur Anzeige aller Schichtregeln

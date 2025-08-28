@@ -1,23 +1,5 @@
 import { BaseService } from './BaseService';
-import { AdvancedPlanningOptionsDto } from '../api/data-contracts';
-
-// Temporary type definitions until DTOs are properly generated
-interface DayShiftPlan {
-  [shiftName: string]: string[];
-}
-
-interface MonthlyShiftPlan {
-  [dateKey: string]: DayShiftPlan | null;
-}
-
-interface EmployeeAvailability {
-  employeeId: string;
-  date: string;
-  available: boolean;
-  shifts: string[];
-  preferences?: string[];
-  constraints?: string[];
-}
+import {AdvancedPlanningOptionsDto, EmployeeAvailabilityResponseDto, MonthlyShiftPlanDto} from '../api/data-contracts';
 
 type ShiftPlanningOptions = AdvancedPlanningOptionsDto;
 import { ShiftPlans } from '../api/ShiftPlans';
@@ -50,8 +32,8 @@ export class ShiftPlanningService extends BaseService {
   async generateOptimalPlan(
     options: ShiftPlanningOptions,
     employees: any[],
-    availability: EmployeeAvailability[]
-  ): Promise<MonthlyShiftPlan> {
+    availability: EmployeeAvailabilityResponseDto[]
+  ): Promise<MonthlyShiftPlanDto> {
     try {
       // Convert frontend options to backend format
       const generateDto: GenerateShiftPlanDto = {
@@ -65,7 +47,7 @@ export class ShiftPlanningService extends BaseService {
       
       // Convert backend response to frontend format
       if (response.data && response.data.shiftPlan) {
-        return response.data.shiftPlan as MonthlyShiftPlan;
+        return response.data.shiftPlan as MonthlyShiftPlanDto;
       }
 
       // Return empty plan if no data
@@ -82,7 +64,7 @@ export class ShiftPlanningService extends BaseService {
    * @param constraints - Validation constraints
    * @returns Validation results
    */
-  async validatePlan(plan: MonthlyShiftPlan, constraints: string[]): Promise<any[]> {
+  async validatePlan(plan: MonthlyShiftPlanDto, constraints: string[]): Promise<any[]> {
     try {
       const validateDto: ValidateShiftPlanDto = {
         year: new Date().getFullYear(),
@@ -111,7 +93,7 @@ export class ShiftPlanningService extends BaseService {
    * @param criteria - Optimization criteria
    * @returns Optimized shift plan
    */
-  async optimizePlan(shiftPlanId: string, criteria: OptimizationCriteriaDto): Promise<MonthlyShiftPlan> {
+  async optimizePlan(shiftPlanId: string, criteria: OptimizationCriteriaDto): Promise<MonthlyShiftPlanDto> {
     try {
       const response = await this.shiftPlansApi.shiftPlansControllerOptimizeShiftPlan(
         shiftPlanId,
@@ -122,7 +104,7 @@ export class ShiftPlanningService extends BaseService {
       const updatedPlan = await this.shiftPlansApi.shiftPlansControllerFindOne(shiftPlanId);
       
       if (updatedPlan.data && updatedPlan.data.planData) {
-        return updatedPlan.data.planData as MonthlyShiftPlan;
+        return updatedPlan.data.planData as MonthlyShiftPlanDto;
       }
 
       throw new Error('Failed to retrieve optimized plan');
@@ -180,7 +162,7 @@ export class ShiftPlanningService extends BaseService {
    * @param plan - The shift plan
    * @returns Array of employee IDs
    */
-  private extractEmployeeIdsFromPlan(plan: MonthlyShiftPlan): string[] {
+  private extractEmployeeIdsFromPlan(plan: MonthlyShiftPlanDto): string[] {
     const employeeIds = new Set<string>();
     
     Object.values(plan).forEach(dayPlan => {

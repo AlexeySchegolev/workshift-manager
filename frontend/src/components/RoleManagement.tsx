@@ -21,9 +21,6 @@ import {
   Switch,
   FormControlLabel,
   Divider,
-  List,
-  ListItem,
-  ListItemText,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -41,7 +38,7 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
-import { roleService } from '../services';
+import { roleService } from '@/services';
 import { CreateRoleDto, UpdateRoleDto, RoleResponseDto } from '../api/data-contracts';
 
 interface RoleFormData {

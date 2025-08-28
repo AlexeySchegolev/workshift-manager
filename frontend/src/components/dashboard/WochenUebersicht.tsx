@@ -17,7 +17,7 @@ import {
   ChevronRight as ChevronRightIcon,
   CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
-import { format, startOfWeek, addDays, isSameDay, isToday } from 'date-fns';
+import { format, isSameDay, isToday } from 'date-fns';
 import { de } from 'date-fns/locale';
 
 export interface WochenTag {

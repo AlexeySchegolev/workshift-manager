@@ -19,8 +19,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-
-// Dashboard-Komponenten
 import {
   StatistikCard,
   WochenUebersicht,
@@ -28,10 +26,8 @@ import {
   StatusAmpel,
   createDefaultSchnellAktionen,
 } from '../components/dashboard';
-
-// Hooks und Services
 import { useDashboardData, useDashboardActions } from '../hooks/useDashboardData';
-import { employeeService } from '../services';
+import { employeeService } from '@/services';
 import { EmployeeResponseDto } from '../api/data-contracts';
 
 /**

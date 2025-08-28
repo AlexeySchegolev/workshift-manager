@@ -16,20 +16,14 @@ import {
   People as PeopleIcon,
   Star as StarIcon,
 } from '@mui/icons-material';
-
-// Dashboard-Komponenten
 import {
   StatistikCard,
   SchnellAktionen,
   StatusAmpel,
 } from '../components/dashboard';
-
-// Komponenten
 import LocationManagement from '../components/LocationManagement';
-
-// Interfaces und Daten
 import { LocationResponseDto } from '../api/data-contracts';
-import { locationService } from '../services';
+import { locationService } from '@/services';
 
 /**
  * Moderne Standort-Verwaltungsseite im Dashboard-Style

@@ -1,30 +1,20 @@
 import { useState, useMemo } from 'react';
-import { format, startOfWeek, addDays, isToday } from 'date-fns';
+import { format, startOfWeek, addDays } from 'date-fns';
 import { WochenTag } from '@/components/dashboard';
 import { StatusItem } from '@/components/dashboard';
-import { EmployeeResponseDto } from '../api/data-contracts';
-
-// Temporary type definitions until DTOs are properly generated
-interface DayShiftPlan {
-  [shiftName: string]: string[];
-}
-
-interface MonthlyShiftPlan {
-  [dateKey: string]: DayShiftPlan | null;
-}
-
-interface ConstraintCheck {
-  id: string;
-  status: 'warning' | 'violation' | 'success';
-  message: string;
-  severity?: 'low' | 'medium' | 'high';
-  rule?: string;
-  affectedEmployees?: string[];
-}
+import {
+    EmployeeResponseDto,
+    ConstraintViolationDto,
+} from '../api/data-contracts';
 
 type Employee = EmployeeResponseDto;
 
-export interface DashboardStatistiken {
+// Monthly shift plan type matching ShiftPlanResponseDto.planData structure
+// Structure: { "01.12.2024": { "Morning": ["employee-id-1", "employee-id-2"], "Evening": [...] } }
+type MonthlyShiftPlanData = Record<string, Record<string, string[]> | null>;
+
+// Dashboard statistics interface using data-contracts concepts
+interface DashboardStatistiken {
   mitarbeiterAnzahl: number;
   schichtAbdeckung: number;
   durchschnittlicheAuslastung: number;
@@ -32,7 +22,8 @@ export interface DashboardStatistiken {
   regelverletzungen: number;
 }
 
-export interface DashboardData {
+// Dashboard data interface
+interface DashboardData {
   statistiken: DashboardStatistiken;
   aktuelleWoche: WochenTag[];
   statusItems: StatusItem[];
@@ -45,8 +36,8 @@ export interface DashboardData {
  */
 export const useDashboardData = (
   employees: Employee[],
-  currentShiftPlan: MonthlyShiftPlan | null,
-  constraints: ConstraintCheck[],
+  currentShiftPlan: MonthlyShiftPlanData | null,
+  constraints: ConstraintViolationDto[],
   selectedDate: Date = new Date()
 ): DashboardData => {
   const [isLoading, setIsLoading] = useState(false);
@@ -72,8 +63,8 @@ export const useDashboardData = (
     }
 
     // Warnungen und Regelverletzungen zählen
-    const aktuelleWarnungen = constraints.filter(c => c.status === 'warning').length;
-    const regelverletzungen = constraints.filter(c => c.status === 'violation').length;
+    const aktuelleWarnungen = constraints.filter(c => c.type === 'warning').length;
+    const regelverletzungen = constraints.filter(c => c.type === 'hard' || c.type === 'soft').length;
 
     return {
       mitarbeiterAnzahl,
@@ -238,5 +229,3 @@ export const useDashboardActions = () => {
     viewReports,
   };
 };
-
-export default useDashboardData;

@@ -18,7 +18,7 @@ async function bootstrap() {
   
   // CORS
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   });
   
@@ -36,7 +36,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   
-  const options = {extraModels : [DayShiftPlanDto, MonthlyShiftPlanDto]};
+  const options = {};
   
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api/docs', app, document);

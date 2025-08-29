@@ -1,14 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
-export interface DayShiftPlan {
-  /** Shift name mapped to array of employee IDs */
-  [shiftName: string]: string[];
-}
-
-export interface MonthlyShiftPlan {
-  /** Date key in DD.MM.YYYY format mapped to day shift plan */
-  [dateKey: string]: DayShiftPlan | null;
-}
+import {MonthlyShiftPlanDto} from "@/modules/shift-plans/dto/monthly-shift-plan.dto";
 
 export class ShiftAssignmentResponseDto {
   @ApiProperty({
@@ -54,7 +45,7 @@ export class ShiftPlanResponseDto {
 
   @ApiPropertyOptional({
     description: 'Shift plan data organized by date and shift',
-    type: 'object',
+    type: [MonthlyShiftPlanDto],
     additionalProperties: true,
     example: {
       '01.12.2024': {
@@ -67,7 +58,7 @@ export class ShiftPlanResponseDto {
       }
     },
   })
-  planData: MonthlyShiftPlan;
+  planData: MonthlyShiftPlanDto;
 
   @ApiProperty({
     description: 'Whether the shift plan is published',

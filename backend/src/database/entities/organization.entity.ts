@@ -139,17 +139,7 @@ export class Organization {
   deletedAt?: Date;
 
   // Virtual fields
-  get isTrialExpired(): boolean {
-    return this.status === OrganizationStatus.TRIAL && 
-           this.subscriptionExpiresAt && 
-           this.subscriptionExpiresAt < new Date();
-  }
-
-  get employeeCount(): number {
+    get employeeCount(): number {
     return this.employees?.length || 0;
-  }
-
-  get locationCount(): number {
-    return this.locations?.length || 0;
   }
 }

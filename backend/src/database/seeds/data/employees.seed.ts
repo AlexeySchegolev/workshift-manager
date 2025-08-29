@@ -1,4 +1,4 @@
-import { EmployeeStatus, ContractType } from '../../entities/employee.entity';
+import { EmployeeStatus, ContractType } from '@/database/entities';
 
 export const employeesSeedData = [
   // Kardiologie Station 3A (locationId: 1)

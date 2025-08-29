@@ -219,24 +219,7 @@ export class ShiftPlan {
   @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date;
 
-  // Virtual fields
   get isActive(): boolean {
     return this.status === ShiftPlanStatus.ACTIVE && !this.deletedAt;
-  }
-
-  get isEditable(): boolean {
-    return [ShiftPlanStatus.DRAFT, ShiftPlanStatus.IN_REVIEW].includes(this.status) && !this.isPublished;
-  }
-
-  get planningPeriodDays(): number {
-    return Math.ceil((this.planningPeriodEnd.getTime() - this.planningPeriodStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  }
-
-  get averageHoursPerDay(): number {
-    return this.planningPeriodDays > 0 ? Number(this.totalHours) / this.planningPeriodDays : 0;
-  }
-
-  get displayName(): string {
-    return `${this.name} (${this.year}-${String(this.month).padStart(2, '0')})`;
   }
 }

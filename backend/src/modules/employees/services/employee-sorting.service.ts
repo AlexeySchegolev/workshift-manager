@@ -276,62 +276,8 @@ export class EmployeeSortingService {
       return a.lastName.localeCompare(b.lastName);
     });
   }
-
-  /**
-   * Sort employees by preference satisfaction (least satisfied first)
-   * 
-   * @param employees Array of employees to sort
-   * @param availabilityMap Current availability map
-   * @returns Employees sorted by preference satisfaction (ascending)
-   */
-  sortByPreferenceSatisfaction(employees: Employee[], availabilityMap: AvailabilityMap): Employee[] {
-    return [...employees].sort((a, b) => {
-      const aAvail = availabilityMap[a.id];
-      const bAvail = availabilityMap[b.id];
-      
-      if (!aAvail && !bAvail) return a.lastName.localeCompare(b.lastName);
-      if (!aAvail) return 1;
-      if (!bAvail) return -1;
-      
-      const aTotal = aAvail.shiftsAssigned.length || 1;
-      const bTotal = bAvail.shiftsAssigned.length || 1;
-      
-      const aRatio = aAvail.preferredShiftsAssigned / aTotal;
-      const bRatio = bAvail.preferredShiftsAssigned / bTotal;
-      
-      if (aRatio !== bRatio) {
-        return aRatio - bRatio; // Lower ratio = higher priority
-      }
-      
-      return a.lastName.localeCompare(b.lastName);
-    });
-  }
-
-  /**
-   * Sort employees by constraint violations (most violated first for priority fixing)
-   * 
-   * @param employees Array of employees to sort
-   * @param availabilityMap Current availability map
-   * @returns Employees sorted by constraint violations (descending)
-   */
-  sortByConstraintViolations(employees: Employee[], availabilityMap: AvailabilityMap): Employee[] {
-    return [...employees].sort((a, b) => {
-      const aAvail = availabilityMap[a.id];
-      const bAvail = availabilityMap[b.id];
-      
-      const aViolations = aAvail?.constraintViolations || 0;
-      const bViolations = bAvail?.constraintViolations || 0;
-      
-      if (aViolations !== bViolations) {
-        return bViolations - aViolations; // More violations = higher priority
-      }
-      
-      return a.lastName.localeCompare(b.lastName);
-    });
-  }
-
-  /**
-   * Filter employees by availability for planning
+    /**
+     * Filter employees by availability for planning
    * 
    * @param employees Array of employees to filter
    * @param availabilityMap Current availability map
@@ -354,39 +300,8 @@ export class EmployeeSortingService {
   filterByRole(employees: Employee[], roleType: string): Employee[] {
     return employees.filter(emp => emp.primaryRole?.type === roleType);
   }
-
-  /**
-   * Filter employees by location
-   * 
-   * @param employees Array of employees to filter
-   * @param locationId Location ID to filter by (null for no specific location)
-   * @returns Employees with matching location
-   */
-  filterByLocation(employees: Employee[], locationId?: string): Employee[] {
-    if (locationId === undefined) return employees;
-    
-    return employees.filter(emp => emp.locationId === locationId);
-  }
-
-  /**
-   * Get employees with lowest Saturday work count for fair distribution
-   * 
-   * @param employees Array of employees to analyze
-   * @param availabilityMap Current availability map
-   * @param maxCount Maximum number of employees to return
-   * @returns Employees with lowest Saturday work count
-   */
-  getEmployeesWithLowestSaturdayCount(
-    employees: Employee[],
-    availabilityMap: AvailabilityMap,
-    maxCount?: number
-  ): Employee[] {
-    const sorted = this.sortEmployeesForSaturday(employees, availabilityMap);
-    return maxCount ? sorted.slice(0, maxCount) : sorted;
-  }
-
-  /**
-   * Balance employees across shifts by rotating order
+    /**
+     * Balance employees across shifts by rotating order
    * 
    * @param employees Array of employees to balance
    * @param rotationSeed Seed for consistent rotation (e.g., day number)
@@ -397,32 +312,5 @@ export class EmployeeSortingService {
     
     const rotation = rotationSeed % employees.length;
     return [...employees.slice(rotation), ...employees.slice(0, rotation)];
-  }
-
-  /**
-   * Randomize employee order while preserving role grouping
-   * 
-   * @param employees Array of employees to shuffle
-   * @param preserveRoleOrder Whether to keep role-based grouping
-   * @returns Shuffled array of employees
-   */
-  shuffleEmployees(employees: Employee[], preserveRoleOrder: boolean = true): Employee[] {
-    if (!preserveRoleOrder) {
-      return [...employees].sort(() => Math.random() - 0.5);
-    }
-    
-    // Shuffle within role groups
-    const shiftLeaders = employees.filter(emp => emp.primaryRole?.type === 'shift_leader')
-      .sort(() => Math.random() - 0.5);
-    const specialists = employees.filter(emp => emp.primaryRole?.type === 'specialist')
-      .sort(() => Math.random() - 0.5);
-    const assistants = employees.filter(emp => emp.primaryRole?.type === 'assistant')
-      .sort(() => Math.random() - 0.5);
-    const others = employees.filter(emp => 
-      !emp.primaryRole || 
-      !['shift_leader', 'specialist', 'assistant'].includes(emp.primaryRole.type)
-    ).sort(() => Math.random() - 0.5);
-    
-    return [...shiftLeaders, ...specialists, ...assistants, ...others];
   }
 }

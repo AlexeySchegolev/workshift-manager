@@ -40,7 +40,6 @@ export {
   ConstraintType,
   ConstraintScope,
   ConstraintSeverity,
-  ConstraintStatus as WorkTimeConstraintStatus,
   TimeUnit,
   ConstraintRule,
   ConstraintViolationThreshold
@@ -51,10 +50,8 @@ export {
   ShiftConstraintType,
   ConstraintCategory,
   ConstraintPriority,
-  ConstraintStatus as ShiftConstraintStatus,
   ConstraintOperator,
   ConstraintCondition,
-  ConstraintRule as ShiftConstraintRule,
   ConstraintValidationResult
 } from './shift-constraint.entity';
 
@@ -62,19 +59,7 @@ export {
   ConstraintViolation,
   ViolationType,
   ConstraintStatus,
-  ConstraintCategory as ViolationConstraintCategory
 } from './constraint-violation.entity';
-
-// Audit and compliance
-export {
-  AuditTrail,
-  AuditAction,
-  AuditEntityType,
-  AuditSeverity,
-  AuditSource,
-  AuditMetadata,
-  FieldChange
-} from './audit-trail.entity';
 
 // Legacy entities (to be deprecated)
 export { ShiftRules } from './shift-rules.entity';

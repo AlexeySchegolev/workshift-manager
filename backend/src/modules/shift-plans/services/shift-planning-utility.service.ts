@@ -3,16 +3,6 @@ import { Injectable } from '@nestjs/common';
 export interface WeekGroup {
   [weekNumber: string]: Date[];
 }
-
-export interface ShiftDefinition {
-  name: string;
-  start: string;
-  end: string;
-  roles: string[];
-  minStaffing?: number;
-  maxStaffing?: number;
-}
-
 /**
  * Utility service for shift planning operations.
  * Contains helper functions used across different shift planning services.
@@ -65,31 +55,8 @@ export class ShiftPlanningUtilityService {
       + ((week1.getDay() + 6) % 7)) / 7
     );
   }
-  
-  /**
-   * Calculates the duration in hours between two time strings
-   * 
-   * @param startTime Time string in HH:MM format (e.g., "08:00")
-   * @param endTime Time string in HH:MM format (e.g., "16:00")
-   * @returns Duration in hours as decimal number
-   */
-  calculateShiftHours(startTime: string, endTime: string): number {
-    const [startHour, startMinute] = startTime.split(':').map(Number);
-    const [endHour, endMinute] = endTime.split(':').map(Number);
-    
-    const start = startHour + startMinute / 60;
-    const end = endHour + endMinute / 60;
-    
-    // Handle overnight shifts (end time is next day)
-    if (end < start) {
-      return (24 - start) + end;
-    }
-    
-    return end - start;
-  }
-  
-  /**
-   * Formats a date into day key string format (DD.MM.YYYY)
+    /**
+     * Formats a date into day key string format (DD.MM.YYYY)
    * 
    * @param date Date to format
    * @returns Formatted day key string
@@ -153,76 +120,8 @@ export class ShiftPlanningUtilityService {
     const dayOfWeek = date.getDay();
     return dayOfWeek === 0 ? 7 : dayOfWeek; // Convert Sunday from 0 to 7
   }
-  
-  /**
-   * Gets the day of week name in German
-   * 
-   * @param date Date to get day name for
-   * @returns German day name
-   */
-  getDayNameGerman(date: Date): string {
-    const dayNames = {
-      0: 'Sonntag',
-      1: 'Montag',
-      2: 'Dienstag',
-      3: 'Mittwoch',
-      4: 'Donnerstag',
-      5: 'Freitag',
-      6: 'Samstag'
-    };
-    return dayNames[date.getDay()];
-  }
-  
-  /**
-   * Determines shifts for a given day based on day type
-   * 
-   * @param isLongDay Whether it's a long day (Monday, Wednesday, Friday)
-   * @returns Array of shift definitions for the day
-   */
-  getDayShifts(isLongDay: boolean): ShiftDefinition[] {
-    if (isLongDay) {
-      return [
-        {
-          name: 'F',
-          start: '06:00',
-          end: '14:00',
-          roles: ['shift_leader', 'specialist', 'assistant'],
-          minStaffing: 6,
-          maxStaffing: 8
-        },
-        {
-          name: 'S',
-          start: '14:00',
-          end: '22:00',
-          roles: ['shift_leader', 'specialist', 'assistant'],
-          minStaffing: 6,
-          maxStaffing: 8
-        }
-      ];
-    } else {
-      return [
-        {
-          name: 'F',
-          start: '07:00',
-          end: '15:00',
-          roles: ['shift_leader', 'specialist', 'assistant'],
-          minStaffing: 4,
-          maxStaffing: 6
-        },
-        {
-          name: 'S',
-          start: '15:00',
-          end: '21:00',
-          roles: ['shift_leader', 'specialist', 'assistant'],
-          minStaffing: 4,
-          maxStaffing: 6
-        }
-      ];
-    }
-  }
-  
-  /**
-   * Calculates total days in a month
+    /**
+     * Calculates total days in a month
    * 
    * @param year The year
    * @param month The month (1-12)
@@ -258,105 +157,5 @@ export class ShiftPlanningUtilityService {
    */
   filterOutSundays(dates: Date[]): Date[] {
     return dates.filter(date => !this.isSunday(date));
-  }
-  
-  /**
-   * Gets only weekend dates from an array
-   * 
-   * @param dates Array of dates to filter
-   * @returns Array of weekend dates only
-   */
-  getWeekendDates(dates: Date[]): Date[] {
-    return dates.filter(date => this.isWeekend(date));
-  }
-  
-  /**
-   * Gets only weekday dates from an array
-   * 
-   * @param dates Array of dates to filter
-   * @returns Array of weekday dates only
-   */
-  getWeekdayDates(dates: Date[]): Date[] {
-    return dates.filter(date => !this.isWeekend(date));
-  }
-  
-  /**
-   * Calculates the difference in days between two dates
-   * 
-   * @param date1 First date
-   * @param date2 Second date
-   * @returns Difference in days (positive if date2 is after date1)
-   */
-  daysDifference(date1: Date, date2: Date): number {
-    const timeDiff = date2.getTime() - date1.getTime();
-    return Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-  }
-  
-  /**
-   * Checks if two dates are consecutive (next day)
-   * 
-   * @param date1 First date
-   * @param date2 Second date
-   * @returns True if dates are consecutive days
-   */
-  areConsecutiveDays(date1: Date, date2: Date): boolean {
-    return Math.abs(this.daysDifference(date1, date2)) === 1;
-  }
-  
-  /**
-   * Validates time string format (HH:MM)
-   * 
-   * @param timeString Time string to validate
-   * @returns True if valid format, false otherwise
-   */
-  validateTimeFormat(timeString: string): boolean {
-    const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
-    return timeRegex.test(timeString);
-  }
-  
-  /**
-   * Sorts shift names by priority (F first, then S, then others alphabetically)
-   * 
-   * @param shiftNames Array of shift names to sort
-   * @returns Sorted array of shift names
-   */
-  sortShiftsByPriority(shiftNames: string[]): string[] {
-    return [...shiftNames].sort((a, b) => {
-      // F shifts have highest priority
-      if (a === 'F') return -1;
-      if (b === 'F') return 1;
-      
-      // S shifts have second priority
-      if (a === 'S') return -1;
-      if (b === 'S') return 1;
-      
-      // All others alphabetically
-      return a.localeCompare(b);
-    });
-  }
-  
-  /**
-   * Generates a month identifier string
-   * 
-   * @param year The year
-   * @param month The month (1-12)
-   * @returns Month identifier string (YYYY-MM)
-   */
-  generateMonthId(year: number, month: number): string {
-    return `${year}-${month.toString().padStart(2, '0')}`;
-  }
-  
-  /**
-   * Calculates planning period dates for a month
-   * 
-   * @param year The year
-   * @param month The month (1-12)
-   * @returns Object with start and end dates of the planning period
-   */
-  getPlanningPeriod(year: number, month: number): { start: Date; end: Date } {
-    const start = new Date(year, month - 1, 1);
-    const end = new Date(year, month, 0); // Last day of the month
-    
-    return { start, end };
   }
 }

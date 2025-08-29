@@ -199,29 +199,7 @@ export class ConstraintViolation {
   @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date;
 
-  // Virtual fields
   get isActive(): boolean {
     return this.status === ConstraintStatus.ACTIVE && !this.isResolved && !this.deletedAt;
-  }
-
-  get isCritical(): boolean {
-    return this.severity >= 4 || this.type === ViolationType.HARD;
-  }
-
-  get isExpired(): boolean {
-    return this.expiresAt ? this.expiresAt < new Date() : false;
-  }
-
-  get ageInHours(): number {
-    return (new Date().getTime() - this.createdAt.getTime()) / (1000 * 60 * 60);
-  }
-
-  get severityLabel(): string {
-    const labels = ['', 'Info', 'Low', 'Medium', 'High', 'Critical'];
-    return labels[this.severity] || 'Unknown';
-  }
-
-  get displayMessage(): string {
-    return this.detailedMessage || this.message;
   }
 }

@@ -1,4 +1,4 @@
-import { RoleType, RoleStatus } from '../../entities/role.entity';
+import { RoleType, RoleStatus } from '@/database/entities';
 
 export const rolesSeedData = [
   {

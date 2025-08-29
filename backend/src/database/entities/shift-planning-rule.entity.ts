@@ -106,38 +106,11 @@ export class ShiftPlanningRule {
   deletedAt?: Date;
 
   // Virtual fields
-  get isCurrentlyActive(): boolean {
-    const now = new Date();
-    const isWithinDateRange = (!this.effectiveFrom || this.effectiveFrom <= now) &&
-                              (!this.effectiveTo || this.effectiveTo >= now);
-    return this.isActive && isWithinDateRange && !this.deletedAt;
-  }
-
-  get isHardConstraint(): boolean {
-    return this.ruleType === ViolationType.HARD;
-  }
-
-  get isSoftConstraint(): boolean {
-    return this.ruleType === ViolationType.SOFT;
-  }
-
-  get displayName(): string {
+    get displayName(): string {
     return `${this.ruleCode}: ${this.ruleName}`;
   }
-
-  get weightedPriority(): number {
-    return this.priority * Number(this.weight);
-  }
-
-  /**
-   * Check if this rule applies to a specific role
-   */
-  appliesToRole(roleId: string): boolean {
-    return this.appliesToRoles.length === 0 || this.appliesToRoles.includes(roleId);
-  }
-
-  /**
-   * Check if this rule applies to a specific location
+    /**
+     * Check if this rule applies to a specific location
    */
   appliesToLocation(locationId: string): boolean {
     return this.appliesToLocations.length === 0 || this.appliesToLocations.includes(locationId);
@@ -148,73 +121,5 @@ export class ShiftPlanningRule {
    */
   appliesToShiftType(shiftType: string): boolean {
     return this.appliesToShiftTypes.length === 0 || this.appliesToShiftTypes.includes(shiftType);
-  }
-
-  /**
-   * Check if this rule is applicable given the context
-   */
-  isApplicableInContext(context: {
-    roleId?: string;
-    locationId?: string;
-    shiftType?: string;
-    organizationId?: string;
-  }): boolean {
-    if (!this.isCurrentlyActive) {
-      return false;
-    }
-
-    if (this.organizationId && context.organizationId !== this.organizationId) {
-      return false;
-    }
-
-    if (this.locationId && context.locationId !== this.locationId) {
-      return false;
-    }
-
-    if (context.roleId && !this.appliesToRole(context.roleId)) {
-      return false;
-    }
-
-    if (context.locationId && !this.appliesToLocation(context.locationId)) {
-      return false;
-    }
-
-    if (context.shiftType && !this.appliesToShiftType(context.shiftType)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  /**
-   * Generate an error message using the template and context
-   */
-  generateErrorMessage(context: Record<string, any>): string {
-    if (!this.errorMessageTemplate) {
-      return `Rule violation: ${this.ruleName}`;
-    }
-
-    let message = this.errorMessageTemplate;
-    Object.keys(context).forEach(key => {
-      message = message.replace(`{{${key}}}`, String(context[key]));
-    });
-
-    return message;
-  }
-
-  /**
-   * Generate a suggested action using the template and context
-   */
-  generateSuggestedAction(context: Record<string, any>): string {
-    if (!this.suggestedActionTemplate) {
-      return `Review and adjust assignment to comply with: ${this.ruleName}`;
-    }
-
-    let action = this.suggestedActionTemplate;
-    Object.keys(context).forEach(key => {
-      action = action.replace(`{{${key}}}`, String(context[key]));
-    });
-
-    return action;
   }
 }

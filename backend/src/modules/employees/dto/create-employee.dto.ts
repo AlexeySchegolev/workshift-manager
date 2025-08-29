@@ -1,6 +1,6 @@
-import { IsString, IsEnum, IsNumber, IsOptional, Min, Max, IsEmail, IsUUID, IsArray, IsDateString, IsDecimal } from 'class-validator';
+import { IsString, IsEnum, IsNumber, IsOptional, Min, Max, IsEmail, IsUUID, IsArray, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EmployeeStatus, ContractType } from '../../../database/entities/employee.entity';
+import { EmployeeStatus, ContractType } from '@/database/entities';
 
 export class CreateEmployeeDto {
   @ApiProperty({

@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Organization } from '../entities/organization.entity';
-import { User } from '../entities/user.entity';
-import { Role } from '../entities/role.entity';
-import { Location } from '../entities/location.entity';
-import { Employee } from '../entities/employee.entity';
-import { ShiftRules } from '../entities/shift-rules.entity';
+import { Organization } from '@/database/entities';
+import { User } from '@/database/entities';
+import { Role } from '@/database/entities';
+import { Location } from '@/database/entities';
+import { Employee } from '@/database/entities';
+import { ShiftRules } from '@/database/entities';
 import {
   organizationsSeedData,
   usersSeedData,

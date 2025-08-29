@@ -24,7 +24,6 @@ import { ShiftRulesService } from './shift-rules.service';
 import { CreateShiftRulesDto } from './dto/create-shift-rules.dto';
 import { UpdateShiftRulesDto } from './dto/update-shift-rules.dto';
 import { ShiftRulesResponseDto } from './dto/shift-rules-response.dto';
-import { ShiftRules } from '@/database/entities';
 
 @ApiTags('shift-rules')
 @Controller('api/shift-rules')

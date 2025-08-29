@@ -215,13 +215,4 @@ export class Employee {
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
   }
-
-  get isAvailable(): boolean {
-    return this.status === EmployeeStatus.ACTIVE && this.isActive && !this.deletedAt;
-  }
-
-  get yearsOfService(): number {
-    const endDate = this.terminationDate || new Date();
-    return Math.floor((endDate.getTime() - this.hireDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-  }
 }

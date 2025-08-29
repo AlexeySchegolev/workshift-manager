@@ -174,47 +174,7 @@ export class ShiftAssignment {
   @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date;
 
-  // Virtual fields
   get isActive(): boolean {
     return [AssignmentStatus.PENDING, AssignmentStatus.CONFIRMED].includes(this.status) && !this.deletedAt;
-  }
-
-  get isCompleted(): boolean {
-    return this.status === AssignmentStatus.COMPLETED;
-  }
-
-  get effectiveHours(): number {
-    return this.actualHours || this.scheduledHours;
-  }
-
-  get duration(): number {
-    // Calculate duration in hours
-    const start = new Date(`2000-01-01T${this.startTime}`);
-    const end = new Date(`2000-01-01T${this.endTime}`);
-    
-    // Handle overnight shifts
-    if (end < start) {
-      end.setDate(end.getDate() + 1);
-    }
-    
-    return (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-  }
-
-  get workingHours(): number {
-    return this.duration - (this.breakDuration / 60);
-  }
-
-  get isLateCheckIn(): boolean {
-    if (!this.checkInTime) return false;
-    
-    const scheduledStart = new Date(`${this.assignmentDate.toISOString().split('T')[0]}T${this.startTime}`);
-    return this.checkInTime > scheduledStart;
-  }
-
-  get isEarlyCheckOut(): boolean {
-    if (!this.checkOutTime) return false;
-    
-    const scheduledEnd = new Date(`${this.assignmentDate.toISOString().split('T')[0]}T${this.endTime}`);
-    return this.checkOutTime < scheduledEnd;
   }
 }

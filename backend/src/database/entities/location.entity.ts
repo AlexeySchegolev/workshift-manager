@@ -177,19 +177,4 @@ export class Location {
 
   @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date;
-
-  // Virtual fields
-  get isOperational(): boolean {
-    return this.status === LocationStatus.ACTIVE && this.isActive && !this.deletedAt;
-  }
-
-  get occupancyRate(): number {
-    return this.maxCapacity > 0 ? (this.currentCapacity / this.maxCapacity) * 100 : 0;
-  }
-
-  get fullAddress(): string {
-    const parts = [this.address, this.city, this.postalCode];
-    if (this.state) parts.splice(-1, 0, this.state);
-    return parts.filter(Boolean).join(', ');
-  }
 }

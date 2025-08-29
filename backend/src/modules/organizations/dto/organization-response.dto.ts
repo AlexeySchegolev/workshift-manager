@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { OrganizationStatus, OrganizationType } from '../../../database/entities/organization.entity';
+import { OrganizationStatus, OrganizationType } from '@/database/entities';
 
 export class OrganizationResponseDto {
   @ApiProperty({ description: 'Unique organization ID', example: 'uuid-string' })

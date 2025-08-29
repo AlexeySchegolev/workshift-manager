@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   FormHelperText,
+  CircularProgress,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -20,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import { LocationResponseDto, RoleResponseDto } from '@/api/data-contracts';
 import { EmployeeFormData, EmployeeFormErrors } from './hooks/useEmployeeForm';
+import { useLocations } from '@/hooks/useLocations';
 
 interface EmployeeFormProps {
   open: boolean;
@@ -43,6 +45,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   onUpdateField,
   isEditing = false,
 }) => {
+  const { locations, loading: locationsLoading, error: locationsError } = useLocations();
   return (
     <Dialog
       open={open}
@@ -154,11 +157,13 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             <InputLabel id="modal-location-label">Standort</InputLabel>
             <Select
               labelId="modal-location-label"
-              value={formData.location || ''}
+              value={formData.location?.id || ''}
               label="Standort"
-              onChange={(e) =>
-                onUpdateField('location', e.target.value as LocationResponseDto)
-              }
+              onChange={(e) => {
+                const selectedLocation = locations.find(loc => loc.id === e.target.value);
+                onUpdateField('location', selectedLocation || null);
+              }}
+              disabled={locationsLoading}
               sx={{
                 borderRadius: 2,
               }}
@@ -166,8 +171,27 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               <MenuItem value="">
                 <em>Bitte wählen</em>
               </MenuItem>
-              <MenuItem value="Standort A">Standort A</MenuItem>
-              <MenuItem value="Standort B">Standort B</MenuItem>
+              {locationsLoading ? (
+                <MenuItem disabled>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CircularProgress size={16} />
+                    <Typography variant="body2">Lade Standorte...</Typography>
+                  </Box>
+                </MenuItem>
+              ) : locationsError ? (
+                <MenuItem disabled>
+                  <Typography variant="body2" color="error">
+                    {locationsError}
+                  </Typography>
+                </MenuItem>
+              ) : (
+                locations.map((location) => (
+                  <MenuItem key={location.id} value={location.id}>
+                    {location.name}
+                    {location.city && ` - ${location.city}`}
+                  </MenuItem>
+                ))
+              )}
             </Select>
             {errors.location && <FormHelperText>{errors.location}</FormHelperText>}
           </FormControl>

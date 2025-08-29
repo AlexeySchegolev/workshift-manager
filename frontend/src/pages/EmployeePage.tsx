@@ -254,20 +254,12 @@ const EmployeePage: React.FC = () => {
 
             {/* Employee management - full width */}
             <Fade in={showCards} timeout={1400}>
-                <Paper
-                    sx={{
-                        borderRadius: 3,
-                        border: `1px solid ${theme.palette.divider}`,
-                        overflow: 'hidden',
-                        mb: 4,
-                    }}
-                    data-testid="employee-form"
-                >
+                <Box>
                     <EmployeeManagement
                         employees={employees}
                         onEmployeesChange={handleEmployeesChange}
                     />
-                </Paper>
+                </Box>
             </Fade>
         </Container>
     );

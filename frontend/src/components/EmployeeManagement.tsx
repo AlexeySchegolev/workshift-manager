@@ -61,13 +61,15 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     const theme = useTheme();
 
     // Form state
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [primaryRole, setPrimaryRole] = useState<RoleResponseDto | null>(null);
     const [location, setLocation] = useState<LocationResponseDto | null>(null);
     const [hoursPerMonth, setHoursPerMonth] = useState<number | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [errors, setErrors] = useState<{
-        name?: string;
+        firstName?: string;
+        lastName?: string;
         role?: string;
         hoursPerMonth?: string;
         location?: string;
@@ -91,7 +93,8 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
 
     // Reset form
     const resetForm = () => {
-        setName('');
+        setFirstName('');
+        setLastName('');
         setPrimaryRole(null);
         setHoursPerMonth(null);
         setLocation(null);
@@ -101,7 +104,8 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
 
     // Load employee for editing
     const handleEditEmployee = (employee: EmployeeResponseDto) => {
-        setName(employee.lastName);
+        setFirstName(employee.firstName);
+        setLastName(employee.lastName);
         setPrimaryRole(employee.primaryRole ?? null);
         setHoursPerMonth(employee.hoursPerMonth ?? 0);
         setLocation(employee.location ?? null);
@@ -152,14 +156,19 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     // Validate form
     const validateForm = (): boolean => {
         const newErrors: {
-            name?: string;
+            firstName?: string;
+            lastName?: string;
             role?: string;
             hoursPerMonth?: string;
             location?: string;
         } = {};
 
-        if (!name.trim()) {
-            newErrors.name = 'Name ist erforderlich';
+        if (!firstName.trim()) {
+            newErrors.firstName = 'Vorname ist erforderlich';
+        }
+
+        if (!lastName.trim()) {
+            newErrors.lastName = 'Nachname ist erforderlich';
         }
 
         if (!primaryRole) {
@@ -198,7 +207,9 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                 emp.id === editingId
                     ? {
                         ...emp,
-                        name,
+                        firstName,
+                        lastName,
+                        fullName: `${firstName} ${lastName}`,
                         role: primaryRole,
                         hoursPerMonth: Number(hoursPerMonth.toFixed(1)),
                         hoursPerWeek: Math.round(hoursPerMonth / 4.33),
@@ -209,7 +220,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
 
             setSnackbar({
                 open: true,
-                message: `Mitarbeiter ${name} wurde aktualisiert`,
+                message: `Mitarbeiter ${firstName} ${lastName} wurde aktualisiert`,
                 severity: 'success'
             });
         } else {
@@ -219,8 +230,8 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                 createdAt: "",
                 email: "",
                 employeeNumber: "",
-                firstName: "",
-                fullName: "",
+                firstName: firstName,
+                fullName: `${firstName} ${lastName}`,
                 hireDate: "",
                 isActive: false,
                 isAvailable: false,
@@ -231,7 +242,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                 updatedAt: "",
                 yearsOfService: 0,
                 id: uuidv4(),
-                lastName: name,
+                lastName: lastName,
                 primaryRole: primaryRole ?? undefined,
                 hoursPerMonth: Number(hoursPerMonth.toFixed(1)),
                 locationId: location?.id,
@@ -243,7 +254,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
 
             setSnackbar({
                 open: true,
-                message: `Mitarbeiter ${name} wurde hinzugefügt`,
+                message: `Mitarbeiter ${firstName} ${lastName} wurde hinzugefügt`,
                 severity: 'success'
             });
         }
@@ -303,7 +314,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                     {/* ... (rest of the existing code) ... */}
                 </Box>
             </Fade>
-            
+
             {/* Table with existing employees */}
             <Fade in timeout={1000}>
                 <Card
@@ -321,7 +332,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                                 </Typography>
                             </Box>
                         }
-                        subheader={`${employees.length} Mitarbeiter registriert`}
                         action={
                             <Button
                                 variant="contained"
@@ -404,7 +414,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                                                         </Avatar>
                                                         <Box>
                                                             <Typography variant="body2" sx={{fontWeight: 600}}>
-                                                                {employee.lastName}
+                                                                {employee.fullName || `${employee.firstName} ${employee.lastName}`}
                                                             </Typography>
                                                             <Typography variant="caption" color="text.secondary">
                                                                 ID: {employee.id.slice(0, 8)}...
@@ -414,7 +424,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                                                 </TableCell>
                                                 <TableCell>
                                                     <Chip
-                                                        label={employee.lastName}
+                                                        label={employee.primaryRole?.name || 'Keine Rolle'}
                                                         size="small"
                                                         color={employee.primaryRole?.type === 'shift_leader' ? 'primary' : 'default'}
                                                         sx={{
@@ -502,7 +512,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Möchten Sie den Mitarbeiter <strong>"{employeeToDelete?.lastName}"</strong> wirklich löschen?
+                        Möchten Sie den Mitarbeiter <strong>"{employeeToDelete?.fullName || `${employeeToDelete?.firstName} ${employeeToDelete?.lastName}`}"</strong> wirklich löschen?
                         Diese Aktion kann nicht rückgängig gemacht werden.
                     </DialogContentText>
                 </DialogContent>
@@ -586,12 +596,27 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                         autoComplete="off"
                     >
                         <TextField
-                            label="Name"
+                            label="Vorname"
                             variant="outlined"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            error={!!errors.name}
-                            helperText={errors.name}
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            error={!!errors.firstName}
+                            helperText={errors.firstName}
+                            fullWidth
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        />
+
+                        <TextField
+                            label="Nachname"
+                            variant="outlined"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            error={!!errors.lastName}
+                            helperText={errors.lastName}
                             fullWidth
                             sx={{
                                 '& .MuiOutlinedInput-root': {

@@ -165,16 +165,25 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label={employee.primaryRole?.name || 'Keine Rolle'}
+                          label={employee.primaryRole?.displayName || employee.primaryRole?.name || 'Keine Rolle'}
                           size="small"
                           color={
                             employee.primaryRole?.type === 'shift_leader'
                               ? 'primary'
+                              : employee.primaryRole?.type === 'specialist'
+                              ? 'success'
+                              : employee.primaryRole?.type === 'assistant'
+                              ? 'info'
                               : 'default'
                           }
                           sx={{
                             fontWeight: 500,
                             borderRadius: 1.5,
+                            backgroundColor: employee.primaryRole?.colorCode
+                              ? `${employee.primaryRole.colorCode}20`
+                              : undefined,
+                            borderColor: employee.primaryRole?.colorCode || undefined,
+                            color: employee.primaryRole?.colorCode || undefined,
                           }}
                         />
                       </TableCell>

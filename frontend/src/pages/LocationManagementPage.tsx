@@ -255,100 +255,9 @@ const LocationManagementPage: React.FC = () => {
                                     {stats.activeLocations} von {stats.totalLocations} Standorten aktiv
                                 </Typography>
                             </Box>
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <PeopleIcon sx={{color: 'success.main', fontSize: '1.2rem'}}/>
-                                <Typography variant="body2" color="text.secondary">
-                                    {stats.totalClients} Kunden betreut
-                                </Typography>
-                            </Box>
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <TrendingUpIcon sx={{color: 'warning.main', fontSize: '1.2rem'}}/>
-                                <Typography variant="body2" color="text.secondary">
-                                    {stats.avgUtilization}% Durchschnittsauslastung
-                                </Typography>
-                            </Box>
                         </Box>
                     </Box>
                 </Paper>
-            </Fade>
-
-            {/* KPI-Cards */}
-            <Fade in={showCards} timeout={1000}>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            sm: 'repeat(2, 1fr)',
-                            md: 'repeat(4, 1fr)',
-                        },
-                        gap: 3,
-                        mb: 4,
-                    }}
-                >
-                    <StatisticsCard
-                        title="Standorte"
-                        value={stats.activeLocations}
-                        subtitle={`${stats.totalLocations} gesamt`}
-                        icon={<BusinessIcon/>}
-                        color="info"
-                        trend={{
-                            value: 0,
-                            isPositive: true,
-                            label: 'Alle aktiv',
-                        }}
-                    />
-                    <StatisticsCard
-                        title="Gesamtkapazität"
-                        value={stats.totalCapacity}
-                        subtitle="Behandlungsplätze"
-                        icon={<LocationIcon/>}
-                        color="primary"
-                    />
-                    <StatisticsCard
-                        title="Ø Auslastung"
-                        value={`${stats.avgUtilization}%`}
-                        subtitle="Alle Standorte"
-                        icon={<TrendingUpIcon/>}
-                        color={stats.avgUtilization >= 80 && stats.avgUtilization <= 95 ? 'success' : stats.avgUtilization > 95 ? 'warning' : 'error'}
-                    />
-                    <StatisticsCard
-                        title="Zufriedenheit"
-                        value={`${stats.avgSatisfaction}/5`}
-                        subtitle="Kundenbewertung"
-                        icon={<StarIcon/>}
-                        color={stats.avgSatisfaction >= 4.5 ? 'success' : stats.avgSatisfaction >= 4.0 ? 'warning' : 'error'}
-                    />
-                </Box>
-            </Fade>
-
-            {/* Sidebar - above management */}
-            <Fade in={showCards} timeout={1200}>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            md: 'repeat(2, 1fr)',
-                        },
-                        gap: 3,
-                        mb: 4,
-                    }}
-                >
-                    {/* Quick actions */}
-                    <QuickActions
-                        actions={quickActions}
-                        title="Schnellaktionen"
-                        maxItems={4}
-                    />
-
-                    {/* Status light */}
-                    <StatusLight
-                        statusItems={statusItems}
-                        title="Standortstatus"
-                        showProgress={true}
-                    />
-                </Box>
             </Fade>
 
             {/* Location management - full width */}
@@ -367,44 +276,6 @@ const LocationManagementPage: React.FC = () => {
                             locations={locations}
                             onLocationsChange={handleLocationsChange}
                         />
-                    </Box>
-                </Paper>
-            </Fade>
-
-            {/* Additional information */}
-            <Fade in={showCards} timeout={1600}>
-                <Paper
-                    sx={{
-                        p: 3,
-                        borderRadius: 3,
-                        background: alpha(theme.palette.info.main, 0.02),
-                        border: `1px solid ${alpha(theme.palette.info.main, 0.1)}`,
-                    }}
-                >
-                    <Typography variant="h6" gutterBottom sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                        <AssessmentIcon sx={{color: 'info.main'}}/>
-                        Standortmanagement-Tipps
-                    </Typography>
-                    <Box
-                        sx={{
-                            display: 'grid',
-                            gridTemplateColumns: {
-                                xs: '1fr',
-                                md: 'repeat(3, 1fr)',
-                            },
-                            gap: 2,
-                        }}
-                    >
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Optimale Auslastung:</strong> 80-95% für maximale Effizienz bei guter
-                            Patientenbetreuung
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Redundanz:</strong> Mindestens 2 aktive Standorte für Ausfallsicherheit
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Personalplanung:</strong> 6-8 Mitarbeiter pro Standort für optimale Schichtabdeckung
-                        </Typography>
                     </Box>
                 </Paper>
             </Fade>

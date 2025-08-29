@@ -160,9 +160,6 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                               {employee.fullName ||
                                 `${employee.firstName} ${employee.lastName}`}
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              ID: {employee.id.slice(0, 8)}...
-                            </Typography>
                           </Box>
                         </Box>
                       </TableCell>

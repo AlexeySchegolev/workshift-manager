@@ -450,19 +450,7 @@ const ShiftPlanningPage: React.FC = () => {
                         mb: 4,
                     }}
                 >
-                    {/* Quick actions */}
-                    <QuickActions
-                        actions={quickActions}
-                        title="Schnellaktionen"
-                        maxItems={4}
-                    />
 
-                    {/* Status light */}
-                    <StatusLight
-                        statusItems={statusItems}
-                        title="Planungsstatus"
-                        showProgress={true}
-                    />
                 </Box>
             </Fade>
 
@@ -485,52 +473,6 @@ const ShiftPlanningPage: React.FC = () => {
                         onGeneratePlan={generateShiftPlan}
                     />
                 </Paper>
-            </Fade>
-
-            {/* Additional information */}
-            <Fade in={showCards} timeout={1600}>
-                <Paper
-                    sx={{
-                        p: 3,
-                        borderRadius: 3,
-                        background: alpha(theme.palette.info.main, 0.02),
-                        border: `1px solid ${alpha(theme.palette.info.main, 0.1)}`,
-                    }}
-                >
-                    <Typography variant="h6" gutterBottom sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                        <AssessmentIcon sx={{color: 'info.main'}}/>
-                        Planungshinweise
-                    </Typography>
-                    <Box
-                        sx={{
-                            display: 'grid',
-                            gridTemplateColumns: {
-                                xs: '1fr',
-                                md: 'repeat(3, 1fr)',
-                            },
-                            gap: 2,
-                        }}
-                    >
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Automatische Planung:</strong> Berücksichtigt alle Regeln und
-                            Mitarbeiterverfügbarkeiten
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Regelvalidierung:</strong> Kontinuierliche Überprüfung auf Konflikte und
-                            Verletzungen
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Excel-Export:</strong> Professionelle Schichtpläne für Druck und Weitergabe
-                        </Typography>
-                    </Box>
-                </Paper>
-            </Fade>
-
-            {/* Planning validation */}
-            <Fade in={showCards} timeout={1800}>
-                <Box sx={{mb: 4}}>
-                    <PlanungsValidierung/>
-                </Box>
             </Fade>
         </Container>
     );

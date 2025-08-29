@@ -243,18 +243,8 @@ const HomePage: React.FC = () => {
 
             {/* Main content */}
             <Fade in={showCards} timeout={1200}>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            lg: '2fr 1fr',
-                        },
-                        gap: 3,
-                        mb: 4,
-                    }}
-                >
-                    {/* Week overview */}
+                <Box sx={{ mb: 4 }}>
+                    {/* Week overview - full width */}
                     <WeekOverview
                         woche={currentWeek}
                         selectedDate={selectedDate}

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { LocationStatus } from '../../../database/entities/location.entity';
+import { LocationStatus } from '@/database/entities';
 import { EmployeeResponseDto } from '../../employees/dto/employee-response.dto';
 import { LocationStatsDto } from './location-stats.dto';
 

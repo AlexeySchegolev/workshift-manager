@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 
 export class DateRangeDto {
   @ApiProperty({
-    description: 'Startdatum für den Export',
+    description: 'Start date for export',
     example: '2024-12-01T00:00:00Z',
     type: 'string',
     format: 'date-time'
@@ -13,7 +13,7 @@ export class DateRangeDto {
   start: string;
 
   @ApiProperty({
-    description: 'Enddatum für den Export',
+    description: 'End date for export',
     example: '2024-12-31T23:59:59Z',
     type: 'string',
     format: 'date-time'
@@ -24,21 +24,21 @@ export class DateRangeDto {
 
 export class AdditionalColumnDto {
   @ApiProperty({
-    description: 'Spalten-Schlüssel',
+    description: 'Column key',
     example: 'overtime_hours'
   })
   @IsString()
   key: string;
 
   @ApiProperty({
-    description: 'Spalten-Überschrift',
-    example: 'Überstunden'
+    description: 'Column header',
+    example: 'Overtime Hours'
   })
   @IsString()
   header: string;
 
   @ApiPropertyOptional({
-    description: 'Spaltenbreite in Excel',
+    description: 'Column width in Excel',
     example: 15,
     minimum: 5,
     maximum: 50
@@ -49,7 +49,7 @@ export class AdditionalColumnDto {
 
 export class ExcelExportOptionsDto {
   @ApiPropertyOptional({
-    description: 'Statistiken in den Export einbeziehen',
+    description: 'Include statistics in export',
     example: true,
     default: false
   })
@@ -58,7 +58,7 @@ export class ExcelExportOptionsDto {
   includeStatistics?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Constraint-Verletzungen in den Export einbeziehen',
+    description: 'Include constraint violations in export',
     example: true,
     default: false
   })
@@ -67,7 +67,7 @@ export class ExcelExportOptionsDto {
   includeConstraintViolations?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Detaillierte Mitarbeiterinformationen einbeziehen',
+    description: 'Include detailed employee information',
     example: true,
     default: false
   })
@@ -76,15 +76,15 @@ export class ExcelExportOptionsDto {
   includeEmployeeDetails?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Benutzerdefinierter Titel für den Export',
-    example: 'Schichtplan Dezember 2024 - Standort Berlin'
+    description: 'Custom title for export',
+    example: 'Shift Plan December 2024 - Berlin Location'
   })
   @IsOptional()
   @IsString()
   customTitle?: string;
 
   @ApiPropertyOptional({
-    description: 'URL zum Firmenlogo für den Export',
+    description: 'Company logo URL for export',
     example: 'https://example.com/logo.png'
   })
   @IsOptional()
@@ -92,11 +92,11 @@ export class ExcelExportOptionsDto {
   companyLogo?: string;
 
   @ApiPropertyOptional({
-    description: 'Zusätzliche Spalten für den Export',
+    description: 'Additional columns for export',
     type: [AdditionalColumnDto],
     example: [
-      { key: 'overtime', header: 'Überstunden', width: 12 },
-      { key: 'vacation_days', header: 'Urlaubstage', width: 15 }
+      { key: 'overtime', header: 'Overtime Hours', width: 12 },
+      { key: 'vacation_days', header: 'Vacation Days', width: 15 }
     ]
   })
   @IsOptional()
@@ -106,7 +106,7 @@ export class ExcelExportOptionsDto {
   additionalColumns?: AdditionalColumnDto[];
 
   @ApiPropertyOptional({
-    description: 'Datumsbereich für den Export (überschreibt Standard-Monatsbereich)',
+    description: 'Date range for export (overrides default monthly range)',
     type: DateRangeDto
   })
   @IsOptional()
@@ -115,10 +115,10 @@ export class ExcelExportOptionsDto {
   dateRange?: DateRangeDto;
 
   @ApiPropertyOptional({
-    description: 'Zusätzliche Metadaten für den Export',
+    description: 'Additional metadata for export',
     type: 'object',
     additionalProperties: true,
-    example: { department: 'Pflege', location: 'Berlin' }
+    example: { department: 'Nursing', location: 'Berlin' }
   })
   @IsOptional()
   @IsObject()
@@ -127,14 +127,14 @@ export class ExcelExportOptionsDto {
 
 export class ExcelExportRequestDto {
   @ApiProperty({
-    description: 'ID des zu exportierenden Schichtplans',
+    description: 'ID of shift plan to export',
     example: 'uuid-string'
   })
   @IsString()
   shiftPlanId: string;
 
   @ApiPropertyOptional({
-    description: 'Export-Optionen und Anpassungen',
+    description: 'Export options and customizations',
     type: ExcelExportOptionsDto
   })
   @IsOptional()
@@ -145,7 +145,7 @@ export class ExcelExportRequestDto {
 
 export class MultipleExcelExportRequestDto {
   @ApiProperty({
-    description: 'Liste der zu exportierenden Schichtplan-IDs',
+    description: 'List of shift plan IDs to export',
     example: ['uuid-1', 'uuid-2', 'uuid-3'],
     type: [String]
   })
@@ -154,7 +154,7 @@ export class MultipleExcelExportRequestDto {
   shiftPlanIds: string[];
 
   @ApiPropertyOptional({
-    description: 'Export-Optionen für alle Schichtpläne',
+    description: 'Export options for all shift plans',
     type: ExcelExportOptionsDto
   })
   @IsOptional()
@@ -165,25 +165,25 @@ export class MultipleExcelExportRequestDto {
 
 export class ExcelExportMetadataDto {
   @ApiProperty({
-    description: 'Gesamtanzahl der Schichten im Export',
+    description: 'Total number of shifts in export',
     example: 456
   })
   totalShifts: number;
 
   @ApiProperty({
-    description: 'Gesamtanzahl der Mitarbeiter im Export',
+    description: 'Total number of employees in export',
     example: 25
   })
   totalEmployees: number;
 
   @ApiProperty({
-    description: 'Gesamtanzahl der Planungstage',
+    description: 'Total number of planning days',
     example: 31
   })
   totalDays: number;
 
   @ApiProperty({
-    description: 'Verwendete Export-Optionen',
+    description: 'Export options used',
     type: ExcelExportOptionsDto
   })
   exportOptions: ExcelExportOptionsDto;
@@ -191,25 +191,25 @@ export class ExcelExportMetadataDto {
 
 export class ExcelExportResultDto {
   @ApiProperty({
-    description: 'Dateiname der generierten Excel-Datei',
-    example: 'schichtplan-2024-12-20241227-1830.xlsx'
+    description: 'Filename of generated Excel file',
+    example: 'shift-plan-2024-12-20241227-1830.xlsx'
   })
   filename: string;
 
   @ApiProperty({
-    description: 'MIME-Type der Datei',
+    description: 'MIME type of file',
     example: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   })
   mimeType: string;
 
   @ApiProperty({
-    description: 'Dateigröße in Bytes',
+    description: 'File size in bytes',
     example: 45120
   })
   size: number;
 
   @ApiProperty({
-    description: 'Zeitpunkt der Generierung',
+    description: 'Generation timestamp',
     example: '2024-12-27T18:30:45Z',
     type: 'string',
     format: 'date-time'
@@ -217,7 +217,7 @@ export class ExcelExportResultDto {
   generatedAt: string;
 
   @ApiProperty({
-    description: 'Metadaten über den Export',
+    description: 'Metadata about the export',
     type: ExcelExportMetadataDto
   })
   metadata: ExcelExportMetadataDto;

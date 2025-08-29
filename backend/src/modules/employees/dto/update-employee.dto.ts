@@ -5,7 +5,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateEmployeeDto extends PartialType(CreateEmployeeDto) {
   @ApiPropertyOptional({
-    description: 'Ist der Mitarbeiter aktiv',
+    description: 'Is the employee active',
     example: true
   })
   @IsOptional()

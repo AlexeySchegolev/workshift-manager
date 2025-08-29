@@ -2,81 +2,81 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OrganizationStatus, OrganizationType } from '../../../database/entities/organization.entity';
 
 export class OrganizationResponseDto {
-  @ApiProperty({ description: 'Eindeutige ID der Organisation', example: 'uuid-string' })
+  @ApiProperty({ description: 'Unique organization ID', example: 'uuid-string' })
   id: string;
 
-  @ApiProperty({ description: 'Name der Organisation', example: 'Dialyse Zentrum Berlin' })
+  @ApiProperty({ description: 'Organization name', example: 'Dialyse Zentrum Berlin' })
   name: string;
 
-  @ApiPropertyOptional({ description: 'Rechtlicher Name der Organisation', example: 'Dialyse Zentrum Berlin GmbH' })
+  @ApiPropertyOptional({ description: 'Legal organization name', example: 'Dialyse Zentrum Berlin GmbH' })
   legalName?: string;
 
-  @ApiPropertyOptional({ description: 'Steuernummer', example: 'DE123456789' })
+  @ApiPropertyOptional({ description: 'Tax ID', example: 'DE123456789' })
   taxId?: string;
 
-  @ApiPropertyOptional({ description: 'Registrierungsnummer', example: 'HRB 12345' })
+  @ApiPropertyOptional({ description: 'Registration number', example: 'HRB 12345' })
   registrationNumber?: string;
 
-  @ApiProperty({ description: 'Typ der Organisation', enum: OrganizationType, example: OrganizationType.MEDICAL_CENTER })
+  @ApiProperty({ description: 'Organization type', enum: OrganizationType, example: OrganizationType.MEDICAL_CENTER })
   type: OrganizationType;
 
-  @ApiProperty({ description: 'Status der Organisation', enum: OrganizationStatus, example: OrganizationStatus.ACTIVE })
+  @ApiProperty({ description: 'Organization status', enum: OrganizationStatus, example: OrganizationStatus.ACTIVE })
   status: OrganizationStatus;
 
-  @ApiPropertyOptional({ description: 'Beschreibung', example: 'Führendes Dialysezentrum in Berlin' })
+  @ApiPropertyOptional({ description: 'Description', example: 'Leading dialysis center in Berlin' })
   description?: string;
 
   @ApiPropertyOptional({ description: 'Website', example: 'https://www.dialyse-berlin.de' })
   website?: string;
 
-  @ApiPropertyOptional({ description: 'Haupt-E-Mail-Adresse', example: 'info@dialyse-berlin.de' })
+  @ApiPropertyOptional({ description: 'Primary email address', example: 'info@dialyse-berlin.de' })
   primaryEmail?: string;
 
-  @ApiPropertyOptional({ description: 'Haupttelefonnummer', example: '+49 30 1234-0' })
+  @ApiPropertyOptional({ description: 'Primary phone number', example: '+49 30 1234-0' })
   primaryPhone?: string;
 
-  @ApiPropertyOptional({ description: 'Adresse des Hauptsitzes', example: 'Alexanderplatz 1' })
+  @ApiPropertyOptional({ description: 'Headquarters address', example: 'Alexanderplatz 1' })
   headquartersAddress?: string;
 
-  @ApiPropertyOptional({ description: 'Stadt des Hauptsitzes', example: 'Berlin' })
+  @ApiPropertyOptional({ description: 'Headquarters city', example: 'Berlin' })
   headquartersCity?: string;
 
-  @ApiPropertyOptional({ description: 'Postleitzahl des Hauptsitzes', example: '10178' })
+  @ApiPropertyOptional({ description: 'Headquarters postal code', example: '10178' })
   headquartersPostalCode?: string;
 
-  @ApiPropertyOptional({ description: 'Land des Hauptsitzes', example: 'Deutschland' })
+  @ApiPropertyOptional({ description: 'Headquarters country', example: 'Germany' })
   headquartersCountry?: string;
 
   @ApiPropertyOptional({ description: 'Logo URL', example: 'https://example.com/logo.png' })
   logoUrl?: string;
 
-  @ApiProperty({ description: 'Abonnement-Plan', example: 'basic' })
+  @ApiProperty({ description: 'Subscription plan', example: 'basic' })
   subscriptionPlan: string;
 
-  @ApiPropertyOptional({ description: 'Ablaufdatum des Abonnements', example: '2025-01-01T00:00:00Z' })
+  @ApiPropertyOptional({ description: 'Subscription expiration date', example: '2025-01-01T00:00:00Z' })
   subscriptionExpiresAt?: Date;
 
-  @ApiProperty({ description: 'Maximale Anzahl Mitarbeiter', example: 50 })
+  @ApiProperty({ description: 'Maximum number of employees', example: 50 })
   maxEmployees: number;
 
-  @ApiProperty({ description: 'Maximale Anzahl Standorte', example: 5 })
+  @ApiProperty({ description: 'Maximum number of locations', example: 5 })
   maxLocations: number;
 
-  @ApiProperty({ description: 'Einstellungen', example: { timezone: 'Europe/Berlin' } })
+  @ApiProperty({ description: 'Settings', example: { timezone: 'Europe/Berlin' } })
   settings: Record<string, any>;
 
-  @ApiProperty({ description: 'Aktivierte Features', example: ['shift-planning', 'reporting'] })
+  @ApiProperty({ description: 'Enabled features', example: ['shift-planning', 'reporting'] })
   features: string[];
 
-  @ApiProperty({ description: 'Ist aktiv', example: true })
+  @ApiProperty({ description: 'Is active', example: true })
   isActive: boolean;
 
-  @ApiPropertyOptional({ description: 'Erstellt am', example: '2024-01-01T12:00:00Z' })
+  @ApiPropertyOptional({ description: 'Created at', example: '2024-01-01T12:00:00Z' })
   createdAt?: Date;
 
-  @ApiPropertyOptional({ description: 'Aktualisiert am', example: '2024-02-01T12:00:00Z' })
+  @ApiPropertyOptional({ description: 'Updated at', example: '2024-02-01T12:00:00Z' })
   updatedAt?: Date;
 
-  @ApiPropertyOptional({ description: 'Gelöscht am', example: null })
+  @ApiPropertyOptional({ description: 'Deleted at', example: null })
   deletedAt?: Date;
 }

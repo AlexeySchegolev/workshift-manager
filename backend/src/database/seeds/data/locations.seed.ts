@@ -1,4 +1,4 @@
-import { OperatingHours, LocationStatus } from '../../entities/location.entity';
+import { OperatingHours, LocationStatus } from '@/database/entities';
 
 const standardOperatingHours: OperatingHours = {
   monday: [{ start: '06:00', end: '22:00' }],

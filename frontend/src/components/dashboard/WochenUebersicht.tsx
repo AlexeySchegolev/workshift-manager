@@ -6,7 +6,6 @@ import {
   Typography,
   Box,
   Chip,
-  Grid,
   useTheme,
   alpha,
   IconButton,

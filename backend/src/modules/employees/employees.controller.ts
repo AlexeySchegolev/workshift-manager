@@ -10,7 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   ParseUUIDPipe,
-  ParseIntPipe,
+
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -25,7 +25,6 @@ import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeResponseDto } from './dto/employee-response.dto';
-import { Employee } from '@/database/entities';
 
 @ApiTags('employees')
 @Controller('api/employees')

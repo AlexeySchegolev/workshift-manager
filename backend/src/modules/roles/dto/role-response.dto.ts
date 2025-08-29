@@ -3,178 +3,178 @@ import { RoleType, RoleStatus } from '../../../database/entities/role.entity';
 
 export class RoleResponseDto {
   @ApiProperty({ 
-    description: 'Eindeutige ID der Rolle', 
+    description: 'Unique role ID', 
     example: '123e4567-e89b-12d3-a456-426614174000' 
   })
   id: string;
 
   @ApiProperty({ 
-    description: 'ID der Organisation', 
+    description: 'Organization ID', 
     example: '123e4567-e89b-12d3-a456-426614174001' 
   })
   organizationId: string;
 
   @ApiProperty({ 
-    description: 'Name der Rolle', 
-    example: 'Fachkraft Dialyse' 
+    description: 'Role name', 
+    example: 'Dialysis Specialist' 
   })
   name: string;
 
   @ApiPropertyOptional({ 
-    description: 'Beschreibung der Rolle', 
-    example: 'Qualifizierte Fachkraft für die Durchführung von Dialysebehandlungen' 
+    description: 'Role description', 
+    example: 'Qualified specialist for performing dialysis treatments' 
   })
   description?: string;
 
   @ApiProperty({ 
-    description: 'Typ der Rolle', 
+    description: 'Role type', 
     enum: RoleType, 
     example: RoleType.SPECIALIST 
   })
   type: RoleType;
 
   @ApiProperty({ 
-    description: 'Status der Rolle', 
+    description: 'Role status', 
     enum: RoleStatus, 
     example: RoleStatus.ACTIVE 
   })
   status: RoleStatus;
 
   @ApiPropertyOptional({ 
-    description: 'Stundensatz in Euro', 
+    description: 'Hourly rate in Euro', 
     example: 25.50 
   })
   hourlyRate?: number;
 
   @ApiPropertyOptional({ 
-    description: 'Überstundensatz in Euro', 
+    description: 'Overtime rate in Euro', 
     example: 31.88 
   })
   overtimeRate?: number;
 
   @ApiProperty({ 
-    description: 'Mindest-Berufserfahrung in Monaten', 
+    description: 'Minimum professional experience in months', 
     example: 12 
   })
   minExperienceMonths: number;
 
   @ApiProperty({ 
-    description: 'Erforderliche Zertifizierungen', 
-    example: ['Dialyse-Grundkurs', 'Hygiene-Schulung'] 
+    description: 'Required certifications', 
+    example: ['Basic Dialysis Course', 'Hygiene Training'] 
   })
   requiredCertifications: string[];
 
   @ApiProperty({ 
-    description: 'Erforderliche Fähigkeiten', 
-    example: ['Patientenbetreuung', 'Maschinenbedienung'] 
+    description: 'Required skills', 
+    example: ['Patient Care', 'Machine Operation'] 
   })
   requiredSkills: string[];
 
   @ApiProperty({ 
-    description: 'Berechtigungen', 
+    description: 'Permissions', 
     example: ['view_patient_data', 'manage_dialysis_machines'] 
   })
   permissions: string[];
 
   @ApiProperty({ 
-    description: 'Kann Nachtschichten arbeiten', 
+    description: 'Can work night shifts', 
     example: true 
   })
   canWorkNights: boolean;
 
   @ApiProperty({ 
-    description: 'Kann Wochenendschichten arbeiten', 
+    description: 'Can work weekend shifts', 
     example: true 
   })
   canWorkWeekends: boolean;
 
   @ApiProperty({ 
-    description: 'Kann an Feiertagen arbeiten', 
+    description: 'Can work on holidays', 
     example: false 
   })
   canWorkHolidays: boolean;
 
   @ApiProperty({ 
-    description: 'Maximale aufeinanderfolgende Arbeitstage', 
+    description: 'Maximum consecutive working days', 
     example: 6 
   })
   maxConsecutiveDays: number;
 
   @ApiProperty({ 
-    description: 'Mindest-Ruhezeit zwischen Schichten in Stunden', 
+    description: 'Minimum rest time between shifts in hours', 
     example: 11 
   })
   minRestHours: number;
 
   @ApiProperty({ 
-    description: 'Maximale wöchentliche Arbeitszeit', 
+    description: 'Maximum weekly working hours', 
     example: 40.0 
   })
   maxWeeklyHours: number;
 
   @ApiProperty({ 
-    description: 'Maximale monatliche Arbeitszeit', 
+    description: 'Maximum monthly working hours', 
     example: 160.0 
   })
   maxMonthlyHours: number;
 
   @ApiProperty({ 
-    description: 'Prioritätslevel der Rolle (1-10, höher = wichtiger)', 
+    description: 'Priority level of the role (1-10, higher = more important)', 
     example: 1 
   })
   priorityLevel: number;
 
   @ApiPropertyOptional({ 
-    description: 'Farbcode für UI-Anzeige (Hex)', 
+    description: 'Color code for UI display (Hex)', 
     example: '#1976d2' 
   })
   colorCode?: string;
 
   @ApiProperty({ 
-    description: 'Rolle ist aktiv', 
+    description: 'Role is active', 
     example: true 
   })
   isActive: boolean;
 
   @ApiPropertyOptional({ 
-    description: 'Erstellt von (Benutzer-ID)', 
+    description: 'Created by (User ID)', 
     example: '123e4567-e89b-12d3-a456-426614174002' 
   })
   createdBy?: string;
 
   @ApiPropertyOptional({ 
-    description: 'Aktualisiert von (Benutzer-ID)', 
+    description: 'Updated by (User ID)', 
     example: '123e4567-e89b-12d3-a456-426614174003' 
   })
   updatedBy?: string;
 
   @ApiProperty({ 
-    description: 'Erstellt am', 
+    description: 'Created at', 
     example: '2024-01-01T12:00:00Z' 
   })
   createdAt: Date;
 
   @ApiProperty({ 
-    description: 'Aktualisiert am', 
+    description: 'Updated at', 
     example: '2024-02-01T12:00:00Z' 
   })
   updatedAt: Date;
 
   @ApiPropertyOptional({ 
-    description: 'Gelöscht am', 
+    description: 'Deleted at', 
     example: null 
   })
   deletedAt?: Date;
 
   @ApiProperty({ 
-    description: 'Rolle ist verfügbar (berechnet)', 
+    description: 'Role is available (computed)', 
     example: true 
   })
   isAvailable: boolean;
 
   @ApiProperty({ 
-    description: 'Anzeigename der Rolle (berechnet)', 
-    example: 'Fachkraft Dialyse (specialist)' 
+    description: 'Display name of the role (computed)', 
+    example: 'Dialysis Specialist (specialist)' 
   })
   displayName: string;
 }

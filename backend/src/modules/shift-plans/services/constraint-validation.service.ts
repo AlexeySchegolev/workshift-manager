@@ -492,7 +492,7 @@ export class ConstraintValidationService {
     });
     
     result.warnings.forEach(violation => {
-      score -= violation.severity * 1; // Warnings are lightly penalized
+      score -= violation.severity; // Warnings are lightly penalized
     });
     
     return Math.max(0, score);

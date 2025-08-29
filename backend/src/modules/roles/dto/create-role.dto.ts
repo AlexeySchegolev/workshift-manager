@@ -1,26 +1,26 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsEnum, IsOptional, IsNumber, IsBoolean, IsArray, IsUUID, Min, Max, Length } from 'class-validator';
-import { RoleType, RoleStatus } from '../../../database/entities/role.entity';
+import { RoleType, RoleStatus } from '@/database/entities';
 
 export class CreateRoleDto {
   @ApiProperty({
-    description: 'ID der Organisation',
+    description: 'Organization ID',
     example: '123e4567-e89b-12d3-a456-426614174000'
   })
   @IsUUID()
   organizationId: string;
 
   @ApiProperty({
-    description: 'Name der Rolle',
-    example: 'Fachkraft Dialyse'
+    description: 'Role name',
+    example: 'Dialysis Specialist'
   })
   @IsString()
   @Length(1, 100)
   name: string;
 
   @ApiPropertyOptional({
-    description: 'Beschreibung der Rolle',
-    example: 'Qualifizierte Fachkraft für die Durchführung von Dialysebehandlungen'
+    description: 'Role description',
+    example: 'Qualified specialist for performing dialysis treatments'
   })
   @IsOptional()
   @IsString()
@@ -28,7 +28,7 @@ export class CreateRoleDto {
   description?: string;
 
   @ApiProperty({
-    description: 'Typ der Rolle',
+    description: 'Role type',
     enum: RoleType,
     example: RoleType.SPECIALIST
   })
@@ -36,7 +36,7 @@ export class CreateRoleDto {
   type: RoleType;
 
   @ApiPropertyOptional({
-    description: 'Status der Rolle',
+    description: 'Role status',
     enum: RoleStatus,
     example: RoleStatus.ACTIVE
   })
@@ -45,7 +45,7 @@ export class CreateRoleDto {
   status?: RoleStatus;
 
   @ApiPropertyOptional({
-    description: 'Stundensatz in Euro',
+    description: 'Hourly rate in Euro',
     example: 25.50
   })
   @IsOptional()
@@ -54,7 +54,7 @@ export class CreateRoleDto {
   hourlyRate?: number;
 
   @ApiPropertyOptional({
-    description: 'Überstundensatz in Euro',
+    description: 'Overtime rate in Euro',
     example: 31.88
   })
   @IsOptional()
@@ -63,7 +63,7 @@ export class CreateRoleDto {
   overtimeRate?: number;
 
   @ApiPropertyOptional({
-    description: 'Mindest-Berufserfahrung in Monaten',
+    description: 'Minimum professional experience in months',
     example: 12
   })
   @IsOptional()
@@ -72,8 +72,8 @@ export class CreateRoleDto {
   minExperienceMonths?: number;
 
   @ApiPropertyOptional({
-    description: 'Erforderliche Zertifizierungen',
-    example: ['Dialyse-Grundkurs', 'Hygiene-Schulung']
+    description: 'Required certifications',
+    example: ['Basic Dialysis Course', 'Hygiene Training']
   })
   @IsOptional()
   @IsArray()
@@ -81,8 +81,8 @@ export class CreateRoleDto {
   requiredCertifications?: string[];
 
   @ApiPropertyOptional({
-    description: 'Erforderliche Fähigkeiten',
-    example: ['Patientenbetreuung', 'Maschinenbedienung']
+    description: 'Required skills',
+    example: ['Patient Care', 'Machine Operation']
   })
   @IsOptional()
   @IsArray()
@@ -90,7 +90,7 @@ export class CreateRoleDto {
   requiredSkills?: string[];
 
   @ApiPropertyOptional({
-    description: 'Berechtigungen',
+    description: 'Permissions',
     example: ['view_patient_data', 'manage_dialysis_machines']
   })
   @IsOptional()
@@ -99,7 +99,7 @@ export class CreateRoleDto {
   permissions?: string[];
 
   @ApiPropertyOptional({
-    description: 'Kann Nachtschichten arbeiten',
+    description: 'Can work night shifts',
     example: true
   })
   @IsOptional()
@@ -107,7 +107,7 @@ export class CreateRoleDto {
   canWorkNights?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Kann Wochenendschichten arbeiten',
+    description: 'Can work weekend shifts',
     example: true
   })
   @IsOptional()
@@ -115,7 +115,7 @@ export class CreateRoleDto {
   canWorkWeekends?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Kann an Feiertagen arbeiten',
+    description: 'Can work on holidays',
     example: false
   })
   @IsOptional()
@@ -123,7 +123,7 @@ export class CreateRoleDto {
   canWorkHolidays?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Maximale aufeinanderfolgende Arbeitstage',
+    description: 'Maximum consecutive working days',
     example: 5
   })
   @IsOptional()
@@ -133,7 +133,7 @@ export class CreateRoleDto {
   maxConsecutiveDays?: number;
 
   @ApiPropertyOptional({
-    description: 'Mindest-Ruhezeit zwischen Schichten in Stunden',
+    description: 'Minimum rest time between shifts in hours',
     example: 11
   })
   @IsOptional()
@@ -143,7 +143,7 @@ export class CreateRoleDto {
   minRestHours?: number;
 
   @ApiPropertyOptional({
-    description: 'Maximale wöchentliche Arbeitszeit',
+    description: 'Maximum weekly working hours',
     example: 40.0
   })
   @IsOptional()
@@ -153,7 +153,7 @@ export class CreateRoleDto {
   maxWeeklyHours?: number;
 
   @ApiPropertyOptional({
-    description: 'Maximale monatliche Arbeitszeit',
+    description: 'Maximum monthly working hours',
     example: 160.0
   })
   @IsOptional()
@@ -163,7 +163,7 @@ export class CreateRoleDto {
   maxMonthlyHours?: number;
 
   @ApiPropertyOptional({
-    description: 'Prioritätslevel der Rolle (1-10, höher = wichtiger)',
+    description: 'Priority level of the role (1-10, higher = more important)',
     example: 5
   })
   @IsOptional()
@@ -173,7 +173,7 @@ export class CreateRoleDto {
   priorityLevel?: number;
 
   @ApiPropertyOptional({
-    description: 'Farbcode für UI-Anzeige (Hex)',
+    description: 'Color code for UI display (Hex)',
     example: '#1976d2'
   })
   @IsOptional()
@@ -182,7 +182,7 @@ export class CreateRoleDto {
   colorCode?: string;
 
   @ApiPropertyOptional({
-    description: 'Rolle ist aktiv',
+    description: 'Role is active',
     example: true
   })
   @IsOptional()
@@ -190,7 +190,7 @@ export class CreateRoleDto {
   isActive?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Erstellt von (Benutzer-ID)',
+    description: 'Created by (User ID)',
     example: '123e4567-e89b-12d3-a456-426614174001'
   })
   @IsOptional()

@@ -4,7 +4,7 @@ import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleResponseDto } from './dto/role-response.dto';
-import { Role } from '../../database/entities/role.entity';
+import { Role } from '@/database/entities';
 
 @ApiTags('roles')
 @Controller('api/roles')
@@ -46,17 +46,17 @@ export class RolesController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Neue Rolle erstellen' })
-  @ApiResponse({ status: 201, description: 'Rolle erfolgreich erstellt', type: RoleResponseDto })
+  @ApiOperation({ summary: 'Create new role' })
+  @ApiResponse({ status: 201, description: 'Role successfully created', type: RoleResponseDto })
   async create(@Body() dto: CreateRoleDto): Promise<RoleResponseDto> {
     const role = await this.rolesService.create(dto);
     return this.mapToResponseDto(role);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Alle Rollen abrufen' })
-  @ApiQuery({ name: 'includeRelations', required: false, type: Boolean, description: 'Verwandte Entitäten einbeziehen' })
-  @ApiResponse({ status: 200, description: 'Liste aller Rollen', type: [RoleResponseDto] })
+  @ApiOperation({ summary: 'Get all roles' })
+  @ApiQuery({ name: 'includeRelations', required: false, type: Boolean, description: 'Include related entities' })
+  @ApiResponse({ status: 200, description: 'List of all roles', type: [RoleResponseDto] })
   async findAll(@Query('includeRelations') includeRelations: string = 'true'): Promise<RoleResponseDto[]> {
     const include = includeRelations === 'true';
     const roles = await this.rolesService.findAll(include);
@@ -64,11 +64,11 @@ export class RolesController {
   }
 
   @Get('organization/:organizationId')
-  @ApiOperation({ summary: 'Rollen nach Organisation abrufen' })
-  @ApiParam({ name: 'organizationId', type: 'string', format: 'uuid', description: 'ID der Organisation' })
-  @ApiQuery({ name: 'includeRelations', required: false, type: Boolean, description: 'Verwandte Entitäten einbeziehen' })
-  @ApiQuery({ name: 'activeOnly', required: false, type: Boolean, description: 'Nur aktive Rollen' })
-  @ApiResponse({ status: 200, description: 'Rollen der Organisation', type: [RoleResponseDto] })
+  @ApiOperation({ summary: 'Get roles by organization' })
+  @ApiParam({ name: 'organizationId', type: 'string', format: 'uuid', description: 'Organization ID' })
+  @ApiQuery({ name: 'includeRelations', required: false, type: Boolean, description: 'Include related entities' })
+  @ApiQuery({ name: 'activeOnly', required: false, type: Boolean, description: 'Only active roles' })
+  @ApiResponse({ status: 200, description: 'Organization roles', type: [RoleResponseDto] })
   async findByOrganization(
     @Param('organizationId') organizationId: string,
     @Query('includeRelations') includeRelations: string = 'true',
@@ -76,28 +76,28 @@ export class RolesController {
   ): Promise<RoleResponseDto[]> {
     const include = includeRelations === 'true';
     const onlyActive = activeOnly === 'true';
-    
+
     const roles = onlyActive 
       ? await this.rolesService.findActiveByOrganization(organizationId)
       : await this.rolesService.findByOrganization(organizationId, include);
-    
+
     return roles.map(role => this.mapToResponseDto(role));
   }
 
   @Get('organization/:organizationId/count')
-  @ApiOperation({ summary: 'Anzahl Rollen pro Organisation' })
-  @ApiParam({ name: 'organizationId', type: 'string', format: 'uuid', description: 'ID der Organisation' })
-  @ApiResponse({ status: 200, description: 'Anzahl der Rollen', schema: { type: 'object', properties: { count: { type: 'number' } } } })
+  @ApiOperation({ summary: 'Count roles by organization' })
+  @ApiParam({ name: 'organizationId', type: 'string', format: 'uuid', description: 'Organization ID' })
+  @ApiResponse({ status: 200, description: 'Number of roles', schema: { type: 'object', properties: { count: { type: 'number' } } } })
   async countByOrganization(@Param('organizationId') organizationId: string): Promise<{ count: number }> {
     const count = await this.rolesService.countByOrganization(organizationId);
     return { count };
   }
 
   @Get('organization/:organizationId/type/:type')
-  @ApiOperation({ summary: 'Rollen nach Typ und Organisation' })
-  @ApiParam({ name: 'organizationId', type: 'string', format: 'uuid', description: 'ID der Organisation' })
-  @ApiParam({ name: 'type', type: 'string', description: 'Rolle-Typ' })
-  @ApiResponse({ status: 200, description: 'Rollen des angegebenen Typs', type: [RoleResponseDto] })
+  @ApiOperation({ summary: 'Get roles by type and organization' })
+  @ApiParam({ name: 'organizationId', type: 'string', format: 'uuid', description: 'Organization ID' })
+  @ApiParam({ name: 'type', type: 'string', description: 'Role type' })
+  @ApiResponse({ status: 200, description: 'Roles of the specified type', type: [RoleResponseDto] })
   async findByType(
     @Param('organizationId') organizationId: string,
     @Param('type') type: string
@@ -107,11 +107,11 @@ export class RolesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Rolle nach ID abrufen' })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID der Rolle' })
-  @ApiQuery({ name: 'includeRelations', required: false, type: Boolean, description: 'Verwandte Entitäten einbeziehen' })
-  @ApiResponse({ status: 200, description: 'Rolle gefunden', type: RoleResponseDto })
-  @ApiNotFoundResponse({ description: 'Rolle nicht gefunden' })
+  @ApiOperation({ summary: 'Get role by ID' })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'Role ID' })
+  @ApiQuery({ name: 'includeRelations', required: false, type: Boolean, description: 'Include related entities' })
+  @ApiResponse({ status: 200, description: 'Role found', type: RoleResponseDto })
+  @ApiNotFoundResponse({ description: 'Role not found' })
   async findOne(
     @Param('id') id: string, 
     @Query('includeRelations') includeRelations: string = 'true'
@@ -122,38 +122,38 @@ export class RolesController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Rolle aktualisieren' })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID der Rolle' })
-  @ApiResponse({ status: 200, description: 'Rolle erfolgreich aktualisiert', type: RoleResponseDto })
-  @ApiNotFoundResponse({ description: 'Rolle nicht gefunden' })
+  @ApiOperation({ summary: 'Update role' })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'Role ID' })
+  @ApiResponse({ status: 200, description: 'Role successfully updated', type: RoleResponseDto })
+  @ApiNotFoundResponse({ description: 'Role not found' })
   async update(@Param('id') id: string, @Body() dto: UpdateRoleDto): Promise<RoleResponseDto> {
     const role = await this.rolesService.update(id, dto);
     return this.mapToResponseDto(role);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Rolle soft-löschen' })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID der Rolle' })
-  @ApiResponse({ status: 204, description: 'Rolle erfolgreich gelöscht' })
-  @ApiNotFoundResponse({ description: 'Rolle nicht gefunden' })
+  @ApiOperation({ summary: 'Soft delete role' })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'Role ID' })
+  @ApiResponse({ status: 204, description: 'Role successfully deleted' })
+  @ApiNotFoundResponse({ description: 'Role not found' })
   async remove(@Param('id') id: string): Promise<void> {
     await this.rolesService.remove(id);
   }
 
   @Delete(':id/hard')
-  @ApiOperation({ summary: 'Rolle permanent löschen' })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID der Rolle' })
-  @ApiResponse({ status: 204, description: 'Rolle permanent gelöscht' })
-  @ApiNotFoundResponse({ description: 'Rolle nicht gefunden' })
+  @ApiOperation({ summary: 'Permanently delete role' })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'Role ID' })
+  @ApiResponse({ status: 204, description: 'Role permanently deleted' })
+  @ApiNotFoundResponse({ description: 'Role not found' })
   async hardRemove(@Param('id') id: string): Promise<void> {
     await this.rolesService.hardRemove(id);
   }
 
   @Post(':id/restore')
-  @ApiOperation({ summary: 'Gelöschte Rolle wiederherstellen' })
-  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'ID der Rolle' })
-  @ApiResponse({ status: 200, description: 'Rolle wiederhergestellt', type: RoleResponseDto })
-  @ApiNotFoundResponse({ description: 'Rolle nicht gefunden oder nicht gelöscht' })
+  @ApiOperation({ summary: 'Restore deleted role' })
+  @ApiParam({ name: 'id', type: 'string', format: 'uuid', description: 'Role ID' })
+  @ApiResponse({ status: 200, description: 'Role restored', type: RoleResponseDto })
+  @ApiNotFoundResponse({ description: 'Role not found or not deleted' })
   async restore(@Param('id') id: string): Promise<RoleResponseDto> {
     const role = await this.rolesService.restore(id);
     return this.mapToResponseDto(role);

@@ -7,8 +7,7 @@ import {
   Matches, 
   IsNumber, 
   Min, 
-  Max, 
-  IsArray, 
+  IsArray,
   IsBoolean, 
   ValidateNested,
   IsUUID

@@ -1,95 +1,95 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UserRole, UserStatus } from '../../../database/entities/user.entity';
+import { UserRole, UserStatus } from '@/database/entities';
 
 export class UserResponseDto {
   @ApiProperty({
-    description: 'Eindeutige ID des Benutzers',
+    description: 'Unique user ID',
     example: 'uuid-string'
   })
   id: string;
 
   @ApiProperty({
-    description: 'E-Mail-Adresse des Benutzers',
-    example: 'max.mustermann@example.com'
+    description: 'User email address',
+    example: 'john.smith@example.com'
   })
   email: string;
 
   @ApiProperty({
-    description: 'Vorname des Benutzers',
-    example: 'Max'
+    description: 'User first name',
+    example: 'John'
   })
   firstName: string;
 
   @ApiProperty({
-    description: 'Nachname des Benutzers',
-    example: 'Mustermann'
+    description: 'User last name',
+    example: 'Smith'
   })
   lastName: string;
 
   @ApiProperty({
-    description: 'Vollständiger Name des Benutzers',
-    example: 'Max Mustermann'
+    description: 'User full name',
+    example: 'John Smith'
   })
   fullName: string;
 
   @ApiProperty({
-    description: 'Rolle des Benutzers',
+    description: 'User role',
     enum: UserRole,
     example: UserRole.EMPLOYEE
   })
   role: UserRole;
 
   @ApiProperty({
-    description: 'Status des Benutzers',
+    description: 'User status',
     enum: UserStatus,
     example: UserStatus.ACTIVE
   })
   status: UserStatus;
 
   @ApiPropertyOptional({
-    description: 'Telefonnummer',
-    example: '+49 89 1234-567'
+    description: 'Phone number',
+    example: '+1 555 123-4567'
   })
   phoneNumber?: string;
 
   @ApiPropertyOptional({
-    description: 'URL zum Profilbild',
+    description: 'Profile picture URL',
     example: 'https://example.com/profile/image.jpg'
   })
   profilePictureUrl?: string;
 
   @ApiPropertyOptional({
-    description: 'Letzter Login-Zeitpunkt',
+    description: 'Last login timestamp',
     example: '2023-12-01T10:30:00Z'
   })
   lastLoginAt?: Date;
 
   @ApiProperty({
-    description: 'E-Mail-Adresse wurde verifiziert',
+    description: 'Email address verified',
     example: true
   })
   emailVerified: boolean;
 
   @ApiProperty({
-    description: 'Zwei-Faktor-Authentifizierung aktiviert',
+    description: 'Two-factor authentication enabled',
     example: false
   })
   twoFactorEnabled: boolean;
 
   @ApiProperty({
-    description: 'Benutzereinstellungen',
-    example: { theme: 'dark', language: 'de' }
+    description: 'User preferences',
+    example: { theme: 'dark', language: 'en' }
   })
   preferences: Record<string, any>;
 
   @ApiProperty({
-    description: 'Benutzerberechtigungen',
+    description: 'User permissions',
     example: ['read:shifts', 'write:shifts']
   })
   permissions: string[];
 
   @ApiProperty({
-    description: 'Liste der Organisationen des Benutzers',
+    description: 'User organization IDs list',
     type: 'array',
     items: { type: 'string' },
     example: ['uuid-org-1', 'uuid-org-2']
@@ -97,25 +97,25 @@ export class UserResponseDto {
   organizationIds: string[];
 
   @ApiProperty({
-    description: 'Ist der Benutzer aktiv',
+    description: 'Is user active',
     example: true
   })
   isActive: boolean;
 
   @ApiPropertyOptional({
-    description: 'Erstellungsdatum',
+    description: 'Creation date',
     example: '2023-01-15T08:00:00Z'
   })
   createdAt?: Date;
 
   @ApiPropertyOptional({
-    description: 'Datum der letzten Aktualisierung',
+    description: 'Last update date',
     example: '2023-12-01T14:30:00Z'
   })
   updatedAt?: Date;
 
   @ApiPropertyOptional({
-    description: 'Löschdatum (falls gelöscht)',
+    description: 'Deletion date (if deleted)',
     example: null
   })
   deletedAt?: Date;

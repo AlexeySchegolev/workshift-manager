@@ -4,42 +4,42 @@ import { EmployeeStatus, ContractType } from '../../../database/entities/employe
 
 export class CreateEmployeeDto {
   @ApiProperty({
-    description: 'ID der Organisation',
+    description: 'Organization ID',
     example: 'uuid-string'
   })
   @IsUUID()
   organizationId: string;
 
   @ApiProperty({
-    description: 'Mitarbeiternummer',
+    description: 'Employee number',
     example: 'EMP001'
   })
   @IsString()
   employeeNumber: string;
 
   @ApiProperty({
-    description: 'Vorname des Mitarbeiters',
+    description: 'Employee first name',
     example: 'Anna'
   })
   @IsString()
   firstName: string;
 
   @ApiProperty({
-    description: 'Nachname des Mitarbeiters',
+    description: 'Employee last name',
     example: 'Schneider'
   })
   @IsString()
   lastName: string;
 
   @ApiProperty({
-    description: 'E-Mail-Adresse des Mitarbeiters',
+    description: 'Employee email address',
     example: 'anna.schneider@dialyse-praxis.de'
   })
   @IsEmail()
   email: string;
 
   @ApiPropertyOptional({
-    description: 'Telefonnummer',
+    description: 'Phone number',
     example: '+49 89 1234-001'
   })
   @IsOptional()
@@ -47,7 +47,7 @@ export class CreateEmployeeDto {
   phoneNumber?: string;
 
   @ApiPropertyOptional({
-    description: 'Geburtsdatum',
+    description: 'Date of birth',
     example: '1985-03-15'
   })
   @IsOptional()
@@ -55,14 +55,14 @@ export class CreateEmployeeDto {
   dateOfBirth?: string;
 
   @ApiProperty({
-    description: 'Einstellungsdatum',
+    description: 'Hire date',
     example: '2020-01-15'
   })
   @IsDateString()
   hireDate: string;
 
   @ApiPropertyOptional({
-    description: 'Kündigungsdatum',
+    description: 'Termination date',
     example: '2023-12-31'
   })
   @IsOptional()
@@ -70,7 +70,7 @@ export class CreateEmployeeDto {
   terminationDate?: string;
 
   @ApiPropertyOptional({
-    description: 'Status des Mitarbeiters',
+    description: 'Employee status',
     enum: EmployeeStatus,
     example: EmployeeStatus.ACTIVE
   })
@@ -79,7 +79,7 @@ export class CreateEmployeeDto {
   status?: EmployeeStatus;
 
   @ApiPropertyOptional({
-    description: 'Vertragstyp',
+    description: 'Contract type',
     enum: ContractType,
     example: ContractType.FULL_TIME
   })
@@ -88,7 +88,7 @@ export class CreateEmployeeDto {
   contractType?: ContractType;
 
   @ApiProperty({
-    description: 'Arbeitsstunden pro Monat',
+    description: 'Working hours per month',
     example: 160,
     minimum: 1,
     maximum: 400
@@ -99,7 +99,7 @@ export class CreateEmployeeDto {
   hoursPerMonth: number;
 
   @ApiPropertyOptional({
-    description: 'Arbeitsstunden pro Woche',
+    description: 'Working hours per week',
     example: 40,
     minimum: 1,
     maximum: 60
@@ -111,7 +111,7 @@ export class CreateEmployeeDto {
   hoursPerWeek?: number;
 
   @ApiPropertyOptional({
-    description: 'Stundenlohn',
+    description: 'Hourly rate',
     example: 25.50
   })
   @IsOptional()
@@ -119,7 +119,7 @@ export class CreateEmployeeDto {
   hourlyRate?: number;
 
   @ApiPropertyOptional({
-    description: 'Überstundenlohn',
+    description: 'Overtime rate',
     example: 32.50
   })
   @IsOptional()
@@ -127,7 +127,7 @@ export class CreateEmployeeDto {
   overtimeRate?: number;
 
   @ApiPropertyOptional({
-    description: 'ID des Standorts',
+    description: 'Location ID',
     example: 'uuid-string'
   })
   @IsOptional()
@@ -135,7 +135,7 @@ export class CreateEmployeeDto {
   locationId?: string;
 
   @ApiPropertyOptional({
-    description: 'ID der Hauptrolle',
+    description: 'Primary role ID',
     example: 'uuid-string'
   })
   @IsOptional()
@@ -143,7 +143,7 @@ export class CreateEmployeeDto {
   primaryRoleId?: string;
 
   @ApiPropertyOptional({
-    description: 'ID des Vorgesetzten',
+    description: 'Supervisor ID',
     example: 'uuid-string'
   })
   @IsOptional()
@@ -151,7 +151,7 @@ export class CreateEmployeeDto {
   supervisorId?: string;
 
   @ApiPropertyOptional({
-    description: 'Name des Notfallkontakts',
+    description: 'Emergency contact name',
     example: 'Maria Schneider'
   })
   @IsOptional()
@@ -159,7 +159,7 @@ export class CreateEmployeeDto {
   emergencyContactName?: string;
 
   @ApiPropertyOptional({
-    description: 'Telefonnummer des Notfallkontakts',
+    description: 'Emergency contact phone',
     example: '+49 89 1234-002'
   })
   @IsOptional()
@@ -167,7 +167,7 @@ export class CreateEmployeeDto {
   emergencyContactPhone?: string;
 
   @ApiPropertyOptional({
-    description: 'Adresse',
+    description: 'Address',
     example: 'Musterstraße 123'
   })
   @IsOptional()
@@ -175,7 +175,7 @@ export class CreateEmployeeDto {
   address?: string;
 
   @ApiPropertyOptional({
-    description: 'Stadt',
+    description: 'City',
     example: 'München'
   })
   @IsOptional()
@@ -183,7 +183,7 @@ export class CreateEmployeeDto {
   city?: string;
 
   @ApiPropertyOptional({
-    description: 'Postleitzahl',
+    description: 'Postal code',
     example: '80331'
   })
   @IsOptional()
@@ -191,7 +191,7 @@ export class CreateEmployeeDto {
   postalCode?: string;
 
   @ApiPropertyOptional({
-    description: 'Land',
+    description: 'Country',
     example: 'Deutschland'
   })
   @IsOptional()
@@ -199,8 +199,8 @@ export class CreateEmployeeDto {
   country?: string;
 
   @ApiPropertyOptional({
-    description: 'Zertifizierungen',
-    example: ['Krankenpflege-Ausbildung', 'Erste Hilfe'],
+    description: 'Certifications',
+    example: ['Nursing Training', 'First Aid'],
     type: [String]
   })
   @IsOptional()
@@ -209,8 +209,8 @@ export class CreateEmployeeDto {
   certifications?: string[];
 
   @ApiPropertyOptional({
-    description: 'Fähigkeiten',
-    example: ['Patientenbetreuung', 'Teamarbeit'],
+    description: 'Skills',
+    example: ['Patient Care', 'Teamwork'],
     type: [String]
   })
   @IsOptional()
@@ -219,8 +219,8 @@ export class CreateEmployeeDto {
   skills?: string[];
 
   @ApiPropertyOptional({
-    description: 'Sprachen',
-    example: ['Deutsch', 'Englisch'],
+    description: 'Languages',
+    example: ['German', 'English'],
     type: [String]
   })
   @IsOptional()
@@ -229,7 +229,7 @@ export class CreateEmployeeDto {
   languages?: string[];
 
   @ApiPropertyOptional({
-    description: 'URL des Profilbilds',
+    description: 'Profile picture URL',
     example: 'https://example.com/profile.jpg'
   })
   @IsOptional()
@@ -237,8 +237,8 @@ export class CreateEmployeeDto {
   profilePictureUrl?: string;
 
   @ApiPropertyOptional({
-    description: 'Notizen zum Mitarbeiter',
-    example: 'Erfahrener Mitarbeiter mit Spezialisierung auf Dialyse'
+    description: 'Notes about the employee',
+    example: 'Experienced employee specialized in dialysis'
   })
   @IsOptional()
   @IsString()

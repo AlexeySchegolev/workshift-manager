@@ -1,18 +1,18 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsEnum, IsDate, IsBoolean, IsOptional, IsArray, IsNumber, Min, Max, IsJSON } from 'class-validator';
 import { Type } from 'class-transformer';
-import { AvailabilityType, AvailabilityStatus, AbsenceReason, RecurrencePattern, WeeklyAvailability } from '../../../database/entities/employee-availability.entity';
+import { AvailabilityType, AvailabilityStatus, AbsenceReason, RecurrencePattern, WeeklyAvailability } from '@/database/entities';
 
 export class CreateEmployeeAvailabilityDto {
   @ApiProperty({
-    description: 'ID des Mitarbeiters',
+    description: 'Employee ID',
     example: 'uuid-string'
   })
   @IsString()
   employeeId: string;
 
   @ApiProperty({
-    description: 'Art der Verfügbarkeit',
+    description: 'Availability type',
     enum: AvailabilityType,
     example: AvailabilityType.AVAILABLE
   })
@@ -20,7 +20,7 @@ export class CreateEmployeeAvailabilityDto {
   type: AvailabilityType;
 
   @ApiPropertyOptional({
-    description: 'Status der Verfügbarkeit',
+    description: 'Availability status',
     enum: AvailabilityStatus,
     example: AvailabilityStatus.ACTIVE,
     default: AvailabilityStatus.ACTIVE
@@ -30,7 +30,7 @@ export class CreateEmployeeAvailabilityDto {
   status?: AvailabilityStatus;
 
   @ApiProperty({
-    description: 'Startdatum des Verfügbarkeitszeitraums',
+    description: 'Start date of availability period',
     type: 'string',
     format: 'date',
     example: '2024-01-15'
@@ -40,7 +40,7 @@ export class CreateEmployeeAvailabilityDto {
   startDate: Date;
 
   @ApiPropertyOptional({
-    description: 'Enddatum des Verfügbarkeitszeitraums',
+    description: 'End date of availability period',
     type: 'string',
     format: 'date',
     example: '2024-01-20'
@@ -51,7 +51,7 @@ export class CreateEmployeeAvailabilityDto {
   endDate?: Date;
 
   @ApiPropertyOptional({
-    description: 'Startzeit für teilweise Tagesverfügbarkeit (HH:MM)',
+    description: 'Start time for partial day availability (HH:MM)',
     example: '09:00'
   })
   @IsOptional()
@@ -59,7 +59,7 @@ export class CreateEmployeeAvailabilityDto {
   startTime?: string;
 
   @ApiPropertyOptional({
-    description: 'Endzeit für teilweise Tagesverfügbarkeit (HH:MM)',
+    description: 'End time for partial day availability (HH:MM)',
     example: '17:00'
   })
   @IsOptional()
@@ -67,7 +67,7 @@ export class CreateEmployeeAvailabilityDto {
   endTime?: string;
 
   @ApiPropertyOptional({
-    description: 'Ganztägige Verfügbarkeit',
+    description: 'All-day availability',
     example: true,
     default: true
   })
@@ -76,7 +76,7 @@ export class CreateEmployeeAvailabilityDto {
   isAllDay?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Wiederkehrende Verfügbarkeit',
+    description: 'Recurring availability',
     example: false,
     default: false
   })
@@ -85,7 +85,7 @@ export class CreateEmployeeAvailabilityDto {
   isRecurring?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Wiederholungsmuster',
+    description: 'Recurrence pattern',
     enum: RecurrencePattern,
     example: RecurrencePattern.NONE,
     default: RecurrencePattern.NONE
@@ -95,7 +95,7 @@ export class CreateEmployeeAvailabilityDto {
   recurrencePattern?: RecurrencePattern;
 
   @ApiPropertyOptional({
-    description: 'Wiederholungsintervall (z.B. alle 2 Wochen)',
+    description: 'Recurrence interval (e.g. every 2 weeks)',
     example: 1,
     default: 1
   })
@@ -105,7 +105,7 @@ export class CreateEmployeeAvailabilityDto {
   recurrenceInterval?: number;
 
   @ApiPropertyOptional({
-    description: 'Wiederholungstage (0=Sonntag, 1=Montag, usw.)',
+    description: 'Recurrence days (0=Sunday, 1=Monday, etc.)',
     type: [Number],
     example: [1, 2, 3, 4, 5]
   })
@@ -115,7 +115,7 @@ export class CreateEmployeeAvailabilityDto {
   recurrenceDays?: number[];
 
   @ApiPropertyOptional({
-    description: 'Enddatum der Wiederholung',
+    description: 'End date of recurrence',
     type: 'string',
     format: 'date',
     example: '2024-12-31'
@@ -126,7 +126,7 @@ export class CreateEmployeeAvailabilityDto {
   recurrenceEndDate?: Date;
 
   @ApiPropertyOptional({
-    description: 'Grund für Abwesenheit',
+    description: 'Reason for absence',
     enum: AbsenceReason,
     example: AbsenceReason.VACATION
   })
@@ -135,15 +135,15 @@ export class CreateEmployeeAvailabilityDto {
   absenceReason?: AbsenceReason;
 
   @ApiPropertyOptional({
-    description: 'Detaillierte Begründung',
-    example: 'Arzttermin am Vormittag'
+    description: 'Detailed reason description',
+    example: 'Doctor appointment in the morning'
   })
   @IsOptional()
   @IsString()
   reasonDescription?: string;
 
   @ApiPropertyOptional({
-    description: 'Wöchentliche Verfügbarkeitszeiten',
+    description: 'Weekly availability times',
     type: 'object',
     additionalProperties: true
   })
@@ -152,7 +152,7 @@ export class CreateEmployeeAvailabilityDto {
   weeklyAvailability?: WeeklyAvailability;
 
   @ApiPropertyOptional({
-    description: 'Maximale Stunden pro Tag',
+    description: 'Maximum hours per day',
     example: 8.0
   })
   @IsOptional()
@@ -161,7 +161,7 @@ export class CreateEmployeeAvailabilityDto {
   maxHoursPerDay?: number;
 
   @ApiPropertyOptional({
-    description: 'Maximale Stunden pro Woche',
+    description: 'Maximum hours per week',
     example: 40.0
   })
   @IsOptional()
@@ -170,7 +170,7 @@ export class CreateEmployeeAvailabilityDto {
   maxHoursPerWeek?: number;
 
   @ApiPropertyOptional({
-    description: 'Bevorzugte Schichtarten',
+    description: 'Preferred shift types',
     type: [String],
     example: ['F', 'S'],
     default: []
@@ -181,7 +181,7 @@ export class CreateEmployeeAvailabilityDto {
   preferredShiftTypes?: string[];
 
   @ApiPropertyOptional({
-    description: 'Ausgeschlossene Schichtarten',
+    description: 'Excluded shift types',
     type: [String],
     example: ['N'],
     default: []
@@ -192,7 +192,7 @@ export class CreateEmployeeAvailabilityDto {
   excludedShiftTypes?: string[];
 
   @ApiPropertyOptional({
-    description: 'Bevorzugte Standorte',
+    description: 'Preferred locations',
     type: [String],
     example: ['location-uuid-1', 'location-uuid-2'],
     default: []
@@ -203,7 +203,7 @@ export class CreateEmployeeAvailabilityDto {
   preferredLocations?: string[];
 
   @ApiPropertyOptional({
-    description: 'Ausgeschlossene Standorte',
+    description: 'Excluded locations',
     type: [String],
     example: ['location-uuid-3'],
     default: []
@@ -214,7 +214,7 @@ export class CreateEmployeeAvailabilityDto {
   excludedLocations?: string[];
 
   @ApiPropertyOptional({
-    description: 'Prioritätsstufe (1-5, höher = wichtiger)',
+    description: 'Priority level (1-5, higher = more important)',
     example: 1,
     default: 1
   })
@@ -225,7 +225,7 @@ export class CreateEmployeeAvailabilityDto {
   priorityLevel?: number;
 
   @ApiPropertyOptional({
-    description: 'Benötigt Genehmigung',
+    description: 'Requires approval',
     example: false,
     default: false
   })
@@ -234,7 +234,7 @@ export class CreateEmployeeAvailabilityDto {
   requiresApproval?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Notfall',
+    description: 'Emergency',
     example: false,
     default: false
   })
@@ -243,7 +243,7 @@ export class CreateEmployeeAvailabilityDto {
   isEmergency?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Betrifft Lohnabrechnung',
+    description: 'Affects payroll',
     example: false,
     default: false
   })
@@ -252,7 +252,7 @@ export class CreateEmployeeAvailabilityDto {
   affectsPayroll?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Dokumentation erforderlich',
+    description: 'Documentation required',
     example: false,
     default: false
   })
@@ -261,7 +261,7 @@ export class CreateEmployeeAvailabilityDto {
   documentationRequired?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Dokumentation bereitgestellt',
+    description: 'Documentation provided',
     example: false,
     default: false
   })
@@ -270,7 +270,7 @@ export class CreateEmployeeAvailabilityDto {
   documentationProvided?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Angehängte Dokumente (URLs oder IDs)',
+    description: 'Attached documents (URLs or IDs)',
     type: [String],
     example: [],
     default: []
@@ -281,16 +281,16 @@ export class CreateEmployeeAvailabilityDto {
   attachedDocuments?: string[];
 
   @ApiPropertyOptional({
-    description: 'Notizen',
-    example: 'Zusätzliche Informationen'
+    description: 'Notes',
+    example: 'Additional information'
   })
   @IsOptional()
   @IsString()
   notes?: string;
 
   @ApiPropertyOptional({
-    description: 'Interne Notizen (nur für Manager sichtbar)',
-    example: 'Interne Bemerkungen'
+    description: 'Internal notes (only visible to managers)',
+    example: 'Internal remarks'
   })
   @IsOptional()
   @IsString()

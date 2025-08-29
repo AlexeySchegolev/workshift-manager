@@ -1,35 +1,35 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AvailabilityType, AvailabilityStatus, AbsenceReason, RecurrencePattern, TimeSlotAvailability, WeeklyAvailability } from '../../../database/entities/employee-availability.entity';
+import { AvailabilityType, AvailabilityStatus, AbsenceReason, RecurrencePattern, WeeklyAvailability } from '@/database/entities';
 
 export class EmployeeAvailabilityResponseDto {
   @ApiProperty({
-    description: 'Eindeutige ID des Verfügbarkeitsdatensatzes',
+    description: 'Unique ID of availability record',
     example: 'uuid-string'
   })
   id: string;
 
   @ApiProperty({
-    description: 'ID des Mitarbeiters',
+    description: 'Employee ID',
     example: 'uuid-string'
   })
   employeeId: string;
 
   @ApiProperty({
-    description: 'Art der Verfügbarkeit',
+    description: 'Availability type',
     enum: AvailabilityType,
     example: AvailabilityType.AVAILABLE
   })
   type: AvailabilityType;
 
   @ApiProperty({
-    description: 'Status der Verfügbarkeit',
+    description: 'Availability status',
     enum: AvailabilityStatus,
     example: AvailabilityStatus.ACTIVE
   })
   status: AvailabilityStatus;
 
   @ApiProperty({
-    description: 'Startdatum des Verfügbarkeitszeitraums',
+    description: 'Start date of availability period',
     type: 'string',
     format: 'date',
     example: '2024-01-15'
@@ -37,7 +37,7 @@ export class EmployeeAvailabilityResponseDto {
   startDate: Date;
 
   @ApiPropertyOptional({
-    description: 'Enddatum des Verfügbarkeitszeitraums',
+    description: 'End date of availability period',
     type: 'string',
     format: 'date',
     example: '2024-01-20'
@@ -45,51 +45,51 @@ export class EmployeeAvailabilityResponseDto {
   endDate?: Date;
 
   @ApiPropertyOptional({
-    description: 'Startzeit für teilweise Tagesverfügbarkeit (HH:MM)',
+    description: 'Start time for partial day availability (HH:MM)',
     example: '09:00'
   })
   startTime?: string;
 
   @ApiPropertyOptional({
-    description: 'Endzeit für teilweise Tagesverfügbarkeit (HH:MM)',
+    description: 'End time for partial day availability (HH:MM)',
     example: '17:00'
   })
   endTime?: string;
 
   @ApiProperty({
-    description: 'Ganztägige Verfügbarkeit',
+    description: 'All-day availability',
     example: true
   })
   isAllDay: boolean;
 
   @ApiProperty({
-    description: 'Wiederkehrende Verfügbarkeit',
+    description: 'Recurring availability',
     example: false
   })
   isRecurring: boolean;
 
   @ApiProperty({
-    description: 'Wiederholungsmuster',
+    description: 'Recurrence pattern',
     enum: RecurrencePattern,
     example: RecurrencePattern.NONE
   })
   recurrencePattern: RecurrencePattern;
 
   @ApiProperty({
-    description: 'Wiederholungsintervall (z.B. alle 2 Wochen)',
+    description: 'Recurrence interval (e.g. every 2 weeks)',
     example: 1
   })
   recurrenceInterval: number;
 
   @ApiProperty({
-    description: 'Wiederholungstage (0=Sonntag, 1=Montag, usw.)',
+    description: 'Recurrence days (0=Sunday, 1=Monday, etc.)',
     type: [Number],
     example: [1, 2, 3, 4, 5]
   })
   recurrenceDays: number[];
 
   @ApiPropertyOptional({
-    description: 'Enddatum der Wiederholung',
+    description: 'End date of recurrence',
     type: 'string',
     format: 'date',
     example: '2024-12-31'
@@ -97,85 +97,85 @@ export class EmployeeAvailabilityResponseDto {
   recurrenceEndDate?: Date;
 
   @ApiPropertyOptional({
-    description: 'Grund für Abwesenheit',
+    description: 'Reason for absence',
     enum: AbsenceReason,
     example: AbsenceReason.VACATION
   })
   absenceReason?: AbsenceReason;
 
   @ApiPropertyOptional({
-    description: 'Detaillierte Begründung',
-    example: 'Arzttermin am Vormittag'
+    description: 'Detailed reason description',
+    example: 'Doctor appointment in the morning'
   })
   reasonDescription?: string;
 
   @ApiPropertyOptional({
-    description: 'Wöchentliche Verfügbarkeitszeiten',
+    description: 'Weekly availability times',
     type: 'object',
     additionalProperties: true
   })
   weeklyAvailability?: WeeklyAvailability;
 
   @ApiPropertyOptional({
-    description: 'Maximale Stunden pro Tag',
+    description: 'Maximum hours per day',
     example: 8.0
   })
   maxHoursPerDay?: number;
 
   @ApiPropertyOptional({
-    description: 'Maximale Stunden pro Woche',
+    description: 'Maximum hours per week',
     example: 40.0
   })
   maxHoursPerWeek?: number;
 
   @ApiProperty({
-    description: 'Bevorzugte Schichtarten',
+    description: 'Preferred shift types',
     type: [String],
     example: ['F', 'S']
   })
   preferredShiftTypes: string[];
 
   @ApiProperty({
-    description: 'Ausgeschlossene Schichtarten',
+    description: 'Excluded shift types',
     type: [String],
     example: ['N']
   })
   excludedShiftTypes: string[];
 
   @ApiProperty({
-    description: 'Bevorzugte Standorte',
+    description: 'Preferred locations',
     type: [String],
     example: ['location-uuid-1', 'location-uuid-2']
   })
   preferredLocations: string[];
 
   @ApiProperty({
-    description: 'Ausgeschlossene Standorte',
+    description: 'Excluded locations',
     type: [String],
     example: ['location-uuid-3']
   })
   excludedLocations: string[];
 
   @ApiProperty({
-    description: 'Prioritätsstufe (1-5, höher = wichtiger)',
+    description: 'Priority level (1-5, higher = more important)',
     example: 1
   })
   priorityLevel: number;
 
   @ApiProperty({
-    description: 'Benötigt Genehmigung',
+    description: 'Requires approval',
     example: false
   })
   requiresApproval: boolean;
 
   @ApiPropertyOptional({
-    description: 'Genehmigt von (Benutzer-ID)',
+    description: 'Approved by (User ID)',
     example: 'user-uuid'
   })
   approvedBy?: string;
 
   @ApiPropertyOptional({
-    description: 'Genehmigungsdatum',
+    description: 'Approval date',
     type: 'string',
     format: 'date-time',
     example: '2024-01-15T10:30:00Z'
@@ -183,13 +183,13 @@ export class EmployeeAvailabilityResponseDto {
   approvedAt?: Date;
 
   @ApiPropertyOptional({
-    description: 'Abgelehnt von (Benutzer-ID)',
+    description: 'Rejected by (User ID)',
     example: 'user-uuid'
   })
   rejectedBy?: string;
 
   @ApiPropertyOptional({
-    description: 'Ablehnungsdatum',
+    description: 'Rejection date',
     type: 'string',
     format: 'date-time',
     example: '2024-01-15T10:30:00Z'
@@ -197,13 +197,13 @@ export class EmployeeAvailabilityResponseDto {
   rejectedAt?: Date;
 
   @ApiPropertyOptional({
-    description: 'Ablehnungsgrund',
-    example: 'Personalbesetzung bereits ausreichend'
+    description: 'Rejection reason',
+    example: 'Staffing already sufficient'
   })
   rejectionReason?: string;
 
   @ApiPropertyOptional({
-    description: 'Einreichungsdatum',
+    description: 'Submission date',
     type: 'string',
     format: 'date-time',
     example: '2024-01-15T09:00:00Z'
@@ -211,80 +211,80 @@ export class EmployeeAvailabilityResponseDto {
   submittedAt?: Date;
 
   @ApiProperty({
-    description: 'Notfall',
+    description: 'Emergency',
     example: false
   })
   isEmergency: boolean;
 
   @ApiProperty({
-    description: 'Betrifft Lohnabrechnung',
+    description: 'Affects payroll',
     example: false
   })
   affectsPayroll: boolean;
 
   @ApiProperty({
-    description: 'Dokumentation erforderlich',
+    description: 'Documentation required',
     example: false
   })
   documentationRequired: boolean;
 
   @ApiProperty({
-    description: 'Dokumentation bereitgestellt',
+    description: 'Documentation provided',
     example: false
   })
   documentationProvided: boolean;
 
   @ApiProperty({
-    description: 'Angehängte Dokumente (URLs oder IDs)',
+    description: 'Attached documents (URLs or IDs)',
     type: [String],
     example: []
   })
   attachedDocuments: string[];
 
   @ApiPropertyOptional({
-    description: 'Notizen',
-    example: 'Zusätzliche Informationen'
+    description: 'Notes',
+    example: 'Additional information'
   })
   notes?: string;
 
   @ApiPropertyOptional({
-    description: 'Interne Notizen (nur für Manager sichtbar)',
-    example: 'Interne Bemerkungen'
+    description: 'Internal notes (only visible to managers)',
+    example: 'Internal remarks'
   })
   internalNotes?: string;
 
   @ApiProperty({
-    description: 'Benachrichtigung gesendet',
+    description: 'Notification sent',
     example: false
   })
   notificationSent: boolean;
 
   @ApiProperty({
-    description: 'Erinnerung gesendet',
+    description: 'Reminder sent',
     example: false
   })
   reminderSent: boolean;
 
   @ApiProperty({
-    description: 'Ist aktiv',
+    description: 'Is active',
     example: true
   })
   isActive: boolean;
 
   @ApiPropertyOptional({
-    description: 'Erstellt von (Benutzer-ID)',
+    description: 'Created by (User ID)',
     example: 'user-uuid'
   })
   createdBy?: string;
 
   @ApiPropertyOptional({
-    description: 'Geändert von (Benutzer-ID)',
+    description: 'Updated by (User ID)',
     example: 'user-uuid'
   })
   updatedBy?: string;
 
   @ApiProperty({
-    description: 'Erstellungsdatum',
+    description: 'Creation date',
     type: 'string',
     format: 'date-time',
     example: '2024-01-01T00:00:00Z'
@@ -292,7 +292,7 @@ export class EmployeeAvailabilityResponseDto {
   createdAt: Date;
 
   @ApiProperty({
-    description: 'Letztes Änderungsdatum',
+    description: 'Last update date',
     type: 'string',
     format: 'date-time',
     example: '2024-01-15T10:30:00Z'
@@ -300,7 +300,7 @@ export class EmployeeAvailabilityResponseDto {
   updatedAt: Date;
 
   @ApiPropertyOptional({
-    description: 'Löschzeitpunkt (Soft Delete)',
+    description: 'Deletion timestamp (Soft Delete)',
     type: 'string',
     format: 'date-time',
     example: '2023-12-31T23:59:59Z'
@@ -309,55 +309,55 @@ export class EmployeeAvailabilityResponseDto {
 
   // Computed properties
   @ApiProperty({
-    description: 'Ist momentan aktiv',
+    description: 'Is currently active',
     example: true
   })
   isCurrentlyActive: boolean;
 
   @ApiProperty({
-    description: 'Dauer in Tagen',
+    description: 'Duration in days',
     example: 5
   })
   duration: number;
 
   @ApiProperty({
-    description: 'Ist abgelaufen',
+    description: 'Is expired',
     example: false
   })
   isExpired: boolean;
 
   @ApiProperty({
-    description: 'Wartet auf Genehmigung',
+    description: 'Waiting for approval',
     example: false
   })
   isPending: boolean;
 
   @ApiProperty({
-    description: 'Benötigt Genehmigung',
+    description: 'Needs approval',
     example: false
   })
   needsApproval: boolean;
 
   @ApiProperty({
-    description: 'Ist Abwesenheit',
+    description: 'Is absence',
     example: false
   })
   isAbsence: boolean;
 
   @ApiProperty({
-    description: 'Anzeigename für Grund',
-    example: 'Verfügbar'
+    description: 'Display name for reason',
+    example: 'Available'
   })
   displayReason: string;
 
   @ApiProperty({
-    description: 'Zeitbereich als Text',
+    description: 'Time range as text',
     example: '09:00 - 17:00'
   })
   timeRange: string;
 
   @ApiProperty({
-    description: 'Datumsbereich als Text',
+    description: 'Date range as text',
     example: '15.01.2024 - 20.01.2024'
   })
   dateRange: string;

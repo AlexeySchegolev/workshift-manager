@@ -4,23 +4,23 @@ import { MonthlyShiftPlan, ShiftPlanStatus, ApprovalStatus } from '@/database/en
 
 export class CreateShiftPlanDto {
   @ApiProperty({
-    description: 'ID der Organisation',
+    description: 'Organization ID',
     example: 'uuid-string'
   })
   @IsUUID()
   organizationId: string;
 
   @ApiProperty({
-    description: 'Name des Schichtplans',
-    example: 'Dezember 2024 Schichtplan',
+    description: 'Shift plan name',
+    example: 'December 2024 Shift Plan',
     maxLength: 255
   })
   @IsString()
   name: string;
 
   @ApiPropertyOptional({
-    description: 'Beschreibung des Schichtplans',
-    example: 'Weihnachtszeit Schichtplan mit erhöhtem Personalbedarf',
+    description: 'Shift plan description',
+    example: 'Christmas period shift plan with increased staffing requirements',
     maxLength: 500
   })
   @IsOptional()

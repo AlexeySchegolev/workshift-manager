@@ -10,14 +10,14 @@ import { ShiftPlanningUtilityService } from './services/shift-planning-utility.s
 import { ExcelExportService } from './services/excel-export.service';
 import { EmployeeAvailabilityService } from '../employees/services/employee-availability.service';
 import { EmployeeSortingService } from '../employees/services/employee-sorting.service';
-import { ShiftPlan } from '../../database/entities/shift-plan.entity';
-import { Employee } from '../../database/entities/employee.entity';
-import { ShiftRules } from '../../database/entities/shift-rules.entity';
-import { ShiftAssignment } from '../../database/entities/shift-assignment.entity';
-import { ConstraintViolation } from '../../database/entities/constraint-violation.entity';
-import { ShiftPlanningAvailability } from '../../database/entities/shift-planning-availability.entity';
-import { ShiftPlanningRule } from '../../database/entities/shift-planning-rule.entity';
-import { PlanningStatistics } from '../../database/entities/planning-statistics.entity';
+import { ShiftPlan } from '@/database/entities';
+import { Employee } from '@/database/entities';
+import { ShiftRules } from '@/database/entities';
+import { ShiftAssignment } from '@/database/entities';
+import { ConstraintViolation } from '@/database/entities';
+import { ShiftPlanningAvailability } from '@/database/entities/shift-planning-availability.entity';
+import { ShiftPlanningRule } from '@/database/entities/shift-planning-rule.entity';
+import { PlanningStatistics } from '@/database/entities/planning-statistics.entity';
 
 @Module({
   imports: [

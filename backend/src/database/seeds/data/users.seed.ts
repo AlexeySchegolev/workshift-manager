@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from '../../entities/user.entity';
+import { UserRole, UserStatus } from '@/database/entities';
 
 export const usersSeedData = [
   {

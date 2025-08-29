@@ -1,34 +1,34 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsString, IsEnum, IsOptional, IsBoolean, IsArray, IsObject, MinLength } from 'class-validator';
-import { UserRole, UserStatus } from '../../../database/entities/user.entity';
+import { UserRole, UserStatus } from '@/database/entities';
 
 export class UpdateUserDto {
   @ApiPropertyOptional({
-    description: 'E-Mail-Adresse des Benutzers',
-    example: 'max.mustermann@example.com'
+    description: 'User email address',
+    example: 'john.smith@example.com'
   })
   @IsOptional()
   @IsEmail()
   email?: string;
 
   @ApiPropertyOptional({
-    description: 'Vorname des Benutzers',
-    example: 'Max'
+    description: 'User first name',
+    example: 'John'
   })
   @IsOptional()
   @IsString()
   firstName?: string;
 
   @ApiPropertyOptional({
-    description: 'Nachname des Benutzers',
-    example: 'Mustermann'
+    description: 'User last name',
+    example: 'Smith'
   })
   @IsOptional()
   @IsString()
   lastName?: string;
 
   @ApiPropertyOptional({
-    description: 'Neues Passwort des Benutzers (mindestens 8 Zeichen)',
+    description: 'New user password (minimum 8 characters)',
     example: 'NewSecurePassword123!'
   })
   @IsOptional()
@@ -37,7 +37,7 @@ export class UpdateUserDto {
   password?: string;
 
   @ApiPropertyOptional({
-    description: 'Rolle des Benutzers',
+    description: 'User role',
     enum: UserRole,
     example: UserRole.EMPLOYEE
   })
@@ -46,7 +46,7 @@ export class UpdateUserDto {
   role?: UserRole;
 
   @ApiPropertyOptional({
-    description: 'Status des Benutzers',
+    description: 'User status',
     enum: UserStatus,
     example: UserStatus.ACTIVE
   })
@@ -55,15 +55,15 @@ export class UpdateUserDto {
   status?: UserStatus;
 
   @ApiPropertyOptional({
-    description: 'Telefonnummer',
-    example: '+49 89 1234-567'
+    description: 'Phone number',
+    example: '+1 555 123-4567'
   })
   @IsOptional()
   @IsString()
   phoneNumber?: string;
 
   @ApiPropertyOptional({
-    description: 'URL zum Profilbild',
+    description: 'Profile picture URL',
     example: 'https://example.com/profile/image.jpg'
   })
   @IsOptional()
@@ -71,7 +71,7 @@ export class UpdateUserDto {
   profilePictureUrl?: string;
 
   @ApiPropertyOptional({
-    description: 'E-Mail-Adresse wurde verifiziert',
+    description: 'Email address verified',
     example: true
   })
   @IsOptional()
@@ -79,7 +79,7 @@ export class UpdateUserDto {
   emailVerified?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Zwei-Faktor-Authentifizierung aktiviert',
+    description: 'Two-factor authentication enabled',
     example: false
   })
   @IsOptional()
@@ -87,15 +87,15 @@ export class UpdateUserDto {
   twoFactorEnabled?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Benutzereinstellungen',
-    example: { theme: 'dark', language: 'de' }
+    description: 'User preferences',
+    example: { theme: 'dark', language: 'en' }
   })
   @IsOptional()
   @IsObject()
   preferences?: Record<string, any>;
 
   @ApiPropertyOptional({
-    description: 'Benutzerberechtigungen',
+    description: 'User permissions',
     example: ['read:shifts', 'write:shifts', 'manage:users']
   })
   @IsOptional()
@@ -104,7 +104,7 @@ export class UpdateUserDto {
   permissions?: string[];
 
   @ApiPropertyOptional({
-    description: 'IDs der Organisationen, denen der Benutzer zugewiesen werden soll',
+    description: 'Organization IDs to assign the user to',
     type: 'array',
     items: { type: 'string' },
     example: ['uuid-org-1', 'uuid-org-2']

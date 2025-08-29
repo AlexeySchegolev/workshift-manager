@@ -1,17 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsEnum, IsOptional, IsEmail, IsUrl, IsNumber, IsBoolean, IsArray, IsObject } from 'class-validator';
-import { OrganizationType, OrganizationStatus } from '../../../database/entities/organization.entity';
+import { OrganizationType, OrganizationStatus } from '@/database/entities';
 
 export class CreateOrganizationDto {
   @ApiProperty({
-    description: 'Name der Organisation',
+    description: 'Organization name',
     example: 'Dialyse Zentrum Berlin'
   })
   @IsString()
   name: string;
 
   @ApiPropertyOptional({
-    description: 'Rechtlicher Name der Organisation',
+    description: 'Legal organization name',
     example: 'Dialyse Zentrum Berlin GmbH'
   })
   @IsOptional()
@@ -19,7 +19,7 @@ export class CreateOrganizationDto {
   legalName?: string;
 
   @ApiPropertyOptional({
-    description: 'Steuernummer',
+    description: 'Tax ID',
     example: 'DE123456789'
   })
   @IsOptional()
@@ -27,7 +27,7 @@ export class CreateOrganizationDto {
   taxId?: string;
 
   @ApiPropertyOptional({
-    description: 'Registrierungsnummer',
+    description: 'Registration number',
     example: 'HRB 12345'
   })
   @IsOptional()
@@ -35,7 +35,7 @@ export class CreateOrganizationDto {
   registrationNumber?: string;
 
   @ApiPropertyOptional({
-    description: 'Typ der Organisation',
+    description: 'Organization type',
     enum: OrganizationType,
     example: OrganizationType.MEDICAL_CENTER
   })
@@ -44,7 +44,7 @@ export class CreateOrganizationDto {
   type?: OrganizationType;
 
   @ApiPropertyOptional({
-    description: 'Status der Organisation',
+    description: 'Organization status',
     enum: OrganizationStatus,
     example: OrganizationStatus.TRIAL
   })
@@ -53,15 +53,15 @@ export class CreateOrganizationDto {
   status?: OrganizationStatus;
 
   @ApiPropertyOptional({
-    description: 'Beschreibung der Organisation',
-    example: 'Führendes Dialysezentrum in Berlin mit modernen Geräten'
+    description: 'Organization description',
+    example: 'Leading dialysis center in Berlin with modern equipment'
   })
   @IsOptional()
   @IsString()
   description?: string;
 
   @ApiPropertyOptional({
-    description: 'Website der Organisation',
+    description: 'Organization website',
     example: 'https://www.dialyse-berlin.de'
   })
   @IsOptional()
@@ -69,7 +69,7 @@ export class CreateOrganizationDto {
   website?: string;
 
   @ApiPropertyOptional({
-    description: 'Haupt-E-Mail-Adresse',
+    description: 'Primary email address',
     example: 'info@dialyse-berlin.de'
   })
   @IsOptional()
@@ -77,7 +77,7 @@ export class CreateOrganizationDto {
   primaryEmail?: string;
 
   @ApiPropertyOptional({
-    description: 'Haupttelefonnummer',
+    description: 'Primary phone number',
     example: '+49 30 1234-0'
   })
   @IsOptional()
@@ -85,7 +85,7 @@ export class CreateOrganizationDto {
   primaryPhone?: string;
 
   @ApiPropertyOptional({
-    description: 'Hauptsitz-Adresse',
+    description: 'Headquarters address',
     example: 'Alexanderplatz 1'
   })
   @IsOptional()
@@ -93,7 +93,7 @@ export class CreateOrganizationDto {
   headquartersAddress?: string;
 
   @ApiPropertyOptional({
-    description: 'Hauptsitz-Stadt',
+    description: 'Headquarters city',
     example: 'Berlin'
   })
   @IsOptional()
@@ -101,7 +101,7 @@ export class CreateOrganizationDto {
   headquartersCity?: string;
 
   @ApiPropertyOptional({
-    description: 'Hauptsitz-Postleitzahl',
+    description: 'Headquarters postal code',
     example: '10178'
   })
   @IsOptional()
@@ -109,15 +109,15 @@ export class CreateOrganizationDto {
   headquartersPostalCode?: string;
 
   @ApiPropertyOptional({
-    description: 'Hauptsitz-Land',
-    example: 'Deutschland'
+    description: 'Headquarters country',
+    example: 'Germany'
   })
   @IsOptional()
   @IsString()
   headquartersCountry?: string;
 
   @ApiPropertyOptional({
-    description: 'URL zum Logo',
+    description: 'Logo URL',
     example: 'https://example.com/logo.png'
   })
   @IsOptional()
@@ -125,7 +125,7 @@ export class CreateOrganizationDto {
   logoUrl?: string;
 
   @ApiPropertyOptional({
-    description: 'Abonnement-Plan',
+    description: 'Subscription plan',
     example: 'basic'
   })
   @IsOptional()
@@ -133,7 +133,7 @@ export class CreateOrganizationDto {
   subscriptionPlan?: string;
 
   @ApiPropertyOptional({
-    description: 'Maximale Anzahl Mitarbeiter',
+    description: 'Maximum number of employees',
     example: 50
   })
   @IsOptional()
@@ -141,7 +141,7 @@ export class CreateOrganizationDto {
   maxEmployees?: number;
 
   @ApiPropertyOptional({
-    description: 'Maximale Anzahl Standorte',
+    description: 'Maximum number of locations',
     example: 5
   })
   @IsOptional()
@@ -149,7 +149,7 @@ export class CreateOrganizationDto {
   maxLocations?: number;
 
   @ApiPropertyOptional({
-    description: 'Organisationseinstellungen',
+    description: 'Organization settings',
     example: { timezone: 'Europe/Berlin', currency: 'EUR' }
   })
   @IsOptional()
@@ -157,7 +157,7 @@ export class CreateOrganizationDto {
   settings?: Record<string, any>;
 
   @ApiPropertyOptional({
-    description: 'Aktivierte Features',
+    description: 'Enabled features',
     example: ['shift-planning', 'reporting']
   })
   @IsOptional()
@@ -166,7 +166,7 @@ export class CreateOrganizationDto {
   features?: string[];
 
   @ApiPropertyOptional({
-    description: 'Organisation ist aktiv',
+    description: 'Organization is active',
     example: true
   })
   @IsOptional()

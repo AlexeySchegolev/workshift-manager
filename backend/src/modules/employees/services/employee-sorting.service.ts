@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Employee } from '../../../database/entities/employee.entity';
-import { ShiftPlanningAvailability } from '../../../database/entities/shift-planning-availability.entity';
+import { Employee } from '@/database/entities';
 import { AvailabilityMap } from './employee-availability.service';
 
 export enum RolePriority {

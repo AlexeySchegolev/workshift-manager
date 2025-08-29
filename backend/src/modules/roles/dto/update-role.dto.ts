@@ -5,7 +5,7 @@ import { IsOptional, IsUUID } from 'class-validator';
 
 export class UpdateRoleDto extends PartialType(CreateRoleDto) {
   @ApiPropertyOptional({
-    description: 'Aktualisiert von (Benutzer-ID)',
+    description: 'Updated by (User ID)',
     example: '123e4567-e89b-12d3-a456-426614174001'
   })
   @IsOptional()

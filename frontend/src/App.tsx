@@ -5,6 +5,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import ShiftPlanningPage from './pages/ShiftPlanningPage';
+import ShiftsPage from './pages/ShiftsPage';
 import EmployeePage from './pages/EmployeePage';
 import ShiftRulesPage from './pages/ShiftRulesPage';
 import LocationManagementPage from './pages/LocationManagementPage';
@@ -24,6 +25,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/schichtplanung" element={<ShiftPlanningPage />} />
+            <Route path="/schichten" element={<ShiftsPage />} />
             <Route path="/mitarbeiter" element={<EmployeePage />} />
             <Route path="/standorte" element={<LocationManagementPage />} />
             <Route path="/rollen" element={<RoleManagementPage />} />

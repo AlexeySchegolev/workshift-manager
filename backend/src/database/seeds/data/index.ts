@@ -4,3 +4,4 @@ export { rolesSeedData } from './roles.seed';
 export { locationsSeedData } from './locations.seed';
 export { employeesSeedData } from './employees.seed';
 export { shiftRulesSeedData } from './shift-rules.seed';
+export { shiftsSeedData } from './shifts.seed';

@@ -1,4 +1,3 @@
-import { useTheme } from '@mui/material';
 import { RoleResponseDto } from '@/api/data-contracts';
 
 /**

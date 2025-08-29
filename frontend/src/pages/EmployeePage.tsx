@@ -252,85 +252,6 @@ const EmployeePage: React.FC = () => {
                 </Paper>
             </Fade>
 
-            {/* KPI-Cards */}
-            <Fade in={showCards} timeout={1000}>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            sm: 'repeat(2, 1fr)',
-                            md: 'repeat(4, 1fr)',
-                        },
-                        gap: 3,
-                        mb: 4,
-                    }}
-                >
-                    <StatisticsCard
-                        title="Mitarbeiter"
-                        value={stats.totalEmployees}
-                        subtitle="Registrierte Mitarbeiter"
-                        icon={<PeopleIcon/>}
-                        color="success"
-                        trend={{
-                            value: 12,
-                            isPositive: true,
-                            label: 'vs. letztes Quartal',
-                        }}
-                    />
-                    <StatisticsCard
-                        title="Schichtleiter"
-                        value={stats.shiftLeaders}
-                        subtitle="Verfügbare Schichtleiter"
-                        icon={<BusinessIcon/>}
-                        color={stats.shiftLeaders >= 3 ? 'success' : stats.shiftLeaders >= 2 ? 'warning' : 'error'}
-                    />
-                    <StatisticsCard
-                        title="Ø Arbeitszeit"
-                        value={`${stats.avgHours.toFixed(1)}h`}
-                        subtitle="Pro Mitarbeiter/Monat"
-                        icon={<TrendingUpIcon/>}
-                        color={stats.avgHours <= 160 ? 'success' : stats.avgHours <= 170 ? 'warning' : 'error'}
-                    />
-                    <StatisticsCard
-                        title="Gesamtstunden"
-                        value={`${Math.ceil(stats.totalHours * 10) / 10}h`}
-                        subtitle="Alle Mitarbeiter/Monat"
-                        icon={<ScheduleIcon/>}
-                        color="info"
-                    />
-                </Box>
-            </Fade>
-
-            {/* Seitenleiste - oberhalb der Tabelle */}
-            <Fade in={showCards} timeout={1200}>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            md: 'repeat(2, 1fr)',
-                        },
-                        gap: 3,
-                        mb: 4,
-                    }}
-                >
-                    {/* Quick actions */}
-                    <QuickActions
-                        actions={quickActions}
-                        title="Schnellaktionen"
-                        maxItems={4}
-                    />
-
-                    {/* Status light */}
-                    <StatusLight
-                        statusItems={statusItems}
-                        title="Personalstatus"
-                        showProgress={true}
-                    />
-                </Box>
-            </Fade>
-
             {/* Employee management - full width */}
             <Fade in={showCards} timeout={1400}>
                 <Paper
@@ -346,44 +267,6 @@ const EmployeePage: React.FC = () => {
                         employees={employees}
                         onEmployeesChange={handleEmployeesChange}
                     />
-                </Paper>
-            </Fade>
-
-            {/* Additional information */}
-            <Fade in={showCards} timeout={1400}>
-                <Paper
-                    sx={{
-                        p: 3,
-                        borderRadius: 3,
-                        background: alpha(theme.palette.success.main, 0.02),
-                        border: `1px solid ${alpha(theme.palette.success.main, 0.1)}`,
-                    }}
-                >
-                    <Typography variant="h6" gutterBottom sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                        <AssessmentIcon sx={{color: 'success.main'}}/>
-                        Personalmanagement-Tipps
-                    </Typography>
-                    <Box
-                        sx={{
-                            display: 'grid',
-                            gridTemplateColumns: {
-                                xs: '1fr',
-                                md: 'repeat(3, 1fr)',
-                            },
-                            gap: 2,
-                        }}
-                    >
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Optimale Teamgröße:</strong> 8-12 Mitarbeiter für flexible Schichtplanung
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Schichtleiter-Ratio:</strong> Mindestens 3 Schichtleiter für kontinuierliche
-                            Abdeckung
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>Arbeitszeit-Balance:</strong> Durchschnittlich 140-160 Stunden pro Monat anstreben
-                        </Typography>
-                    </Box>
                 </Paper>
             </Fade>
         </Container>

@@ -76,6 +76,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     // Dialog state
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [employeeToDelete, setEmployeeToDelete] = useState<EmployeeResponseDto | null>(null);
+    const [addEmployeeModalOpen, setAddEmployeeModalOpen] = useState(false);
 
     // Snackbar state
     const [snackbar, setSnackbar] = useState<{
@@ -118,6 +119,18 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
     const handleCloseDeleteDialog = () => {
         setDeleteDialogOpen(false);
         setEmployeeToDelete(null);
+    };
+
+    // Open modal to add employee
+    const handleOpenAddEmployeeModal = () => {
+        resetForm();
+        setAddEmployeeModalOpen(true);
+    };
+
+    // Close modal to add employee
+    const handleCloseAddEmployeeModal = () => {
+        setAddEmployeeModalOpen(false);
+        resetForm();
     };
 
     // Delete employee
@@ -237,6 +250,11 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
 
         onEmployeesChange(updatedEmployees);
         resetForm();
+        
+        // Close modal if it was opened from modal
+        if (addEmployeeModalOpen) {
+            setAddEmployeeModalOpen(false);
+        }
     };
 
     // Close snackbar
@@ -285,146 +303,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                     {/* ... (rest of the existing code) ... */}
                 </Box>
             </Fade>
-
-            {/* Form for adding/editing employees */}
-            <Fade in timeout={800}>
-                <Card
-                    sx={{
-                        borderRadius: 3,
-                        border: `1px solid ${theme.palette.divider}`,
-                    }}
-                >
-                    <CardHeader
-                        title={
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <PersonAddIcon sx={{fontSize: '1.25rem', color: 'primary.main'}}/>
-                                <Typography variant="h6" component="div">
-                                    {editingId ? 'Mitarbeiter bearbeiten' : 'Neuen Mitarbeiter hinzufügen'}
-                                </Typography>
-                            </Box>
-                        }
-                        sx={{pb: 1}}
-                    />
-                    <CardContent>
-                        <Box
-                            component="form"
-                            sx={{
-                                display: 'grid',
-                                gridTemplateColumns: {xs: '1fr', md: 'repeat(4, 1fr) auto'},
-                                gap: 3,
-                                alignItems: 'flex-start'
-                            }}
-                            noValidate
-                            autoComplete="off"
-                        >
-                            <TextField
-                                label="Name"
-                                variant="outlined"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                error={!!errors.name}
-                                helperText={errors.name}
-                                fullWidth
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: 2,
-                                    },
-                                }}
-                            />
-
-                            <FormControl fullWidth error={!!errors.role}>
-                                <InputLabel id="role-label">Rolle</InputLabel>
-                                <Select
-                                    labelId="role-label"
-                                    value={primaryRole}
-                                    label="Rolle"
-                                    sx={{
-                                        borderRadius: 2,
-                                    }}
-                                >
-                                    <MenuItem value="">
-                                        <em>Bitte wählen</em>
-                                    </MenuItem>
-                                    <MenuItem value="Specialist">Fachkraft</MenuItem>
-                                    <MenuItem value="Assistant">Hilfskraft</MenuItem>
-                                    <MenuItem value="ShiftLeader">Schichtleiter</MenuItem>
-                                </Select>
-                                {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
-                            </FormControl>
-
-                            <TextField
-                                label="Stunden pro Monat"
-                                variant="outlined"
-                                type="number"
-                                inputProps={{min: 1, max: 180, step: "0.1"}}
-                                value={hoursPerMonth}
-                                onChange={(e) => setHoursPerMonth(e.target.value === '' ? null : Number(e.target.value))}
-                                error={!!errors.hoursPerMonth}
-                                helperText={errors.hoursPerMonth}
-                                fullWidth
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: 2,
-                                    },
-                                }}
-                            />
-
-                            <FormControl fullWidth error={!!errors.location}>
-                                <InputLabel id="location-label">Standort</InputLabel>
-                                <Select
-                                    labelId="location-label"
-                                    value={location}
-                                    label="Standort"
-                                    sx={{
-                                        borderRadius: 2,
-                                    }}
-                                >
-                                    <MenuItem value="">
-                                        <em>Bitte wählen</em>
-                                    </MenuItem>
-                                    <MenuItem value="Standort A">Standort A</MenuItem>
-                                    <MenuItem value="Standort B">Standort B</MenuItem>
-                                </Select>
-                                {errors.location && <FormHelperText>{errors.location}</FormHelperText>}
-                            </FormControl>
-
-                            <Box sx={{display: 'flex', gap: 1, alignSelf: 'center'}}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    startIcon={editingId ? <SaveIcon/> : <AddIcon/>}
-                                    onClick={handleSaveEmployee}
-                                    sx={{
-                                        borderRadius: 2,
-                                        textTransform: 'none',
-                                        fontWeight: 600,
-                                        px: 3,
-                                    }}
-                                >
-                                    {editingId ? 'Speichern' : 'Hinzufügen'}
-                                </Button>
-
-                                {editingId && (
-                                    <Button
-                                        variant="outlined"
-                                        color="secondary"
-                                        startIcon={<CancelIcon/>}
-                                        onClick={resetForm}
-                                        sx={{
-                                            borderRadius: 2,
-                                            textTransform: 'none',
-                                            fontWeight: 600,
-                                        }}
-                                    >
-                                        Abbrechen
-                                    </Button>
-                                )}
-                            </Box>
-                        </Box>
-                    </CardContent>
-                </Card>
-            </Fade>
-
+            
             {/* Table with existing employees */}
             <Fade in timeout={1000}>
                 <Card
@@ -443,6 +322,22 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                             </Box>
                         }
                         subheader={`${employees.length} Mitarbeiter registriert`}
+                        action={
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<PersonAddIcon />}
+                                onClick={handleOpenAddEmployeeModal}
+                                sx={{
+                                    borderRadius: 2,
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    px: 3,
+                                }}
+                            >
+                                Mitarbeiter hinzufügen
+                            </Button>
+                        }
                         sx={{pb: 1}}
                     />
                     <CardContent sx={{pt: 0, px: 0}}>
@@ -657,6 +552,141 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                     {snackbar.message}
                 </Alert>
             </Snackbar>
+
+            {/* Modal for adding new employee */}
+            <Dialog
+                open={addEmployeeModalOpen}
+                onClose={handleCloseAddEmployeeModal}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: 3,
+                    },
+                }}
+            >
+                <DialogTitle sx={{pb: 1}}>
+                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                        <PersonAddIcon sx={{fontSize: '1.25rem', color: 'primary.main'}}/>
+                        <Typography variant="h6" component="div" sx={{fontWeight: 600}}>
+                            Neuen Mitarbeiter hinzufügen
+                        </Typography>
+                    </Box>
+                </DialogTitle>
+                <DialogContent>
+                    <Box
+                        component="form"
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: {xs: '1fr', md: 'repeat(2, 1fr)'},
+                            gap: 3,
+                            pt: 2,
+                        }}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <TextField
+                            label="Name"
+                            variant="outlined"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            error={!!errors.name}
+                            helperText={errors.name}
+                            fullWidth
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        />
+
+                        <FormControl fullWidth error={!!errors.role}>
+                            <InputLabel id="modal-role-label">Rolle</InputLabel>
+                            <Select
+                                labelId="modal-role-label"
+                                value={primaryRole}
+                                label="Rolle"
+                                onChange={(e) => setPrimaryRole(e.target.value as RoleResponseDto)}
+                                sx={{
+                                    borderRadius: 2,
+                                }}
+                            >
+                                <MenuItem value="">
+                                    <em>Bitte wählen</em>
+                                </MenuItem>
+                                <MenuItem value="Specialist">Fachkraft</MenuItem>
+                                <MenuItem value="Assistant">Hilfskraft</MenuItem>
+                                <MenuItem value="ShiftLeader">Schichtleiter</MenuItem>
+                            </Select>
+                            {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
+                        </FormControl>
+
+                        <TextField
+                            label="Stunden pro Monat"
+                            variant="outlined"
+                            type="number"
+                            inputProps={{min: 1, max: 180, step: "0.1"}}
+                            value={hoursPerMonth}
+                            onChange={(e) => setHoursPerMonth(e.target.value === '' ? null : Number(e.target.value))}
+                            error={!!errors.hoursPerMonth}
+                            helperText={errors.hoursPerMonth}
+                            fullWidth
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        />
+
+                        <FormControl fullWidth error={!!errors.location}>
+                            <InputLabel id="modal-location-label">Standort</InputLabel>
+                            <Select
+                                labelId="modal-location-label"
+                                value={location}
+                                label="Standort"
+                                onChange={(e) => setLocation(e.target.value as LocationResponseDto)}
+                                sx={{
+                                    borderRadius: 2,
+                                }}
+                            >
+                                <MenuItem value="">
+                                    <em>Bitte wählen</em>
+                                </MenuItem>
+                                <MenuItem value="Standort A">Standort A</MenuItem>
+                                <MenuItem value="Standort B">Standort B</MenuItem>
+                            </Select>
+                            {errors.location && <FormHelperText>{errors.location}</FormHelperText>}
+                        </FormControl>
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{p: 3, pt: 1}}>
+                    <Button
+                        onClick={handleCloseAddEmployeeModal}
+                        color="secondary"
+                        sx={{
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                        }}
+                    >
+                        Abbrechen
+                    </Button>
+                    <Button
+                        onClick={handleSaveEmployee}
+                        variant="contained"
+                        color="primary"
+                        startIcon={<AddIcon/>}
+                        sx={{
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            px: 3,
+                        }}
+                    >
+                        Hinzufügen
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

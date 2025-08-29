@@ -11,22 +11,14 @@ import {
 import {
     Schedule as ScheduleIcon,
     People as PeopleIcon,
-    Assessment as AssessmentIcon,
-    Warning as WarningIcon,
     CalendarMonth as CalendarIcon,
-    TrendingUp as TrendingUpIcon,
     Add as AddIcon,
     FileDownload as FileDownloadIcon,
     Settings as SettingsIcon
 } from '@mui/icons-material';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
-import {
-    QuickAction,
-    StatusItem,
-} from '@/components/dashboard';
 import ShiftTable from '../components/ShiftTable';
-import PlanungsValidierung from '../components/PlanungsValidierung';
 import {EmployeeService} from "@/services";
 import {
     ConstraintViolationDto,
@@ -35,9 +27,8 @@ import {
 } from "@/api/data-contracts.ts";
 
 import {shiftPlanningService} from '@/services';
-import StatisticsCard from "@/components/dashboard/StatisticsCard.tsx";
-import QuickActions from "@/components/dashboard/QuickActions.tsx";
-import StatusLight from "@/components/dashboard/StatusLight.tsx";
+import {QuickAction} from "@/components/dashboard/QuickActions.tsx";
+import {StatusItem} from "@/components/dashboard/StatusLight.tsx";
 
 /**
  * Modern Shift Planning Page in Dashboard Style

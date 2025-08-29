@@ -1,15 +1,12 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { EmployeeResponseDto } from '@/api/data-contracts';
-import {
-  EmployeeStatistics,
-  EmployeeTable,
-  EmployeeForm,
-  DeleteConfirmationDialog,
-  EmployeeSnackbar,
-  useEmployeeForm,
-  useEmployeeActions,
-} from './employee';
+import {useEmployeeForm} from "@/components/employee/hooks/useEmployeeForm.ts";
+import {useEmployeeActions} from "@/components/employee/hooks/useEmployeeActions.ts";
+import EmployeeTable from "@/components/employee/EmployeeTable.tsx";
+import EmployeeForm from "@/components/employee/EmployeeForm.tsx";
+import DeleteConfirmationDialog from "@/components/employee/DeleteConfirmationDialog.tsx";
+import EmployeeSnackbar from "@/components/employee/EmployeeSnackbar.tsx";
 
 interface EmployeeManagementProps {
   employees: EmployeeResponseDto[];

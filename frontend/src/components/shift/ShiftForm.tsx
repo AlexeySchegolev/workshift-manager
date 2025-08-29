@@ -6,27 +6,24 @@ import {
     DialogActions,
     Button,
     TextField,
-    Grid,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
     FormControlLabel,
     Switch,
-    Chip,
     Box,
     Typography,
     Divider,
     IconButton,
-    Tooltip,
+    Grid,
 } from '@mui/material';
 import {
     Close as CloseIcon,
     Schedule as ScheduleIcon,
-    Add as AddIcon,
+
 } from '@mui/icons-material';
 import { ShiftFormData, ShiftFormErrors } from './hooks/useShiftForm';
-import { formatShiftType, formatShiftStatus, formatShiftPriority } from './utils/shiftUtils';
 
 interface ShiftFormProps {
     open: boolean;
@@ -153,13 +150,13 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
             <DialogContent dividers sx={{ p: 3 }}>
                 <Grid container spacing={3}>
                     {/* Basic Information */}
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
                             Grundinformationen
                         </Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={8}>
+                    <Grid size={{ xs: 12, md: 8 }}>
                         <TextField
                             fullWidth
                             label="Schichtname"
@@ -171,7 +168,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <FormControl fullWidth error={!!errors.type}>
                             <InputLabel>Schichttyp</InputLabel>
                             <Select
@@ -188,7 +185,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <TextField
                             fullWidth
                             label="Beschreibung"
@@ -199,7 +196,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <FormControl fullWidth>
                             <InputLabel>Status</InputLabel>
                             <Select
@@ -216,7 +213,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <FormControl fullWidth>
                             <InputLabel>Priorität</InputLabel>
                             <Select
@@ -233,7 +230,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <FormControl fullWidth error={!!errors.locationId}>
                             <InputLabel>Station</InputLabel>
                             <Select
@@ -251,14 +248,14 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                     </Grid>
 
                     {/* Time and Duration */}
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <Divider sx={{ my: 2 }} />
                         <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
                             Zeit und Dauer
                         </Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <TextField
                             fullWidth
                             label="Datum"
@@ -272,7 +269,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <TextField
                             fullWidth
                             label="Startzeit"
@@ -286,7 +283,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <TextField
                             fullWidth
                             label="Endzeit"
@@ -300,7 +297,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
                             label="Pausenzeit (Minuten)"
@@ -311,7 +308,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
                             label="Gesamtstunden"
@@ -326,14 +323,14 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                     </Grid>
 
                     {/* Staffing */}
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <Divider sx={{ my: 2 }} />
                         <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
                             Personalbesetzung
                         </Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
                             label="Mindestanzahl Mitarbeiter"
@@ -347,7 +344,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
                             label="Maximalanzahl Mitarbeiter"
@@ -362,14 +359,14 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                     </Grid>
 
                     {/* Additional Options */}
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <Divider sx={{ my: 2 }} />
                         <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
                             Zusätzliche Optionen
                         </Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
                             label="Farbcode"
@@ -380,7 +377,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                             <FormControlLabel
                                 control={
@@ -412,7 +409,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         </Box>
                     </Grid>
 
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <TextField
                             fullWidth
                             label="Notizen"
@@ -424,7 +421,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                     </Grid>
 
                     {/* Recurring Options */}
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <FormControlLabel
                             control={
                                 <Switch
@@ -438,7 +435,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
 
                     {formData.isRecurring && (
                         <>
-                            <Grid item xs={12} md={6}>
+                            <Grid size={{ xs: 12, md: 6 }}>
                                 <FormControl fullWidth>
                                     <InputLabel>Wiederholungsmuster</InputLabel>
                                     <Select
@@ -455,7 +452,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                                 </FormControl>
                             </Grid>
 
-                            <Grid item xs={12} md={6}>
+                            <Grid size={{ xs: 12, md: 6 }}>
                                 <TextField
                                     fullWidth
                                     label="Enddatum der Wiederholung"

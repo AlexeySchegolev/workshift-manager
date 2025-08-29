@@ -22,9 +22,7 @@ import {
 import {useNavigate} from 'react-router-dom';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
-import {
-    QuickAction,
-} from '@/components/dashboard';
+import { QuickAction } from '../components/dashboard/QuickActions';
 import {useDashboardData, useDashboardActions} from '../hooks/useDashboardData';
 import {employeeService} from '@/services';
 import {EmployeeResponseDto} from '../api/data-contracts';

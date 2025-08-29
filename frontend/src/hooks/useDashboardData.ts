@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays } from 'date-fns';
-import { WeekDay } from '@/components/dashboard';
-import { StatusItem } from '@/components/dashboard';
+import { WeekDay } from '../components/dashboard/WeekOverview';
+import { StatusItem } from '../components/dashboard/StatusLight';
 import {
     EmployeeResponseDto,
     ConstraintViolationDto,

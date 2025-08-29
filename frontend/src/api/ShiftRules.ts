@@ -35,7 +35,6 @@ import {
   CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
-  DayShiftPlanDto,
   EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
   EmployeeUtilizationDto,

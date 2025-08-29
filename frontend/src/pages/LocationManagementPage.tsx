@@ -9,19 +9,11 @@ import {
     Paper,
 } from '@mui/material';
 import {
-    Business as BusinessIcon,
-    LocationOn as LocationIcon,
-    Assessment as AssessmentIcon,
-    TrendingUp as TrendingUpIcon,
-    People as PeopleIcon,
-    Star as StarIcon,
+    Business as BusinessIcon
 } from '@mui/icons-material';
 import LocationManagement from '../components/LocationManagement';
 import {LocationResponseDto} from '../api/data-contracts';
 import {locationService} from '@/services';
-import StatisticsCard from "@/components/dashboard/StatisticsCard.tsx";
-import QuickActions from "@/components/dashboard/QuickActions.tsx";
-import StatusLight from "@/components/dashboard/StatusLight.tsx";
 
 /**
  * Modern Location Management Page in Dashboard Style
@@ -31,19 +23,15 @@ const LocationManagementPage: React.FC = () => {
 
     // Location list - load via API
     const [locations, setLocations] = useState<LocationResponseDto[]>([]);
-    const [loading, setLoading] = useState(true);
 
     // Fetch locations when component loads
     useEffect(() => {
         const loadLocations = async () => {
             try {
-                setLoading(true);
                 const data = await locationService.getAllLocations();
                 setLocations(data);
             } catch (error) {
                 console.error('Error loading locations:', error);
-            } finally {
-                setLoading(false);
             }
         };
 
@@ -108,98 +96,6 @@ const LocationManagementPage: React.FC = () => {
     };
 
     const stats = calculateOverallStatistics();
-
-    // Define quick actions
-    const quickActions = [
-        {
-            id: 'add-location',
-            title: 'Neuer Standort',
-            description: 'Neuen Standort zur Verwaltung hinzufügen',
-            icon: <BusinessIcon/>,
-            color: 'success' as const,
-            onClick: () => {
-                // Scroll to form
-                const formElement = document.querySelector('[data-testid="location-management"]');
-                if (formElement) {
-                    formElement.scrollIntoView({behavior: 'smooth'});
-                }
-            },
-        },
-        {
-            id: 'location-analysis',
-            title: 'Standortanalyse',
-            description: 'Detaillierte Analyse aller Standorte',
-            icon: <AssessmentIcon/>,
-            color: 'info' as const,
-            onClick: () => {
-                // TODO: Implement location analysis
-                console.log('Standortanalyse öffnen');
-            },
-        },
-        {
-            id: 'capacity-planning',
-            title: 'Kapazitätsplanung',
-            description: 'Optimierung der Standortkapazitäten',
-            icon: <TrendingUpIcon/>,
-            color: 'warning' as const,
-            onClick: () => {
-                // TODO: Implement capacity planning
-                console.log('Kapazitätsplanung öffnen');
-            },
-        },
-        {
-            id: 'location-reports',
-            title: 'Standortberichte',
-            description: 'Berichte und Statistiken exportieren',
-            icon: <LocationIcon/>,
-            color: 'primary' as const,
-            onClick: () => {
-                // TODO: Implement report generation
-                console.log('Standortberichte generieren');
-            },
-        },
-    ];
-
-    // Status items for the status light
-    const statusItems = [
-        {
-            id: 'active-locations',
-            title: 'Aktive Standorte',
-            description: 'Anzahl der betriebsbereiten Standorte',
-            status: stats.activeLocations >= 2 ? 'success' : stats.activeLocations >= 1 ? 'warning' : 'error',
-            value: stats.activeLocations,
-            maxValue: stats.totalLocations,
-            details: stats.activeLocations < 2 ? ['Mindestens 2 aktive Standorte für Redundanz empfohlen'] : undefined,
-        } as const,
-        {
-            id: 'capacity-utilization',
-            title: 'Kapazitätsauslastung',
-            description: 'Durchschnittliche Auslastung aller Standorte',
-            status: stats.avgUtilization >= 80 && stats.avgUtilization <= 95 ? 'success' : stats.avgUtilization > 95 ? 'warning' : 'error',
-            value: stats.avgUtilization,
-            maxValue: 100,
-            details: stats.avgUtilization > 95 ? ['Sehr hohe Auslastung - Kapazitätserweiterung prüfen'] :
-                stats.avgUtilization < 70 ? ['Niedrige Auslastung - Optimierungspotential vorhanden'] : undefined,
-        } as const,
-        {
-            id: 'client-satisfaction',
-            title: 'Kundenzufriedenheit',
-            description: 'Durchschnittliche Bewertung aller Standorte',
-            status: stats.avgSatisfaction >= 4.5 ? 'success' : stats.avgSatisfaction >= 4.0 ? 'warning' : 'error',
-            value: stats.avgSatisfaction,
-            maxValue: 5,
-            details: stats.avgSatisfaction < 4.0 ? ['Kundenzufriedenheit unter Zielwert - Maßnahmen erforderlich'] : undefined,
-        } as const,
-        {
-            id: 'employee-distribution',
-            title: 'Personalverteilung',
-            description: 'Mitarbeiter pro Standort',
-            status: stats.totalEmployees >= stats.activeLocations * 6 ? 'success' : 'warning',
-            value: Math.round(stats.totalEmployees / Math.max(stats.activeLocations, 1)),
-            maxValue: 15,
-            details: stats.totalEmployees < stats.activeLocations * 6 ? ['Zu wenig Personal pro Standort'] : undefined,
-        } as const,
-    ];
 
     return (
         <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>

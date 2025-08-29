@@ -9,9 +9,7 @@ import {
 } from '@mui/material';
 import {
   People as PeopleIcon,
-  PersonAdd as PersonAddIcon,
-  Schedule as ScheduleIcon,
-  TrendingUp as TrendingUpIcon,
+  PersonAdd as PersonAddIcon
 } from '@mui/icons-material';
 import { EmployeeResponseDto } from '@/api/data-contracts';
 import { calculateEmployeeStatistics } from './utils/employeeUtils';
@@ -116,7 +114,6 @@ const EmployeeStatistics: React.FC<EmployeeStatisticsProps> = ({ employees }) =>
             value={stat.value}
             icon={stat.icon}
             color={stat.color}
-            subtitle={stat.subtitle}
           />
         ))}
       </Box>

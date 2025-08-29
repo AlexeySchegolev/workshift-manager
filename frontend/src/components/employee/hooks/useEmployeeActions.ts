@@ -106,7 +106,6 @@ export const useEmployeeActions = (
           lastName: formData.lastName,
           hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
           locationId: formData.location?.id,
-          roleIds: formData.roles?.map(role => role.id) || [],
           primaryRoleId: formData.primaryRole?.id
         };
 
@@ -133,7 +132,6 @@ export const useEmployeeActions = (
           hireDate: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
           hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
           locationId: formData.location?.id,
-          roleIds: formData.roles?.map(role => role.id) || [],
           primaryRoleId: formData.primaryRole?.id
         };
 

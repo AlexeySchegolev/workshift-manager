@@ -449,6 +449,11 @@ export interface CreateEmployeeDto {
    */
   profilePictureUrl?: string;
   /**
+   * Additional role IDs
+   * @example ["uuid-string-1","uuid-string-2"]
+   */
+  roleIds?: string[];
+  /**
    * Skills
    * @example ["Patient Care","Teamwork"]
    */
@@ -1353,8 +1358,6 @@ export interface DateRangeDto {
    */
   start: string;
 }
-
-export type DayShiftPlanDto = object;
 
 export interface EmployeeAvailabilityResponseDto {
   /**
@@ -2898,7 +2901,7 @@ export interface ShiftPlanResponseDto {
    * Shift plan data organized by date and shift
    * @example {"01.12.2024":{"Morning":["employee-id-1","employee-id-2"],"Evening":["employee-id-3","employee-id-4"]},"02.12.2024":{"Morning":["employee-id-2","employee-id-3"],"Evening":["employee-id-1","employee-id-4"]}}
    */
-  planData?: Record<string, any>;
+  planData?: MonthlyShiftPlanDto[];
   /**
    * Date when the shift plan was last updated
    * @format date-time
@@ -3545,6 +3548,11 @@ export interface UpdateEmployeeDto {
    * @example "https://example.com/profile.jpg"
    */
   profilePictureUrl?: string;
+  /**
+   * Additional role IDs
+   * @example ["uuid-string-1","uuid-string-2"]
+   */
+  roleIds?: string[];
   /**
    * Skills
    * @example ["Patient Care","Teamwork"]

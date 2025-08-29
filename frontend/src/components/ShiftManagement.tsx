@@ -1,14 +1,12 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { ShiftResponseDto } from '@/api/data-contracts';
-import {
-  ShiftTable,
-  ShiftForm,
-  DeleteConfirmationDialog,
-  ShiftSnackbar,
-  useShiftForm,
-  useShiftActions,
-} from './shift';
+import ShiftTable from './shift/ShiftTable';
+import ShiftForm from './shift/ShiftForm';
+import DeleteConfirmationDialog from './shift/DeleteConfirmationDialog';
+import ShiftSnackbar from './shift/ShiftSnackbar';
+import { useShiftForm } from './shift/hooks/useShiftForm';
+import { useShiftActions } from './shift/hooks/useShiftActions';
 
 interface ShiftManagementProps {
   shifts: ShiftResponseDto[];

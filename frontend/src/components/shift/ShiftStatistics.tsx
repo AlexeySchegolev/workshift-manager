@@ -3,11 +3,11 @@ import {
     Box,
     Paper,
     Typography,
-    Grid,
     LinearProgress,
     Chip,
     useTheme,
     alpha,
+    Grid,
 } from '@mui/material';
 import {
     Schedule as ScheduleIcon,
@@ -115,7 +115,7 @@ const ShiftStatistics: React.FC<ShiftStatisticsProps> = ({ shifts }) => {
 
             <Grid container spacing={3}>
                 {/* Total Shifts */}
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <StatCard
                         title="Gesamte Schichten"
                         value={stats.total}
@@ -126,7 +126,7 @@ const ShiftStatistics: React.FC<ShiftStatisticsProps> = ({ shifts }) => {
                 </Grid>
 
                 {/* Active Shifts */}
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <StatCard
                         title="Aktive Schichten"
                         value={stats.active}
@@ -138,7 +138,7 @@ const ShiftStatistics: React.FC<ShiftStatisticsProps> = ({ shifts }) => {
                 </Grid>
 
                 {/* Staffing Level */}
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <StatCard
                         title="Durchschnittliche Besetzung"
                         value={`${stats.averageStaffing}%`}
@@ -153,7 +153,7 @@ const ShiftStatistics: React.FC<ShiftStatisticsProps> = ({ shifts }) => {
                 </Grid>
 
                 {/* Understaffed */}
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <StatCard
                         title="Unterbesetzt"
                         value={stats.understaffed}
@@ -165,7 +165,7 @@ const ShiftStatistics: React.FC<ShiftStatisticsProps> = ({ shifts }) => {
                 </Grid>
 
                 {/* Shift Types Distribution */}
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Paper
                         elevation={0}
                         sx={{
@@ -197,7 +197,7 @@ const ShiftStatistics: React.FC<ShiftStatisticsProps> = ({ shifts }) => {
                 </Grid>
 
                 {/* Location Distribution */}
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Paper
                         elevation={0}
                         sx={{

@@ -6,6 +6,7 @@ export interface EmployeeFormData {
   firstName: string;
   lastName: string;
   primaryRole: RoleResponseDto | null;
+  roles: RoleResponseDto[];
   location: LocationResponseDto | null;
   hoursPerMonth: number | null;
 }
@@ -23,6 +24,7 @@ export const useEmployeeForm = () => {
     firstName: '',
     lastName: '',
     primaryRole: null,
+    roles: [],
     location: null,
     hoursPerMonth: null,
   });
@@ -36,6 +38,7 @@ export const useEmployeeForm = () => {
       firstName: '',
       lastName: '',
       primaryRole: null,
+      roles: [],
       location: null,
       hoursPerMonth: null,
     });
@@ -49,6 +52,7 @@ export const useEmployeeForm = () => {
       firstName: employee.firstName,
       lastName: employee.lastName,
       primaryRole: employee.primaryRole ?? null,
+      roles: employee.roles ?? [],
       location: employee.location ?? null,
       hoursPerMonth: employee.hoursPerMonth ?? 0,
     });

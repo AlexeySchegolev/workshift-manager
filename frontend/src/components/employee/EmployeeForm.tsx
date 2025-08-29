@@ -22,6 +22,8 @@ import {
 import { LocationResponseDto, RoleResponseDto } from '@/api/data-contracts';
 import { EmployeeFormData, EmployeeFormErrors } from './hooks/useEmployeeForm';
 import { useLocations } from '@/hooks/useLocations';
+import { useRoles } from '@/hooks/useRoles';
+import RoleSelector from './RoleSelector';
 
 interface EmployeeFormProps {
   open: boolean;
@@ -46,6 +48,20 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   isEditing = false,
 }) => {
   const { locations, loading: locationsLoading, error: locationsError } = useLocations();
+  const { roles, loading: rolesLoading, error: rolesError } = useRoles();
+
+  const handleRolesChange = (selectedRoles: RoleResponseDto[]) => {
+    onUpdateField('roles', selectedRoles);
+    // Erste ausgewählte Rolle als Hauptrolle setzen, falls noch keine gesetzt
+    if (!formData.primaryRole && selectedRoles.length > 0) {
+      onUpdateField('primaryRole', selectedRoles[0]);
+    }
+    // Wenn die entfernte Rolle die Hauptrolle war, neue Hauptrolle setzen
+    if (formData.primaryRole && !selectedRoles.some(role => role.id === formData.primaryRole?.id)) {
+      onUpdateField('primaryRole', selectedRoles.length > 0 ? selectedRoles[0] : null);
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -108,28 +124,16 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             }}
           />
 
-          <FormControl fullWidth error={!!errors.role}>
-            <InputLabel id="modal-role-label">Rolle</InputLabel>
-            <Select
-              labelId="modal-role-label"
-              value={formData.primaryRole || ''}
-              label="Rolle"
-              onChange={(e) =>
-                onUpdateField('primaryRole', e.target.value as RoleResponseDto)
-              }
-              sx={{
-                borderRadius: 2,
-              }}
-            >
-              <MenuItem value="">
-                <em>Bitte wählen</em>
-              </MenuItem>
-              <MenuItem value="Specialist">Fachkraft</MenuItem>
-              <MenuItem value="Assistant">Hilfskraft</MenuItem>
-              <MenuItem value="ShiftLeader">Schichtleiter</MenuItem>
-            </Select>
-            {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
-          </FormControl>
+          <Box sx={{ gridColumn: { md: 'span 2' } }}>
+            <RoleSelector
+              roles={roles}
+              selectedRoles={formData.roles}
+              onRolesChange={handleRolesChange}
+              loading={rolesLoading}
+              error={rolesError}
+              helperText={errors.role}
+            />
+          </Box>
 
           <TextField
             label="Stunden pro Monat"

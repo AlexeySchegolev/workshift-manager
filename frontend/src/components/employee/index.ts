@@ -2,6 +2,7 @@
 export { default as EmployeeStatistics } from './EmployeeStatistics';
 export { default as EmployeeTable } from './EmployeeTable';
 export { default as EmployeeForm } from './EmployeeForm';
+export { default as RoleSelector } from './RoleSelector';
 export { default as DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 export { default as EmployeeSnackbar } from './EmployeeSnackbar';
 

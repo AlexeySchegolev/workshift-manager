@@ -94,8 +94,9 @@ export const useEmployeeActions = (
               lastName: formData.lastName,
               fullName: `${formData.firstName} ${formData.lastName}`,
               primaryRole: formData.primaryRole ?? undefined,
-              hoursPerMonth: Number(formData.hoursPerMonth.toFixed(1)),
-              hoursPerWeek: Math.round(formData.hoursPerMonth / 4.33),
+              roles: formData.roles ?? [],
+              hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
+              hoursPerWeek: Math.round(formData.hoursPerMonth! / 4.33),
               locationId: formData.location?.id,
               location: formData.location ?? undefined,
             }
@@ -127,7 +128,8 @@ export const useEmployeeActions = (
         id: uuidv4(),
         lastName: formData.lastName,
         primaryRole: formData.primaryRole ?? undefined,
-        hoursPerMonth: Number(formData.hoursPerMonth.toFixed(1)),
+        roles: formData.roles ?? [],
+        hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
         locationId: formData.location?.id,
         location: formData.location ?? undefined,
         certifications: []

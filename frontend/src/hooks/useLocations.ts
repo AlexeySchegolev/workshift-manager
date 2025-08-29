@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
 import { LocationResponseDto } from '@/api/data-contracts';
-import { Locations } from '@/api/Locations';
-import { HttpClient } from '@/api/http-client';
-
-const httpClient = new HttpClient({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001',
-});
-
-const locationsApi = new Locations(httpClient);
+import { locationService } from '@/services';
 
 export const useLocations = () => {
   const [locations, setLocations] = useState<LocationResponseDto[]>([]);
@@ -19,16 +12,16 @@ export const useLocations = () => {
       setLoading(true);
       setError(null);
       
-      // Nur aktive Locations laden, ohne Employee-Daten
-      const response = await locationsApi.locationsControllerFindAll({
+      // Load only active locations without employee data
+      const data = await locationService.getAllLocations({
         activeOnly: true,
         includeEmployees: false,
       });
-      
-      setLocations(response.data);
+
+      setLocations(data);
     } catch (err) {
-      console.error('Fehler beim Laden der Locations:', err);
-      setError('Fehler beim Laden der Standorte');
+      console.error('Error loading locations:', err);
+      setError('Error loading locations');
     } finally {
       setLoading(false);
     }

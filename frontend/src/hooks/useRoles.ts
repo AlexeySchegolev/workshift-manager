@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
 import { RoleResponseDto } from '@/api/data-contracts';
-import { Roles } from '@/api/Roles';
-import { HttpClient } from '@/api/http-client';
-
-const httpClient = new HttpClient({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001',
-});
-
-const rolesApi = new Roles(httpClient);
+import { roleService } from '@/services';
 
 export const useRoles = (organizationId?: string) => {
   const [roles, setRoles] = useState<RoleResponseDto[]>([]);
@@ -19,24 +12,24 @@ export const useRoles = (organizationId?: string) => {
       setLoading(true);
       setError(null);
       
-      let response;
+      let data;
       if (organizationId) {
-        // Lade Rollen für eine spezifische Organisation
-        response = await rolesApi.rolesControllerFindByOrganization(organizationId, {
+        // Load roles for a specific organization
+        data = await roleService.getRolesByOrganization(organizationId, {
           activeOnly: true,
           includeRelations: false,
         });
       } else {
-        // Lade alle Rollen
-        response = await rolesApi.rolesControllerFindAll({
+        // Load all roles
+        data = await roleService.getAllRoles({
           includeRelations: false,
         });
       }
-      
-      setRoles(response.data);
+
+      setRoles(data);
     } catch (err) {
-      console.error('Fehler beim Laden der Rollen:', err);
-      setError('Fehler beim Laden der Rollen');
+      console.error('Error loading roles:', err);
+      setError('Error loading roles');
     } finally {
       setLoading(false);
     }

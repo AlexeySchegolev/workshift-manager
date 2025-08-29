@@ -49,28 +49,11 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
   const theme = useTheme();
 
   const getShiftColor = (schichtName: string): string => {
-    switch (schichtName.toUpperCase()) {
-      case 'F':
-        return theme.palette.shifts?.early || theme.palette.success.main;
-      case 'S':
-      case 'S0':
-      case 'S1':
-      case 'S00':
-        return theme.palette.shifts?.late || theme.palette.warning.main;
-      case 'FS':
-        return theme.palette.shifts?.special || theme.palette.info.main;
-      case '4':
-      case '5':
-      case '6':
-        return theme.palette.shifts?.uetersen || theme.palette.info.main;
-      default:
-        return theme.palette.grey[500];
-    }
+      return theme.palette.shifts?.early;
   };
 
   const getShiftBackground = (schichtName: string): string => {
-    const color = getShiftColor(schichtName);
-    return alpha(color, 0.1);
+    return alpha(theme.palette.grey[500], 0.1);
   };
 
   const formatWeekday = (datum: Date): string => {
@@ -240,47 +223,7 @@ const WeekOverview: React.FC<WeekOverviewProps> = ({
           })}
         </Box>
 
-        {/* Legend */}
-        <Box sx={{ mt: 2, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-          <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-            Schichttypen:
-          </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            <Chip
-              label="F - Frühschicht"
-              size="small"
-              sx={{
-                height: 20,
-                fontSize: '0.65rem',
-                backgroundColor: getShiftBackground('F'),
-                color: getShiftColor('F'),
-                border: `1px solid ${alpha(getShiftColor('F'), 0.3)}`,
-              }}
-            />
-            <Chip
-              label="S - Spätschicht"
-              size="small"
-              sx={{
-                height: 20,
-                fontSize: '0.65rem',
-                backgroundColor: getShiftBackground('S'),
-                color: getShiftColor('S'),
-                border: `1px solid ${alpha(getShiftColor('S'), 0.3)}`,
-              }}
-            />
-            <Chip
-              label="FS - Spezial"
-              size="small"
-              sx={{
-                height: 20,
-                fontSize: '0.65rem',
-                backgroundColor: getShiftBackground('FS'),
-                color: getShiftColor('FS'),
-                border: `1px solid ${alpha(getShiftColor('FS'), 0.3)}`,
-              }}
-            />
-          </Box>
-        </Box>
+       
       </CardContent>
     </Card>
   );

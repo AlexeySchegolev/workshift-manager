@@ -209,15 +209,12 @@ const HomePage: React.FC = () => {
                     <StatisticsCard
                         title="Mitarbeiter"
                         value={statistics.employeeCount}
-                        subtitle="Aktive Mitarbeiter"
+                        subtitle="TODO: wieviele sind aktiv heute? Ist jemand krank aus Schichtbelegung?"
                         icon={<PeopleIcon/>}
                         color="primary"
-                        onClick={() => navigate('/mitarbeiter')}
-                        trend={{
-                            value: 5,
-                            isPositive: true,
-                            label: 'vs. letzter Monat',
-                        }}
+                        onClick={() => navigate('/mitarbeiter')
+
+                        }
                     />
                     <StatisticsCard
                         title="Schichtabdeckung"
@@ -267,64 +264,6 @@ const HomePage: React.FC = () => {
                         }}
                         title="Aktuelle Woche"
                     />
-
-                    {/* Quick actions */}
-                    <QuickActions
-                        actions={quickActions}
-                        title="Schnellaktionen"
-                        maxItems={5}
-                    />
-                </Box>
-            </Fade>
-
-            {/* Status overview */}
-            <Fade in={showCards} timeout={1400}>
-                <Box sx={{mb: 4}}>
-                    <StatusLight
-                        statusItems={statusItems}
-                        title="System-Status"
-                        showProgress={true}
-                    />
-                </Box>
-            </Fade>
-
-            {/* Additional information */}
-            <Fade in={showCards} timeout={1600}>
-                <Box sx={{mt: 4}}>
-                    <Paper
-                        sx={{
-                            p: 3,
-                            borderRadius: 3,
-                            background: alpha(theme.palette.info.main, 0.02),
-                            border: `1px solid ${alpha(theme.palette.info.main, 0.1)}`,
-                        }}
-                    >
-                        <Typography variant="h6" gutterBottom sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                            <AssessmentIcon sx={{color: 'info.main'}}/>
-                            Wichtige Hinweise
-                        </Typography>
-                        <Box
-                            sx={{
-                                display: 'grid',
-                                gridTemplateColumns: {
-                                    xs: '1fr',
-                                    md: 'repeat(3, 1fr)',
-                                },
-                                gap: 2,
-                            }}
-                        >
-                            <Typography variant="body2" color="text.secondary">
-                                <strong>Schichtplanung:</strong> Automatische Generierung berücksichtigt alle Regeln und
-                                Vorgaben
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                <strong>Mitarbeiterverwaltung:</strong> Einfache Verwaltung von Rollen und Arbeitszeiten
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                <strong>Excel-Export:</strong> Professionelle Schichtpläne für Druck und Weitergabe
-                            </Typography>
-                        </Box>
-                    </Paper>
                 </Box>
             </Fade>
         </Container>

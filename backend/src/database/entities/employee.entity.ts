@@ -215,4 +215,20 @@ export class Employee {
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
   }
+
+  get displayName(): string {
+    return this.fullName;
+  }
+
+  get isAvailable(): boolean {
+    return this.isActive && this.status === EmployeeStatus.ACTIVE;
+  }
+
+  get yearsOfService(): number {
+    const now = new Date();
+    const hireDate = new Date(this.hireDate);
+    const diffTime = Math.abs(now.getTime() - hireDate.getTime());
+    const diffYears = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365.25));
+    return diffYears;
+  }
 }

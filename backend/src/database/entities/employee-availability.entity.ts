@@ -235,4 +235,66 @@ export class EmployeeAvailability {
 
   @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date;
+
+  // Computed properties
+  get isCurrentlyActive(): boolean {
+    const now = new Date();
+    const startDate = new Date(this.startDate);
+    const endDate = this.endDate ? new Date(this.endDate) : null;
+    
+    return this.isActive && 
+           this.status === AvailabilityStatus.ACTIVE &&
+           startDate <= now &&
+           (!endDate || endDate >= now);
+  }
+
+  get duration(): number {
+    if (!this.endDate) return 1;
+    const start = new Date(this.startDate);
+    const end = new Date(this.endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  get isExpired(): boolean {
+    if (!this.endDate) return false;
+    const now = new Date();
+    const endDate = new Date(this.endDate);
+    return endDate < now;
+  }
+
+  get isPending(): boolean {
+    return this.requiresApproval && !this.approvedAt && !this.rejectedAt;
+  }
+
+  get needsApproval(): boolean {
+    return this.requiresApproval && !this.approvedAt;
+  }
+
+  get isAbsence(): boolean {
+    return this.type === AvailabilityType.UNAVAILABLE || 
+           this.absenceReason !== null;
+  }
+
+  get displayReason(): string {
+    if (this.absenceReason) {
+      return this.absenceReason.replace(/_/g, ' ').toLowerCase()
+        .replace(/\b\w/g, l => l.toUpperCase());
+    }
+    return this.type.replace(/_/g, ' ').toLowerCase()
+      .replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  get timeRange(): string {
+    if (this.isAllDay) return 'All Day';
+    if (!this.startTime || !this.endTime) return 'All Day';
+    return `${this.startTime} - ${this.endTime}`;
+  }
+
+  get dateRange(): string {
+    const startStr = this.startDate.toLocaleDateString('de-DE');
+    if (!this.endDate) return startStr;
+    const endStr = this.endDate.toLocaleDateString('de-DE');
+    return startStr === endStr ? startStr : `${startStr} - ${endStr}`;
+  }
 }

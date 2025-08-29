@@ -85,4 +85,40 @@ export class ShiftPlanningAvailability {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  // Business logic methods
+  updateAfterShiftAssignment(shiftHours: number, shiftType: string, dayKey: string, isSaturday?: boolean): void {
+    // Add day key to assigned shifts (using dayKey as identifier)
+    if (!this.shiftsAssigned.includes(dayKey)) {
+      this.shiftsAssigned.push(dayKey);
+    }
+    
+    // Update hours
+    this.totalHoursAssigned = Number((this.totalHoursAssigned + shiftHours).toFixed(2));
+    this.weeklyHoursAssigned = Number((this.weeklyHoursAssigned + shiftHours).toFixed(2));
+    
+    // Update last shift info
+    this.lastShiftType = shiftType;
+    this.lastAssignmentDate = new Date(); // Set to current date for now
+    
+    // Update consecutive days count (simplified logic)
+    this.consecutiveDaysCount++;
+    
+    // Update Saturday count if specified
+    if (isSaturday) {
+      this.saturdaysWorked++;
+    }
+  }
+
+  resetWeeklyCounters(): void {
+    this.weeklyHoursAssigned = 0;
+    this.currentWeekNumber = null;
+    this.consecutiveDaysCount = 0;
+  }
+
+  private getWeekNumber(date: Date): number {
+    const startOfYear = new Date(date.getFullYear(), 0, 1);
+    const daysDiff = Math.floor((date.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.ceil((daysDiff + startOfYear.getDay() + 1) / 7);
+  }
 }

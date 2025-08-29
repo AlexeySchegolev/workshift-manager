@@ -24,6 +24,13 @@ import {
 
 } from '@mui/icons-material';
 import { ShiftFormData, ShiftFormErrors } from './hooks/useShiftForm';
+import { useLocations } from '@/hooks/useLocations';
+import { 
+    SHIFT_TYPES, 
+    SHIFT_STATUSES, 
+    SHIFT_PRIORITIES, 
+    RECURRENCE_PATTERNS 
+} from '@/constants/shiftConstants';
 
 interface ShiftFormProps {
     open: boolean;
@@ -46,45 +53,10 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
 }) => {
     const [skillInput, setSkillInput] = useState('');
     const [certificationInput, setCertificationInput] = useState('');
+    
+    // Fetch locations from API
+    const { locations, loading: locationsLoading, error: locationsError } = useLocations();
 
-    // Mock data for locations - in real app, this would come from API
-    const locations = [
-        { id: '1', name: 'Dialyse Station A', code: 'DSA' },
-        { id: '2', name: 'Dialyse Station B', code: 'DSB' },
-    ];
-
-    const shiftTypes = [
-        { value: 'morning', label: 'Frühschicht' },
-        { value: 'afternoon', label: 'Spätschicht' },
-        { value: 'evening', label: 'Abendschicht' },
-        { value: 'night', label: 'Nachtschicht' },
-        { value: 'full_day', label: 'Ganztag' },
-        { value: 'split', label: 'Geteilte Schicht' },
-        { value: 'on_call', label: 'Bereitschaft' },
-        { value: 'overtime', label: 'Überstunden' },
-    ];
-
-    const shiftStatuses = [
-        { value: 'draft', label: 'Entwurf' },
-        { value: 'published', label: 'Veröffentlicht' },
-        { value: 'active', label: 'Aktiv' },
-        { value: 'completed', label: 'Abgeschlossen' },
-        { value: 'cancelled', label: 'Abgesagt' },
-    ];
-
-    const priorities = [
-        { value: 1, label: 'Niedrig' },
-        { value: 2, label: 'Normal' },
-        { value: 3, label: 'Hoch' },
-        { value: 4, label: 'Kritisch' },
-        { value: 5, label: 'Notfall' },
-    ];
-
-    const recurrencePatterns = [
-        { value: 'daily', label: 'Täglich' },
-        { value: 'weekly', label: 'Wöchentlich' },
-        { value: 'monthly', label: 'Monatlich' },
-    ];
 
     const handleAddSkill = () => {
         if (skillInput.trim() && !formData.requiredSkills.includes(skillInput.trim())) {
@@ -176,7 +148,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                                 onChange={(e) => onUpdateField('type', e.target.value)}
                                 label="Schichttyp"
                             >
-                                {shiftTypes.map((type) => (
+                                {SHIFT_TYPES.map((type) => (
                                     <MenuItem key={type.value} value={type.value}>
                                         {type.label}
                                     </MenuItem>
@@ -204,7 +176,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                                 onChange={(e) => onUpdateField('status', e.target.value)}
                                 label="Status"
                             >
-                                {shiftStatuses.map((status) => (
+                                {SHIFT_STATUSES.map((status) => (
                                     <MenuItem key={status.value} value={status.value}>
                                         {status.label}
                                     </MenuItem>
@@ -221,7 +193,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                                 onChange={(e) => onUpdateField('priority', e.target.value)}
                                 label="Priorität"
                             >
-                                {priorities.map((priority) => (
+                                {SHIFT_PRIORITIES.map((priority) => (
                                     <MenuItem key={priority.value} value={priority.value}>
                                         {priority.label}
                                     </MenuItem>
@@ -237,10 +209,11 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                                 value={formData.locationId}
                                 onChange={(e) => onUpdateField('locationId', e.target.value)}
                                 label="Station"
+                                disabled={locationsLoading}
                             >
                                 {locations.map((location) => (
                                     <MenuItem key={location.id} value={location.id}>
-                                        {location.name} ({location.code})
+                                        {location.name}{location.code ? ` (${location.code})` : ''}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -443,7 +416,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                                         onChange={(e) => onUpdateField('recurrencePattern', e.target.value)}
                                         label="Wiederholungsmuster"
                                     >
-                                        {recurrencePatterns.map((pattern) => (
+                                        {RECURRENCE_PATTERNS.map((pattern) => (
                                             <MenuItem key={pattern.value} value={pattern.value}>
                                                 {pattern.label}
                                             </MenuItem>

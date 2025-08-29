@@ -1,20 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Organization } from '@/database/entities';
-import { User } from '@/database/entities';
-import { Role } from '@/database/entities';
-import { Location } from '@/database/entities';
-import { Employee } from '@/database/entities';
-import { ShiftRules } from '@/database/entities';
-import {
-  organizationsSeedData,
-  usersSeedData,
-  rolesSeedData,
-  locationsSeedData,
-  employeesSeedData,
-  shiftRulesSeedData
-} from './data';
+import { Organization } from "../entities/organization.entity";
+import {User} from "@/database/entities/user.entity";
+import {organizationsSeedData} from "@/database/seeds/data/organizations.seed";
+import {Role} from "@/database/entities/role.entity";
+import {Employee} from "@/database/entities/employee.entity";
+import {employeesSeedData} from "@/database/seeds/data/employees.seed";
+import {locationsSeedData} from "@/database/seeds/data/locations.seed";
+import {ShiftRules} from "@/database/entities/shift-rules.entity";
+import {shiftRulesSeedData} from "@/database/seeds/data/shift-rules.seed";
+import {usersSeedData} from "@/database/seeds/data/users.seed";
+import {rolesSeedData} from "@/database/seeds/data/roles.seed";
 
 @Injectable()
 export class SeederService {

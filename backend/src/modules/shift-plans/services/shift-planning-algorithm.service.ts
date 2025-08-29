@@ -1,11 +1,11 @@
 import {Injectable, Logger} from '@nestjs/common';
-import {Employee} from '@/database/entities';
-import {MonthlyShiftPlan, DayShiftPlan} from '@/database/entities';
 import {BacktrackingAlgorithmService, BacktrackingConfiguration} from './backtracking-algorithm.service';
 import {ConstraintValidationService, ConstraintCheckResult} from './constraint-validation.service';
 import {ShiftPlanningUtilityService} from './shift-planning-utility.service';
 import {EmployeeSortingService} from '../../employees/services/employee-sorting.service';
 import {EmployeeAvailabilityService, AvailabilityMap} from '../../employees/services/employee-availability.service';
+import {Employee} from "@/database/entities/employee.entity";
+import {DayShiftPlan, MonthlyShiftPlan} from "@/database/entities/shift-plan.entity";
 
 export interface ShiftPlanResult {
     shiftPlan: MonthlyShiftPlan;

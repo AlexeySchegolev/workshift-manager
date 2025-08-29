@@ -5,8 +5,6 @@ import helmet from 'helmet';
 import * as compression from 'compression';
 import * as morgan from 'morgan';
 import { AppModule } from './app.module';
-import {DayShiftPlanDto} from "@/modules/shift-plans/dto/day-shift-plan.dto";
-import {MonthlyShiftPlanDto} from "@/modules/shift-plans/dto/monthly-shift-plan.dto";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

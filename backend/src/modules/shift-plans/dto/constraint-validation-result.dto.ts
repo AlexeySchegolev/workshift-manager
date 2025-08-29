@@ -1,7 +1,7 @@
 import { IsString, IsNumber, IsArray, IsBoolean, IsOptional, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ViolationType, ConstraintCategory } from '../../../database/entities/constraint-violation.entity';
+import { ViolationType, ConstraintCategory } from '@/database/entities/constraint-violation.entity';
 
 /**
  * DTO for individual constraint violation details

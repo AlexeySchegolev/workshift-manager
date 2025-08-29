@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { LocationStatus } from '@/database/entities';
 import { EmployeeResponseDto } from '../../employees/dto/employee-response.dto';
 import { LocationStatsDto } from './location-stats.dto';
+import {LocationStatus} from "@/database/entities/location.entity";
 
 export interface TimeSlot {
   /** Start time in HH:MM format */

@@ -2,7 +2,7 @@ import {Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {ShiftPlanningAvailability} from '@/database/entities/shift-planning-availability.entity';
-import {Employee} from '@/database/entities';
+import {Employee} from "@/database/entities/employee.entity";
 
 export interface AvailabilityUpdateData {
   shiftHours: number;

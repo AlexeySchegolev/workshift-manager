@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsEnum, IsOptional, IsEmail, IsUrl, IsNumber, IsBoolean, IsArray, IsObject } from 'class-validator';
-import { OrganizationType, OrganizationStatus } from '@/database/entities';
+import {OrganizationStatus, OrganizationType} from "@/database/entities/organization.entity";
 
 export class CreateOrganizationDto {
   @ApiProperty({

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, Min, IsOptional } from 'class-validator';
+import { IsString, IsNumber, Min } from 'class-validator';
 
 export class ShiftRoleRequirementDto {
   @ApiProperty({

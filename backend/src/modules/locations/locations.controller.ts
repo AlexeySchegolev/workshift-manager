@@ -9,7 +9,6 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  ParseIntPipe,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import {

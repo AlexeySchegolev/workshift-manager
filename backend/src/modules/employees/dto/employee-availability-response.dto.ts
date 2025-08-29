@@ -1,5 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AvailabilityType, AvailabilityStatus, AbsenceReason, RecurrencePattern, WeeklyAvailability } from '@/database/entities';
+import {
+    AbsenceReason,
+    AvailabilityStatus,
+    AvailabilityType,
+    RecurrencePattern, WeeklyAvailability
+} from "@/database/entities/employee-availability.entity";
 
 export class EmployeeAvailabilityResponseDto {
   @ApiProperty({

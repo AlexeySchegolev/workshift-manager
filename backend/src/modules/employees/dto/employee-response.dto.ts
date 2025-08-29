@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EmployeeStatus, ContractType } from '@/database/entities';
 import { LocationResponseDto } from '../../locations/dto/location-response.dto';
 import { RoleResponseDto } from '../../roles/dto/role-response.dto';
 import { EmployeeAvailabilityResponseDto } from './employee-availability-response.dto';
+import {ContractType, EmployeeStatus} from "@/database/entities/employee.entity";
 
 export class EmployeeResponseDto {
   @ApiProperty({

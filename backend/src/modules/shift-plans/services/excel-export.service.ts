@@ -2,11 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as ExcelJS from 'exceljs';
-import { Employee } from '@/database/entities';
-import { ShiftPlan, MonthlyShiftPlan, DayShiftPlan } from '@/database/entities';
 import { ShiftPlanningUtilityService } from './shift-planning-utility.service';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
+import {Employee} from "@/database/entities/employee.entity";
+import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from "@/database/entities/shift-plan.entity";
 
 export interface ExcelExportOptions {
   includeStatistics?: boolean;

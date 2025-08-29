@@ -1,10 +1,6 @@
 import {BadRequestException, Injectable, Logger, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
-import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from '@/database/entities';
-import {Employee} from '@/database/entities';
-import {ShiftRules} from '@/database/entities';
-import {ShiftAssignment} from '@/database/entities';
 import {
     ConstraintCategory,
     ConstraintViolation,
@@ -12,6 +8,10 @@ import {
 } from '@/database/entities/constraint-violation.entity';
 import {CreateShiftPlanDto, GenerateShiftPlanDto, ValidateShiftPlanDto} from './dto/create-shift-plan.dto';
 import {UpdateShiftPlanDto} from './dto/update-shift-plan.dto';
+import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from "@/database/entities/shift-plan.entity";
+import {Employee} from "@/database/entities/employee.entity";
+import {ShiftRules} from "@/database/entities/shift-rules.entity";
+import {ShiftAssignment} from "@/database/entities/shift-assignment.entity";
 
 @Injectable()
 export class ShiftPlansService {

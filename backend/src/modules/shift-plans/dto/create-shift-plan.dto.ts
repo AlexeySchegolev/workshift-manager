@@ -1,6 +1,7 @@
 import { IsInt, IsOptional, IsBoolean, IsString, IsObject, Min, Max, IsEnum, IsUUID, IsDateString, IsNumber } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { MonthlyShiftPlan, ShiftPlanStatus, ApprovalStatus } from '@/database/entities';
+import {ApprovalStatus, MonthlyShiftPlan, ShiftPlanStatus} from "@/database/entities/shift-plan.entity";
+import {MonthlyShiftPlanDto} from "@/modules/shift-plans/dto/monthly-shift-plan.dto";
 
 export class CreateShiftPlanDto {
   @ApiProperty({
@@ -99,7 +100,7 @@ export class CreateShiftPlanDto {
   })
   @IsOptional()
   @IsObject()
-  planData?: MonthlyShiftPlan;
+  planData?: MonthlyShiftPlanDto;
 
   @ApiPropertyOptional({
     description: 'Metadata for the shift plan',

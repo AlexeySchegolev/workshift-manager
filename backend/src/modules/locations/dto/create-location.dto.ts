@@ -1,7 +1,7 @@
 import { IsString, IsInt, IsOptional, IsEmail, IsBoolean, IsArray, ValidateNested, Min, Max, IsEnum, IsNumber, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { TimeSlot, OperatingHours, LocationStatus } from '@/database/entities';
+import {LocationStatus, OperatingHours, TimeSlot} from "@/database/entities/location.entity";
 
 class TimeSlotDto implements TimeSlot {
   @ApiProperty({ 

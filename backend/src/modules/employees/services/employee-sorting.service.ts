@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Employee } from '@/database/entities';
 import { AvailabilityMap } from './employee-availability.service';
+import {Employee} from "@/database/entities/employee.entity";
 
 export enum RolePriority {
   SHIFT_LEADER = 1,

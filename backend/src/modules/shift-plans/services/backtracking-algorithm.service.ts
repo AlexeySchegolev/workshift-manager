@@ -1,12 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Employee } from '@/database/entities';
-import { ShiftPlan, MonthlyShiftPlan, DayShiftPlan } from '@/database/entities';
 import { ConstraintValidationService } from './constraint-validation.service';
 import { ShiftPlanningUtilityService } from './shift-planning-utility.service';
 import { EmployeeSortingService } from '../../employees/services/employee-sorting.service';
 import { EmployeeAvailabilityService, AvailabilityMap } from '../../employees/services/employee-availability.service';
+import {Employee} from "@/database/entities/employee.entity";
+import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from "@/database/entities/shift-plan.entity";
 
 export interface BacktrackingConfiguration {
   maxAttempts: number;
@@ -50,11 +48,7 @@ export class BacktrackingAlgorithmService {
   private readonly logger = new Logger(BacktrackingAlgorithmService.name);
 
   constructor(
-    @InjectRepository(Employee)
-    private employeeRepository: Repository<Employee>,
-    @InjectRepository(ShiftPlan)
-    private shiftPlanRepository: Repository<ShiftPlan>,
-    private constraintValidationService: ConstraintValidationService,
+      private constraintValidationService: ConstraintValidationService,
     private shiftPlanningUtilityService: ShiftPlanningUtilityService,
     private employeeSortingService: EmployeeSortingService,
     private employeeAvailabilityService: EmployeeAvailabilityService,

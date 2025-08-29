@@ -4,7 +4,7 @@ import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { OrganizationResponseDto } from './dto/organization-response.dto';
-import { Organization } from '@/database/entities';
+import {Organization} from "@/database/entities/organization.entity";
 
 @ApiTags('organizations')
 @Controller('api/organizations')

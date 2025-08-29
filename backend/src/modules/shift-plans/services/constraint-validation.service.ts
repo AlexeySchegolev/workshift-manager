@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Employee } from '@/database/entities';
-import { ShiftPlan, MonthlyShiftPlan } from '@/database/entities';
 import { ShiftPlanningRule } from '@/database/entities/shift-planning-rule.entity';
-import { ConstraintViolation } from '@/database/entities';
 import { ShiftPlanningAvailability } from '@/database/entities/shift-planning-availability.entity';
 import { AvailabilityMap } from '../../employees/services/employee-availability.service';
 import { ShiftPlanningUtilityService } from './shift-planning-utility.service';
+import {Employee} from "@/database/entities/employee.entity";
+import {MonthlyShiftPlan} from "@/database/entities/shift-plan.entity";
 
 export interface ConstraintCheckResult {
   isValid: boolean;
@@ -49,15 +48,9 @@ export interface AssignmentContext {
 @Injectable()
 export class ConstraintValidationService {
   constructor(
-    @InjectRepository(Employee)
-    private employeeRepository: Repository<Employee>,
-    @InjectRepository(ShiftPlan)
-    private shiftPlanRepository: Repository<ShiftPlan>,
-    @InjectRepository(ShiftPlanningRule)
+      @InjectRepository(ShiftPlanningRule)
     private shiftPlanningRuleRepository: Repository<ShiftPlanningRule>,
-    @InjectRepository(ConstraintViolation)
-    private constraintViolationRepository: Repository<ConstraintViolation>,
-    private shiftPlanningUtilityService: ShiftPlanningUtilityService,
+      private shiftPlanningUtilityService: ShiftPlanningUtilityService,
   ) {}
 
   /**

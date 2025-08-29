@@ -1,38 +1,42 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-  HttpCode,
-  HttpStatus,
-  ParseUUIDPipe,
-  ParseIntPipe,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Param,
+    ParseIntPipe,
+    ParseUUIDPipe,
+    Patch,
+    Post,
+    Query,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-  ApiQuery,
-  ApiBadRequestResponse,
-  ApiNotFoundResponse,
+    ApiBadRequestResponse,
+    ApiNotFoundResponse,
+    ApiOperation,
+    ApiParam,
+    ApiQuery,
+    ApiResponse,
+    ApiTags,
 } from '@nestjs/swagger';
-import { ShiftPlansService } from './shift-plans.service';
-import { CreateShiftPlanDto, GenerateShiftPlanDto, ValidateShiftPlanDto } from './dto/create-shift-plan.dto';
-import { UpdateShiftPlanDto } from './dto/update-shift-plan.dto';
-import { ShiftPlanResponseDto } from './dto/shift-plan-response.dto';
-import { AdvancedPlanningOptionsDto, OptimizationCriteriaDto } from './dto/advanced-planning-options.dto';
-import { ShiftPlanStatisticsDto } from './dto/shift-plan-statistics.dto';
-import { ConstraintValidationResultDto, BulkValidationRequestDto, ValidationConfigDto } from './dto/constraint-validation-result.dto';
-import { ShiftPlanningAlgorithmService } from './services/shift-planning-algorithm.service';
-import { ConstraintValidationService } from './services/constraint-validation.service';
-import { EmployeeAvailabilityService } from '../employees/services/employee-availability.service';
-import { ExcelExportService } from './services/excel-export.service';
-import { ExcelExportRequestDto, MultipleExcelExportRequestDto, ExcelExportResultDto } from './dto/excel-export.dto';
+import {ShiftPlansService} from './shift-plans.service';
+import {CreateShiftPlanDto, GenerateShiftPlanDto, ValidateShiftPlanDto} from './dto/create-shift-plan.dto';
+import {UpdateShiftPlanDto} from './dto/update-shift-plan.dto';
+import {ShiftPlanResponseDto} from './dto/shift-plan-response.dto';
+import {AdvancedPlanningOptionsDto, OptimizationCriteriaDto} from './dto/advanced-planning-options.dto';
+import {ShiftPlanStatisticsDto} from './dto/shift-plan-statistics.dto';
+import {
+    BulkValidationRequestDto,
+    ConstraintValidationResultDto,
+    ValidationConfigDto
+} from './dto/constraint-validation-result.dto';
+import {ShiftPlanningAlgorithmService} from './services/shift-planning-algorithm.service';
+import {ConstraintValidationService} from './services/constraint-validation.service';
+import {EmployeeAvailabilityService} from '../employees/services/employee-availability.service';
+import {ExcelExportService} from './services/excel-export.service';
+import {ExcelExportRequestDto, ExcelExportResultDto, MultipleExcelExportRequestDto} from './dto/excel-export.dto';
 
 @ApiTags('shift-plans')
 @Controller('api/shift-plans')
@@ -373,13 +377,11 @@ export class ShiftPlansController {
     const employees = await this.shiftPlansService.getEmployeesForPlan(id);
     const availabilityMap = await this.employeeAvailabilityService.getAvailabilityForShiftPlan(id);
 
-    const result = await this.shiftPlanningAlgorithmService.optimizeShiftDistribution(
-      shiftPlan.planData,
-      employees,
-      availabilityMap
+    return await this.shiftPlanningAlgorithmService.optimizeShiftDistribution(
+        shiftPlan.planData,
+        employees,
+        availabilityMap
     );
-
-    return result;
   }
 
   @Get(':id/statistics')

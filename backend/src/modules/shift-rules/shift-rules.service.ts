@@ -1,9 +1,9 @@
 import {BadRequestException, Injectable, Logger, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
-import {ShiftRules} from '@/database/entities';
 import {CreateShiftRulesDto} from './dto/create-shift-rules.dto';
 import {UpdateShiftRulesDto} from './dto/update-shift-rules.dto';
+import {ShiftRules} from "@/database/entities/shift-rules.entity";
 
 @Injectable()
 export class ShiftRulesService {

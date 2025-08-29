@@ -26,15 +26,15 @@ import {EmployeeService} from "@/services";
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 
 /**
- * Moderne Mitarbeiterverwaltungs-Seite im Dashboard-Style
+ * Modern Employee Management Page in Dashboard Style
  */
 const EmployeePage: React.FC = () => {
     const theme = useTheme();
 
-    // Mitarbeiterliste über API laden
+    // Load employee list via API
     const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
 
-    // Mitarbeiter beim Laden der Komponente abrufen
+    // Fetch employees when component loads
     useEffect(() => {
         const loadEmployees = async () => {
             try {
@@ -47,41 +47,41 @@ const EmployeePage: React.FC = () => {
         loadEmployees();
     }, []);
 
-    // Animationssteuerung
+    // Animation control
     const [showCards, setShowCards] = useState(false);
     useEffect(() => {
         const timer = setTimeout(() => setShowCards(true), 100);
         return () => clearTimeout(timer);
     }, []);
 
-    // Mitarbeiter aktualisieren (aber nicht in localStorage speichern)
+    // Update employees (but don't save to localStorage)
     const handleEmployeesChange = (updatedEmployees: EmployeeResponseDto[]) => {
         setEmployees(updatedEmployees);
     };
 
-    // Statistiken berechnen
+    // Calculate statistics
     const calculateStatistics = () => {
         const totalEmployees = employees.length;
-        const standortA = employees.filter(emp => emp.locationId !== "2").length;
-        const standortB = employees.filter(emp => emp.locationId === "2").length;
-        const schichtleiter = employees.filter(emp => emp.primaryRoleId === "1").length;
+        const locationA = employees.filter(emp => emp.locationId !== "2").length;
+        const locationB = employees.filter(emp => emp.locationId === "2").length;
+        const shiftLeaders = employees.filter(emp => emp.primaryRoleId === "1").length;
         const specialists = employees.filter(emp => emp.primaryRoleId === "2").length;
         const assistants = employees.filter(emp => emp.primaryRoleId === "3").length;
 
         const totalHours = employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0);
         const avgHours = totalEmployees > 0 ? Math.ceil((totalHours / totalEmployees) * 10) / 10 : 0;
 
-        // Warnungen berechnen
+        // Calculate warnings
         let warnings = 0;
-        if (schichtleiter < 2) warnings++; // Zu wenige Schichtleiter
-        if (totalEmployees < 5) warnings++; // Zu wenige Mitarbeiter insgesamt
-        if (avgHours > 160) warnings++; // Zu hohe durchschnittliche Arbeitszeit
+        if (shiftLeaders < 2) warnings++; // Too few shift leaders
+        if (totalEmployees < 5) warnings++; // Too few employees overall
+        if (avgHours > 160) warnings++; // Too high average working time
 
         return {
             totalEmployees,
-            standortA,
-            standortB,
-            schichtleiter,
+            locationA,
+            locationB,
+            shiftLeaders,
             specialists,
             assistants,
             avgHours,
@@ -92,8 +92,8 @@ const EmployeePage: React.FC = () => {
 
     const stats = calculateStatistics();
 
-    // Schnellaktionen definieren
-    const schnellAktionen = [
+    // Define quick actions
+    const quickActions = [
         {
             id: 'add-employee',
             title: 'Mitarbeiter hinzufügen',
@@ -101,7 +101,7 @@ const EmployeePage: React.FC = () => {
             icon: <PersonAddIcon/>,
             color: 'success' as const,
             onClick: () => {
-                // Scroll zum Formular
+                // Scroll to form
                 const formElement = document.querySelector('[data-testid="employee-form"]');
                 if (formElement) {
                     formElement.scrollIntoView({behavior: 'smooth'});
@@ -115,7 +115,7 @@ const EmployeePage: React.FC = () => {
             icon: <AssessmentIcon/>,
             color: 'info' as const,
             onClick: () => {
-                // TODO: Excel-Export implementieren
+                // TODO: Implement Excel export
                 console.log('Excel-Export für Mitarbeiterliste');
             },
         },
@@ -126,7 +126,7 @@ const EmployeePage: React.FC = () => {
             icon: <BusinessIcon/>,
             color: 'warning' as const,
             onClick: () => {
-                // TODO: Rollenverwaltung implementieren
+                // TODO: Implement role management
                 console.log('Rollenverwaltung öffnen');
             },
         },
@@ -137,13 +137,13 @@ const EmployeePage: React.FC = () => {
             icon: <ScheduleIcon/>,
             color: 'primary' as const,
             onClick: () => {
-                // TODO: Arbeitszeitanalyse implementieren
+                // TODO: Implement working time analysis
                 console.log('Arbeitszeitanalyse öffnen');
             },
         },
     ];
 
-    // Status-Items für die Ampel
+    // Status items for the status light
     const statusItems = [
         {
             id: 'total-employees',
@@ -158,19 +158,19 @@ const EmployeePage: React.FC = () => {
             id: 'shift-leaders',
             title: 'Schichtleiter',
             description: 'Anzahl der verfügbaren Schichtleiter',
-            status: stats.schichtleiter >= 3 ? 'success' : stats.schichtleiter >= 2 ? 'warning' : 'error',
-            value: stats.schichtleiter,
+            status: stats.shiftLeaders >= 3 ? 'success' : stats.shiftLeaders >= 2 ? 'warning' : 'error',
+            value: stats.shiftLeaders,
             maxValue: 5,
-            details: stats.schichtleiter < 3 ? ['Mindestens 3 Schichtleiter für kontinuierliche Abdeckung empfohlen'] : undefined,
+            details: stats.shiftLeaders < 3 ? ['Mindestens 3 Schichtleiter für kontinuierliche Abdeckung empfohlen'] : undefined,
         } as const,
         {
             id: 'location-distribution',
             title: 'Standortverteilung',
             description: 'Verteilung der Mitarbeiter auf beide Standorte',
-            status: stats.standortB >= 2 && stats.standortA >= 3 ? 'success' : 'warning',
-            value: Math.min(stats.standortA, stats.standortB),
-            maxValue: Math.max(stats.standortA, stats.standortB),
-            details: stats.standortB < 2 ? ['Zu wenige Mitarbeiter für Standort B'] : undefined,
+            status: stats.locationB >= 2 && stats.locationA >= 3 ? 'success' : 'warning',
+            value: Math.min(stats.locationA, stats.locationB),
+            maxValue: Math.max(stats.locationA, stats.locationB),
+            details: stats.locationB < 2 ? ['Zu wenige Mitarbeiter für Standort B'] : undefined,
         } as const,
         {
             id: 'working-hours',
@@ -185,7 +185,7 @@ const EmployeePage: React.FC = () => {
 
     return (
         <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>
-            {/* Hero-Bereich */}
+            {/* Hero section */}
             <Fade in timeout={800}>
                 <Paper
                     elevation={0}
@@ -240,7 +240,7 @@ const EmployeePage: React.FC = () => {
                             <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
                                 <BusinessIcon sx={{color: 'info.main', fontSize: '1.2rem'}}/>
                                 <Typography variant="body2" color="text.secondary">
-                                    {stats.standortA} Standort A • {stats.standortB} Standort B
+                                    {stats.locationA} Standort A • {stats.locationB} Standort B
                                 </Typography>
                             </Box>
                             <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
@@ -282,10 +282,10 @@ const EmployeePage: React.FC = () => {
                     />
                     <StatistikCard
                         title="Schichtleiter"
-                        value={stats.schichtleiter}
+                        value={stats.shiftLeaders}
                         subtitle="Verfügbare Schichtleiter"
                         icon={<BusinessIcon/>}
-                        color={stats.schichtleiter >= 3 ? 'success' : stats.schichtleiter >= 2 ? 'warning' : 'error'}
+                        color={stats.shiftLeaders >= 3 ? 'success' : stats.shiftLeaders >= 2 ? 'warning' : 'error'}
                     />
                     <StatistikCard
                         title="Ø Arbeitszeit"
@@ -317,14 +317,14 @@ const EmployeePage: React.FC = () => {
                         mb: 4,
                     }}
                 >
-                    {/* Schnellaktionen */}
+                    {/* Quick actions */}
                     <SchnellAktionen
-                        aktionen={schnellAktionen}
+                        aktionen={quickActions}
                         title="Schnellaktionen"
                         maxItems={4}
                     />
 
-                    {/* Status-Ampel */}
+                    {/* Status light */}
                     <StatusAmpel
                         statusItems={statusItems}
                         title="Personalstatus"
@@ -333,7 +333,7 @@ const EmployeePage: React.FC = () => {
                 </Box>
             </Fade>
 
-            {/* Mitarbeiterverwaltung - volle Breite */}
+            {/* Employee management - full width */}
             <Fade in={showCards} timeout={1400}>
                 <Paper
                     sx={{
@@ -351,7 +351,7 @@ const EmployeePage: React.FC = () => {
                 </Paper>
             </Fade>
 
-            {/* Zusätzliche Informationen */}
+            {/* Additional information */}
             <Fade in={showCards} timeout={1400}>
                 <Paper
                     sx={{

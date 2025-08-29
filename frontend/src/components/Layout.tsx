@@ -33,7 +33,7 @@ interface LayoutProps {
 }
 
 /**
- * Layout-Komponente mit Navigation
+ * Layout Component with Navigation
  */
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -235,7 +235,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 );
               })}
               
-              {/* Zusätzliche Header-Aktionen */}
+              {/* Additional header actions */}
               <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
                 <IconButton
                   size="small"
@@ -272,7 +272,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         open={drawerOpen}
         onClose={handleDrawerToggle}
         ModalProps={{
-          keepMounted: true, // Bessere Performance auf Mobilgeräten
+          keepMounted: true, // Better performance on mobile devices
         }}
       >
         {drawer}

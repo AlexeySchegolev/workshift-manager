@@ -52,7 +52,7 @@ interface EmployeeManagementProps {
 }
 
 /**
- * Moderne Mitarbeiterverwaltung im Dashboard-Style
+ * Modern Employee Management in Dashboard Style
  */
 const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                                                                    employees,
@@ -60,7 +60,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                                                                }) => {
     const theme = useTheme();
 
-    // Formularstatus
+    // Form state
     const [name, setName] = useState('');
     const [primaryRole, setPrimaryRole] = useState<RoleResponseDto | null>(null);
     const [location, setLocation] = useState<LocationResponseDto | null>(null);
@@ -73,11 +73,11 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         location?: string;
     }>({});
 
-    // Dialog-Status
+    // Dialog state
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [employeeToDelete, setEmployeeToDelete] = useState<EmployeeResponseDto | null>(null);
 
-    // Snackbar-Status
+    // Snackbar state
     const [snackbar, setSnackbar] = useState<{
         open: boolean;
         message: string;
@@ -88,7 +88,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         severity: 'info'
     });
 
-    // Formular zurücksetzen
+    // Reset form
     const resetForm = () => {
         setName('');
         setPrimaryRole(null);
@@ -98,7 +98,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         setErrors({});
     };
 
-    // Mitarbeiter zum Bearbeiten laden
+    // Load employee for editing
     const handleEditEmployee = (employee: EmployeeResponseDto) => {
         setName(employee.lastName);
         setPrimaryRole(employee.primaryRole ?? null);
@@ -108,19 +108,19 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         setErrors({});
     };
 
-    // Dialog zum Löschen eines Mitarbeiters öffnen
+    // Open dialog to delete employee
     const handleOpenDeleteDialog = (employee: EmployeeResponseDto) => {
         setEmployeeToDelete(employee);
         setDeleteDialogOpen(true);
     };
 
-    // Dialog zum Löschen eines Mitarbeiters schließen
+    // Close dialog to delete employee
     const handleCloseDeleteDialog = () => {
         setDeleteDialogOpen(false);
         setEmployeeToDelete(null);
     };
 
-    // Mitarbeiter löschen
+    // Delete employee
     const handleDeleteEmployee = () => {
         if (employeeToDelete) {
             const updatedEmployees = employees.filter(emp => emp.id !== employeeToDelete.id);
@@ -136,7 +136,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         }
     };
 
-    // Formular validieren
+    // Validate form
     const validateForm = (): boolean => {
         const newErrors: {
             name?: string;
@@ -171,7 +171,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         return Object.keys(newErrors).length === 0;
     };
 
-    // Mitarbeiter speichern (hinzufügen oder aktualisieren)
+    // Save employee (add or update)
     const handleSaveEmployee = () => {
         if (!validateForm()) return;
 
@@ -180,7 +180,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         let updatedEmployees: EmployeeResponseDto[];
 
         if (editingId) {
-            // Bestehenden Mitarbeiter aktualisieren
+            // Update existing employee
             updatedEmployees = employees.map(emp =>
                 emp.id === editingId
                     ? {
@@ -200,7 +200,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                 severity: 'success'
             });
         } else {
-            // Neuen Mitarbeiter hinzufügen
+            // Add new employee
             const newEmployee: EmployeeResponseDto = {
                 contractType: "full_time",
                 createdAt: "",
@@ -239,12 +239,12 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         resetForm();
     };
 
-    // Snackbar schließen
+    // Close snackbar
     const handleCloseSnackbar = () => {
         setSnackbar(prev => ({...prev, open: false}));
     };
 
-    // Rolle-spezifische Farben
+    // Role-specific colors
     const getRoleColor = (role?: RoleResponseDto) => {
         switch (role?.type) {
             case 'shift_leader':
@@ -258,7 +258,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         }
     };
 
-    // Avatar-Initialen generieren
+    // Generate avatar initials
     const getInitials = (name: string | undefined | null) => {
         if (!name) {
             return '??';
@@ -268,7 +268,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
 
     return (
         <Box sx={{display: 'flex', flexDirection: 'column', gap: 4}}>
-            {/* Statistik-Cards */}
+            {/* Statistics Cards */}
             <Fade in timeout={600}>
                 <Box
                     sx={{
@@ -281,12 +281,12 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                         gap: 3,
                     }}
                 >
-                    {/* Statistik-Cards Inhalt bleibt unverändert */}
+                    {/* Statistics Cards content remains unchanged */}
                     {/* ... (rest of the existing code) ... */}
                 </Box>
             </Fade>
 
-            {/* Formular zum Hinzufügen/Bearbeiten von Mitarbeitern */}
+            {/* Form for adding/editing employees */}
             <Fade in timeout={800}>
                 <Card
                     sx={{
@@ -425,7 +425,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                 </Card>
             </Fade>
 
-            {/* Tabelle mit bestehenden Mitarbeitern */}
+            {/* Table with existing employees */}
             <Fade in timeout={1000}>
                 <Card
                     sx={{
@@ -590,7 +590,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                 </Card>
             </Fade>
 
-            {/* Bestätigungsdialog zum Löschen */}
+            {/* Confirmation dialog for deletion */}
             <Dialog
                 open={deleteDialogOpen}
                 onClose={handleCloseDeleteDialog}
@@ -639,7 +639,7 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
                 </DialogActions>
             </Dialog>
 
-            {/* Snackbar für Benachrichtigungen */}
+            {/* Snackbar for notifications */}
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={6000}

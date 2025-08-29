@@ -11,15 +11,15 @@ import ShiftRuleManager from '../components/ShiftRuleManager';
 import { ShiftRulesResponseDto } from '../api/data-contracts';
 
 /**
- * Seite zur Anzeige aller Schichtregeln
- * Zeigt eine übersichtliche Darstellung aller Regeln für die Schichtplanung
+ * Page for displaying all shift rules
+ * Shows a clear overview of all rules for shift planning
  */
 const ShiftRulesPage: React.FC = () => {
 
   const handleSaveConfiguration = (config: ShiftRulesResponseDto) => {
-    // Hier würde die Konfiguration gespeichert werden
+    // Here the configuration would be saved
     console.log('Schichtregeln-Konfiguration gespeichert:', config);
-    // TODO: Integration mit Backend/LocalStorage
+    // TODO: Integration with Backend/LocalStorage
     alert('Schichtregeln-Konfiguration wurde gespeichert!');
   };
 
@@ -41,7 +41,7 @@ const ShiftRulesPage: React.FC = () => {
         </Alert>
       </Box>
 
-      {/* Schichtregeln Konfiguration */}
+      {/* Shift rules configuration */}
       <ShiftRuleManager onSave={handleSaveConfiguration} />
     </Container>
   );

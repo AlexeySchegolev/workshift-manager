@@ -55,7 +55,7 @@ interface RoleFormData {
 }
 
 /**
- * Komponente für die Verwaltung von Rollen
+ * Component for Role Management
  */
 const RoleManagement: React.FC = () => {
   const [roles, setRoles] = useState<RoleResponseDto[]>([]);
@@ -83,7 +83,7 @@ const RoleManagement: React.FC = () => {
     type: 'other',
   });
 
-  // Daten laden
+  // Load data
   useEffect(() => {
     loadData();
   }, []);
@@ -100,7 +100,7 @@ const RoleManagement: React.FC = () => {
       setAvailableSkills(roleService.extractAvailableSkills(roles));
     } catch (error) {
       showAlert('error', 'Fehler beim Laden der Daten');
-      console.error('Fehler beim Laden der Rollen-Daten:', error);
+      console.error('Error loading role data:', error);
     }
   };
 
@@ -150,7 +150,7 @@ const RoleManagement: React.FC = () => {
   const handleSaveRole = async () => {
     try {
       if (editingRole) {
-        // Rolle aktualisieren
+        // Update role
         const updateData: UpdateRoleDto = {
           name: formData.name,
           description: formData.description,
@@ -166,7 +166,7 @@ const RoleManagement: React.FC = () => {
         await roleService.updateRole(editingRole.id, updateData);
         showAlert('success', 'Rolle erfolgreich aktualisiert');
       } else {
-        // Neue Rolle erstellen
+        // Create new role
         const createData: CreateRoleDto = {
           name: formData.name,
           description: formData.description,
@@ -188,7 +188,7 @@ const RoleManagement: React.FC = () => {
       handleCloseDialog();
     } catch (error) {
       showAlert('error', 'Fehler beim Speichern der Rolle');
-      console.error('Fehler beim Speichern der Rolle:', error);
+      console.error('Error saving role:', error);
     }
   };
 
@@ -423,7 +423,7 @@ const RoleManagement: React.FC = () => {
         ))}
       </Box>
 
-      {/* Dialog für Rolle erstellen/bearbeiten */}
+      {/* Dialog for creating/editing role */}
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="md" fullWidth>
         <DialogTitle>
           {editingRole ? 'Rolle bearbeiten' : 'Neue Rolle erstellen'}
@@ -573,7 +573,7 @@ const RoleManagement: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Lösch-Bestätigung */}
+      {/* Delete confirmation */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Rolle löschen</DialogTitle>
         <DialogContent>

@@ -12,8 +12,8 @@ import RoleManagementPage from './pages/RoleManagementPage';
 import { extendedTheme } from './theme/extendedTheme';
 
 /**
- * Hauptkomponente der Anwendung
- * Definiert Routing und Theme
+ * Main application component
+ * Defines routing and theme
  */
 const App: React.FC = () => {
   return (
@@ -28,7 +28,7 @@ const App: React.FC = () => {
             <Route path="/standorte" element={<LocationManagementPage />} />
             <Route path="/rollen" element={<RoleManagementPage />} />
             <Route path="/schichtregeln" element={<ShiftRulesPage />} />
-            {/* Fallback-Route zur Startseite */}
+            {/* Fallback route to homepage */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Layout>

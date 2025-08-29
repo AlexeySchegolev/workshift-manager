@@ -89,7 +89,7 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerCountByOrganization
-   * @summary Anzahl Rollen pro Organisation
+   * @summary Count roles by organization
    * @request GET:/api/roles/organization/{organizationId}/count
    */
   rolesControllerCountByOrganization = (
@@ -111,7 +111,7 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerCreate
-   * @summary Neue Rolle erstellen
+   * @summary Create new role
    * @request POST:/api/roles
    */
   rolesControllerCreate = (data: CreateRoleDto, params: RequestParams = {}) =>
@@ -127,12 +127,12 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerFindAll
-   * @summary Alle Rollen abrufen
+   * @summary Get all roles
    * @request GET:/api/roles
    */
   rolesControllerFindAll = (
     query?: {
-      /** Verwandte Entitäten einbeziehen */
+      /** Include related entities */
       includeRelations?: boolean;
     },
     params: RequestParams = {}
@@ -148,15 +148,15 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerFindByOrganization
-   * @summary Rollen nach Organisation abrufen
+   * @summary Get roles by organization
    * @request GET:/api/roles/organization/{organizationId}
    */
   rolesControllerFindByOrganization = (
     organizationId: string,
     query?: {
-      /** Nur aktive Rollen */
+      /** Only active roles */
       activeOnly?: boolean;
-      /** Verwandte Entitäten einbeziehen */
+      /** Include related entities */
       includeRelations?: boolean;
     },
     params: RequestParams = {}
@@ -172,7 +172,7 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerFindByType
-   * @summary Rollen nach Typ und Organisation
+   * @summary Get roles by type and organization
    * @request GET:/api/roles/organization/{organizationId}/type/{type}
    */
   rolesControllerFindByType = (
@@ -190,13 +190,13 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerFindOne
-   * @summary Rolle nach ID abrufen
+   * @summary Get role by ID
    * @request GET:/api/roles/{id}
    */
   rolesControllerFindOne = (
     id: string,
     query?: {
-      /** Verwandte Entitäten einbeziehen */
+      /** Include related entities */
       includeRelations?: boolean;
     },
     params: RequestParams = {}
@@ -212,7 +212,7 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerHardRemove
-   * @summary Rolle permanent löschen
+   * @summary Permanently delete role
    * @request DELETE:/api/roles/{id}/hard
    */
   rolesControllerHardRemove = (id: string, params: RequestParams = {}) =>
@@ -225,7 +225,7 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerRemove
-   * @summary Rolle soft-löschen
+   * @summary Soft delete role
    * @request DELETE:/api/roles/{id}
    */
   rolesControllerRemove = (id: string, params: RequestParams = {}) =>
@@ -238,7 +238,7 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerRestore
-   * @summary Gelöschte Rolle wiederherstellen
+   * @summary Restore deleted role
    * @request POST:/api/roles/{id}/restore
    */
   rolesControllerRestore = (id: string, params: RequestParams = {}) =>
@@ -252,7 +252,7 @@ export class Roles<SecurityDataType = unknown> {
    *
    * @tags roles
    * @name RolesControllerUpdate
-   * @summary Rolle aktualisieren
+   * @summary Update role
    * @request PATCH:/api/roles/{id}
    */
   rolesControllerUpdate = (

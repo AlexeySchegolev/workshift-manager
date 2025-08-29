@@ -31,23 +31,23 @@ import { employeeService } from '@/services';
 import { EmployeeResponseDto } from '../api/data-contracts';
 
 /**
- * Professionelle Dashboard-Startseite
+ * Professional Dashboard Homepage
  */
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const dashboardActions = useDashboardActions();
 
-  // State für aktuelle Daten
+  // State for current data
   const [selectedDate] = useState<Date>(new Date());
-  const [currentShiftPlan] = useState(null); // TODO: Aktuellen Schichtplan laden
-  const [constraints] = useState([]); // TODO: Aktuelle Constraints laden
-  
-  // Mitarbeiterliste über API laden
+  const [currentShiftPlan] = useState(null); // TODO: Load current shift plan
+  const [constraints] = useState([]); // TODO: Load current constraints
+
+  // Load employee list via API
   const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
   const [loadingEmployees, setLoadingEmployees] = useState(true);
 
-  // Mitarbeiter beim Laden der Komponente abrufen
+  // Fetch employees when component loads
   useEffect(() => {
     const loadEmployees = async () => {
       try {
@@ -55,7 +55,7 @@ const HomePage: React.FC = () => {
         const employees = await employeeService.getAllEmployees();
         setEmployees(employees);
       } catch (error) {
-        console.error('Fehler beim Laden der Mitarbeiter:', error);
+        console.error('Error loading employees:', error);
       } finally {
         setLoadingEmployees(false);
       }
@@ -64,26 +64,26 @@ const HomePage: React.FC = () => {
     loadEmployees();
   }, []);
 
-  // Dashboard-Daten laden
-  const { statistiken, aktuelleWoche, statusItems, isLoading } = useDashboardData(
-    employees, // Jetzt werden die geladenen Mitarbeiter übergeben
+  // Load dashboard data
+  const { statistics, currentWeek, statusItems, isLoading } = useDashboardData(
+    employees, // Now the loaded employees are passed
     currentShiftPlan,
     constraints,
     selectedDate
   );
 
-  // Schnellaktionen definieren
-  const schnellAktionen = createDefaultSchnellAktionen(
+  // Define quick actions
+  const quickActions = createDefaultSchnellAktionen(
     () => navigate('/schichtplanung'),
     () => navigate('/mitarbeiter'),
     dashboardActions.exportCurrentPlan,
     dashboardActions.openSettings,
     dashboardActions.viewReports,
     !!currentShiftPlan,
-    statistiken.aktuelleWarnungen
+    statistics.currentWarnings
   );
 
-  // Animationsdelay für Cards
+  // Animation delay for cards
   const [showCards, setShowCards] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => setShowCards(true), 100);
@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 3 }}>
-      {/* Hero-Bereich */}
+      {/* Hero section */}
       <Fade in timeout={800}>
         <Paper
           elevation={0}
@@ -148,7 +148,7 @@ const HomePage: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <PeopleIcon sx={{ color: 'success.main', fontSize: '1.2rem' }} />
                 <Typography variant="body2" color="text.secondary">
-                  {statistiken.mitarbeiterAnzahl} Mitarbeiter aktiv
+                  {statistics.employeeCount} Mitarbeiter aktiv
                 </Typography>
               </Box>
             </Box>
@@ -172,7 +172,7 @@ const HomePage: React.FC = () => {
         >
           <StatistikCard
             title="Mitarbeiter"
-            value={statistiken.mitarbeiterAnzahl}
+            value={statistics.employeeCount}
             subtitle="Aktive Mitarbeiter"
             icon={<PeopleIcon />}
             color="primary"
@@ -185,30 +185,30 @@ const HomePage: React.FC = () => {
           />
           <StatistikCard
             title="Schichtabdeckung"
-            value={`${statistiken.schichtAbdeckung}%`}
+            value={`${statistics.shiftCoverage}%`}
             subtitle="Geplante Schichten"
             icon={<ScheduleIcon />}
-            color={statistiken.schichtAbdeckung >= 90 ? 'success' : statistiken.schichtAbdeckung >= 70 ? 'warning' : 'error'}
+            color={statistics.shiftCoverage >= 90 ? 'success' : statistics.shiftCoverage >= 70 ? 'warning' : 'error'}
             onClick={() => navigate('/schichtplanung')}
           />
           <StatistikCard
             title="Ø Auslastung"
-            value={`${statistiken.durchschnittlicheAuslastung.toFixed(1)}h`}
+            value={`${statistics.averageWorkload.toFixed(1)}h`}
             subtitle="Pro Mitarbeiter/Monat"
             icon={<TrendingUpIcon />}
-            color={statistiken.durchschnittlicheAuslastung <= 160 ? 'success' : 'warning'}
+            color={statistics.averageWorkload <= 160 ? 'success' : 'warning'}
           />
           <StatistikCard
             title="Warnungen"
-            value={statistiken.aktuelleWarnungen + statistiken.regelverletzungen}
+            value={statistics.currentWarnings + statistics.ruleViolations}
             subtitle="Aktuelle Probleme"
             icon={<WarningIcon />}
-            color={statistiken.aktuelleWarnungen + statistiken.regelverletzungen === 0 ? 'success' : 'warning'}
+            color={statistics.currentWarnings + statistics.ruleViolations === 0 ? 'success' : 'warning'}
           />
         </Box>
       </Fade>
 
-      {/* Hauptinhalt */}
+      {/* Main content */}
       <Fade in={showCards} timeout={1200}>
         <Box
           sx={{
@@ -221,27 +221,27 @@ const HomePage: React.FC = () => {
             mb: 4,
           }}
         >
-          {/* Wochenübersicht */}
+          {/* Week overview */}
           <WochenUebersicht
-            woche={aktuelleWoche}
+            woche={currentWeek}
             selectedDate={selectedDate}
             onDateSelect={(date) => {
-              // TODO: Datum auswählen und zur Schichtplanung navigieren
+              // TODO: Select date and navigate to shift planning
               navigate('/schichtplanung');
             }}
             title="Aktuelle Woche"
           />
 
-          {/* Schnellaktionen */}
+          {/* Quick actions */}
           <SchnellAktionen
-            aktionen={schnellAktionen}
+            aktionen={quickActions}
             title="Schnellaktionen"
             maxItems={5}
           />
         </Box>
       </Fade>
 
-      {/* Status-Übersicht */}
+      {/* Status overview */}
       <Fade in={showCards} timeout={1400}>
         <Box sx={{ mb: 4 }}>
           <StatusAmpel
@@ -252,7 +252,7 @@ const HomePage: React.FC = () => {
         </Box>
       </Fade>
 
-      {/* Zusätzliche Informationen */}
+      {/* Additional information */}
       <Fade in={showCards} timeout={1600}>
         <Box sx={{ mt: 4 }}>
           <Paper

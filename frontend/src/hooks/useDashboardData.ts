@@ -14,25 +14,25 @@ type Employee = EmployeeResponseDto;
 type MonthlyShiftPlanData = Record<string, Record<string, string[]> | null>;
 
 // Dashboard statistics interface using data-contracts concepts
-interface DashboardStatistiken {
-  mitarbeiterAnzahl: number;
-  schichtAbdeckung: number;
-  durchschnittlicheAuslastung: number;
-  aktuelleWarnungen: number;
-  regelverletzungen: number;
+interface DashboardStatistics {
+  employeeCount: number;
+  shiftCoverage: number;
+  averageWorkload: number;
+  currentWarnings: number;
+  ruleViolations: number;
 }
 
 // Dashboard data interface
 interface DashboardData {
-  statistiken: DashboardStatistiken;
-  aktuelleWoche: WochenTag[];
+  statistics: DashboardStatistics;
+  currentWeek: WochenTag[];
   statusItems: StatusItem[];
   isLoading: boolean;
   error: string | null;
 }
 
 /**
- * Hook für Dashboard-Daten
+ * Hook for Dashboard Data
  */
 export const useDashboardData = (
   employees: Employee[],
@@ -43,151 +43,151 @@ export const useDashboardData = (
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Statistiken berechnen
-  const statistiken = useMemo((): DashboardStatistiken => {
-    const mitarbeiterAnzahl = employees.length;
+  // Calculate statistics
+  const statistics = useMemo((): DashboardStatistics => {
+    const employeeCount = employees.length;
     
-    // Schichtabdeckung berechnen
-    let schichtAbdeckung = 0;
+    // Calculate shift coverage
+    let shiftCoverage = 0;
     if (currentShiftPlan) {
       const totalDays = Object.keys(currentShiftPlan).length;
       const coveredDays = Object.values(currentShiftPlan).filter(day => day !== null).length;
-      schichtAbdeckung = totalDays > 0 ? Math.round((coveredDays / totalDays) * 100) : 0;
+      shiftCoverage = totalDays > 0 ? Math.round((coveredDays / totalDays) * 100) : 0;
     }
 
-    // Durchschnittliche Auslastung berechnen
-    let durchschnittlicheAuslastung = 0;
+    // Calculate average workload
+    let averageWorkload = 0;
     if (employees.length > 0) {
       const totalHours = employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0);
-      durchschnittlicheAuslastung = Math.ceil((totalHours / employees.length) * 10) / 10;
+      averageWorkload = Math.ceil((totalHours / employees.length) * 10) / 10;
     }
 
-    // Warnungen und Regelverletzungen zählen
-    const aktuelleWarnungen = constraints.filter(c => c.type === 'warning').length;
-    const regelverletzungen = constraints.filter(c => c.type === 'hard' || c.type === 'soft').length;
+    // Count warnings and rule violations
+    const currentWarnings = constraints.filter(c => c.type === 'warning').length;
+    const ruleViolations = constraints.filter(c => c.type === 'hard' || c.type === 'soft').length;
 
     return {
-      mitarbeiterAnzahl,
-      schichtAbdeckung,
-      durchschnittlicheAuslastung,
-      aktuelleWarnungen,
-      regelverletzungen,
+      employeeCount,
+      shiftCoverage,
+      averageWorkload,
+      currentWarnings,
+      ruleViolations,
     };
   }, [employees, currentShiftPlan, constraints]);
 
-  // Aktuelle Woche generieren
-  const aktuelleWoche = useMemo((): WochenTag[] => {
-    const startDerWoche = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Montag als Wochenstart
-    const wocheTage: WochenTag[] = [];
+  // Generate current week
+  const currentWeek = useMemo((): WochenTag[] => {
+    const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday as week start
+    const weekDays: WochenTag[] = [];
 
     for (let i = 0; i < 7; i++) {
-      const datum = addDays(startDerWoche, i);
-      const dateKey = format(datum, 'dd.MM.yyyy');
-      
-      // Schichten für diesen Tag aus dem aktuellen Plan extrahieren
-      const schichten: { [schichtName: string]: number } = {};
+      const date = addDays(weekStart, i);
+      const dateKey = format(date, 'dd.MM.yyyy');
+
+      // Extract shifts for this day from current plan
+      const shifts: { [shiftName: string]: number } = {};
       
       if (currentShiftPlan && currentShiftPlan[dateKey]) {
         const dayPlan = currentShiftPlan[dateKey];
         if (dayPlan) {
           Object.entries(dayPlan).forEach(([shiftName, employeeIds]) => {
             if (employeeIds && employeeIds.length > 0) {
-              schichten[shiftName] = employeeIds.length;
+              shifts[shiftName] = employeeIds.length;
             }
           });
         }
       }
 
-      const istWochenende = datum.getDay() === 0 || datum.getDay() === 6;
-      
-      wocheTage.push({
-        datum,
-        schichten,
-        istWochenende,
-        istFeiertag: false, // TODO: Feiertage implementieren
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+
+      weekDays.push({
+        datum: date,
+        schichten: shifts,
+        istWochenende: isWeekend,
+        istFeiertag: false, // TODO: Implement holidays
       });
     }
 
-    return wocheTage;
+    return weekDays;
   }, [selectedDate, currentShiftPlan]);
 
-  // Status-Items generieren
+  // Generate status items
   const statusItems = useMemo((): StatusItem[] => {
     const items: StatusItem[] = [];
 
-    // Mitarbeiter-Status
+    // Employee status
     items.push({
       id: 'employees',
       title: 'Mitarbeiter',
       description: 'Verfügbare Mitarbeiter im System',
-      status: statistiken.mitarbeiterAnzahl >= 8 ? 'success' : 
-              statistiken.mitarbeiterAnzahl >= 5 ? 'warning' : 'error',
-      value: statistiken.mitarbeiterAnzahl,
+      status: statistics.employeeCount >= 8 ? 'success' : 
+              statistics.employeeCount >= 5 ? 'warning' : 'error',
+      value: statistics.employeeCount,
       maxValue: 15,
-      details: statistiken.mitarbeiterAnzahl < 5 ? 
+      details: statistics.employeeCount < 5 ? 
         ['Zu wenige Mitarbeiter für optimale Schichtplanung'] : undefined,
     });
 
-    // Schichtabdeckung-Status
+    // Shift coverage status
     items.push({
       id: 'coverage',
       title: 'Schichtabdeckung',
       description: 'Prozent der geplanten Schichten im aktuellen Monat',
-      status: statistiken.schichtAbdeckung >= 95 ? 'success' : 
-              statistiken.schichtAbdeckung >= 80 ? 'warning' : 'error',
-      value: statistiken.schichtAbdeckung,
+      status: statistics.shiftCoverage >= 95 ? 'success' : 
+              statistics.shiftCoverage >= 80 ? 'warning' : 'error',
+      value: statistics.shiftCoverage,
       maxValue: 100,
-      details: statistiken.schichtAbdeckung < 95 ? 
+      details: statistics.shiftCoverage < 95 ? 
         ['Unvollständige Schichtabdeckung'] : undefined,
     });
 
-    // Regelverletzungen-Status
-    if (statistiken.regelverletzungen > 0) {
+    // Rule violations status
+    if (statistics.ruleViolations > 0) {
       items.push({
         id: 'violations',
         title: 'Regelverletzungen',
         description: 'Kritische Regelverletzungen im aktuellen Plan',
         status: 'error',
-        value: statistiken.regelverletzungen,
+        value: statistics.ruleViolations,
         maxValue: 0,
-        details: [`${statistiken.regelverletzungen} kritische Regelverletzungen gefunden`],
+        details: [`${statistics.ruleViolations} kritische Regelverletzungen gefunden`],
       });
     }
 
-    // Warnungen-Status
-    if (statistiken.aktuelleWarnungen > 0) {
+    // Warnings status
+    if (statistics.currentWarnings > 0) {
       items.push({
         id: 'warnings',
         title: 'Warnungen',
         description: 'Warnungen und Optimierungsvorschläge',
         status: 'warning',
-        value: statistiken.aktuelleWarnungen,
+        value: statistics.currentWarnings,
         maxValue: 0,
-        details: [`${statistiken.aktuelleWarnungen} Warnungen vorhanden`],
+        details: [`${statistics.currentWarnings} Warnungen vorhanden`],
       });
     }
 
-    // Auslastung-Status
+    // Workload status
     items.push({
       id: 'workload',
       title: 'Durchschnittliche Auslastung',
       description: 'Durchschnittliche Monatsstunden pro Mitarbeiter',
-      status: statistiken.durchschnittlicheAuslastung <= 160 && statistiken.durchschnittlicheAuslastung >= 120 ? 'success' :
-              statistiken.durchschnittlicheAuslastung <= 180 ? 'warning' : 'error',
-      value: statistiken.durchschnittlicheAuslastung,
+      status: statistics.averageWorkload <= 160 && statistics.averageWorkload >= 120 ? 'success' :
+              statistics.averageWorkload <= 180 ? 'warning' : 'error',
+      value: statistics.averageWorkload,
       maxValue: 160,
-      details: statistiken.durchschnittlicheAuslastung > 160 ? 
+      details: statistics.averageWorkload > 160 ? 
         ['Überdurchschnittliche Arbeitsbelastung'] : 
-        statistiken.durchschnittlicheAuslastung < 120 ? 
+        statistics.averageWorkload < 120 ? 
         ['Unterdurchschnittliche Arbeitsbelastung'] : undefined,
     });
 
     return items;
-  }, [statistiken]);
+  }, [statistics]);
 
   return {
-    statistiken,
-    aktuelleWoche,
+    statistics,
+    currentWeek,
     statusItems,
     isLoading,
     error,
@@ -195,7 +195,7 @@ export const useDashboardData = (
 };
 
 /**
- * Hook für Dashboard-Aktionen
+ * Hook for Dashboard Actions
  */
 export const useDashboardActions = () => {
   const navigateToShiftPlanning = () => {
@@ -207,17 +207,17 @@ export const useDashboardActions = () => {
   };
 
   const exportCurrentPlan = () => {
-    // TODO: Excel-Export implementieren
+    // TODO: Implement Excel export
     console.log('Excel-Export wird implementiert...');
   };
 
   const openSettings = () => {
-    // TODO: Einstellungen-Dialog implementieren
+    // TODO: Implement settings dialog
     console.log('Einstellungen werden implementiert...');
   };
 
   const viewReports = () => {
-    // TODO: Berichte-Seite implementieren
+    // TODO: Implement reports page
     console.log('Berichte werden implementiert...');
   };
 

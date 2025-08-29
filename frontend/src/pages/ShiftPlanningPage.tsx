@@ -34,61 +34,61 @@ import {ConstraintViolationDto, EmployeeResponseDto, MonthlyShiftPlanDto, Employ
 import { shiftPlanningService } from '@/services';
 
 /**
- * Moderne Schichtplanungs-Seite im Dashboard-Style
+ * Modern Shift Planning Page in Dashboard Style
  */
 const ShiftPlanningPage: React.FC = () => {
     const theme = useTheme();
 
-    // Ausgewähltes Datum
+    // Selected date
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-    // Mitarbeiterliste - über API laden
+    // Employee list - load via API
     const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
 
-    // Mitarbeiter beim Laden der Komponente abrufen
+    // Fetch employees when component loads
     useEffect(() => {
         const loadEmployees = async () => {
             try {
                 const employees = await new EmployeeService().getAllEmployees();
                 setEmployees(employees);
             } catch (error) {
-                console.error('Fehler beim Laden der Mitarbeiter:', error);
+                console.error('Error loading employees:', error);
             }
         };
 
         loadEmployees();
     }, []);
 
-    // Schichtplan
+    // Shift plan
     const [shiftPlan, setShiftPlan] = useState<MonthlyShiftPlanDto | null>(null);
 
-    // Regelverletzungen
+    // Rule violations
     const [constraints, setConstraints] = useState<ConstraintViolationDto[]>([]);
 
-    // Lade-Zustand
+    // Loading state
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    // Animationssteuerung
+    // Animation control
     const [showCards, setShowCards] = useState(false);
     useEffect(() => {
         const timer = setTimeout(() => setShowCards(true), 100);
         return () => clearTimeout(timer);
     }, []);
 
-    // Hilfsfunktion für SessionStorage-Key
+    // Helper function for SessionStorage key
     const getSessionKey = (date: Date, type: string): string => {
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         return `schichtplan_${year}_${month}_${type}`;
     };
 
-    // Schichtplan initialisieren
+    // Initialize shift plan
     const initializeShiftPlan = () => {
         setShiftPlan(null);
         setConstraints([]);
     };
 
-    // Statistiken berechnen
+    // Calculate statistics
     const calculateStatistics = () => {
         const totalEmployees = employees.length;
         const currentMonthDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
@@ -106,7 +106,7 @@ const ShiftPlanningPage: React.FC = () => {
                     });
                 }
             });
-            totalPossibleShifts = currentMonthDays * 6; // Annahme: 6 Schichten pro Tag
+            totalPossibleShifts = currentMonthDays * 6; // Assumption: 6 shifts per day
         }
 
         constraints.forEach(constraint => {
@@ -129,7 +129,7 @@ const ShiftPlanningPage: React.FC = () => {
 
     const stats = calculateStatistics();
 
-    // Schichtplan beim Ändern des Datums initialisieren oder aus sessionStorage laden
+    // Initialize shift plan when date changes or load from sessionStorage
     useEffect(() => {
         const planKey = getSessionKey(selectedDate, 'plan');
         const availabilityKey = getSessionKey(selectedDate, 'availability');
@@ -152,7 +152,7 @@ const ShiftPlanningPage: React.FC = () => {
                 const newConstraints: ConstraintViolationDto[] = [];
                 setConstraints(newConstraints);
             } catch (error) {
-                console.error('Fehler beim Laden des Schichtplans aus dem sessionStorage:', error);
+                console.error('Error loading shift plan from sessionStorage:', error);
                 initializeShiftPlan();
             }
         } else {
@@ -174,7 +174,7 @@ const ShiftPlanningPage: React.FC = () => {
         };
     }, [selectedDate, employees]);
 
-    // Schichtplan generieren
+    // Generate shift plan
     const generateShiftPlan = async () => {
         if (employees.length === 0) {
             alert('Keine Mitarbeiter vorhanden. Bitte fügen Sie zuerst Mitarbeiter hinzu.');
@@ -220,29 +220,29 @@ const ShiftPlanningPage: React.FC = () => {
             sessionStorage.setItem(planKey, JSON.stringify(generatedPlan));
             sessionStorage.setItem(availabilityKey, JSON.stringify([])); // TODO: Store actual availability data
         } catch (error) {
-            console.error('Fehler beim Generieren des Schichtplans:', error);
+            console.error('Error generating shift plan:', error);
             alert('Der Schichtplan konnte nicht generiert werden.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Schnellaktionen definieren
-    const schnellAktionen = createDefaultSchnellAktionen(
+    // Define quick actions
+    const quickActions = createDefaultSchnellAktionen(
         generateShiftPlan,
         () => {
-        }, // Mitarbeiter hinzufügen - wird später implementiert
+        }, // Add employee - will be implemented later
         () => {
-        }, // Excel Export - wird in ShiftTable gehandhabt
+        }, // Excel export - handled in ShiftTable
         () => {
-        }, // Einstellungen
+        }, // Settings
         () => {
-        }, // Berichte
+        }, // Reports
         !!shiftPlan,
         stats.warnings + stats.violations
     );
 
-    // Status-Items für die Ampel
+    // Status items for the status light
     const statusItems = createShiftPlanningStatusItems(
         stats.totalEmployees,
         stats.coverage,
@@ -252,7 +252,7 @@ const ShiftPlanningPage: React.FC = () => {
 
     return (
         <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>
-            {/* Hero-Bereich */}
+            {/* Hero section */}
             <Fade in timeout={800}>
                 <Paper
                     elevation={0}
@@ -324,7 +324,7 @@ const ShiftPlanningPage: React.FC = () => {
                 </Paper>
             </Fade>
 
-            {/* Monatsauswahl */}
+            {/* Month selection */}
             <Fade in={showCards} timeout={1000}>
                 <Paper
                     sx={{
@@ -390,7 +390,7 @@ const ShiftPlanningPage: React.FC = () => {
                 </Box>
             </Fade>
 
-            {/* Seitenleiste - oberhalb der Tabelle */}
+            {/* Sidebar - above the table */}
             <Fade in={showCards} timeout={1400}>
                 <Box
                     sx={{
@@ -403,14 +403,14 @@ const ShiftPlanningPage: React.FC = () => {
                         mb: 4,
                     }}
                 >
-                    {/* Schnellaktionen */}
+                    {/* Quick actions */}
                     <SchnellAktionen
-                        aktionen={schnellAktionen}
+                        aktionen={quickActions}
                         title="Schnellaktionen"
                         maxItems={4}
                     />
 
-                    {/* Status-Ampel */}
+                    {/* Status light */}
                     <StatusAmpel
                         statusItems={statusItems}
                         title="Planungsstatus"
@@ -419,7 +419,7 @@ const ShiftPlanningPage: React.FC = () => {
                 </Box>
             </Fade>
 
-            {/* Schichtplan-Tabelle - volle Breite */}
+            {/* Shift plan table - full width */}
             <Fade in={showCards} timeout={1600}>
                 <Paper
                     sx={{
@@ -440,7 +440,7 @@ const ShiftPlanningPage: React.FC = () => {
                 </Paper>
             </Fade>
 
-            {/* Zusätzliche Informationen */}
+            {/* Additional information */}
             <Fade in={showCards} timeout={1600}>
                 <Paper
                     sx={{
@@ -479,7 +479,7 @@ const ShiftPlanningPage: React.FC = () => {
                 </Paper>
             </Fade>
 
-            {/* Planungsvalidierung */}
+            {/* Planning validation */}
             <Fade in={showCards} timeout={1800}>
                 <Box sx={{mb: 4}}>
                     <PlanungsValidierung/>

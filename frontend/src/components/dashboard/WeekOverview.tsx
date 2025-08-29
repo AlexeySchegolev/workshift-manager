@@ -19,17 +19,17 @@ import {
 import { format, isSameDay, isToday } from 'date-fns';
 import { de } from 'date-fns/locale';
 
-export interface WochenTag {
+export interface WeekDay {
   datum: Date;
   schichten: {
-    [schichtName: string]: number; // Anzahl Mitarbeiter in dieser Schicht
+    [schichtName: string]: number; // Number of employees in this shift
   };
   istFeiertag?: boolean;
   istWochenende?: boolean;
 }
 
-export interface WochenUebersichtProps {
-  woche: WochenTag[];
+export interface WeekOverviewProps {
+  woche: WeekDay[];
   selectedDate?: Date;
   onDateSelect?: (date: Date) => void;
   onWeekChange?: (direction: 'prev' | 'next') => void;
@@ -37,9 +37,9 @@ export interface WochenUebersichtProps {
 }
 
 /**
- * Kompakte Wochenübersicht für das Dashboard
+ * Compact Week Overview for the Dashboard
  */
-const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
+const WeekOverview: React.FC<WeekOverviewProps> = ({
   woche,
   selectedDate,
   onDateSelect,
@@ -48,7 +48,7 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
 }) => {
   const theme = useTheme();
 
-  const getSchichtColor = (schichtName: string): string => {
+  const getShiftColor = (schichtName: string): string => {
     switch (schichtName.toUpperCase()) {
       case 'F':
         return theme.palette.shifts?.early || theme.palette.success.main;
@@ -68,24 +68,24 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
     }
   };
 
-  const getSchichtBackground = (schichtName: string): string => {
-    const color = getSchichtColor(schichtName);
+  const getShiftBackground = (schichtName: string): string => {
+    const color = getShiftColor(schichtName);
     return alpha(color, 0.1);
   };
 
-  const formatWochentag = (datum: Date): string => {
+  const formatWeekday = (datum: Date): string => {
     return format(datum, 'EEE', { locale: de });
   };
 
-  const formatDatum = (datum: Date): string => {
+  const formatDate = (datum: Date): string => {
     return format(datum, 'dd.MM', { locale: de });
   };
 
-  const getWochenbereich = (): string => {
+  const getWeekRange = (): string => {
     if (woche.length === 0) return '';
-    const ersterTag = woche[0].datum;
-    const letzterTag = woche[woche.length - 1].datum;
-    return `${format(ersterTag, 'dd.MM', { locale: de })} - ${format(letzterTag, 'dd.MM', { locale: de })}`;
+    const firstDay = woche[0].datum;
+    const lastDay = woche[woche.length - 1].datum;
+    return `${format(firstDay, 'dd.MM', { locale: de })} - ${format(lastDay, 'dd.MM', { locale: de })}`;
   };
 
   return (
@@ -99,7 +99,7 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
             </Typography>
           </Box>
         }
-        subheader={getWochenbereich()}
+        subheader={getWeekRange()}
         action={
           onWeekChange && (
             <Box sx={{ display: 'flex', gap: 0.5 }}>
@@ -129,29 +129,29 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
       
       <CardContent sx={{ pt: 0 }}>
         <Box sx={{ display: 'flex', gap: 1, overflowX: 'auto' }}>
-          {woche.map((tag, index) => {
-            const istHeute = isToday(tag.datum);
-            const istAusgewaehlt = selectedDate && isSameDay(tag.datum, selectedDate);
-            const istWochenende = tag.istWochenende || tag.datum.getDay() === 0 || tag.datum.getDay() === 6;
-            
+          {woche.map((day, index) => {
+            const isTodayLocal = isToday(day.datum);
+            const isSelected = selectedDate && isSameDay(day.datum, selectedDate);
+            const isWeekend = day.istWochenende || day.datum.getDay() === 0 || day.datum.getDay() === 6;
+
             return (
               <Box key={index} sx={{ flex: '1 1 0', minWidth: 80 }}>
                 <Box
-                  onClick={() => onDateSelect && onDateSelect(tag.datum)}
+                  onClick={() => onDateSelect && onDateSelect(day.datum)}
                   sx={{
                     p: 1.5,
                     borderRadius: 2,
                     textAlign: 'center',
                     cursor: onDateSelect ? 'pointer' : 'default',
                     transition: 'all 0.2s ease-in-out',
-                    backgroundColor: istAusgewaehlt 
+                    backgroundColor: isSelected 
                       ? alpha(theme.palette.primary.main, 0.1)
-                      : istHeute 
+                      : isTodayLocal
                         ? alpha(theme.palette.primary.main, 0.05)
                         : 'transparent',
-                    border: istHeute 
+                    border: isTodayLocal
                       ? `2px solid ${theme.palette.primary.main}`
-                      : istAusgewaehlt
+                      : isSelected
                         ? `2px solid ${alpha(theme.palette.primary.main, 0.5)}`
                         : '2px solid transparent',
                     '&:hover': onDateSelect ? {
@@ -160,36 +160,36 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
                     } : {},
                   }}
                 >
-                  {/* Wochentag */}
+                  {/* Weekday */}
                   <Typography
                     variant="caption"
                     sx={{
                       display: 'block',
                       fontWeight: 600,
-                      color: istWochenende ? 'error.main' : 'text.secondary',
+                      color: isWeekend ? 'error.main' : 'text.secondary',
                       textTransform: 'uppercase',
                       letterSpacing: 0.5,
                       mb: 0.5,
                     }}
                   >
-                    {formatWochentag(tag.datum)}
+                    {formatWeekday(day.datum)}
                   </Typography>
 
-                  {/* Datum */}
+                  {/* Date */}
                   <Typography
                     variant="body2"
                     sx={{
-                      fontWeight: istHeute ? 700 : 500,
-                      color: istHeute ? 'primary.main' : 'text.primary',
+                      fontWeight: isTodayLocal ? 700 : 500,
+                      color: isTodayLocal ? 'primary.main' : 'text.primary',
                       mb: 1,
                     }}
                   >
-                    {formatDatum(tag.datum)}
+                    {formatDate(day.datum)}
                   </Typography>
 
-                  {/* Schichten */}
+                  {/* Shifts */}
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                    {Object.entries(tag.schichten).map(([schichtName, anzahl]) => (
+                    {Object.entries(day.schichten).map(([schichtName, anzahl]) => (
                       <Chip
                         key={schichtName}
                         label={`${schichtName}: ${anzahl}`}
@@ -198,17 +198,17 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
                           height: 20,
                           fontSize: '0.7rem',
                           fontWeight: 600,
-                          backgroundColor: getSchichtBackground(schichtName),
-                          color: getSchichtColor(schichtName),
-                          border: `1px solid ${alpha(getSchichtColor(schichtName), 0.3)}`,
+                          backgroundColor: getShiftBackground(schichtName),
+                          color: getShiftColor(schichtName),
+                          border: `1px solid ${alpha(getShiftColor(schichtName), 0.3)}`,
                           '& .MuiChip-label': {
                             px: 1,
                           },
                         }}
                       />
                     ))}
-                    
-                    {Object.keys(tag.schichten).length === 0 && (
+
+                    {Object.keys(day.schichten).length === 0 && (
                       <Typography
                         variant="caption"
                         sx={{
@@ -221,8 +221,8 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
                     )}
                   </Box>
 
-                  {/* Feiertag-Indikator */}
-                  {tag.istFeiertag && (
+                  {/* Holiday indicator */}
+                  {day.istFeiertag && (
                     <Box
                       sx={{
                         mt: 0.5,
@@ -240,7 +240,7 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
           })}
         </Box>
 
-        {/* Legende */}
+        {/* Legend */}
         <Box sx={{ mt: 2, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
           <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
             Schichttypen:
@@ -252,9 +252,9 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
               sx={{
                 height: 20,
                 fontSize: '0.65rem',
-                backgroundColor: getSchichtBackground('F'),
-                color: getSchichtColor('F'),
-                border: `1px solid ${alpha(getSchichtColor('F'), 0.3)}`,
+                backgroundColor: getShiftBackground('F'),
+                color: getShiftColor('F'),
+                border: `1px solid ${alpha(getShiftColor('F'), 0.3)}`,
               }}
             />
             <Chip
@@ -263,9 +263,9 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
               sx={{
                 height: 20,
                 fontSize: '0.65rem',
-                backgroundColor: getSchichtBackground('S'),
-                color: getSchichtColor('S'),
-                border: `1px solid ${alpha(getSchichtColor('S'), 0.3)}`,
+                backgroundColor: getShiftBackground('S'),
+                color: getShiftColor('S'),
+                border: `1px solid ${alpha(getShiftColor('S'), 0.3)}`,
               }}
             />
             <Chip
@@ -274,9 +274,9 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
               sx={{
                 height: 20,
                 fontSize: '0.65rem',
-                backgroundColor: getSchichtBackground('FS'),
-                color: getSchichtColor('FS'),
-                border: `1px solid ${alpha(getSchichtColor('FS'), 0.3)}`,
+                backgroundColor: getShiftBackground('FS'),
+                color: getShiftColor('FS'),
+                border: `1px solid ${alpha(getShiftColor('FS'), 0.3)}`,
               }}
             />
           </Box>
@@ -286,4 +286,4 @@ const WochenUebersicht: React.FC<WochenUebersichtProps> = ({
   );
 };
 
-export default WochenUebersicht;
+export default WeekOverview;

@@ -50,7 +50,7 @@ interface ShiftTableProps {
 }
 
 /**
- * Moderne Schichtplan-Tabelle im Dashboard-Style
+ * Modern Shift Plan Table in Dashboard Style
  */
 const ShiftTable: React.FC<ShiftTableProps> = ({
                                                    employees,
@@ -63,7 +63,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                }) => {
     const theme = useTheme();
 
-    // Sortierte Tage des Monats aus dem Schichtplan
+    // Sorted days of the month from the shift plan
     const sortedDays = shiftPlan
         ? Object.keys(shiftPlan)
             .sort((a, b) => {
@@ -75,10 +75,10 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
             })
         : [];
 
-    // Formatierter Monatsname
+    // Formatted month name
     const monthName = format(selectedDate, 'MMMM yyyy', {locale: de});
 
-    // Funktion zum Exportieren des Schichtplans
+    // Function to export the shift plan
     const handleExportToExcel = async () => {
         if (!shiftPlan || !shiftPlanId) {
             alert('Kein Schichtplan zum Exportieren verfügbar.');
@@ -100,12 +100,12 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
 
             excelExportService.downloadBlob(blob, `Schichtplan_${monthName}.xlsx`);
         } catch (error) {
-            console.error('Fehler beim Exportieren des Schichtplans:', error);
+            console.error('Error exporting shift plan:', error);
             alert('Der Schichtplan konnte nicht exportiert werden.');
         }
     };
 
-    // Funktion, um die Hintergrundfarbe basierend auf der Schicht zu ermitteln
+    // Function to determine background color based on shift
     const getShiftBackgroundColor = (shift: string): string => {
         switch (shift) {
             case 'F':
@@ -126,7 +126,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
         }
     };
 
-    // Funktion für Schichtfarben
+    // Function for shift colors
     const getShiftColor = (shift: string): string => {
         switch (shift) {
             case 'F':
@@ -147,7 +147,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
         }
     };
 
-    // Funktion zum Rendern der Statusfarbe für Constraints
+    // Function to render status color for constraints
     const getConstraintColor = (type: "hard" | "soft" | "warning" | "info"): 'success' | 'warning' | 'error' | 'default' => {
         switch (type) {
             case 'info':
@@ -162,7 +162,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
         }
     };
 
-    // Constraint-Icon basierend auf Status
+    // Constraint icon based on status
     const getConstraintIcon = (type: "hard" | "soft" | "warning" | "info") => {
         switch (type) {
             case 'info':
@@ -231,7 +231,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
             />
 
             <CardContent sx={{pt: 0, px: 0, flex: 1, display: 'flex', flexDirection: 'column'}}>
-                {/* Schichtplan-Tabelle */}
+                {/* Shift plan table */}
                 {isLoading ? (
                     <Box
                         sx={{
@@ -313,7 +313,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                 }}
                             >
                                 <Table stickyHeader size="medium">
-                                    {/* Tabellenkopf mit Datumsangaben */}
+                                    {/* Table head with dates */}
                                     <TableHead>
                                         <TableRow>
                                             <TableCell
@@ -365,7 +365,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                         </TableRow>
                                     </TableHead>
 
-                                    {/* Tabellenkörper mit Mitarbeitern und Schichten */}
+                                    {/* Table body with employees and shifts */}
                                     <TableBody>
                                         {employees.map((emp, empIndex) => (
                                             <TableRow
@@ -542,7 +542,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                     </Fade>
                 )}
 
-                {/* Zusammenfassung der Constraints */}
+                {/* Constraints summary */}
                 {constraints.length > 0 && (
                     <Fade in timeout={800}>
                         <Card

@@ -23,7 +23,7 @@ import { CreateShiftRulesDto, UpdateShiftRulesDto, ShiftRulesResponseDto } from 
 
 interface ShiftRuleManagerProps {
     onSave?: (config: ShiftRulesResponseDto) => void;
-    configId?: string; // ID der zu ladenden Konfiguration
+    configId?: string; // ID of the configuration to load
 }
 
 const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
@@ -36,7 +36,7 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    // Daten laden
+    // Load data
     useEffect(() => {
         loadData();
     }, [configId]);
@@ -46,19 +46,19 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
         setError(null);
 
         try {
-            // Shift Rules laden
+            // Load shift rules
             let configData: ShiftRulesResponseDto | null = null;
             if (configId) {
                 configData = await shiftRuleService.getShiftRuleById(configId);
             } else {
-                // Standard-Shift-Rules laden
+                // Load default shift rules
                 const defaultRules = await shiftRuleService.getDefaultShiftRules();
                 configData = defaultRules.length > 0 ? defaultRules[0] : null;
             }
 
             setConfig(configData);
         } catch (err) {
-            console.error('Fehler beim Laden der Daten:', err);
+            console.error('Error loading data:', err);
             setError(err instanceof Error ? err.message : 'Fehler beim Laden der Daten');
             setConfig(null);
         } finally {
@@ -84,7 +84,7 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
 
         try {
             if (config.id) {
-                // Bestehende Konfiguration aktualisieren
+                // Update existing configuration
                 const updateDto: UpdateShiftRulesDto = {
                     description: config.description,
                     maxConsecutiveSameShifts: config.maxConsecutiveSameShifts,
@@ -101,7 +101,7 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
                 setConfig(updatedConfig);
                 setSuccessMessage('Konfiguration erfolgreich aktualisiert');
             } else {
-                // Neue Konfiguration erstellen
+                // Create new configuration
                 const createDto: CreateShiftRulesDto = {
                     description: config.description || 'Neue Schichtregeln',
                     maxConsecutiveSameShifts: config.maxConsecutiveSameShifts,
@@ -123,7 +123,7 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
                 onSave(config);
             }
         } catch (err) {
-            console.error('Fehler beim Speichern:', err);
+            console.error('Error saving:', err);
             setError(err instanceof Error ? err.message : 'Fehler beim Speichern der Konfiguration');
         } finally {
             setSaving(false);
@@ -176,7 +176,7 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
                 </Box>
             </Box>
 
-            {/* Fehler- und Erfolgsmeldungen */}
+            {/* Error and success messages */}
             {error && (
                 <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
                     {error}
@@ -189,7 +189,7 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
                 </Alert>
             )}
 
-            {/* Globale Regeln */}
+            {/* Global rules */}
             <Accordion defaultExpanded sx={{ mb: 3 }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="h6">Globale Schichtregeln</Typography>
@@ -279,7 +279,7 @@ const ShiftRuleManager: React.FC<ShiftRuleManagerProps> = ({
                         />
                     </Box>
 
-                    {/* Zusätzliche Informationen */}
+                    {/* Additional information */}
                     <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'divider' }}>
                         <Typography variant="body2" color="text.secondary">
                             <strong>Erstellt:</strong> {new Date(config.createdAt).toLocaleString('de-DE')}

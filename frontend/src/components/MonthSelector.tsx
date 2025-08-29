@@ -23,59 +23,59 @@ interface MonthSelectorProps {
 }
 
 /**
- * Komponente zur Auswahl des Monats für die Schichtplanung
+ * Component for selecting the month for shift planning
  */
 const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedDate, onDateChange }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   
-  // Wechsel zum vorherigen Monat
+  // Switch to previous month
   const handlePreviousMonth = () => {
     onDateChange(subMonths(selectedDate, 1));
   };
   
-  // Wechsel zum nächsten Monat
+  // Switch to next month
   const handleNextMonth = () => {
     onDateChange(addMonths(selectedDate, 1));
   };
   
-  // Kalender-Dialog öffnen
+  // Open calendar dialog
   const handleOpenCalendar = () => {
     setIsCalendarOpen(true);
   };
   
-  // Kalender-Dialog schließen
+  // Close calendar dialog
   const handleCloseCalendar = () => {
     setIsCalendarOpen(false);
   };
   
-  // Monat auswählen
+  // Select month
   const handleSelectMonth = (month: number) => {
     const newDate = setMonth(selectedDate, month);
     onDateChange(newDate);
     setIsCalendarOpen(false);
   };
   
-  // Jahr wechseln
+  // Change year
   const handleYearChange = (increment: number) => {
     const currentYear = getYear(selectedDate);
     const newDate = setYear(selectedDate, currentYear + increment);
     onDateChange(newDate);
   };
   
-  // Formatierter Monatsname und Jahr
+  // Formatted month name and year
   const formattedDate = format(selectedDate, 'MMMM yyyy', { locale: de });
   
-  // Liste der Monate für den Kalender-Dialog
+  // List of months for calendar dialog
   const months = [
     'Januar', 'Februar', 'März', 'April', 
     'Mai', 'Juni', 'Juli', 'August', 
     'September', 'Oktober', 'November', 'Dezember'
   ];
   
-  // Aktuelles Jahr für den Kalender-Dialog
+  // Current year for calendar dialog
   const currentYear = getYear(selectedDate);
-  
-  // Aktueller Monat (0-basiert)
+
+  // Current month (0-based)
   const currentMonth = selectedDate.getMonth();
   
   return (
@@ -111,7 +111,7 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedDate, onDateChang
         <ChevronRightIcon />
       </IconButton>
       
-      {/* Kalender-Dialog */}
+      {/* Calendar Dialog */}
       <Dialog open={isCalendarOpen} onClose={handleCloseCalendar}>
         <DialogTitle>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

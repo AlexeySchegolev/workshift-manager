@@ -34,16 +34,16 @@ export interface StatusItem {
   details?: string[];
 }
 
-export interface StatusAmpelProps {
+export interface StatusLightProps {
   statusItems: StatusItem[];
   title?: string;
   showProgress?: boolean;
 }
 
 /**
- * Status-Ampel-System für das Dashboard
+ * Status Light System for the Dashboard
  */
-const StatusAmpel: React.FC<StatusAmpelProps> = ({
+const StatusLight: React.FC<StatusLightProps> = ({
   statusItems,
   title = 'System-Status',
   showProgress = true,
@@ -100,8 +100,8 @@ const StatusAmpel: React.FC<StatusAmpelProps> = ({
     }
   };
 
-  // Gesamtstatus berechnen
-  const gesamtStatus: StatusLevel = statusItems.reduce((worst, item) => {
+  // Calculate overall status
+  const overallStatus: StatusLevel = statusItems.reduce((worst, item) => {
     const statusPriority = { success: 0, info: 1, warning: 2, error: 3 };
     return statusPriority[item.status] > statusPriority[worst] ? item.status : worst;
   }, 'success' as StatusLevel);
@@ -116,7 +116,7 @@ const StatusAmpel: React.FC<StatusAmpelProps> = ({
       <CardHeader
         title={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <TrafficIcon sx={{ fontSize: '1.25rem', color: getStatusColor(gesamtStatus) }} />
+            <TrafficIcon sx={{ fontSize: '1.25rem', color: getStatusColor(overallStatus) }} />
             <Typography variant="h6" component="div">
               {title}
             </Typography>
@@ -124,8 +124,8 @@ const StatusAmpel: React.FC<StatusAmpelProps> = ({
         }
         action={
           <Chip
-            label={getStatusLabel(gesamtStatus)}
-            color={gesamtStatus as any}
+            label={getStatusLabel(overallStatus)}
+            color={overallStatus as any}
             size="small"
             sx={{
               fontWeight: 600,
@@ -138,7 +138,7 @@ const StatusAmpel: React.FC<StatusAmpelProps> = ({
       />
       
       <CardContent sx={{ pt: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Übersicht der Status-Verteilung */}
+        {/* Overview of status distribution */}
         {showProgress && (
           <Box sx={{ mb: 3 }}>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
@@ -159,7 +159,7 @@ const StatusAmpel: React.FC<StatusAmpelProps> = ({
           </Box>
         )}
 
-        {/* Status-Liste */}
+        {/* Status list */}
         {statusItems.length === 0 ? (
           <Box
             sx={{
@@ -244,7 +244,7 @@ const StatusAmpel: React.FC<StatusAmpelProps> = ({
                           {item.description}
                         </Typography>
                         
-                        {/* Fortschrittsbalken */}
+                        {/* Progress bar */}
                         {item.value !== undefined && item.maxValue !== undefined && (
                           <LinearProgress
                             variant="determinate"
@@ -297,7 +297,7 @@ const StatusAmpel: React.FC<StatusAmpelProps> = ({
   );
 };
 
-// Hilfsfunktion zum Erstellen von Standard-Status-Items für die Schichtplanung
+// Helper function to create standard status items for shift planning
 export const createShiftPlanningStatusItems = (
   employeeCount: number,
   currentMonthCoverage: number,
@@ -342,4 +342,4 @@ export const createShiftPlanningStatusItems = (
   },
 ];
 
-export default StatusAmpel;
+export default StatusLight;

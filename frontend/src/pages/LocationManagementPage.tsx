@@ -26,16 +26,16 @@ import { LocationResponseDto } from '../api/data-contracts';
 import { locationService } from '@/services';
 
 /**
- * Moderne Standort-Verwaltungsseite im Dashboard-Style
+ * Modern Location Management Page in Dashboard Style
  */
 const LocationManagementPage: React.FC = () => {
   const theme = useTheme();
 
-  // Standortliste - über API laden
+  // Location list - load via API
   const [locations, setLocations] = useState<LocationResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Standorte beim Laden der Komponente abrufen
+  // Fetch locations when component loads
   useEffect(() => {
     const loadLocations = async () => {
       try {
@@ -43,7 +43,7 @@ const LocationManagementPage: React.FC = () => {
         const data = await locationService.getAllLocations();
         setLocations(data);
       } catch (error) {
-        console.error('Fehler beim Laden der Standorte:', error);
+        console.error('Error loading locations:', error);
       } finally {
         setLoading(false);
       }
@@ -52,19 +52,19 @@ const LocationManagementPage: React.FC = () => {
     loadLocations();
   }, []);
 
-  // Animationssteuerung
+  // Animation control
   const [showCards, setShowCards] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => setShowCards(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
-  // Standorte aktualisieren
+  // Update locations
   const handleLocationsChange = (updatedLocations: LocationResponseDto[]) => {
     setLocations(updatedLocations);
   };
 
-  // Gesamtstatistiken berechnen
+  // Calculate overall statistics
   const calculateOverallStatistics = () => {
     const activeLocations = locations.filter(loc => loc.isActive);
     const totalLocations = locations.length;
@@ -77,8 +77,8 @@ const LocationManagementPage: React.FC = () => {
     let avgUtilization = 0;
 
     activeLocations.forEach(location => {
-      // TODO: Statistiken aus der Datenbank laden
-      // Temporäre Standardwerte bis DB-Integration implementiert ist
+      // TODO: Load statistics from database
+      // Temporary default values until DB integration is implemented
       const defaultStats = {
         totalClients: 25,
         employeeCount: 8,
@@ -111,8 +111,8 @@ const LocationManagementPage: React.FC = () => {
 
   const stats = calculateOverallStatistics();
 
-  // Schnellaktionen definieren
-  const schnellAktionen = [
+  // Define quick actions
+  const quickActions = [
     {
       id: 'add-location',
       title: 'Neuer Standort',
@@ -120,7 +120,7 @@ const LocationManagementPage: React.FC = () => {
       icon: <BusinessIcon />,
       color: 'success' as const,
       onClick: () => {
-        // Scroll zum Formular
+        // Scroll to form
         const formElement = document.querySelector('[data-testid="location-management"]');
         if (formElement) {
           formElement.scrollIntoView({ behavior: 'smooth' });
@@ -134,7 +134,7 @@ const LocationManagementPage: React.FC = () => {
       icon: <AssessmentIcon />,
       color: 'info' as const,
       onClick: () => {
-        // TODO: Standortanalyse implementieren
+        // TODO: Implement location analysis
         console.log('Standortanalyse öffnen');
       },
     },
@@ -145,7 +145,7 @@ const LocationManagementPage: React.FC = () => {
       icon: <TrendingUpIcon />,
       color: 'warning' as const,
       onClick: () => {
-        // TODO: Kapazitätsplanung implementieren
+        // TODO: Implement capacity planning
         console.log('Kapazitätsplanung öffnen');
       },
     },
@@ -156,13 +156,13 @@ const LocationManagementPage: React.FC = () => {
       icon: <LocationIcon />,
       color: 'primary' as const,
       onClick: () => {
-        // TODO: Berichtserstellung implementieren
+        // TODO: Implement report generation
         console.log('Standortberichte generieren');
       },
     },
   ];
 
-  // Status-Items für die Ampel
+  // Status items for the status light
   const statusItems = [
     {
       id: 'active-locations',
@@ -205,7 +205,7 @@ const LocationManagementPage: React.FC = () => {
 
   return (
     <Container maxWidth={false} sx={{ py: 3, px: { xs: 2, sm: 3, md: 4 }, maxWidth: '100%' }}>
-      {/* Hero-Bereich */}
+      {/* Hero section */}
       <Fade in timeout={800}>
         <Paper
           elevation={0}
@@ -324,7 +324,7 @@ const LocationManagementPage: React.FC = () => {
         </Box>
       </Fade>
 
-      {/* Seitenleiste - oberhalb der Verwaltung */}
+      {/* Sidebar - above management */}
       <Fade in={showCards} timeout={1200}>
         <Box
           sx={{
@@ -337,14 +337,14 @@ const LocationManagementPage: React.FC = () => {
             mb: 4,
           }}
         >
-          {/* Schnellaktionen */}
+          {/* Quick actions */}
           <SchnellAktionen
-            aktionen={schnellAktionen}
+            aktionen={quickActions}
             title="Schnellaktionen"
             maxItems={4}
           />
 
-          {/* Status-Ampel */}
+          {/* Status light */}
           <StatusAmpel
             statusItems={statusItems}
             title="Standortstatus"
@@ -353,7 +353,7 @@ const LocationManagementPage: React.FC = () => {
         </Box>
       </Fade>
 
-      {/* Standortverwaltung - volle Breite */}
+      {/* Location management - full width */}
       <Fade in={showCards} timeout={1400}>
         <Paper
           sx={{
@@ -373,7 +373,7 @@ const LocationManagementPage: React.FC = () => {
         </Paper>
       </Fade>
 
-      {/* Zusätzliche Informationen */}
+      {/* Additional information */}
       <Fade in={showCards} timeout={1600}>
         <Paper
           sx={{

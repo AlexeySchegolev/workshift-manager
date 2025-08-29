@@ -13,7 +13,7 @@ import {
   TrendingDown as TrendingDownIcon,
 } from '@mui/icons-material';
 
-export interface StatistikCardProps {
+export interface StatisticsCardProps {
   title: string;
   value: string | number;
   subtitle?: string;
@@ -28,9 +28,9 @@ export interface StatistikCardProps {
 }
 
 /**
- * Wiederverwendbare Statistik-Card für das Dashboard
+ * Reusable Statistics Card for the Dashboard
  */
-const StatistikCard: React.FC<StatistikCardProps> = ({
+const StatisticsCard: React.FC<StatisticsCardProps> = ({
   title,
   value,
   subtitle,
@@ -92,7 +92,7 @@ const StatistikCard: React.FC<StatistikCardProps> = ({
       onClick={onClick}
     >
       <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-        {/* Header mit Icon und Titel */}
+        {/* Header with icon and title */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <Box
             sx={{
@@ -127,7 +127,7 @@ const StatistikCard: React.FC<StatistikCardProps> = ({
           </Box>
         </Box>
 
-        {/* Hauptwert */}
+        {/* Main value */}
         <Typography
           variant="h4"
           component="div"
@@ -142,7 +142,7 @@ const StatistikCard: React.FC<StatistikCardProps> = ({
           {value}
         </Typography>
 
-        {/* Untertitel */}
+        {/* Subtitle */}
         {subtitle && (
           <Typography
             variant="body2"
@@ -157,7 +157,7 @@ const StatistikCard: React.FC<StatistikCardProps> = ({
           </Typography>
         )}
 
-        {/* Trend-Anzeige */}
+        {/* Trend display */}
         {trend && (
           <Box sx={{ display: 'flex', alignItems: 'center', mt: 'auto' }}>
             <Chip
@@ -197,4 +197,4 @@ const StatistikCard: React.FC<StatistikCardProps> = ({
   );
 };
 
-export default StatistikCard;
+export default StatisticsCard;

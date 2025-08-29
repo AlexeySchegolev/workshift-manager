@@ -44,7 +44,7 @@ interface LocationManagementProps {
 }
 
 /**
- * Standort-Verwaltungskomponente
+ * Location Management Component
  */
 const LocationManagement: React.FC<LocationManagementProps> = ({
   locations: propLocations,
@@ -58,7 +58,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Standorte von der API laden
+  // Load locations from API
   useEffect(() => {
     if (!propLocations) {
       loadLocations();
@@ -81,10 +81,10 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     }
   };
 
-  // Standort-Statistiken
+  // Location statistics
   const getLocationStats = (locationId: string): LocationStatsDto => {
-    // TODO: Statistiken aus der Datenbank laden
-    // Temporäre Standardwerte bis DB-Integration implementiert ist
+    // TODO: Load statistics from database
+    // Temporary default values until DB integration is implemented
     return {
       activeShifts: 12,
       averageStaffing: 92.3,
@@ -97,7 +97,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     };
   };
 
-  // Dialog öffnen
+  // Open dialog
   const handleOpenDialog = (location?: LocationResponseDto) => {
     if (location) {
       setSelectedLocation(location);
@@ -141,14 +141,14 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     setIsDialogOpen(true);
   };
 
-  // Dialog schließen
+  // Close dialog
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setSelectedLocation(null);
     setIsEditing(false);
   };
 
-  // Standort speichern
+  // Save location
   const handleSaveLocation = async () => {
     if (!selectedLocation) return;
 
@@ -157,7 +157,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       setError(null);
 
       if (isEditing) {
-        // Standort aktualisieren
+        // Update location
         const updatedLocation = await locationService.updateLocation(selectedLocation.id, selectedLocation as UpdateLocationDto);
         const updatedLocations = locations.map(loc =>
           loc.id === selectedLocation.id ? updatedLocation : loc
@@ -165,7 +165,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
       } else {
-        // Neuen Standort erstellen
+        // Create new location
         const newLocation = await locationService.createLocation(selectedLocation as CreateLocationDto);
         const updatedLocations = [...locations, newLocation];
         setLocations(updatedLocations);
@@ -180,7 +180,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     }
   };
 
-  // Standort löschen
+  // Delete location
   const handleDeleteLocation = async (locationId: string) => {
     if (window.confirm('Sind Sie sicher, dass Sie diesen Standort löschen möchten?')) {
       try {
@@ -198,7 +198,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     }
   };
 
-  // Öffnungszeiten formatieren
+  // Format operating hours
   const formatOperatingHours = (location: LocationResponseDto): string => {
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
@@ -249,7 +249,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         </Box>
       )}
 
-      {/* Standort-Karten */}
+      {/* Location Cards */}
       <Grid container spacing={3}>
         {locations.map((location) => {
           const stats = getLocationStats(location.id);
@@ -310,7 +310,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Box>
                   </Box>
 
-                  {/* Adresse */}
+                  {/* Address */}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                     <LocationIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
                     <Typography variant="body2" color="text.secondary">
@@ -318,7 +318,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Typography>
                   </Box>
 
-                  {/* Kontakt */}
+                  {/* Contact */}
                   {location.phone && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <PhoneIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
@@ -349,7 +349,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
                   <Divider sx={{ my: 2 }} />
 
-                  {/* Statistiken */}
+                  {/* Statistics */}
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 2 }}>
                     <Box sx={{ textAlign: 'center' }}>
                       <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600 }}>
@@ -411,7 +411,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Box>
                   </Box>
 
-                  {/* Öffnungszeiten */}
+                  {/* Operating hours */}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <ScheduleIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
                     <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.3 }}>
@@ -443,7 +443,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         })}
       </Grid>
 
-      {/* Bearbeitungs-Dialog */}
+      {/* Edit Dialog */}
       <Dialog
         open={isDialogOpen}
         onClose={handleCloseDialog}

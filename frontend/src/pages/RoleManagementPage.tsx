@@ -3,7 +3,7 @@ import { Container, Typography, Box, Paper } from '@mui/material';
 import RoleManagement from '../components/RoleManagement';
 
 /**
- * Seite für die Rollenverwaltung
+ * Page for Role Management
  */
 const RoleManagementPage: React.FC = () => {
   return (

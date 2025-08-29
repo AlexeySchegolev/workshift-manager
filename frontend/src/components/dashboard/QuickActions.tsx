@@ -24,7 +24,7 @@ import {
   Schedule as ScheduleIcon,
 } from '@mui/icons-material';
 
-export interface SchnellAktion {
+export interface QuickAction {
   id: string;
   title: string;
   description: string;
@@ -35,17 +35,17 @@ export interface SchnellAktion {
   badge?: string | number;
 }
 
-export interface SchnellAktionenProps {
-  aktionen: SchnellAktion[];
+export interface QuickActionsProps {
+  actions: QuickAction[];
   title?: string;
   maxItems?: number;
 }
 
 /**
- * Schnellaktionen-Panel für das Dashboard
+ * Quick Actions Panel for the Dashboard
  */
-const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
-  aktionen,
+const QuickActions: React.FC<QuickActionsProps> = ({
+  actions,
   title = 'Schnellaktionen',
   maxItems = 6,
 }) => {
@@ -85,7 +85,7 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
     }
   };
 
-  const sichtbareAktionen = aktionen.slice(0, maxItems);
+  const visibleActions = actions.slice(0, maxItems);
 
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -102,7 +102,7 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
       />
       
       <CardContent sx={{ pt: 0, px: { xs: 2, md: 3 }, pb: { xs: 2, md: 3 }, flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {sichtbareAktionen.length === 0 ? (
+        {visibleActions.length === 0 ? (
           <Box
             sx={{
               display: 'flex',
@@ -120,16 +120,16 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
           </Box>
         ) : (
           <List sx={{ flex: 1, py: 0 }}>
-            {sichtbareAktionen.map((aktion, index) => {
-              const mainColor = getColorValue(aktion.color);
-              const backgroundColor = getBackgroundColor(aktion.color);
+            {visibleActions.map((action, index) => {
+              const mainColor = getColorValue(action.color);
+              const backgroundColor = getBackgroundColor(action.color);
 
               return (
-                <React.Fragment key={aktion.id}>
+                <React.Fragment key={action.id}>
                   <ListItem disablePadding>
                     <ListItemButton
-                      onClick={aktion.onClick}
-                      disabled={aktion.disabled}
+                      onClick={action.onClick}
+                      disabled={action.disabled}
                       sx={{
                         borderRadius: 2,
                         mb: 1,
@@ -158,8 +158,8 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
                             height: 36,
                           }}
                         >
-                          {aktion.icon}
-                          {aktion.badge && (
+                          {action.icon}
+                          {action.badge && (
                             <Box
                               sx={{
                                 position: 'absolute',
@@ -178,7 +178,7 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
                                 px: 0.5,
                               }}
                             >
-                              {aktion.badge}
+                              {action.badge}
                             </Box>
                           )}
                         </Box>
@@ -195,7 +195,7 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
                               lineHeight: 1.3,
                             }}
                           >
-                            {aktion.title}
+                            {action.title}
                           </Typography>
                         }
                         secondary={
@@ -212,14 +212,14 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
                               mt: 0.25,
                             }}
                           >
-                            {aktion.description}
+                            {action.description}
                           </Typography>
                         }
                       />
                     </ListItemButton>
                   </ListItem>
                   
-                  {index < sichtbareAktionen.length - 1 && (
+                  {index < visibleActions.length - 1 && (
                     <Divider sx={{ my: 0.5, opacity: 0.3 }} />
                   )}
                 </React.Fragment>
@@ -228,8 +228,8 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
           </List>
         )}
 
-        {/* Alle Aktionen anzeigen Button */}
-        {aktionen.length > maxItems && (
+        {/* Show all actions button */}
+        {actions.length > maxItems && (
           <Box sx={{ mt: 2, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
             <Button
               variant="outlined"
@@ -240,7 +240,7 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
                 fontWeight: 500,
               }}
             >
-              Alle {aktionen.length} Aktionen anzeigen
+              Alle {actions.length} Aktionen anzeigen
             </Button>
           </Box>
         )}
@@ -249,8 +249,8 @@ const SchnellAktionen: React.FC<SchnellAktionenProps> = ({
   );
 };
 
-// Vordefinierte Schnellaktionen für die Schichtplanung
-export const createDefaultSchnellAktionen = (
+// Predefined quick actions for shift planning
+export const createDefaultQuickActions = (
   onGenerateShiftPlan: () => void,
   onAddEmployee: () => void,
   onExportExcel: () => void,
@@ -258,7 +258,7 @@ export const createDefaultSchnellAktionen = (
   onViewReports: () => void,
   hasCurrentPlan: boolean = false,
   warningCount: number = 0
-): SchnellAktion[] => [
+): QuickAction[] => [
   {
     id: 'generate-plan',
     title: 'Schichtplan generieren',
@@ -303,4 +303,4 @@ export const createDefaultSchnellAktionen = (
   },
 ];
 
-export default SchnellAktionen;
+export default QuickActions;

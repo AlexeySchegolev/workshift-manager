@@ -62,7 +62,7 @@ function a11yProps(index: number) {
 }
 
 /**
- * Moderne Planungsvalidierung mit professioneller Tab-Struktur
+ * Modern Planning Validation with Professional Tab Structure
  */
 const PlanungsValidierung: React.FC = () => {
   const theme = useTheme();
@@ -77,7 +77,7 @@ const PlanungsValidierung: React.FC = () => {
     setExpandedAccordion(isExpanded ? panel : false);
   };
 
-  // Icons für verschiedene Kategorien
+  // Icons for different categories
   const getCategoryIcon = (title: string) => {
     if (title.includes('Allgemeine')) return <RuleIcon />;
     if (title.includes('Spätschicht')) return <LateShiftIcon />;
@@ -87,7 +87,7 @@ const PlanungsValidierung: React.FC = () => {
     return <InfoIcon />;
   };
 
-  // Farben für verschiedene Kategorien
+  // Colors for different categories
   const getCategoryColor = (title: string): 'primary' | 'secondary' | 'success' | 'warning' | 'info' => {
     if (title.includes('Allgemeine')) return 'primary';
     if (title.includes('Spätschicht')) return 'warning';
@@ -181,7 +181,7 @@ const PlanungsValidierung: React.FC = () => {
     }
   ];
 
-  // Tab-Ansicht für Desktop
+  // Tab view for desktop
   const renderTabView = () => (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
@@ -296,7 +296,7 @@ const PlanungsValidierung: React.FC = () => {
     </Box>
   );
 
-  // Accordion-Ansicht für Mobile
+  // Accordion view for mobile
   const renderAccordionView = () => (
     <Box sx={{ width: '100%' }}>
       {allRuleCategories.map((category, index) => (
@@ -423,7 +423,7 @@ const PlanungsValidierung: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Statistiken */}
+        {/* Statistics */}
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <Chip
             icon={<RuleIcon />}
@@ -440,7 +440,7 @@ const PlanungsValidierung: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Responsive Ansicht */}
+      {/* Responsive view */}
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         {renderTabView()}
       </Box>

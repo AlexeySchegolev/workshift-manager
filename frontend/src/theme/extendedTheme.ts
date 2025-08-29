@@ -1,6 +1,6 @@
 import { createTheme, Theme } from '@mui/material/styles';
 
-// Erweiterte Farbpalette für das Dashboard
+// Extended color palette for the dashboard
 declare module '@mui/material/styles' {
   interface Palette {
     shifts: {
@@ -31,7 +31,7 @@ declare module '@mui/material/styles' {
   }
 }
 
-// Erweiterte Theme-Konfiguration
+// Extended theme configuration
 export const extendedTheme: Theme = createTheme({
   palette: {
     primary: {
@@ -78,14 +78,14 @@ export const extendedTheme: Theme = createTheme({
       default: '#f8fafc',
       paper: '#ffffff',
     },
-    // Neue Schicht-spezifische Farben
+    // New shift-specific colors
     shifts: {
-      early: '#10b981',     // Frühschicht (Grün)
-      late: '#f59e0b',      // Spätschicht (Orange)
-      special: '#8b5cf6',   // Spezialschichten (Lila)
-      uetersen: '#06b6d4',  // Uetersen-Schichten (Cyan)
+      early: '#10b981',     // Early shift (Green)
+      late: '#f59e0b',      // Late shift (Orange)
+      special: '#8b5cf6',   // Special shifts (Purple)
+      uetersen: '#06b6d4',  // Uetersen shifts (Cyan)
     },
-    // Dashboard-spezifische Farben
+    // Dashboard-specific colors
     dashboard: {
       cardBackground: '#ffffff',
       statBackground: '#f8fafc',
@@ -150,7 +150,7 @@ export const extendedTheme: Theme = createTheme({
   },
   spacing: 8, // 8px base spacing
   shape: {
-    borderRadius: 12, // Modernere abgerundete Ecken
+    borderRadius: 12, // More modern rounded corners
   },
   shadows: [
     'none',

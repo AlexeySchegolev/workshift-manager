@@ -19,6 +19,7 @@ import {
 import {
   Menu as MenuIcon,
   CalendarMonth as CalendarIcon,
+  Schedule as ScheduleIcon,
   People as PeopleIcon,
   Dashboard as DashboardIcon,
   Notifications as NotificationsIcon,
@@ -48,6 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigationLinks = [
     { title: 'Dashboard', path: '/', icon: <DashboardIcon />, description: 'Übersicht und Statistiken' },
     { title: 'Schichtplanung', path: '/schichtplanung', icon: <CalendarIcon />, description: 'Schichtpläne erstellen und verwalten' },
+    { title: 'Schichten', path: '/schichten', icon: <ScheduleIcon />, description: 'Einzelne Schichten verwalten' },
     { title: 'Mitarbeiter', path: '/mitarbeiter', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten' },
     { title: 'Standorte', path: '/standorte', icon: <BusinessIcon />, description: 'Standorte und Betriebsstätten verwalten' },
     { title: 'Rollenverwaltung', path: '/rollen', icon: <SettingsIcon />, description: 'Rollen und Berechtigungen verwalten' },

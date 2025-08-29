@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { EmployeeResponseDto } from '@/api/data-contracts';
+import { EmployeeResponseDto, CreateEmployeeDto, UpdateEmployeeDto } from '@/api/data-contracts';
 import { EmployeeFormData } from './useEmployeeForm';
+import { EmployeeService } from '@/services';
 
 export interface SnackbarState {
   open: boolean;
@@ -63,91 +63,102 @@ export const useEmployeeActions = (
     setAddEmployeeModalOpen(false);
   };
 
-  // Delete employee
-  const deleteEmployee = () => {
+  // Delete employee - now with API call
+  const deleteEmployee = async () => {
     if (employeeToDelete) {
-      const updatedEmployees = employees.filter(emp => emp.id !== employeeToDelete.id);
-      onEmployeesChange(updatedEmployees);
+      try {
+        const employeeService = new EmployeeService();
+        
+        // Delete from database via API
+        await employeeService.deleteEmployee(employeeToDelete.id);
+        
+        // Update local state
+        const updatedEmployees = employees.filter(emp => emp.id !== employeeToDelete.id);
+        onEmployeesChange(updatedEmployees);
 
-      showSnackbar(
-        `Mitarbeiter ${employeeToDelete.lastName} wurde gelöscht`,
-        'success'
-      );
+        showSnackbar(
+          `Mitarbeiter ${employeeToDelete.lastName} wurde gelöscht`,
+          'success'
+        );
 
-      closeDeleteDialog();
+        closeDeleteDialog();
+      } catch (error) {
+        console.error('Error deleting employee:', error);
+        showSnackbar(
+          `Fehler beim Löschen des Mitarbeiters: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`,
+          'error'
+        );
+      }
     }
   };
 
-  // Save employee (add or update)
-  const saveEmployee = (formData: EmployeeFormData, editingId: string | null) => {
+  // Save employee (add or update) - now with API calls
+  const saveEmployee = async (formData: EmployeeFormData, editingId: string | null) => {
     if (typeof formData.hoursPerMonth !== 'number') return;
 
-    let updatedEmployees: EmployeeResponseDto[];
+    try {
+      const employeeService = new EmployeeService();
 
-    if (editingId) {
-      // Update existing employee
-      updatedEmployees = employees.map(emp =>
-        emp.id === editingId
-          ? {
-              ...emp,
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              fullName: `${formData.firstName} ${formData.lastName}`,
-              primaryRole: formData.primaryRole ?? undefined,
-              roles: formData.roles ?? [],
-              hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
-              hoursPerWeek: Math.round(formData.hoursPerMonth! / 4.33),
-              locationId: formData.location?.id,
-              location: formData.location ?? undefined,
-            }
-          : emp
-      );
+      if (editingId) {
+        // Update existing employee via API
+        const updateData: UpdateEmployeeDto = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
+          locationId: formData.location?.id,
+          roleIds: formData.roles?.map(role => role.id) || [],
+          primaryRoleId: formData.primaryRole?.id
+        };
 
+        const updatedEmployee = await employeeService.updateEmployee(editingId, updateData);
+        
+        // Update local state with the response from API
+        const updatedEmployees = employees.map(emp =>
+          emp.id === editingId ? updatedEmployee : emp
+        );
+        onEmployeesChange(updatedEmployees);
+
+        showSnackbar(
+          `Mitarbeiter ${formData.firstName} ${formData.lastName} wurde aktualisiert`,
+          'success'
+        );
+      } else {
+        // Create new employee via API
+        const createData: CreateEmployeeDto = {
+          organizationId: "ae2dd453-4c7d-4a13-bc1f-435f3f1c44ae", // TODO: Get from context/config
+          employeeNumber: `EMP${Date.now()}`, // Generate unique employee number
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@dialyse-praxis.de`,
+          hireDate: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+          hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
+          locationId: formData.location?.id,
+          roleIds: formData.roles?.map(role => role.id) || [],
+          primaryRoleId: formData.primaryRole?.id
+        };
+
+        const newEmployee = await employeeService.createEmployee(createData);
+        
+        // Add new employee to local state
+        const updatedEmployees = [...employees, newEmployee];
+        onEmployeesChange(updatedEmployees);
+
+        showSnackbar(
+          `Mitarbeiter ${formData.firstName} ${formData.lastName} wurde hinzugefügt`,
+          'success'
+        );
+      }
+
+      // Close modal if it was opened from modal
+      if (addEmployeeModalOpen) {
+        closeAddEmployeeModal();
+      }
+    } catch (error) {
+      console.error('Error saving employee:', error);
       showSnackbar(
-        `Mitarbeiter ${formData.firstName} ${formData.lastName} wurde aktualisiert`,
-        'success'
+        `Fehler beim Speichern des Mitarbeiters: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`,
+        'error'
       );
-    } else {
-      // Add new employee
-      const newEmployee: EmployeeResponseDto = {
-        contractType: "full_time",
-        createdAt: "",
-        email: "",
-        employeeNumber: "",
-        firstName: formData.firstName,
-        fullName: `${formData.firstName} ${formData.lastName}`,
-        hireDate: "",
-        isActive: false,
-        isAvailable: false,
-        languages: [],
-        organizationId: "",
-        skills: [],
-        status: "active",
-        updatedAt: "",
-        yearsOfService: 0,
-        id: uuidv4(),
-        lastName: formData.lastName,
-        primaryRole: formData.primaryRole ?? undefined,
-        roles: formData.roles ?? [],
-        hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
-        locationId: formData.location?.id,
-        location: formData.location ?? undefined,
-        certifications: []
-      };
-
-      updatedEmployees = [...employees, newEmployee];
-
-      showSnackbar(
-        `Mitarbeiter ${formData.firstName} ${formData.lastName} wurde hinzugefügt`,
-        'success'
-      );
-    }
-
-    onEmployeesChange(updatedEmployees);
-    
-    // Close modal if it was opened from modal
-    if (addEmployeeModalOpen) {
-      closeAddEmployeeModal();
     }
   };
 

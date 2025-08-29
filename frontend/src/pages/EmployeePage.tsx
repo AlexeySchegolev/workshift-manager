@@ -32,16 +32,18 @@ const EmployeePage: React.FC = () => {
     // Load employee list via API
     const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
 
+    // Function to load employees
+    const loadEmployees = async () => {
+        try {
+            const employees = await new EmployeeService().getAllEmployees();
+            setEmployees(employees);
+        } catch (error) {
+            console.error('Error loading employees:', error);
+        }
+    };
+
     // Fetch employees when component loads
     useEffect(() => {
-        const loadEmployees = async () => {
-            try {
-                const employees = await new EmployeeService().getAllEmployees();
-                setEmployees(employees);
-            } catch (error) {
-            }
-        };
-
         loadEmployees();
     }, []);
 
@@ -52,9 +54,14 @@ const EmployeePage: React.FC = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    // Update employees (but don't save to localStorage)
+    // Update employees and refresh from API if needed
     const handleEmployeesChange = (updatedEmployees: EmployeeResponseDto[]) => {
         setEmployees(updatedEmployees);
+    };
+
+    // Refresh employees from API
+    const refreshEmployees = () => {
+        loadEmployees();
     };
 
     // Calculate statistics
@@ -239,12 +246,6 @@ const EmployeePage: React.FC = () => {
                                 <BusinessIcon sx={{color: 'info.main', fontSize: '1.2rem'}}/>
                                 <Typography variant="body2" color="text.secondary">
                                     {stats.locationA} Standort A • {stats.locationB} Standort B
-                                </Typography>
-                            </Box>
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <ScheduleIcon sx={{color: 'warning.main', fontSize: '1.2rem'}}/>
-                                <Typography variant="body2" color="text.secondary">
-                                    Ø {stats.avgHours.toFixed(1)}h pro Monat
                                 </Typography>
                             </Box>
                         </Box>

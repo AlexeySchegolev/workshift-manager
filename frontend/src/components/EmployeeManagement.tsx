@@ -57,10 +57,10 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
   };
 
   // Handle save employee
-  const handleSaveEmployee = () => {
+  const handleSaveEmployee = async () => {
     if (!validateForm()) return;
     
-    saveEmployee(formData, editingId);
+    await saveEmployee(formData, editingId);
     resetForm();
   };
 

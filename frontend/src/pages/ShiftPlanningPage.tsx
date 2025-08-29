@@ -25,7 +25,6 @@ import {
     QuickAction,
     StatusItem,
 } from '@/components/dashboard';
-import MonthSelector from '../components/MonthSelector';
 import ShiftTable from '../components/ShiftTable';
 import PlanungsValidierung from '../components/PlanungsValidierung';
 import {EmployeeService} from "@/services";
@@ -371,72 +370,6 @@ const ShiftPlanningPage: React.FC = () => {
                 </Paper>
             </Fade>
 
-            {/* Month selection */}
-            <Fade in={showCards} timeout={1000}>
-                <Paper
-                    sx={{
-                        p: 3,
-                        mb: 4,
-                        borderRadius: 3,
-                        border: `1px solid ${theme.palette.divider}`,
-                    }}
-                >
-                    <Typography variant="h6" gutterBottom sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                        <CalendarIcon sx={{color: 'primary.main'}}/>
-                        Monat auswählen
-                    </Typography>
-                    <MonthSelector
-                        selectedDate={selectedDate}
-                        onDateChange={setSelectedDate}
-                    />
-                </Paper>
-            </Fade>
-
-            {/* KPI-Cards */}
-            <Fade in={showCards} timeout={1200}>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            sm: 'repeat(2, 1fr)',
-                            md: 'repeat(4, 1fr)',
-                        },
-                        gap: 3,
-                        mb: 4,
-                    }}
-                >
-                    <StatisticsCard
-                        title="Mitarbeiter"
-                        value={stats.totalEmployees}
-                        subtitle="Verfügbare Mitarbeiter"
-                        icon={<PeopleIcon/>}
-                        color="primary"
-                    />
-                    <StatisticsCard
-                        title="Schichtabdeckung"
-                        value={`${stats.coverage}%`}
-                        subtitle="Geplante Schichten"
-                        icon={<ScheduleIcon/>}
-                        color={stats.coverage >= 90 ? 'success' : stats.coverage >= 70 ? 'warning' : 'error'}
-                    />
-                    <StatisticsCard
-                        title="Ø Auslastung"
-                        value={`${stats.avgHoursPerEmployee}h`}
-                        subtitle="Pro Mitarbeiter/Monat"
-                        icon={<TrendingUpIcon/>}
-                        color={stats.avgHoursPerEmployee <= 160 ? 'success' : 'warning'}
-                    />
-                    <StatisticsCard
-                        title="Probleme"
-                        value={stats.violations + stats.warnings}
-                        subtitle="Regelverletzungen & Warnungen"
-                        icon={<WarningIcon/>}
-                        color={stats.violations + stats.warnings === 0 ? 'success' : stats.violations > 0 ? 'error' : 'warning'}
-                    />
-                </Box>
-            </Fade>
-
             {/* Sidebar - above the table */}
             <Fade in={showCards} timeout={1400}>
                 <Box
@@ -467,6 +400,7 @@ const ShiftPlanningPage: React.FC = () => {
                     <ShiftTable
                         employees={employees}
                         selectedDate={selectedDate}
+                        onDateChange={setSelectedDate}
                         shiftPlan={shiftPlan}
                         constraints={constraints}
                         isLoading={isLoading}

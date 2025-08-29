@@ -38,10 +38,12 @@ import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {ConstraintViolationDto, EmployeeResponseDto, MonthlyShiftPlanDto} from "@/api/data-contracts.ts";
 import { excelExportService } from '@/services';
+import MonthSelector from './MonthSelector';
 
 interface ShiftTableProps {
     employees: EmployeeResponseDto[];
     selectedDate: Date;
+    onDateChange: (date: Date) => void;
     shiftPlan: MonthlyShiftPlanDto | null;
     shiftPlanId?: string | null; // Optional shift plan ID for Excel export
     constraints: ConstraintViolationDto[];
@@ -55,6 +57,7 @@ interface ShiftTableProps {
 const ShiftTable: React.FC<ShiftTableProps> = ({
                                                    employees,
                                                    selectedDate,
+                                                   onDateChange,
                                                    shiftPlan,
                                                    shiftPlanId,
                                                    constraints,
@@ -182,11 +185,37 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
             {/* Header */}
             <CardHeader
                 title={
-                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap'}}>
                         <ScheduleIcon sx={{fontSize: '1.25rem', color: 'primary.main'}}/>
                         <Typography variant="h6" component="div">
-                            Schichtplan {monthName}
+                            Schichtplan für
                         </Typography>
+                        <Box sx={{
+                            '& .MuiBox-root': {
+                                margin: 0,
+                                padding: 0,
+                                backgroundColor: 'transparent',
+                                borderRadius: 1,
+                            },
+                            '& .MuiButton-root': {
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                padding: '4px 8px',
+                                minHeight: 'auto',
+                                textTransform: 'capitalize',
+                            },
+                            '& .MuiIconButton-root': {
+                                padding: '4px',
+                                '& .MuiSvgIcon-root': {
+                                    fontSize: '1.2rem',
+                                },
+                            },
+                        }}>
+                            <MonthSelector
+                                selectedDate={selectedDate}
+                                onDateChange={onDateChange}
+                            />
+                        </Box>
                     </Box>
                 }
                 action={

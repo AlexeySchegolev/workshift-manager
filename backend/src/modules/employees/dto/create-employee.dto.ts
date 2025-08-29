@@ -143,6 +143,16 @@ export class CreateEmployeeDto {
   primaryRoleId?: string;
 
   @ApiPropertyOptional({
+    description: 'Additional role IDs',
+    example: ['uuid-string-1', 'uuid-string-2'],
+    type: [String]
+  })
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  roleIds?: string[];
+
+  @ApiPropertyOptional({
     description: 'Supervisor ID',
     example: 'uuid-string'
   })

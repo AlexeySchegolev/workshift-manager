@@ -4,10 +4,11 @@ import { EmployeesController } from './employees.controller';
 import { EmployeesService } from './employees.service';
 import {Employee} from "@/database/entities/employee.entity";
 import {Location} from "@/database/entities/location.entity";
+import {Role} from "@/database/entities/role.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Employee, Location])
+    TypeOrmModule.forFeature([Employee, Location, Role])
   ],
   controllers: [EmployeesController],
   providers: [EmployeesService],

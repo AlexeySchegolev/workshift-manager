@@ -5,6 +5,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from '@/database/entities/employee.entity';
 import { Location } from '@/database/entities/location.entity';
+import {Role} from "@/database/entities/role.entity";
 
 @Injectable()
 export class EmployeesService {
@@ -15,6 +16,8 @@ export class EmployeesService {
     private readonly employeeRepository: Repository<Employee>,
     @InjectRepository(Location)
     private readonly locationRepository: Repository<Location>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
@@ -30,7 +33,23 @@ export class EmployeesService {
       }
     }
 
-    const employee = this.employeeRepository.create(createEmployeeDto);
+    // Validate and load roles if provided
+    let roles: Role[] = [];
+    if (createEmployeeDto.roleIds && createEmployeeDto.roleIds.length > 0) {
+      roles = await this.roleRepository.findByIds(createEmployeeDto.roleIds);
+      if (roles.length !== createEmployeeDto.roleIds.length) {
+        const foundIds = roles.map(role => role.id);
+        const missingIds = createEmployeeDto.roleIds.filter(id => !foundIds.includes(id));
+        throw new BadRequestException(`Roles with IDs ${missingIds.join(', ')} not found`);
+      }
+    }
+
+    const { roleIds, ...employeeData } = createEmployeeDto;
+    const employee = this.employeeRepository.create({
+      ...employeeData,
+      roles
+    });
+
     const savedEmployee = await this.employeeRepository.save(employee);
     
     this.logger.log(`Employee created successfully with ID: ${savedEmployee.id}`);
@@ -91,7 +110,7 @@ export class EmployeesService {
     this.logger.log(`Updating employee with ID: ${id}`);
 
     // Validate employee exists
-    await this.findOne(id, false);
+    const employee = await this.findOne(id, true);
 
     // Validate location exists if provided
     if (updateEmployeeDto.locationId) {
@@ -103,7 +122,23 @@ export class EmployeesService {
       }
     }
 
-    await this.employeeRepository.update(id, updateEmployeeDto);
+    // Handle role updates if provided
+    if (updateEmployeeDto.roleIds !== undefined) {
+      let roles: Role[] = [];
+      if (updateEmployeeDto.roleIds.length > 0) {
+        roles = await this.roleRepository.findByIds(updateEmployeeDto.roleIds);
+        if (roles.length !== updateEmployeeDto.roleIds.length) {
+          const foundIds = roles.map(role => role.id);
+          const missingIds = updateEmployeeDto.roleIds.filter(id => !foundIds.includes(id));
+          throw new BadRequestException(`Roles with IDs ${missingIds.join(', ')} not found`);
+        }
+      }
+      employee.roles = roles;
+      await this.employeeRepository.save(employee);
+    }
+
+    const { roleIds, ...employeeData } = updateEmployeeDto;
+    await this.employeeRepository.update(id, employeeData);
     const updatedEmployee = await this.findOne(id);
     
     this.logger.log(`Employee with ID ${id} updated successfully`);

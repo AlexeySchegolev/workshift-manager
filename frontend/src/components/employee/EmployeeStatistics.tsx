@@ -93,20 +93,7 @@ const EmployeeStatistics: React.FC<EmployeeStatisticsProps> = ({ employees }) =>
       value: stats.activeEmployees,
       icon: <PersonAddIcon sx={{ fontSize: '1.5rem' }} />,
       color: theme.palette.success.main,
-    },
-    {
-      title: 'Gesamt Stunden/Monat',
-      value: `${stats.totalHours}h`,
-      icon: <ScheduleIcon sx={{ fontSize: '1.5rem' }} />,
-      color: theme.palette.info.main,
-    },
-    {
-      title: 'Ø Stunden/Mitarbeiter',
-      value: `${stats.avgHours}h`,
-      icon: <TrendingUpIcon sx={{ fontSize: '1.5rem' }} />,
-      color: theme.palette.warning.main,
-      subtitle: 'pro Monat',
-    },
+    }
   ];
 
   return (

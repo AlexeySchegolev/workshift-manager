@@ -16,14 +16,12 @@ import {
     Schedule as ScheduleIcon,
     TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
-import {
-    StatistikCard,
-    SchnellAktionen,
-    StatusAmpel,
-} from '../components/dashboard';
 import EmployeeManagement from '../components/EmployeeManagement';
 import {EmployeeService} from "@/services";
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
+import QuickActions from "@/components/dashboard/QuickActions.tsx";
+import StatusLight from "@/components/dashboard/StatusLight.tsx";
+import StatisticsCard from "@/components/dashboard/StatisticsCard.tsx";
 
 /**
  * Modern Employee Management Page in Dashboard Style
@@ -268,7 +266,7 @@ const EmployeePage: React.FC = () => {
                         mb: 4,
                     }}
                 >
-                    <StatistikCard
+                    <StatisticsCard
                         title="Mitarbeiter"
                         value={stats.totalEmployees}
                         subtitle="Registrierte Mitarbeiter"
@@ -280,21 +278,21 @@ const EmployeePage: React.FC = () => {
                             label: 'vs. letztes Quartal',
                         }}
                     />
-                    <StatistikCard
+                    <StatisticsCard
                         title="Schichtleiter"
                         value={stats.shiftLeaders}
                         subtitle="Verfügbare Schichtleiter"
                         icon={<BusinessIcon/>}
                         color={stats.shiftLeaders >= 3 ? 'success' : stats.shiftLeaders >= 2 ? 'warning' : 'error'}
                     />
-                    <StatistikCard
+                    <StatisticsCard
                         title="Ø Arbeitszeit"
                         value={`${stats.avgHours.toFixed(1)}h`}
                         subtitle="Pro Mitarbeiter/Monat"
                         icon={<TrendingUpIcon/>}
                         color={stats.avgHours <= 160 ? 'success' : stats.avgHours <= 170 ? 'warning' : 'error'}
                     />
-                    <StatistikCard
+                    <StatisticsCard
                         title="Gesamtstunden"
                         value={`${Math.ceil(stats.totalHours * 10) / 10}h`}
                         subtitle="Alle Mitarbeiter/Monat"
@@ -318,14 +316,14 @@ const EmployeePage: React.FC = () => {
                     }}
                 >
                     {/* Quick actions */}
-                    <SchnellAktionen
-                        aktionen={quickActions}
+                    <QuickActions
+                        actions={quickActions}
                         title="Schnellaktionen"
                         maxItems={4}
                     />
 
                     {/* Status light */}
-                    <StatusAmpel
+                    <StatusLight
                         statusItems={statusItems}
                         title="Personalstatus"
                         showProgress={true}

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays } from 'date-fns';
-import { WochenTag } from '@/components/dashboard';
+import { WeekDay } from '@/components/dashboard';
 import { StatusItem } from '@/components/dashboard';
 import {
     EmployeeResponseDto,
@@ -25,7 +25,7 @@ interface DashboardStatistics {
 // Dashboard data interface
 interface DashboardData {
   statistics: DashboardStatistics;
-  currentWeek: WochenTag[];
+  currentWeek: WeekDay[];
   statusItems: StatusItem[];
   isLoading: boolean;
   error: string | null;
@@ -76,9 +76,9 @@ export const useDashboardData = (
   }, [employees, currentShiftPlan, constraints]);
 
   // Generate current week
-  const currentWeek = useMemo((): WochenTag[] => {
+  const currentWeek = useMemo((): WeekDay[] => {
     const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday as week start
-    const weekDays: WochenTag[] = [];
+    const weekDays: WeekDay[] = [];
 
     for (let i = 0; i < 7; i++) {
       const date = addDays(weekStart, i);

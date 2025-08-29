@@ -15,23 +15,30 @@ import {
     Warning as WarningIcon,
     CalendarMonth as CalendarIcon,
     TrendingUp as TrendingUpIcon,
+    Add as AddIcon,
+    FileDownload as FileDownloadIcon,
+    Settings as SettingsIcon
 } from '@mui/icons-material';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {
-    StatistikCard,
-    SchnellAktionen,
-    StatusAmpel,
-    createDefaultSchnellAktionen,
-    createShiftPlanningStatusItems,
-} from '../components/dashboard';
+    QuickAction,
+    StatusItem,
+} from '@/components/dashboard';
 import MonthSelector from '../components/MonthSelector';
 import ShiftTable from '../components/ShiftTable';
 import PlanungsValidierung from '../components/PlanungsValidierung';
 import {EmployeeService} from "@/services";
-import {ConstraintViolationDto, EmployeeResponseDto, MonthlyShiftPlanDto, EmployeeAvailabilityResponseDto} from "@/api/data-contracts.ts";
+import {
+    ConstraintViolationDto,
+    EmployeeResponseDto,
+    MonthlyShiftPlanDto
+} from "@/api/data-contracts.ts";
 
-import { shiftPlanningService } from '@/services';
+import {shiftPlanningService} from '@/services';
+import StatisticsCard from "@/components/dashboard/StatisticsCard.tsx";
+import QuickActions from "@/components/dashboard/QuickActions.tsx";
+import StatusLight from "@/components/dashboard/StatusLight.tsx";
 
 /**
  * Modern Shift Planning Page in Dashboard Style
@@ -135,17 +142,11 @@ const ShiftPlanningPage: React.FC = () => {
         const availabilityKey = getSessionKey(selectedDate, 'availability');
 
         const storedPlan = sessionStorage.getItem(planKey);
-        const storedAvailability = sessionStorage.getItem(availabilityKey);
-
+        sessionStorage.getItem(availabilityKey);
         if (storedPlan) {
             try {
                 const parsedPlan = JSON.parse(storedPlan);
                 setShiftPlan(parsedPlan);
-
-                let employeeAvailability: EmployeeAvailabilityResponseDto[] = [];
-                if (storedAvailability) {
-                    employeeAvailability = JSON.parse(storedAvailability);
-                }
 
                 // TODO: Implement constraint checking with backend integration
                 // For now, set empty constraints to avoid async issues in useEffect
@@ -186,12 +187,9 @@ const ShiftPlanningPage: React.FC = () => {
         try {
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const year = selectedDate.getFullYear();
-            const month = selectedDate.getMonth() + 1;
-
             // TODO: Implement actual shift plan generation with backend integration
             const generatedPlan = await shiftPlanningService.generateOptimalPlan(
-                { 
+                {
                     algorithm: 'mixed',
                     optimizationLevel: 'standard',
                     allowOvertime: false,
@@ -228,27 +226,76 @@ const ShiftPlanningPage: React.FC = () => {
     };
 
     // Define quick actions
-    const quickActions = createDefaultSchnellAktionen(
-        generateShiftPlan,
-        () => {
-        }, // Add employee - will be implemented later
-        () => {
-        }, // Excel export - handled in ShiftTable
-        () => {
-        }, // Settings
-        () => {
-        }, // Reports
-        !!shiftPlan,
-        stats.warnings + stats.violations
-    );
+    const quickActions: QuickAction[] = [
+        {
+            id: 'generate-plan',
+            title: 'Plan generieren',
+            description: 'Automatischen Schichtplan erstellen',
+            icon: <AddIcon/>,
+            color: 'primary',
+            onClick: generateShiftPlan,
+        },
+        {
+            id: 'add-employee',
+            title: 'Mitarbeiter hinzufügen',
+            description: 'Neuen Mitarbeiter anlegen',
+            icon: <PeopleIcon/>,
+            color: 'info',
+            onClick: () => {
+            }, // Will be implemented later
+        },
+        {
+            id: 'export-excel',
+            title: 'Excel Export',
+            description: 'Plan als Excel exportieren',
+            icon: <FileDownloadIcon/>,
+            color: 'success',
+            onClick: () => {
+            }, // Handled in ShiftTable
+        },
+        {
+            id: 'settings',
+            title: 'Einstellungen',
+            description: 'Planungsregeln konfigurieren',
+            icon: <SettingsIcon/>,
+            color: 'warning',
+            onClick: () => {
+            },
+        },
+    ];
 
     // Status items for the status light
-    const statusItems = createShiftPlanningStatusItems(
-        stats.totalEmployees,
-        stats.coverage,
-        stats.violations,
-        stats.warnings
-    );
+    const statusItems: StatusItem[] = [
+        {
+            id: 'employees',
+            title: 'Mitarbeiter verfügbar',
+            description: `${stats.totalEmployees} Mitarbeiter für Schichtplanung`,
+            status: stats.totalEmployees >= 8 ? 'success' : stats.totalEmployees >= 5 ? 'warning' : 'error',
+            value: stats.totalEmployees,
+        },
+        {
+            id: 'coverage',
+            title: 'Schichtabdeckung',
+            description: `${stats.coverage}% der Schichten sind besetzt`,
+            status: stats.coverage >= 90 ? 'success' : stats.coverage >= 70 ? 'warning' : 'error',
+            value: stats.coverage,
+            maxValue: 100,
+        },
+        {
+            id: 'violations',
+            title: 'Regelverletzungen',
+            description: `${stats.violations} Regelverletzungen gefunden`,
+            status: stats.violations === 0 ? 'success' : 'error',
+            value: stats.violations,
+        },
+        {
+            id: 'warnings',
+            title: 'Warnungen',
+            description: `${stats.warnings} Warnungen vorhanden`,
+            status: stats.warnings === 0 ? 'success' : 'warning',
+            value: stats.warnings,
+        },
+    ];
 
     return (
         <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>
@@ -359,28 +406,28 @@ const ShiftPlanningPage: React.FC = () => {
                         mb: 4,
                     }}
                 >
-                    <StatistikCard
+                    <StatisticsCard
                         title="Mitarbeiter"
                         value={stats.totalEmployees}
                         subtitle="Verfügbare Mitarbeiter"
                         icon={<PeopleIcon/>}
                         color="primary"
                     />
-                    <StatistikCard
+                    <StatisticsCard
                         title="Schichtabdeckung"
                         value={`${stats.coverage}%`}
                         subtitle="Geplante Schichten"
                         icon={<ScheduleIcon/>}
                         color={stats.coverage >= 90 ? 'success' : stats.coverage >= 70 ? 'warning' : 'error'}
                     />
-                    <StatistikCard
+                    <StatisticsCard
                         title="Ø Auslastung"
                         value={`${stats.avgHoursPerEmployee}h`}
                         subtitle="Pro Mitarbeiter/Monat"
                         icon={<TrendingUpIcon/>}
                         color={stats.avgHoursPerEmployee <= 160 ? 'success' : 'warning'}
                     />
-                    <StatistikCard
+                    <StatisticsCard
                         title="Probleme"
                         value={stats.violations + stats.warnings}
                         subtitle="Regelverletzungen & Warnungen"
@@ -404,14 +451,14 @@ const ShiftPlanningPage: React.FC = () => {
                     }}
                 >
                     {/* Quick actions */}
-                    <SchnellAktionen
-                        aktionen={quickActions}
+                    <QuickActions
+                        actions={quickActions}
                         title="Schnellaktionen"
                         maxItems={4}
                     />
 
                     {/* Status light */}
-                    <StatusAmpel
+                    <StatusLight
                         statusItems={statusItems}
                         title="Planungsstatus"
                         showProgress={true}

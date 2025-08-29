@@ -24,11 +24,23 @@ export const rolesSeedData = [
       'Personalplanung'
     ],
     permissions: [
-      'patient.read',
-      'patient.update',
-      'nursing.perform',
-      'team.manage',
-      'shift.coordinate'
+      'Patientendaten einsehen',
+      'Patientendaten bearbeiten',
+      'Neue Patienten anlegen',
+      'Patientendaten löschen',
+      'Pflegetätigkeiten durchführen',
+      'Pflegepersonal überwachen',
+      'Team leiten',
+      'Mitarbeiter zuteilen',
+      'Schichten koordinieren',
+      'Dienstpläne erstellen',
+      'Schichtpläne genehmigen',
+      'Berichte erstellen',
+      'Qualitätskontrolle',
+      'Notfälle managen',
+      'Personal bewerten',
+      'Budget einsehen',
+      'Dienstpläne ändern'
     ],
     canWorkNights: true,
     canWorkWeekends: true,
@@ -63,10 +75,21 @@ export const rolesSeedData = [
       'Notfallmanagement'
     ],
     permissions: [
-      'patient.read',
-      'patient.update',
-      'nursing.perform',
-      'medication.administer'
+      'Patientendaten einsehen',
+      'Patientendaten bearbeiten',
+      'Neue Patienten anlegen',
+      'Pflegetätigkeiten durchführen',
+      'Pflegedokumentation',
+      'Medikamente verabreichen',
+      'Medikamente vorbereiten',
+      'Vitalzeichen messen',
+      'Wundversorgung',
+      'Notfallversorgung',
+      'Medizingeräte bedienen',
+      'Hygienemaßnahmen',
+      'Angehörigengespräche',
+      'Schichtübergabe',
+      'Qualitätsberichte'
     ],
     canWorkNights: true,
     canWorkWeekends: true,
@@ -100,9 +123,20 @@ export const rolesSeedData = [
       'Teamarbeit'
     ],
     permissions: [
-      'patient.read',
-      'nursing.assist',
-      'documentation.create'
+      'Patientendaten einsehen',
+      'Grundpflege durchführen',
+      'Pflegekräfte unterstützen',
+      'Einfache Pflegetätigkeiten',
+      'Dokumentation erstellen',
+      'Dokumentation aktualisieren',
+      'Grundlegende Vitalzeichen',
+      'Hygienehilfe',
+      'Mobilitätshilfe',
+      'Essenshilfe',
+      'Patientenkomfort',
+      'Beobachtungen melden',
+      'Geräte reinigen',
+      'Material verwalten'
     ],
     canWorkNights: true,
     canWorkWeekends: true,

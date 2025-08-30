@@ -22,12 +22,12 @@ import {
   Schedule as ScheduleIcon,
   People as PeopleIcon,
   Dashboard as DashboardIcon,
-  Notifications as NotificationsIcon,
-  Settings as SettingsIcon,
   Rule as RuleIcon,
   Business as BusinessIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
+import UserInfo from './UserInfo';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -52,7 +52,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { title: 'Schichten', path: '/schichten', icon: <ScheduleIcon />, description: 'Einzelne Schichten verwalten' },
     { title: 'Mitarbeiter', path: '/mitarbeiter', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten' },
     { title: 'Standorte', path: '/standorte', icon: <BusinessIcon />, description: 'Standorte und Betriebsstätten verwalten' },
-    { title: 'Rollenverwaltung', path: '/rollen', icon: <SettingsIcon />, description: 'Rollen und Berechtigungen verwalten' },
+    { title: 'Rollenverwaltung', path: '/rollen', icon: <AdminPanelSettingsIcon />, description: 'Rollen und Berechtigungen verwalten' },
     { title: 'Schichtkonfiguration', path: '/schichtregeln', icon: <RuleIcon />, description: 'Konfiguration und Vorgaben für die Schichtplanung' }
   ];
 
@@ -237,32 +237,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 );
               })}
               
-              {/* Additional header actions */}
-              <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
-                <IconButton
-                  size="small"
-                  sx={{
-                    color: 'text.secondary',
-                    '&:hover': {
-                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                      color: 'primary.main',
-                    },
-                  }}
-                >
-                  <NotificationsIcon />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  sx={{
-                    color: 'text.secondary',
-                    '&:hover': {
-                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                      color: 'primary.main',
-                    },
-                  }}
-                >
-                  <SettingsIcon />
-                </IconButton>
+              {/* User Info */}
+              <Box sx={{ ml: 2, display: 'flex', alignItems: 'center' }}>
+                <UserInfo />
               </Box>
             </Box>
           )}

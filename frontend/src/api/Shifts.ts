@@ -19,10 +19,8 @@ import {
 } from "./http-client";
 import {
   AdditionalColumnDto,
-  AdvancedPlanningOptionsDto,
   ConstraintViolationDto,
   ConstraintViolationResponseDto,
-  ConstraintWeightsDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
@@ -157,20 +155,6 @@ export class Shifts<SecurityDataType = unknown> {
     this.http.request<void, void>({
       path: `/api/shifts/${id}`,
       method: "DELETE",
-      ...params,
-    }); /**
-   * @description Restores a soft-deleted shift
-   *
-   * @tags shifts
-   * @name ShiftsControllerRestore
-   * @summary Restore deleted shift
-   * @request POST:/api/shifts/{id}/restore
-   */
-  shiftsControllerRestore = (id: string, params: RequestParams = {}) =>
-    this.http.request<ShiftResponseDto, void>({
-      path: `/api/shifts/${id}/restore`,
-      method: "POST",
-      format: "json",
       ...params,
     }); /**
    * @description Updates an existing shift with validation

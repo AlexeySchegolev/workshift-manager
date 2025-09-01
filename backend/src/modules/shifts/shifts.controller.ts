@@ -174,32 +174,6 @@ export class ShiftsController {
     return this.shiftsService.update(id, updateShiftDto);
   }
 
-  @Post(':id/restore')
-  @ApiOperation({
-    summary: 'Restore deleted shift',
-    description: 'Restores a soft-deleted shift'
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    description: 'Shift UUID'
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Shift restored successfully',
-    type: ShiftResponseDto
-  })
-  @ApiNotFoundResponse({
-    description: 'Shift not found'
-  })
-  @ApiBadRequestResponse({
-    description: 'Shift is not deleted'
-  })
-  async restore(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftResponseDto> {
-    return this.shiftsService.restore(id);
-  }
-
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({

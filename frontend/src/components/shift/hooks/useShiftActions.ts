@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ShiftResponseDto } from '@/api/data-contracts';
 import { shiftService } from '@/services/ShiftService';
 import { ShiftFormData } from './useShiftForm';
-import { toDateString } from '../../../utils/date.utils';
+import { toDateString } from '@/utils/date.utils.ts';
 
 export interface SnackbarState {
   open: boolean;
@@ -158,22 +158,6 @@ export const useShiftActions = (
     }
   };
 
-  const restoreShift = async (shiftId: string) => {
-    try {
-      const restoredShift = await shiftService.restoreShift(shiftId);
-      
-      const updatedShifts = shifts.map(shift =>
-        shift.id === shiftId ? restoredShift : shift
-      );
-      onShiftsChange(updatedShifts);
-      
-      showSnackbar('Schicht erfolgreich wiederhergestellt!', 'success');
-    } catch (error) {
-      console.error('Error restoring shift:', error);
-      showSnackbar('Fehler beim Wiederherstellen der Schicht', 'error');
-    }
-  };
-
   const duplicateShift = async (shift: ShiftResponseDto) => {
     try {
       // Create a copy with a new date (next day)
@@ -238,7 +222,6 @@ export const useShiftActions = (
     // Actions
     saveShift,
     deleteShift,
-    restoreShift,
     duplicateShift,
   };
 };

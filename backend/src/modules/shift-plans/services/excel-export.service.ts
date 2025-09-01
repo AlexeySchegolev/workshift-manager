@@ -134,89 +134,19 @@ export class ExcelExportService {
       throw error;
     }
   }
-
-  /**
-   * Export multiple shift plans to a single Excel file
-   * 
-   * @param shiftPlanIds Array of shift plan IDs to export
-   * @param options Export options
-   * @returns Excel file with multiple worksheets
-   */
-  async exportMultipleShiftPlans(
-    shiftPlanIds: string[],
-    options: ExcelExportOptions = {}
-  ): Promise<ExcelExportResult> {
-    const startTime = Date.now();
-    this.logger.log(`Starting multi-plan Excel export for ${shiftPlanIds.length} plans`);
-
-    const workbook = new ExcelJS.Workbook();
-    this.setupWorkbookProperties(workbook, 'Multiple Shift Plans Export');
-
-    let totalShifts = 0;
-    let totalEmployees = 0;
-    let totalDays = 0;
-
-    for (const shiftPlanId of shiftPlanIds) {
-      try {
-        const shiftPlan = await this.shiftPlanRepository.findOne({
-          where: { id: shiftPlanId }
-        });
-
-        if (shiftPlan) {
-          const employees = await this.getEmployeesForPlan(shiftPlanId);
-          
-          await this.generateShiftPlanWorksheet(
-            workbook,
-            shiftPlan,
-            employees,
-            options
-          );
-
-          totalShifts += this.countTotalShifts(shiftPlan.planData);
-          totalEmployees += employees.length;
-          totalDays += this.countPlanningDays(shiftPlan.planData);
-        }
-      } catch (error) {
-        this.logger.warn(`Failed to export plan ${shiftPlanId}: ${error.message}`);
-      }
-    }
-
-    const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
-    const exportDuration = Date.now() - startTime;
-
-    this.logger.log(`Multi-plan Excel export completed in ${exportDuration}ms`);
-
-    return {
-      buffer,
-      filename: `shift-plans-export-${format(new Date(), 'yyyy-MM-dd-HHmm')}.xlsx`,
-      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      size: buffer.length,
-      generatedAt: new Date(),
-      metadata: {
-        totalShifts,
-        totalEmployees,
-        totalDays,
-        exportOptions: options
-      }
-    };
-  }
-
-  /**
-   * Create and configure workbook
+    /**
+     * Create and configure workbook
    */
   private createWorkbook(shiftPlan: ShiftPlan): ExcelJS.Workbook {
     const workbook = new ExcelJS.Workbook();
-    const title = `Schichtplan ${format(new Date(shiftPlan.year, shiftPlan.month - 1), 'MMMM yyyy', { locale: de })}`;
-    
-    this.setupWorkbookProperties(workbook, title);
-    
+    this.setupWorkbookProperties(workbook);
     return workbook;
   }
 
   /**
    * Setup workbook properties
    */
-  private setupWorkbookProperties(workbook: ExcelJS.Workbook, title: string): void {
+  private setupWorkbookProperties(workbook: ExcelJS.Workbook): void {
     workbook.creator = 'Workshift Manager Backend';
     workbook.lastModifiedBy = 'Workshift Manager Backend';
     workbook.created = new Date();
@@ -465,7 +395,7 @@ export class ExcelExportService {
 
       // Add additional column data if specified
       if (options.additionalColumns) {
-        options.additionalColumns.forEach(col => {
+        options.additionalColumns.forEach(() => {
           // This would be populated based on the column key
           // For now, we'll add empty values
           rowData.push('');

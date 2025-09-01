@@ -1,7 +1,6 @@
 import {BaseService} from './BaseService';
-import {AdvancedPlanningOptionsDto, EmployeeAvailabilityResponseDto, MonthlyShiftPlanDto} from '../api/data-contracts';
+import {EmployeeResponseDto, MonthlyShiftPlanDto} from '../api/data-contracts';
 
-type ShiftPlanningOptions = AdvancedPlanningOptionsDto;
 import {ShiftPlans} from '../api/ShiftPlans';
 import {
     GenerateShiftPlanDto,
@@ -21,13 +20,11 @@ export class ShiftPlanningService extends BaseService {
 
     /**
      * Generate an optimized shift plan using backend API
-     * @param options - Planning options and constraints
      * @param employees - Available employees
      * @returns Generated shift plan
      */
     async generateOptimalPlan(
-        options: ShiftPlanningOptions,
-        employees: any[],
+        employees: EmployeeResponseDto[],
     ): Promise<MonthlyShiftPlanDto> {
         try {
             // Convert frontend options to backend format
@@ -35,7 +32,7 @@ export class ShiftPlanningService extends BaseService {
                 year: new Date().getFullYear(),
                 month: new Date().getMonth() + 1,
                 employeeIds: employees.map(emp => emp.id),
-                useRelaxedRules: options.optimizationLevel === 'basic'
+                useRelaxedRules: false
             };
 
             const response = await this.shiftPlansApi.shiftPlansControllerGenerate(generateDto);
@@ -56,10 +53,9 @@ export class ShiftPlanningService extends BaseService {
     /**
      * Validate a shift plan against constraints using backend API
      * @param plan - The shift plan to validate
-     * @param constraints - Validation constraints
      * @returns Validation results
      */
-    async validatePlan(plan: MonthlyShiftPlanDto, constraints: string[]): Promise<any[]> {
+    async validatePlan(plan: MonthlyShiftPlanDto): Promise<any[]> {
         try {
             const validateDto: ValidateShiftPlanDto = {
                 year: new Date().getFullYear(),

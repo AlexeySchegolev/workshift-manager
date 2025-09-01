@@ -5,7 +5,6 @@ import helmet from 'helmet';
 import * as compression from 'compression';
 import * as morgan from 'morgan';
 import { AppModule } from './app.module';
-import {AdvancedPlanningOptionsDto} from "@/modules/shift-plans/dto/advanced-planning-options.dto";
 import {ConstraintViolationDto} from "@/modules/shift-plans/dto/constraint-validation-result.dto";
 
 async function bootstrap() {
@@ -36,7 +35,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   
-  const options = {extraModels: [AdvancedPlanningOptionsDto, ConstraintViolationDto]};
+  const options = {extraModels: [ConstraintViolationDto]};
   
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api/docs', app, document);

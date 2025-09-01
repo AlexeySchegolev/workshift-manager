@@ -66,19 +66,6 @@ export class ShiftService {
       throw error;
     }
   }
-
-  /**
-   * Restore a deleted shift
-   */
-  async restoreShift(id: string): Promise<ShiftResponseDto> {
-    try {
-      const response = await this.shiftsApi.shiftsControllerRestore(id);
-      return response.data;
-    } catch (error) {
-      console.error('Error restoring shift:', error);
-      throw error;
-    }
-  }
 }
 
 // Export singleton instance

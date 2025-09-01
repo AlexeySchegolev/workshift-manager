@@ -172,23 +172,11 @@ const ShiftPlanningPage: React.FC = () => {
         try {
             await new Promise(resolve => setTimeout(resolve, 1000));
             const generatedPlan = await shiftPlanningService.generateOptimalPlan(
-                {
-                    algorithm: 'mixed',
-                    optimizationLevel: 'standard',
-                    allowOvertime: false,
-                    consecutiveDaysLimit: 5,
-                    maxPlanningAttempts: 3,
-                    strictMode: true,
-                    weeklyHoursFlexibility: 0.1,
-                    employeeSortingStrategy: 'workload_balancing',
-                    saturdayDistributionMode: 'fair'
-                },
                 employees
             );
 
             const newConstraints = await shiftPlanningService.validatePlan(
-                generatedPlan,
-                ['basic_constraints']
+                generatedPlan
             );
 
             setShiftPlan(generatedPlan);

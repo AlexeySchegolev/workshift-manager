@@ -142,27 +142,6 @@ export class ExcelExportRequestDto {
   @Type(() => ExcelExportOptionsDto)
   options?: ExcelExportOptionsDto;
 }
-
-export class MultipleExcelExportRequestDto {
-  @ApiProperty({
-    description: 'List of shift plan IDs to export',
-    example: ['uuid-1', 'uuid-2', 'uuid-3'],
-    type: [String]
-  })
-  @IsArray()
-  @IsString({ each: true })
-  shiftPlanIds: string[];
-
-  @ApiPropertyOptional({
-    description: 'Export options for all shift plans',
-    type: ExcelExportOptionsDto
-  })
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ExcelExportOptionsDto)
-  options?: ExcelExportOptionsDto;
-}
-
 export class ExcelExportMetadataDto {
   @ApiProperty({
     description: 'Total number of shifts in export',

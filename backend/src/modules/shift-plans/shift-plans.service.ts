@@ -162,15 +162,7 @@ export class ShiftPlansService {
     await this.shiftPlanRepository.update(id, { isPublished: true });
     return this.findOne(id);
   }
-
-  async unpublish(id: string): Promise<ShiftPlan> {
-    this.logger.log(`Unpublishing shift plan with ID: ${id}`);
-    
-    await this.shiftPlanRepository.update(id, { isPublished: false });
-    return this.findOne(id);
-  }
-
-  async generateShiftPlan(generateDto: GenerateShiftPlanDto): Promise<{
+    async generateShiftPlan(generateDto: GenerateShiftPlanDto): Promise<{
     shiftPlan: ShiftPlan;
     statistics: any;
     violations: ConstraintViolation[];
@@ -196,8 +188,7 @@ export class ShiftPlansService {
       generateDto.year,
       generateDto.month,
       employees,
-      shiftRules,
-      generateDto.useRelaxedRules || false
+      shiftRules
     );
 
     // Create or update the shift plan
@@ -231,7 +222,7 @@ export class ShiftPlansService {
 
     // Generate statistics and validate
     const statistics = this.calculatePlanStatistics(planData, employees);
-    const violations = await this.validatePlanAndCreateViolations(shiftPlan.id, planData, employees, shiftRules);
+    const violations = await this.validatePlanAndCreateViolations(shiftPlan.id, planData, shiftRules);
 
     this.logger.log(`Shift plan generated successfully for ${generateDto.month}/${generateDto.year}`);
     
@@ -258,7 +249,7 @@ export class ShiftPlansService {
       throw new BadRequestException('No shift rules found for validation');
     }
 
-    const violations = await this.validatePlanData(validateDto.planData, employees, shiftRules);
+    const violations = await this.validatePlanData(validateDto.planData, shiftRules);
     const statistics = this.calculatePlanStatistics(validateDto.planData, employees);
 
     return {
@@ -267,44 +258,11 @@ export class ShiftPlansService {
       statistics
     };
   }
-
-  async getShiftPlanStats(): Promise<{
-    total: number;
-    published: number;
-    unpublished: number;
-    currentMonth?: ShiftPlan;
-    nextMonth?: ShiftPlan;
-  }> {
-    this.logger.log('Generating shift plan statistics');
-
-    const allPlans = await this.findAll(false);
-    const publishedPlans = allPlans.filter(plan => plan.isPublished);
-    
-    const now = new Date();
-    const currentMonth = allPlans.find(plan => 
-      plan.year === now.getFullYear() && plan.month === now.getMonth() + 1
-    );
-    
-    const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const nextMonth = allPlans.find(plan => 
-      plan.year === nextMonthDate.getFullYear() && plan.month === nextMonthDate.getMonth() + 1
-    );
-
-    return {
-      total: allPlans.length,
-      published: publishedPlans.length,
-      unpublished: allPlans.length - publishedPlans.length,
-      currentMonth,
-      nextMonth
-    };
-  }
-
-  private async generateMonthlyPlan(
+    private async generateMonthlyPlan(
     year: number,
     month: number,
     employees: Employee[],
-    rules: ShiftRules,
-    useRelaxedRules: boolean
+    rules: ShiftRules
   ): Promise<MonthlyShiftPlan> {
     const planData: MonthlyShiftPlan = {};
     const daysInMonth = new Date(year, month - 1, 0).getDate();
@@ -351,13 +309,12 @@ export class ShiftPlansService {
   private async validatePlanAndCreateViolations(
     shiftPlanId: string,
     planData: MonthlyShiftPlan,
-    employees: Employee[],
     rules: ShiftRules
   ): Promise<ConstraintViolation[]> {
     // Clear existing violations for this plan
     await this.constraintViolationRepository.delete({ shiftPlanId });
 
-    const violations = await this.validatePlanData(planData, employees, rules);
+    const violations = await this.validatePlanData(planData, rules);
     
     // Save violations to database
     for (const violation of violations) {
@@ -372,7 +329,6 @@ export class ShiftPlansService {
 
   private async validatePlanData(
     planData: MonthlyShiftPlan,
-    employees: Employee[],
     rules: ShiftRules
   ): Promise<ConstraintViolation[]> {
     const violations: ConstraintViolation[] = [];
@@ -425,12 +381,12 @@ export class ShiftPlansService {
     });
     
     // Calculate statistics
-    for (const [date, dayPlan] of validDateEntries) {
+    for (const [dayPlan] of validDateEntries) {
       // Skip entries that are not valid date keys or don't have proper dayPlan structure
       if (!dayPlan || typeof dayPlan !== 'object') continue;
       
       let dayAssignments = 0;
-      for (const [shiftType, assignedEmployees] of Object.entries(dayPlan)) {
+      for (const [assignedEmployees] of Object.entries(dayPlan)) {
         // Defensive programming: ensure assignedEmployees is an array
         const employeeArray = Array.isArray(assignedEmployees) ? assignedEmployees : [];
         
@@ -460,67 +416,5 @@ export class ShiftPlansService {
     });
     
     return activeRules.length > 0 ? activeRules[0] : null;
-  }
-
-  async getEmployeesForPlan(shiftPlanId: string): Promise<Employee[]> {
-    // Get all employees that are potentially available for this shift plan
-    // In a more sophisticated implementation, this would filter based on
-    // location, roles, availability, etc.
-    return this.employeeRepository.find({
-      where: { isActive: true },
-      relations: ['roles', 'location']
-    });
-  }
-
-  async getDetailedStatistics(shiftPlanId: string): Promise<any> {
-    const shiftPlan = await this.findOne(shiftPlanId, true);
-    if (!shiftPlan) {
-      throw new NotFoundException(`Shift plan with ID ${shiftPlanId} not found`);
-    }
-
-    const employees = await this.getEmployeesForPlan(shiftPlanId);
-    const assignments = await this.shiftAssignmentRepository.find({
-      where: { shiftPlanId },
-      relations: ['employee', 'shift']
-    });
-
-    const violations = await this.constraintViolationRepository.find({
-      where: { shiftPlanId }
-    });
-
-    // Calculate detailed statistics
-      return {
-        shiftPlanId,
-        totalEmployees: employees.length,
-        totalAssignments: assignments.length,
-        totalViolations: violations.length,
-        hardViolations: violations.filter(v => v.type === ViolationType.HARD).length,
-        softViolations: violations.filter(v => v.type === ViolationType.SOFT).length,
-        coveragePercentage: shiftPlan.coveragePercentage,
-        totalHours: shiftPlan.totalHours,
-        employeeUtilization: assignments.reduce((acc, assignment) => {
-            const empId = assignment.employee.id;
-            acc[empId] = (acc[empId] || 0) + 1;
-            return acc;
-        }, {} as Record<string, number>),
-        violationsByCategory: violations.reduce((acc, violation) => {
-            acc[violation.category] = (acc[violation.category] || 0) + 1;
-            return acc;
-        }, {} as Record<string, number>),
-        averageShiftsPerEmployee: employees.length > 0 ? assignments.length / employees.length : 0,
-        planCompleteness: this.calculatePlanCompleteness(shiftPlan.planData)
-    };
-  }
-
-  private calculatePlanCompleteness(planData: MonthlyShiftPlan): number {
-    if (!planData) return 0;
-    
-    const totalDays = Object.keys(planData).length;
-    const completeDays = Object.values(planData).filter(dayPlan => {
-      if (!dayPlan) return false;
-      return Object.values(dayPlan).some(shifts => shifts.length > 0);
-    }).length;
-    
-    return totalDays > 0 ? (completeDays / totalDays) * 100 : 0;
   }
 }

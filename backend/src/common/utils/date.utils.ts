@@ -27,11 +27,3 @@ export const toISOString = (date: Date | string): string => {
   }
   return date.toISOString();
 };
-
-/**
- * Gets current timestamp as ISO string
- * @returns Current timestamp in ISO string format
- */
-export const getCurrentTimestamp = (): string => {
-  return new Date().toISOString();
-};

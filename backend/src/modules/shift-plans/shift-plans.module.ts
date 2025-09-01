@@ -2,9 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShiftPlansController } from './shift-plans.controller';
 import { ShiftPlansService } from './shift-plans.service';
-import { ShiftPlanningAlgorithmService } from './services/shift-planning-algorithm.service';
-import { BacktrackingAlgorithmService } from './services/backtracking-algorithm.service';
-import { ConstraintValidationService } from './services/constraint-validation.service';
 import { ShiftPlanningUtilityService } from './services/shift-planning-utility.service';
 import { ExcelExportService } from './services/excel-export.service';
 import { EmployeeAvailabilityService } from '../employees/services/employee-availability.service';
@@ -38,9 +35,6 @@ import {Organization} from "@/database/entities/organization.entity";
   ],
   providers: [
     ShiftPlansService,
-    ShiftPlanningAlgorithmService,
-    BacktrackingAlgorithmService,
-    ConstraintValidationService,
     ShiftPlanningUtilityService,
     ExcelExportService,
     EmployeeAvailabilityService,
@@ -48,9 +42,6 @@ import {Organization} from "@/database/entities/organization.entity";
   ],
   exports: [
     ShiftPlansService,
-    ShiftPlanningAlgorithmService,
-    BacktrackingAlgorithmService,
-    ConstraintValidationService,
     ShiftPlanningUtilityService,
     ExcelExportService,
     EmployeeAvailabilityService,

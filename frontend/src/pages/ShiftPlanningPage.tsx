@@ -198,7 +198,7 @@ const ShiftPlanningPage: React.FC = () => {
     // Define quick actions
 // Status items for the status light
     return (
-        <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>
+        <Container maxWidth="xl" sx={{py: 3}}>
             {/* Hero section */}
             <Fade in timeout={800}>
                 <Paper

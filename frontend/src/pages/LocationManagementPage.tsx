@@ -98,7 +98,7 @@ const LocationManagementPage: React.FC = () => {
     const stats = calculateOverallStatistics();
 
     return (
-        <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>
+        <Container maxWidth="xl" sx={{py: 3}}>
             {/* Hero section */}
             <Fade in timeout={800}>
                 <Paper
@@ -107,8 +107,8 @@ const LocationManagementPage: React.FC = () => {
                         p: {xs: 3, md: 4},
                         mb: 4,
                         borderRadius: 3,
-                        background: `linear-gradient(135deg, ${alpha(theme.palette.info.main, 0.1)} 0%, ${alpha(theme.palette.info.light, 0.05)} 100%)`,
-                        border: `1px solid ${alpha(theme.palette.info.main, 0.1)}`,
+                        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.primary.light, 0.05)} 100%)`,
+                        border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
                         position: 'relative',
                         overflow: 'hidden',
                         '&::before': {
@@ -118,7 +118,7 @@ const LocationManagementPage: React.FC = () => {
                             left: 0,
                             right: 0,
                             height: 4,
-                            background: `linear-gradient(90deg, ${theme.palette.info.main}, ${theme.palette.warning.main})`,
+                            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                         },
                     }}
                 >
@@ -129,7 +129,7 @@ const LocationManagementPage: React.FC = () => {
                             sx={{
                                 fontWeight: 700,
                                 mb: 1,
-                                background: `linear-gradient(135deg, ${theme.palette.info.main}, ${theme.palette.info.dark})`,
+                                background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
                                 backgroundClip: 'text',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
@@ -146,7 +146,7 @@ const LocationManagementPage: React.FC = () => {
                         </Typography>
                         <Box sx={{display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap'}}>
                             <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <BusinessIcon sx={{color: 'info.main', fontSize: '1.2rem'}}/>
+                                <BusinessIcon sx={{color: 'primary.main', fontSize: '1.2rem'}}/>
                                 <Typography variant="body2" color="text.secondary">
                                     {stats.activeLocations} von {stats.totalLocations} Standorten aktiv
                                 </Typography>

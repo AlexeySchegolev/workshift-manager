@@ -11,7 +11,6 @@ import {UpdateShiftPlanDto} from './dto/update-shift-plan.dto';
 import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from "@/database/entities/shift-plan.entity";
 import {Employee} from "@/database/entities/employee.entity";
 import {ShiftRules} from "@/database/entities/shift-rules.entity";
-import {ShiftAssignment} from "@/database/entities/shift-assignment.entity";
 import {Organization} from "@/database/entities/organization.entity";
 import { toDateString } from '@/common/utils/date.utils';
 
@@ -26,8 +25,6 @@ export class ShiftPlansService {
     private readonly employeeRepository: Repository<Employee>,
     @InjectRepository(ShiftRules)
     private readonly shiftRulesRepository: Repository<ShiftRules>,
-    @InjectRepository(ShiftAssignment)
-    private readonly shiftAssignmentRepository: Repository<ShiftAssignment>,
     @InjectRepository(ConstraintViolation)
     private readonly constraintViolationRepository: Repository<ConstraintViolation>,
     @InjectRepository(Organization)

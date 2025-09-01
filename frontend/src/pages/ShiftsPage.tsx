@@ -248,7 +248,7 @@ const ShiftsPage: React.FC = () => {
                             color="text.secondary"
                             sx={{mb: 2, maxWidth: 600}}
                         >
-                            Verwalten Sie Ihre Schichten und optimieren Sie die Personalplanung für beide Stationen
+                            Verwalten Sie Ihre Schichten
                         </Typography>
                         <Box sx={{display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap'}}>
                             <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>

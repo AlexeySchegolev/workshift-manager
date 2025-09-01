@@ -84,7 +84,7 @@ const ShiftRulesPage: React.FC = () => {
                             color="text.secondary"
                             sx={{mb: 2, maxWidth: 600}}
                         >
-                            Verwaltung und Übersicht aller Regeln für die Schichtplanung in beiden Praxen
+                            Verwaltung und Übersicht aller Regeln für die Schichtplanung
                         </Typography>
                         <Box sx={{display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap'}}>
                             <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>

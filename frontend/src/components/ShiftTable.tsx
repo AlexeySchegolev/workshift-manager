@@ -436,7 +436,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                             mt: 0.5
                                                         }}>
                                                             <Chip
-                                                                label={emp.primaryRole?.type}
+                                                                label={emp.primaryRole?.name || emp.primaryRole?.type}
                                                                 size="small"
                                                                 color={emp.primaryRole?.type === 'shift_leader' ? 'primary' : 'default'}
                                                                 sx={{

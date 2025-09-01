@@ -539,7 +539,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Container maxWidth="xl">
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              © {new Date().getFullYear()} Schichtplanungs- und Zeitmanagement-System
+              © {new Date().getFullYear()} Schicht- und Einsatzplanungssystem 
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Typography variant="caption" color="text.secondary">

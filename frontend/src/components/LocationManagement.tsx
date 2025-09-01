@@ -82,19 +82,26 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     }
   };
 
-  // Location statistics
-  const getLocationStats = (locationId: string): LocationStatsDto => {
-    // TODO: Load statistics from database
-    // Temporary default values until DB integration is implemented
+  // Get real statistics from location data
+  const getLocationStats = (location: LocationResponseDto): LocationStatsDto => {
+    // Use backend stats if available, otherwise calculate from available data
+    if (location.stats) {
+      return location.stats;
+    }
+    
+    // Calculate statistics from available location data
+    const employeeCount = location.employees?.length || 0;
+    const occupancyRate = location.maxCapacity > 0 
+      ? (location.currentCapacity / location.maxCapacity) * 100 
+      : 0;
+    
     return {
-      activeShifts: 12,
-      averageStaffing: 92.3,
-      averageUtilization: 85,
-      employeeCount: 8,
-      occupancyRate: 78.5,
-      totalClients: 25,
-      clientSatisfaction: 4.2,
-      monthlyRevenue: 15000,
+      activeShifts: 0, // Default value for required field
+      averageStaffing: 0, // Default value for required field
+      averageUtilization: 0, // Default value for required field
+      employeeCount,
+      occupancyRate,
+      totalClients: location.currentCapacity, // Use current capacity as proxy for clients
     };
   };
 
@@ -253,7 +260,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       {/* Location Cards */}
       <Grid container spacing={3}>
         {locations.map((location) => {
-          const stats = getLocationStats(location.id);
+          const stats = getLocationStats(location);
           return (
             <Grid size={{ xs: 12, md: 6, lg: 4 }} key={location.id}>
               <Card
@@ -351,21 +358,13 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                   <Divider sx={{ my: 2 }} />
 
                   {/* Statistics */}
-                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 2 }}>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, mb: 2 }}>
                     <Box sx={{ textAlign: 'center' }}>
                       <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600 }}>
                         {stats.totalClients}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         Kunden
-                      </Typography>
-                    </Box>
-                    <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="h6" color="success.main" sx={{ fontWeight: 600 }}>
-                        {stats.averageUtilization}%
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Auslastung
                       </Typography>
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>

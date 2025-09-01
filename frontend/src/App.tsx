@@ -26,7 +26,7 @@ const App: React.FC = () => {
           <Layout>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/schichtplanung" element={<ShiftPlanningPage />} />
+              <Route path="/schichtplan" element={<ShiftPlanningPage />} />
               <Route path="/schichten" element={<ShiftsPage />} />
               <Route path="/mitarbeiter" element={<EmployeePage />} />
               <Route path="/standorte" element={<LocationManagementPage />} />

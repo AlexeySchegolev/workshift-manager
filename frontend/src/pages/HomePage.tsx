@@ -81,7 +81,7 @@ const HomePage: React.FC = () => {
             description: 'Neuen Schichtplan generieren',
             icon: <AddIcon/>,
             color: 'primary',
-            onClick: () => navigate('/schichtplanung'),
+            onClick: () => navigate('/schichtplan'),
         },
         {
             id: 'manage-employees',
@@ -220,7 +220,7 @@ const HomePage: React.FC = () => {
                         subtitle="Geplante Schichten"
                         icon={<ScheduleIcon/>}
                         color={statistics.shiftCoverage >= 90 ? 'success' : statistics.shiftCoverage >= 70 ? 'warning' : 'error'}
-                        onClick={() => navigate('/schichtplanung')}
+                        onClick={() => navigate('/schichtplan')}
                     />
                     <StatisticsCard
                         title="Ø Auslastung"
@@ -248,7 +248,7 @@ const HomePage: React.FC = () => {
                         selectedDate={selectedDate}
                         onDateSelect={(date) => {
                             // TODO: Select date and navigate to shift planning
-                            navigate('/schichtplanung');
+                            navigate('/schichtplan');
                         }}
                         title="Aktuelle Woche"
                     />

@@ -235,7 +235,7 @@ const ShiftPlanningPage: React.FC = () => {
                                 WebkitTextFillColor: 'transparent',
                             }}
                         >
-                            Schichtplanung
+                            Schichtplan
                         </Typography>
                         <Typography
                             variant="h6"

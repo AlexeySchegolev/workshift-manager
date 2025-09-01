@@ -199,7 +199,7 @@ export const useDashboardData = (
  */
 export const useDashboardActions = () => {
   const navigateToShiftPlanning = () => {
-    window.location.href = '/schichtplanung';
+    window.location.href = '/schichtplan';
   };
 
   const navigateToEmployees = () => {

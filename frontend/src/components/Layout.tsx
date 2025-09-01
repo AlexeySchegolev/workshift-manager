@@ -75,7 +75,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigationLinks = [
     { title: 'Dashboard', path: '/', icon: <DashboardIcon />, description: 'Übersicht und Statistiken', category: 'main' },
-    { title: 'Schichtplanung', path: '/schichtplanung', icon: <CalendarIcon />, description: 'Schichtpläne erstellen und verwalten', category: 'shifts' },
+    { title: 'Schichtplan', path: '/schichtplan', icon: <CalendarIcon />, description: 'Schichtpläne erstellen und verwalten', category: 'shifts' },
     { title: 'Schichten', path: '/schichten', icon: <ScheduleIcon />, description: 'Einzelne Schichten verwalten', category: 'shifts' },
     { title: 'Schichtkonfiguration', path: '/schichtregeln', icon: <RuleIcon />, description: 'Konfiguration und Vorgaben für die Schichtplanung', category: 'shifts' },
     { title: 'Mitarbeiter', path: '/mitarbeiter', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten', category: 'employees' },

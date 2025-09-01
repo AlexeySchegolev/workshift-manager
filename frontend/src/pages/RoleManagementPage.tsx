@@ -10,7 +10,7 @@ const RoleManagementPage: React.FC = () => {
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom>
-          Rollenverwaltung
+          Rollen
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
           Verwalten Sie die Rollen und Berechtigungen für Ihr Schichtplanungssystem. 

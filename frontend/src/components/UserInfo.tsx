@@ -29,52 +29,46 @@ const UserInfo: React.FC = () => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
-  // Rolle übersetzen
-  const getRoleDisplayName = (role: string) => {
-    switch (role) {
-      case 'SUPER_ADMIN':
-        return 'Super Admin';
-      case 'ADMIN':
-        return 'Administrator';
-      case 'MANAGER':
-        return 'Manager';
-      case 'USER':
-        return 'Benutzer';
-      default:
-        return role;
-    }
-  };
 
   return (
     <Box
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: 2,
+        gap: 1.5,
         px: 2,
         py: 1,
         borderRadius: 2,
-        backgroundColor: alpha(theme.palette.primary.main, 0.05),
-        border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+        backgroundColor: alpha(theme.palette.grey[50], 0.8),
+        border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+        backdropFilter: 'blur(8px)',
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.primary.main, 0.05),
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+        },
+        transition: 'all 0.2s ease-in-out',
+        cursor: 'pointer',
       }}
     >
       {/* User Avatar */}
       <Avatar
         sx={{
           bgcolor: 'primary.main',
-          width: 36,
-          height: 36,
-          fontSize: '0.875rem',
-          fontWeight: 600,
+          background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+          width: 32,
+          height: 32,
+          fontSize: '0.8rem',
+          fontWeight: 700,
+          boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.3)}`,
         }}
       >
         {getInitials(user.firstName, user.lastName)}
       </Avatar>
 
       {/* User und Organisation Info */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        {/* User Name und Rolle */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+        {/* User Name */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
           <Typography
             variant="body2"
             sx={{
@@ -83,29 +77,19 @@ const UserInfo: React.FC = () => {
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              maxWidth: '150px',
+              maxWidth: '200px',
+              fontSize: '0.875rem',
             }}
           >
             {user.firstName} {user.lastName}
           </Typography>
-          <Chip
-            label={getRoleDisplayName(user.role)}
-            size="small"
-            sx={{
-              height: 20,
-              fontSize: '0.75rem',
-              backgroundColor: alpha(theme.palette.success.main, 0.1),
-              color: 'success.main',
-              border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`,
-            }}
-          />
         </Box>
 
         {/* Organisation */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <BusinessIcon
             sx={{
-              fontSize: '0.875rem',
+              fontSize: '0.75rem',
               color: 'text.secondary',
             }}
           />
@@ -116,14 +100,15 @@ const UserInfo: React.FC = () => {
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              maxWidth: '180px',
+              maxWidth: '140px',
+              fontSize: '0.7rem',
+              fontWeight: 500,
             }}
           >
             {organization.name}
           </Typography>
         </Box>
       </Box>
-
     </Box>
   );
 };

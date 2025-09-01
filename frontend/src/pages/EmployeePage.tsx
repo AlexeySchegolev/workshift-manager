@@ -132,7 +132,7 @@ const EmployeePage: React.FC = () => {
             color: 'warning' as const,
             onClick: () => {
                 // TODO: Implement role management
-                console.log('Rollenverwaltung öffnen');
+                console.log('Rollen öffnen');
             },
         },
         {

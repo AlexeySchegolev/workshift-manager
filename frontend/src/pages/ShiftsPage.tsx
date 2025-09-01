@@ -197,14 +197,14 @@ const ShiftsPage: React.FC = () => {
 
     if (loading) {
         return (
-            <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>
+            <Container maxWidth="xl" sx={{py: 3}}>
                 <Typography>Lade Schichten...</Typography>
             </Container>
         );
     }
 
     return (
-        <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>
+        <Container maxWidth="xl" sx={{py: 3}}>
             {/* Hero section */}
             <Fade in timeout={800}>
                 <Paper

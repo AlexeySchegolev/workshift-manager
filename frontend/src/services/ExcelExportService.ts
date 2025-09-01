@@ -6,6 +6,7 @@ import {
     MultipleExcelExportRequestDto,
     ExcelExportResultDto
 } from '../api/data-contracts';
+import { toISOString } from '../utils/date.utils';
 
 // Frontend interface for simplified API usage
 interface ExcelExportOptions {
@@ -46,8 +47,8 @@ export class ExcelExportService extends BaseService {
             // Add date range if provided
             if (options.dateRange) {
                 backendOptions.dateRange = {
-                    start: options.dateRange.start.toISOString(),
-                    end: options.dateRange.end.toISOString(),
+                    start: toISOString(options.dateRange.start),
+                    end: toISOString(options.dateRange.end),
                 };
             }
 
@@ -93,8 +94,8 @@ export class ExcelExportService extends BaseService {
             // Add date range if provided
             if (options.dateRange) {
                 backendOptions.dateRange = {
-                    start: options.dateRange.start.toISOString(),
-                    end: options.dateRange.end.toISOString(),
+                    start: toISOString(options.dateRange.start),
+                    end: toISOString(options.dateRange.end),
                 };
             }
 

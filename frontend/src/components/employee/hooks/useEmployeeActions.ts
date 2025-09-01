@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { EmployeeResponseDto, CreateEmployeeDto, UpdateEmployeeDto } from '@/api/data-contracts';
 import { EmployeeFormData } from './useEmployeeForm';
 import { EmployeeService } from '@/services';
+import { getTodayDateString } from '../../../utils/date.utils';
 
 export interface SnackbarState {
   open: boolean;
@@ -129,7 +130,7 @@ export const useEmployeeActions = (
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@dialyse-praxis.de`,
-          hireDate: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+          hireDate: getTodayDateString(), // Today's date in YYYY-MM-DD format
           hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
           locationId: formData.location?.id,
           primaryRoleId: formData.primaryRole?.id

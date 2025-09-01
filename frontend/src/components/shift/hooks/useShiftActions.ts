@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ShiftResponseDto } from '@/api/data-contracts';
 import { shiftService } from '@/services/ShiftService';
 import { ShiftFormData } from './useShiftForm';
+import { toDateString } from '../../../utils/date.utils';
 
 export interface SnackbarState {
   open: boolean;
@@ -187,7 +188,7 @@ export const useShiftActions = (
         type: shift.type as any,
         status: 'draft' as any, // Always start as draft
         priority: shift.priority as any,
-        shiftDate: nextDay.toISOString().split('T')[0],
+        shiftDate: toDateString(nextDay),
         startTime: shift.startTime,
         endTime: shift.endTime,
         breakDuration: shift.breakDuration,

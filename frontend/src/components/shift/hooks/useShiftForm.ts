@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ShiftResponseDto } from '@/api/data-contracts';
 import { validateShiftTime, calculateShiftDuration } from '../utils/shiftUtils';
+import { getTodayDateString } from '../../../utils/date.utils';
 
 export interface ShiftFormData {
   name: string;
@@ -51,7 +52,7 @@ const initialFormData: ShiftFormData = {
   type: 'morning',
   status: 'draft',
   priority: 2,
-  shiftDate: new Date().toISOString().split('T')[0],
+  shiftDate: getTodayDateString(),
   startTime: '08:00',
   endTime: '16:00',
   breakDuration: 30,

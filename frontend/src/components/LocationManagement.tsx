@@ -37,6 +37,7 @@ import {
 } from '@mui/icons-material';
 import { locationService } from '@/services';
 import {CreateLocationDto, UpdateLocationDto, LocationResponseDto, LocationStatsDto} from '../api/data-contracts';
+import { getCurrentTimestamp } from '../utils/date.utils';
 
 interface LocationManagementProps {
   locations?: LocationResponseDto[];
@@ -132,8 +133,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         services: [],
         equipment: [],
         isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: getCurrentTimestamp(),
+        updatedAt: getCurrentTimestamp(),
         employees: [],
       });
       setIsEditing(false);

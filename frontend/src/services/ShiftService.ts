@@ -29,65 +29,8 @@ export class ShiftService {
       throw error;
     }
   }
-
-  /**
-   * Get shift by ID
-   */
-  async getShiftById(id: string, includeRelations = false): Promise<ShiftResponseDto> {
-    try {
-      const response = await this.shiftsApi.shiftsControllerFindOne(id, { includeRelations });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching shift:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get shifts by date range
-   */
-  async getShiftsByDateRange(
-    startDate: string,
-    endDate: string,
-    organizationId?: string,
-    locationId?: string
-  ): Promise<ShiftResponseDto[]> {
-    try {
-      const response = await this.shiftsApi.shiftsControllerFindByDateRange({
-        startDate,
-        endDate,
-        organizationId,
-        locationId,
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching shifts by date range:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get shift statistics
-   */
-  async getShiftStats(organizationId?: string): Promise<{
-    total: number;
-    active: number;
-    inactive: number;
-    byType: Record<string, number>;
-    byStatus: Record<string, number>;
-    averageStaffing: number;
-  }> {
-    try {
-      const response = await this.shiftsApi.shiftsControllerGetStats({ organizationId });
-      return response.data as any;
-    } catch (error) {
-      console.error('Error fetching shift statistics:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Create a new shift
+    /**
+     * Create a new shift
    */
   async createShift(shiftData: CreateShiftDto): Promise<ShiftResponseDto> {
     try {
@@ -120,18 +63,6 @@ export class ShiftService {
       await this.shiftsApi.shiftsControllerRemove(id);
     } catch (error) {
       console.error('Error deleting shift:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Hard delete a shift (permanent)
-   */
-  async hardDeleteShift(id: string): Promise<void> {
-    try {
-      await this.shiftsApi.shiftsControllerHardRemove(id);
-    } catch (error) {
-      console.error('Error hard deleting shift:', error);
       throw error;
     }
   }

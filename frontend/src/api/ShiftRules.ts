@@ -20,24 +20,19 @@ import {
 import {
   AdditionalColumnDto,
   AdvancedPlanningOptionsDto,
-  BulkValidationRequestDto,
-  ConstraintValidationResultDto,
   ConstraintViolationDto,
   ConstraintViolationResponseDto,
-  ConstraintViolationsSummaryDto,
   ConstraintWeightsDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
   CreateRoleDto,
   CreateShiftDto,
-  CreateShiftPlanDto,
   CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
-  EmployeeUtilizationDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
   ExcelExportRequestDto,
@@ -46,17 +41,11 @@ import {
   LocationResponseDto,
   LocationStatsDto,
   MonthlyShiftPlanDto,
-  MultipleExcelExportRequestDto,
   OperatingHoursDto,
-  OptimizationCriteriaDto,
   OrganizationResponseDto,
-  PlanningPerformanceDto,
-  QualityMetricsDto,
   RoleResponseDto,
   ShiftAssignmentResponseDto,
-  ShiftDistributionDto,
   ShiftPlanResponseDto,
-  ShiftPlanStatisticsDto,
   ShiftResponseDto,
   ShiftRoleRequirementDto,
   ShiftRulesResponseDto,
@@ -71,9 +60,6 @@ import {
   UpdateUserDto,
   UserResponseDto,
   ValidateShiftPlanDto,
-  ValidationConfigDto,
-  ValidationRecommendationDto,
-  ValidationStatisticsDto,
 } from "./data-contracts";
 
 export class ShiftRules<SecurityDataType = unknown> {
@@ -84,20 +70,6 @@ export class ShiftRules<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Activates a set of shift rules, making them available for use
-   *
-   * @tags shift-rules
-   * @name ShiftRulesControllerActivate
-   * @summary Activate shift rules
-   * @request POST:/api/shift-rules/{id}/activate
-   */
-  shiftRulesControllerActivate = (id: string, params: RequestParams = {}) =>
-    this.http.request<ShiftRulesResponseDto, void>({
-      path: `/api/shift-rules/${id}/activate`,
-      method: "POST",
-      format: "json",
-      ...params,
-    }); /**
    * @description Creates a new set of shift rules with validation constraints
    *
    * @tags shift-rules
@@ -114,34 +86,6 @@ export class ShiftRules<SecurityDataType = unknown> {
       method: "POST",
       body: data,
       type: ContentType.Json,
-      format: "json",
-      ...params,
-    }); /**
-   * @description Deactivates a set of shift rules, making them unavailable for new shift plans
-   *
-   * @tags shift-rules
-   * @name ShiftRulesControllerDeactivate
-   * @summary Deactivate shift rules
-   * @request POST:/api/shift-rules/{id}/deactivate
-   */
-  shiftRulesControllerDeactivate = (id: string, params: RequestParams = {}) =>
-    this.http.request<ShiftRulesResponseDto, void>({
-      path: `/api/shift-rules/${id}/deactivate`,
-      method: "POST",
-      format: "json",
-      ...params,
-    }); /**
-   * @description Retrieves all currently active shift rules
-   *
-   * @tags shift-rules
-   * @name ShiftRulesControllerFindActive
-   * @summary Get active shift rules
-   * @request GET:/api/shift-rules/active
-   */
-  shiftRulesControllerFindActive = (params: RequestParams = {}) =>
-    this.http.request<ShiftRulesResponseDto[], any>({
-      path: `/api/shift-rules/active`,
-      method: "GET",
       format: "json",
       ...params,
     }); /**
@@ -166,20 +110,6 @@ export class ShiftRules<SecurityDataType = unknown> {
       format: "json",
       ...params,
     }); /**
-   * @description Retrieves the default (most recent active) shift rules set
-   *
-   * @tags shift-rules
-   * @name ShiftRulesControllerFindDefault
-   * @summary Get default shift rules
-   * @request GET:/api/shift-rules/default
-   */
-  shiftRulesControllerFindDefault = (params: RequestParams = {}) =>
-    this.http.request<ShiftRulesResponseDto, void>({
-      path: `/api/shift-rules/default`,
-      method: "GET",
-      format: "json",
-      ...params,
-    }); /**
    * @description Retrieves a specific set of shift rules by their UUID
    *
    * @tags shift-rules
@@ -190,28 +120,6 @@ export class ShiftRules<SecurityDataType = unknown> {
   shiftRulesControllerFindOne = (id: string, params: RequestParams = {}) =>
     this.http.request<ShiftRulesResponseDto, void>({
       path: `/api/shift-rules/${id}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    }); /**
-   * @description Retrieves statistics about shift rules including total, active, and inactive counts
-   *
-   * @tags shift-rules
-   * @name ShiftRulesControllerGetStats
-   * @summary Get shift rules statistics
-   * @request GET:/api/shift-rules/stats
-   */
-  shiftRulesControllerGetStats = (params: RequestParams = {}) =>
-    this.http.request<
-      {
-        active?: number;
-        inactive?: number;
-        mostRecentActive?: any;
-        total?: number;
-      },
-      any
-    >({
-      path: `/api/shift-rules/stats`,
       method: "GET",
       format: "json",
       ...params,
@@ -246,27 +154,6 @@ export class ShiftRules<SecurityDataType = unknown> {
       method: "PATCH",
       body: data,
       type: ContentType.Json,
-      format: "json",
-      ...params,
-    }); /**
-   * @description Validates whether a shift assignment complies with the given rules
-   *
-   * @tags shift-rules
-   * @name ShiftRulesControllerValidateAssignment
-   * @summary Validate shift assignment
-   * @request POST:/api/shift-rules/validate-assignment
-   */
-  shiftRulesControllerValidateAssignment = (params: RequestParams = {}) =>
-    this.http.request<
-      {
-        isValid?: boolean;
-        violations?: string[];
-        warnings?: string[];
-      },
-      void
-    >({
-      path: `/api/shift-rules/validate-assignment`,
-      method: "POST",
       format: "json",
       ...params,
     });

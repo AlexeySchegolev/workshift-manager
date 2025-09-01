@@ -307,7 +307,7 @@ export class ShiftPlansService {
     useRelaxedRules: boolean
   ): Promise<MonthlyShiftPlan> {
     const planData: MonthlyShiftPlan = {};
-    const daysInMonth = new Date(year, month, 0).getDate();
+    const daysInMonth = new Date(year, month - 1, 0).getDate();
     
     // Simplified shift generation algorithm
     // In a real implementation, this would be much more sophisticated

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShiftPlansController } from './shift-plans.controller';
-import { PlanningAlgorithmsController } from './controllers/planning-algorithms.controller';
 import { ShiftPlansService } from './shift-plans.service';
 import { ShiftPlanningAlgorithmService } from './services/shift-planning-algorithm.service';
 import { BacktrackingAlgorithmService } from './services/backtracking-algorithm.service';
@@ -36,7 +35,6 @@ import {Organization} from "@/database/entities/organization.entity";
   ],
   controllers: [
     ShiftPlansController,
-    PlanningAlgorithmsController,
   ],
   providers: [
     ShiftPlansService,

@@ -20,24 +20,19 @@ import {
 import {
   AdditionalColumnDto,
   AdvancedPlanningOptionsDto,
-  BulkValidationRequestDto,
-  ConstraintValidationResultDto,
   ConstraintViolationDto,
   ConstraintViolationResponseDto,
-  ConstraintViolationsSummaryDto,
   ConstraintWeightsDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
   CreateRoleDto,
   CreateShiftDto,
-  CreateShiftPlanDto,
   CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
-  EmployeeUtilizationDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
   ExcelExportRequestDto,
@@ -46,17 +41,11 @@ import {
   LocationResponseDto,
   LocationStatsDto,
   MonthlyShiftPlanDto,
-  MultipleExcelExportRequestDto,
   OperatingHoursDto,
-  OptimizationCriteriaDto,
   OrganizationResponseDto,
-  PlanningPerformanceDto,
-  QualityMetricsDto,
   RoleResponseDto,
   ShiftAssignmentResponseDto,
-  ShiftDistributionDto,
   ShiftPlanResponseDto,
-  ShiftPlanStatisticsDto,
   ShiftResponseDto,
   ShiftRoleRequirementDto,
   ShiftRulesResponseDto,
@@ -71,9 +60,6 @@ import {
   UpdateUserDto,
   UserResponseDto,
   ValidateShiftPlanDto,
-  ValidationConfigDto,
-  ValidationRecommendationDto,
-  ValidationStatisticsDto,
 } from "./data-contracts";
 
 export class Employees<SecurityDataType = unknown> {
@@ -124,37 +110,6 @@ export class Employees<SecurityDataType = unknown> {
       format: "json",
       ...params,
     }); /**
-   * @description Retrieves all employees assigned to a specific location
-   *
-   * @tags employees
-   * @name EmployeesControllerFindByLocation
-   * @summary Get employees by location
-   * @request GET:/api/employees/by-location/{locationId}
-   */
-  employeesControllerFindByLocation = (
-    locationId: string,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<EmployeeResponseDto[], any>({
-      path: `/api/employees/by-location/${locationId}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    }); /**
-   * @description Retrieves all employees with a specific role
-   *
-   * @tags employees
-   * @name EmployeesControllerFindByRole
-   * @summary Get employees by role
-   * @request GET:/api/employees/by-role/{role}
-   */
-  employeesControllerFindByRole = (role: string, params: RequestParams = {}) =>
-    this.http.request<EmployeeResponseDto[], any>({
-      path: `/api/employees/by-role/${role}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    }); /**
    * @description Retrieves a specific employee by their UUID
    *
    * @tags employees
@@ -174,27 +129,6 @@ export class Employees<SecurityDataType = unknown> {
       path: `/api/employees/${id}`,
       method: "GET",
       query: query,
-      format: "json",
-      ...params,
-    }); /**
-   * @description Retrieves statistics about employees by role and location
-   *
-   * @tags employees
-   * @name EmployeesControllerGetStats
-   * @summary Get employee statistics
-   * @request GET:/api/employees/stats
-   */
-  employeesControllerGetStats = (params: RequestParams = {}) =>
-    this.http.request<
-      {
-        byLocation?: object;
-        byRole?: object;
-        total?: number;
-      },
-      any
-    >({
-      path: `/api/employees/stats`,
-      method: "GET",
       format: "json",
       ...params,
     }); /**

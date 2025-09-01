@@ -113,95 +113,6 @@ export class ShiftsController {
     return this.shiftsService.findAll(Object.keys(options).length > 0 ? options : undefined);
   }
 
-  @Get('stats')
-  @ApiOperation({
-    summary: 'Get shift statistics',
-    description: 'Retrieves statistics about shifts including counts by type, status, and staffing information'
-  })
-  @ApiQuery({
-    name: 'organizationId',
-    required: false,
-    type: String,
-    format: 'uuid',
-    description: 'Filter statistics by organization ID'
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Shift statistics',
-    schema: {
-      type: 'object',
-      properties: {
-        total: { type: 'number' },
-        active: { type: 'number' },
-        inactive: { type: 'number' },
-        byType: {
-          type: 'object',
-          additionalProperties: { type: 'number' }
-        },
-        byStatus: {
-          type: 'object',
-          additionalProperties: { type: 'number' }
-        },
-        averageStaffing: { type: 'number' }
-      }
-    }
-  })
-  async getStats(@Query('organizationId') organizationId?: string) {
-    return this.shiftsService.getShiftStats(organizationId);
-  }
-
-  @Get('date-range')
-  @ApiOperation({
-    summary: 'Get shifts by date range',
-    description: 'Retrieves shifts within a specified date range'
-  })
-  @ApiQuery({
-    name: 'startDate',
-    required: true,
-    type: String,
-    format: 'date',
-    description: 'Start date (YYYY-MM-DD)',
-    example: '2024-01-01'
-  })
-  @ApiQuery({
-    name: 'endDate',
-    required: true,
-    type: String,
-    format: 'date',
-    description: 'End date (YYYY-MM-DD)',
-    example: '2024-01-31'
-  })
-  @ApiQuery({
-    name: 'organizationId',
-    required: false,
-    type: String,
-    format: 'uuid',
-    description: 'Filter by organization ID'
-  })
-  @ApiQuery({
-    name: 'locationId',
-    required: false,
-    type: String,
-    format: 'uuid',
-    description: 'Filter by location ID'
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'List of shifts in date range',
-    type: [ShiftResponseDto]
-  })
-  @ApiBadRequestResponse({
-    description: 'Invalid date format or date range'
-  })
-  async findByDateRange(
-    @Query('startDate') startDate: string,
-    @Query('endDate') endDate: string,
-    @Query('organizationId') organizationId?: string,
-    @Query('locationId') locationId?: string
-  ): Promise<ShiftResponseDto[]> {
-    return this.shiftsService.findByDateRange(startDate, endDate, organizationId, locationId);
-  }
-
   @Get(':id')
   @ApiOperation({
     summary: 'Get shift by ID',
@@ -310,28 +221,5 @@ export class ShiftsController {
   })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.shiftsService.remove(id);
-  }
-
-  @Delete(':id/hard')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({
-    summary: 'Hard delete shift',
-    description: 'Permanently deletes a shift from the database (cannot be undone)'
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    description: 'Shift UUID'
-  })
-  @ApiResponse({
-    status: 204,
-    description: 'Shift permanently deleted'
-  })
-  @ApiNotFoundResponse({
-    description: 'Shift not found'
-  })
-  async hardRemove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.shiftsService.hardRemove(id);
   }
 }

@@ -11,10 +11,7 @@ import {
 import {
     Schedule as ScheduleIcon,
     People as PeopleIcon,
-    CalendarMonth as CalendarIcon,
-    Add as AddIcon,
-    FileDownload as FileDownloadIcon,
-    Settings as SettingsIcon
+    CalendarMonth as CalendarIcon
 } from '@mui/icons-material';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
@@ -27,8 +24,6 @@ import {
 } from "@/api/data-contracts.ts";
 
 import {shiftPlanningService} from '@/services';
-import {QuickAction} from "@/components/dashboard/QuickActions.tsx";
-import {StatusItem} from "@/components/dashboard/StatusLight.tsx";
 
 /**
  * Modern Shift Planning Page in Dashboard Style
@@ -176,8 +171,6 @@ const ShiftPlanningPage: React.FC = () => {
 
         try {
             await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // TODO: Implement actual shift plan generation with backend integration
             const generatedPlan = await shiftPlanningService.generateOptimalPlan(
                 {
                     algorithm: 'mixed',
@@ -190,8 +183,7 @@ const ShiftPlanningPage: React.FC = () => {
                     employeeSortingStrategy: 'workload_balancing',
                     saturdayDistributionMode: 'fair'
                 },
-                employees,
-                [] // empty availability array for now
+                employees
             );
 
             const newConstraints = await shiftPlanningService.validatePlan(
@@ -216,77 +208,7 @@ const ShiftPlanningPage: React.FC = () => {
     };
 
     // Define quick actions
-    const quickActions: QuickAction[] = [
-        {
-            id: 'generate-plan',
-            title: 'Plan generieren',
-            description: 'Automatischen Schichtplan erstellen',
-            icon: <AddIcon/>,
-            color: 'primary',
-            onClick: generateShiftPlan,
-        },
-        {
-            id: 'add-employee',
-            title: 'Mitarbeiter hinzufügen',
-            description: 'Neuen Mitarbeiter anlegen',
-            icon: <PeopleIcon/>,
-            color: 'info',
-            onClick: () => {
-            }, // Will be implemented later
-        },
-        {
-            id: 'export-excel',
-            title: 'Excel Export',
-            description: 'Plan als Excel exportieren',
-            icon: <FileDownloadIcon/>,
-            color: 'success',
-            onClick: () => {
-            }, // Handled in ShiftTable
-        },
-        {
-            id: 'settings',
-            title: 'Einstellungen',
-            description: 'Planungsregeln konfigurieren',
-            icon: <SettingsIcon/>,
-            color: 'warning',
-            onClick: () => {
-            },
-        },
-    ];
-
-    // Status items for the status light
-    const statusItems: StatusItem[] = [
-        {
-            id: 'employees',
-            title: 'Mitarbeiter verfügbar',
-            description: `${stats.totalEmployees} Mitarbeiter für Schichtplanung`,
-            status: stats.totalEmployees >= 8 ? 'success' : stats.totalEmployees >= 5 ? 'warning' : 'error',
-            value: stats.totalEmployees,
-        },
-        {
-            id: 'coverage',
-            title: 'Schichtabdeckung',
-            description: `${stats.coverage}% der Schichten sind besetzt`,
-            status: stats.coverage >= 90 ? 'success' : stats.coverage >= 70 ? 'warning' : 'error',
-            value: stats.coverage,
-            maxValue: 100,
-        },
-        {
-            id: 'violations',
-            title: 'Regelverletzungen',
-            description: `${stats.violations} Regelverletzungen gefunden`,
-            status: stats.violations === 0 ? 'success' : 'error',
-            value: stats.violations,
-        },
-        {
-            id: 'warnings',
-            title: 'Warnungen',
-            description: `${stats.warnings} Warnungen vorhanden`,
-            status: stats.warnings === 0 ? 'success' : 'warning',
-            value: stats.warnings,
-        },
-    ];
-
+// Status items for the status light
     return (
         <Container maxWidth={false} sx={{py: 3, px: {xs: 2, sm: 3, md: 4}, maxWidth: '100%'}}>
             {/* Hero section */}

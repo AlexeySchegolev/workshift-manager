@@ -20,24 +20,19 @@ import {
 import {
   AdditionalColumnDto,
   AdvancedPlanningOptionsDto,
-  BulkValidationRequestDto,
-  ConstraintValidationResultDto,
   ConstraintViolationDto,
   ConstraintViolationResponseDto,
-  ConstraintViolationsSummaryDto,
   ConstraintWeightsDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
   CreateRoleDto,
   CreateShiftDto,
-  CreateShiftPlanDto,
   CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
-  EmployeeUtilizationDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
   ExcelExportRequestDto,
@@ -46,17 +41,11 @@ import {
   LocationResponseDto,
   LocationStatsDto,
   MonthlyShiftPlanDto,
-  MultipleExcelExportRequestDto,
   OperatingHoursDto,
-  OptimizationCriteriaDto,
   OrganizationResponseDto,
-  PlanningPerformanceDto,
-  QualityMetricsDto,
   RoleResponseDto,
   ShiftAssignmentResponseDto,
-  ShiftDistributionDto,
   ShiftPlanResponseDto,
-  ShiftPlanStatisticsDto,
   ShiftResponseDto,
   ShiftRoleRequirementDto,
   ShiftRulesResponseDto,
@@ -71,9 +60,6 @@ import {
   UpdateUserDto,
   UserResponseDto,
   ValidateShiftPlanDto,
-  ValidationConfigDto,
-  ValidationRecommendationDto,
-  ValidationStatisticsDto,
 } from "./data-contracts";
 
 export class Roles<SecurityDataType = unknown> {
@@ -84,28 +70,6 @@ export class Roles<SecurityDataType = unknown> {
   }
 
   /**
-   * No description
-   *
-   * @tags roles
-   * @name RolesControllerCountByOrganization
-   * @summary Count roles by organization
-   * @request GET:/api/roles/organization/{organizationId}/count
-   */
-  rolesControllerCountByOrganization = (
-    organizationId: string,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<
-      {
-        count?: number;
-      },
-      any
-    >({
-      path: `/api/roles/organization/${organizationId}/count`,
-      method: "GET",
-      format: "json",
-      ...params,
-    }); /**
    * No description
    *
    * @tags roles
@@ -170,24 +134,6 @@ export class Roles<SecurityDataType = unknown> {
    * No description
    *
    * @tags roles
-   * @name RolesControllerFindByType
-   * @summary Get roles by type and organization
-   * @request GET:/api/roles/organization/{organizationId}/type/{type}
-   */
-  rolesControllerFindByType = (
-    organizationId: string,
-    type: string,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<RoleResponseDto[], any>({
-      path: `/api/roles/organization/${organizationId}/type/${type}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags roles
    * @name RolesControllerFindOne
    * @summary Get role by ID
    * @request GET:/api/roles/{id}
@@ -210,19 +156,6 @@ export class Roles<SecurityDataType = unknown> {
    * No description
    *
    * @tags roles
-   * @name RolesControllerHardRemove
-   * @summary Permanently delete role
-   * @request DELETE:/api/roles/{id}/hard
-   */
-  rolesControllerHardRemove = (id: string, params: RequestParams = {}) =>
-    this.http.request<void, void>({
-      path: `/api/roles/${id}/hard`,
-      method: "DELETE",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags roles
    * @name RolesControllerRemove
    * @summary Soft delete role
    * @request DELETE:/api/roles/{id}
@@ -231,20 +164,6 @@ export class Roles<SecurityDataType = unknown> {
     this.http.request<void, void>({
       path: `/api/roles/${id}`,
       method: "DELETE",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags roles
-   * @name RolesControllerRestore
-   * @summary Restore deleted role
-   * @request POST:/api/roles/{id}/restore
-   */
-  rolesControllerRestore = (id: string, params: RequestParams = {}) =>
-    this.http.request<RoleResponseDto, void>({
-      path: `/api/roles/${id}/restore`,
-      method: "POST",
-      format: "json",
       ...params,
     }); /**
    * No description

@@ -71,68 +71,6 @@ export class EmployeesController {
     return this.employeesService.findAll(include);
   }
 
-  @Get('stats')
-  @ApiOperation({ 
-    summary: 'Get employee statistics',
-    description: 'Retrieves statistics about employees by role and location'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Employee statistics',
-    schema: {
-      type: 'object',
-      properties: {
-        total: { type: 'number' },
-        byRole: { type: 'object' },
-        byLocation: { type: 'object' }
-      }
-    }
-  })
-  async getStats() {
-    return this.employeesService.getEmployeeStats();
-  }
-
-  @Get('by-location/:locationId')
-  @ApiOperation({ 
-    summary: 'Get employees by location',
-    description: 'Retrieves all employees assigned to a specific location'
-  })
-  @ApiParam({
-    name: 'locationId',
-    type: 'string',
-    format: 'uuid',
-    description: 'Location UUID'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'List of employees at the location',
-    type: [EmployeeResponseDto]
-  })
-  async findByLocation(
-    @Param('locationId', ParseUUIDPipe) locationId: string
-  ): Promise<EmployeeResponseDto[]> {
-    return this.employeesService.findByLocation(locationId);
-  }
-
-  @Get('by-role/:role')
-  @ApiOperation({ 
-    summary: 'Get employees by role',
-    description: 'Retrieves all employees with a specific role'
-  })
-  @ApiParam({ 
-    name: 'role', 
-    type: 'string',
-    description: 'Employee role (Specialist, Assistant, ShiftLeader)'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'List of employees with the specified role',
-    type: [EmployeeResponseDto]
-  })
-  async findByRole(@Param('role') role: string): Promise<EmployeeResponseDto[]> {
-    return this.employeesService.findByRole(role);
-  }
-
   @Get(':id')
   @ApiOperation({ 
     summary: 'Get employee by ID',

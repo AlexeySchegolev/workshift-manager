@@ -119,56 +119,6 @@ export interface AdvancedPlanningOptionsDto {
   weeklyHoursFlexibility: number;
 }
 
-export interface BulkValidationRequestDto {
-  /** Whether to generate recommendations */
-  generateRecommendations?: boolean;
-  /** Whether to include detailed violation context */
-  includeDetailedContext?: boolean;
-  /** Maximum violations to return per plan */
-  maxViolationsPerPlan?: number;
-  /** Minimum severity level to include (1-5) */
-  minimumSeverityLevel?: number;
-  /** Validation rules to apply (empty means all) */
-  ruleCodesToApply?: string[];
-  /** Shift plan IDs to validate */
-  shiftPlanIds: string[];
-}
-
-export interface ConstraintValidationResultDto {
-  /** Whether plan can be published despite violations */
-  canPublishWithViolations?: boolean;
-  /** Confidence level of validation results (0-100) */
-  confidenceLevel?: number;
-  /** Critical issues that prevent plan execution */
-  criticalIssues?: string[];
-  /** Hard constraint violations (must be fixed) */
-  hardViolations: ConstraintViolationDto[];
-  /** Informational messages */
-  informationalMessages?: ConstraintViolationDto[];
-  /** Whether the overall validation passed */
-  isValid: boolean;
-  /** Additional validation metadata */
-  metadata?: object;
-  /** Overall validation score (0-100) */
-  overallScore: number;
-  /** Recommendations for improvement */
-  recommendations: ValidationRecommendationDto[];
-  /** Validation rules version used */
-  rulesVersion?: string;
-  /** Soft constraint violations (should be fixed) */
-  softViolations: ConstraintViolationDto[];
-  /** Validation statistics */
-  statistics: ValidationStatisticsDto;
-  /** Validation summary for quick overview */
-  summary?: string;
-  /** Validation duration in milliseconds */
-  validationDurationMs: number;
-  /** Timestamp when validation was performed */
-  validationTimestamp: string;
-  /** Warnings (minor issues) */
-  warnings: ConstraintViolationDto[];
-}
-
 export interface ConstraintViolationDto {
   /** Whether violation can be automatically resolved */
   canAutoResolve?: boolean;
@@ -229,43 +179,6 @@ export interface ConstraintViolationResponseDto {
    * @example "550e8400-e29b-41d4-a716-446655440000"
    */
   id: string;
-}
-
-export interface ConstraintViolationsSummaryDto {
-  /**
-   * Average severity score
-   * @example 2.4
-   */
-  averageSeverity?: number;
-  /**
-   * Employees with violations count
-   * @example 3
-   */
-  employeesWithViolations: number;
-  /**
-   * Number of hard constraint violations
-   * @example 0
-   */
-  hardViolations: number;
-  /** Most common violation type */
-  mostCommonViolationType: string;
-  /**
-   * Number of soft constraint violations
-   * @example 3
-   */
-  softViolations: number;
-  /**
-   * Total number of violations
-   * @example 5
-   */
-  totalViolations: number;
-  /** Violations by category */
-  violationsByCategory: object;
-  /**
-   * Number of warnings
-   * @example 2
-   */
-  warnings: number;
 }
 
 export interface ConstraintWeightsDto {
@@ -1085,118 +998,6 @@ export interface CreateShiftDto {
   weekendRate?: number;
 }
 
-export interface CreateShiftPlanDto {
-  /**
-   * Approval status
-   * @example "pending"
-   */
-  approvalStatus?: "pending" | "approved" | "rejected" | "needs_revision";
-  /**
-   * Number of constraint violations
-   * @min 0
-   * @example 2
-   */
-  constraintViolations?: number;
-  /**
-   * Coverage percentage
-   * @min 0
-   * @max 100
-   * @example 95.5
-   */
-  coveragePercentage?: number;
-  /**
-   * ID of user who created this shift plan
-   * @example "uuid-string"
-   */
-  createdBy?: string;
-  /**
-   * Shift plan description
-   * @maxLength 500
-   * @example "Christmas period shift plan with increased staffing requirements"
-   */
-  description?: string;
-  /**
-   * Whether this shift plan is published
-   * @default false
-   * @example false
-   */
-  isPublished?: boolean;
-  /**
-   * Metadata for the shift plan
-   * @example {"generatedBy":"system","version":"1.0"}
-   */
-  metadata?: Record<string, any>;
-  /**
-   * Month for the shift plan (1-12)
-   * @min 1
-   * @max 12
-   * @example 12
-   */
-  month: number;
-  /**
-   * Shift plan name
-   * @maxLength 255
-   * @example "December 2024 Shift Plan"
-   */
-  name: string;
-  /**
-   * Organization ID
-   * @example "uuid-string"
-   */
-  organizationId: string;
-  /**
-   * Monthly shift plan data structure
-   * @example {"01.12.2024":{"F":["employee-uuid-1","employee-uuid-2"],"S":["employee-uuid-3"],"FS":["employee-uuid-4"]},"02.12.2024":{"F":["employee-uuid-2","employee-uuid-5"],"S":["employee-uuid-1"]}}
-   */
-  planData?: Record<string, any>;
-  /**
-   * End date of planning period
-   * @example "2024-12-31"
-   */
-  planningPeriodEnd: string;
-  /**
-   * Start date of planning period
-   * @example "2024-12-01"
-   */
-  planningPeriodStart: string;
-  /**
-   * Status of the shift plan
-   * @example "draft"
-   */
-  status?:
-    | "draft"
-    | "in_review"
-    | "approved"
-    | "published"
-    | "active"
-    | "completed"
-    | "cancelled";
-  /**
-   * Total number of employees in the plan
-   * @min 0
-   * @example 25
-   */
-  totalEmployees?: number;
-  /**
-   * Total hours in the shift plan
-   * @example 1200.5
-   */
-  totalHours?: number;
-  /**
-   * Total number of shifts in the plan
-   * @min 0
-   * @example 150
-   */
-  totalShifts?: number;
-  /**
-   * Year for the shift plan
-   * @min 2020
-   * @max 2030
-   * @example 2024
-   */
-  year: number;
-}
-
 export interface CreateShiftRulesDto {
   /** User ID who created this rule set */
   createdBy?: string;
@@ -1880,62 +1681,6 @@ export interface EmployeeResponseDto {
   yearsOfService: number;
 }
 
-export interface EmployeeUtilizationDto {
-  /**
-   * Constraint violations count
-   * @example 0
-   */
-  constraintViolations?: number;
-  /**
-   * Planning efficiency score (0-100)
-   * @example 85.2
-   */
-  efficiencyScore?: number;
-  /** Employee ID */
-  employeeId: string;
-  /** Employee name */
-  employeeName: string;
-  /**
-   * Hours difference from target
-   * @example -2.5
-   */
-  hoursDifference: number;
-  /** Location ID */
-  locationId: string;
-  /**
-   * Preferred shift types assigned
-   * @example 15
-   */
-  preferredShiftsAssigned?: number;
-  /** Employee role */
-  role: string;
-  /**
-   * Number of Saturday shifts worked
-   * @example 2
-   */
-  saturdaysWorked: number;
-  /**
-   * Number of shifts assigned
-   * @example 20
-   */
-  shiftsCount: number;
-  /**
-   * Target hours per month
-   * @example 163
-   */
-  targetHours: number;
-  /**
-   * Total hours assigned
-   * @example 160.5
-   */
-  totalHoursAssigned: number;
-  /**
-   * Workload percentage relative to target
-   * @example 98.5
-   */
-  workloadPercentage: number;
-}
-
 export interface ExcelExportMetadataDto {
   /** Export options used */
   exportOptions: ExcelExportOptionsDto;
@@ -2325,16 +2070,6 @@ export interface LocationStatsDto {
 
 export type MonthlyShiftPlanDto = object;
 
-export interface MultipleExcelExportRequestDto {
-  /** Export options for all shift plans */
-  options?: ExcelExportOptionsDto;
-  /**
-   * List of shift plan IDs to export
-   * @example ["uuid-1","uuid-2","uuid-3"]
-   */
-  shiftPlanIds: string[];
-}
-
 export interface OperatingHoursDto {
   /**
    * Friday operating hours
@@ -2371,56 +2106,6 @@ export interface OperatingHoursDto {
    * @default []
    */
   wednesday?: TimeSlotDto[];
-}
-
-export interface OptimizationCriteriaDto {
-  /**
-   * Weight for minimizing constraint violations
-   * @min 0
-   * @max 10
-   * @example 3
-   */
-  constraintViolationWeight: number;
-  /**
-   * Maximum optimization iterations
-   * @min 1
-   * @max 100
-   * @default 10
-   */
-  maxOptimizationIterations?: number;
-  /**
-   * Whether to optimize for cost efficiency
-   * @default false
-   */
-  optimizeForCostEfficiency?: boolean;
-  /**
-   * Weight for minimizing overtime usage
-   * @min 0
-   * @max 10
-   * @example 1.5
-   */
-  overtimeMinimizationWeight: number;
-  /**
-   * Weight for preference satisfaction
-   * @min 0
-   * @max 10
-   * @example 1
-   */
-  preferenceSatisfactionWeight: number;
-  /**
-   * Target coverage percentage
-   * @min 50
-   * @max 100
-   * @default 95
-   */
-  targetCoveragePercentage?: number;
-  /**
-   * Weight for balancing workload across employees
-   * @min 0
-   * @max 10
-   * @example 2
-   */
-  workloadBalanceWeight: number;
 }
 
 export interface OrganizationResponseDto {
@@ -2564,96 +2249,6 @@ export interface OrganizationResponseDto {
    * @example "https://www.dialyse-berlin.de"
    */
   website?: string;
-}
-
-export interface PlanningPerformanceDto {
-  /**
-   * Algorithm used
-   * @example "enhanced_backtracking"
-   */
-  algorithmUsed: string;
-  /**
-   * Number of backtracking attempts
-   * @example 127
-   */
-  backtrackingAttempts: number;
-  /**
-   * Constraint checks performed
-   * @example 3456
-   */
-  constraintChecks?: number;
-  /**
-   * Number of failed day assignments
-   * @example 2
-   */
-  failedDays: number;
-  /**
-   * Number of planning iterations
-   * @example 31
-   */
-  iterationsCount: number;
-  /**
-   * Memory usage in MB
-   * @example 45.2
-   */
-  memoryUsageMB?: number;
-  /**
-   * Planning duration in milliseconds
-   * @example 15432
-   */
-  planningDurationMs: number;
-  /**
-   * Planning efficiency score
-   * @example 78.3
-   */
-  planningEfficiency?: number;
-  /**
-   * Planning success rate percentage
-   * @example 93.5
-   */
-  successRate: number;
-  /**
-   * Number of successful day assignments
-   * @example 29
-   */
-  successfulDays: number;
-}
-
-export interface QualityMetricsDto {
-  /**
-   * Constraint compliance score (0-100)
-   * @example 95.8
-   */
-  constraintComplianceScore: number;
-  /**
-   * Cost efficiency score (0-100)
-   * @example 82.3
-   */
-  costEfficiencyScore?: number;
-  /**
-   * Coverage optimization score (0-100)
-   * @example 88.9
-   */
-  coverageOptimizationScore: number;
-  /** Whether the plan meets high quality standards */
-  isHighQuality?: boolean;
-  /** Whether the plan needs improvement */
-  needsImprovement?: boolean;
-  /**
-   * Overall quality score (0-100)
-   * @example 87.5
-   */
-  overallScore: number;
-  /**
-   * Preference satisfaction score (0-100)
-   * @example 76.4
-   */
-  preferenceSatisfactionScore: number;
-  /**
-   * Workload balance score (0-100)
-   * @example 92.1
-   */
-  workloadBalanceScore: number;
 }
 
 export interface RoleResponseDto {
@@ -2828,41 +2423,6 @@ export interface ShiftAssignmentResponseDto {
   id: string;
 }
 
-export interface ShiftDistributionDto {
-  /**
-   * Average shifts per day
-   * @example 10.2
-   */
-  averageShiftsPerDay?: number;
-  /** Shift distribution by day of week */
-  dailyDistribution: object;
-  /**
-   * Evening shift (S) count
-   * @example 145
-   */
-  eveningShifts: number;
-  /**
-   * Morning shift (F) count
-   * @example 150
-   */
-  morningShifts: number;
-  /**
-   * Secondary location shifts
-   * @example 30
-   */
-  secondaryLocationShifts?: number;
-  /**
-   * Split shift (FS) count
-   * @example 20
-   */
-  splitShifts?: number;
-  /**
-   * Total shifts assigned
-   * @example 315
-   */
-  totalShifts: number;
-}
-
 export interface ShiftPlanResponseDto {
   /** Shift assignments for this plan */
   assignments: ShiftAssignmentResponseDto[];
@@ -2917,87 +2477,6 @@ export interface ShiftPlanResponseDto {
    * @example 2024
    */
   year: number;
-}
-
-export interface ShiftPlanStatisticsDto {
-  /**
-   * Average hours per employee
-   * @example 100.8
-   */
-  averageHoursPerEmployee: number;
-  /** Timestamp when statistics were calculated */
-  calculationTimestamp: string;
-  /**
-   * Statistics calculation version
-   * @example "1.0"
-   */
-  calculationVersion?: string;
-  /** Summary of constraint violations */
-  constraintViolationsSummary: ConstraintViolationsSummaryDto;
-  /**
-   * Coverage percentage of required shifts
-   * @example 96.8
-   */
-  coveragePercentage: number;
-  /** Individual employee utilization statistics */
-  employeeUtilization: EmployeeUtilizationDto[];
-  /** Unique statistics ID */
-  id: string;
-  /**
-   * Whether statistics are final
-   * @example true
-   */
-  isFinal?: boolean;
-  /**
-   * Maximum hours assigned to any employee
-   * @example 125
-   */
-  maxEmployeeHours: number;
-  /** Additional metadata */
-  metadata?: object;
-  /**
-   * Minimum hours assigned to any employee
-   * @example 85.5
-   */
-  minEmployeeHours: number;
-  /** Planning performance metrics */
-  planningPerformance: PlanningPerformanceDto;
-  /** Quality assessment metrics */
-  qualityMetrics: QualityMetricsDto;
-  /**
-   * Recommendations for improvement
-   * @example ["Consider redistributing Saturday shifts more evenly","Review workload for Employee X"]
-   */
-  recommendations?: string[];
-  /**
-   * Number of Saturday shifts covered
-   * @example 4
-   */
-  saturdayCoverage: number;
-  /** Shift distribution across types and days */
-  shiftDistribution: ShiftDistributionDto;
-  /** Shift plan ID */
-  shiftPlanId: string;
-  /**
-   * Standard deviation of hours distribution
-   * @example 12.3
-   */
-  standardDeviationHours: number;
-  /**
-   * Number of employees involved in planning
-   * @example 25
-   */
-  totalEmployeesInvolved: number;
-  /**
-   * Total hours planned across all shifts
-   * @example 2520
-   */
-  totalHoursPlanned: number;
-  /**
-   * Total number of shifts planned
-   * @example 315
-   */
-  totalShiftsPlanned: number;
 }
 
 export interface ShiftResponseDto {
@@ -4600,63 +4079,4 @@ export interface ValidateShiftPlanDto {
    * @example 2024
    */
   year: number;
-}
-
-export interface ValidationConfigDto {
-  /** Custom validation parameters */
-  customParameters?: object;
-  /** Maximum validation time in milliseconds */
-  maxValidationTimeMs?: number;
-  /** Constraint rule overrides */
-  ruleOverrides?: string[];
-  /** Whether to perform strict validation */
-  strictMode?: boolean;
-  /** Whether to validate cross-employee constraints */
-  validateCrossEmployeeConstraints?: boolean;
-  /** Whether to validate resource constraints */
-  validateResourceConstraints?: boolean;
-  /** Whether to validate temporal constraints */
-  validateTemporalConstraints?: boolean;
-}
-
-export interface ValidationRecommendationDto {
-  /** Affected entity IDs (employees, shifts, etc.) */
-  affectedEntities?: string[];
-  /** Detailed recommendation description */
-  description: string;
-  /** Estimated time to implement */
-  estimatedTimeToImplement?: string;
-  /** Expected improvement if recommendation is followed */
-  expectedImprovement?: string;
-  /** Implementation difficulty (1-5) */
-  implementationDifficulty?: number;
-  /** Recommendation priority (1-5) */
-  priority: number;
-  /** Related violation codes */
-  relatedViolations?: string[];
-  /** Recommendation title */
-  title: string;
-  /** Recommendation type */
-  type: string;
-}
-
-export interface ValidationStatisticsDto {
-  /** Average constraint check time in milliseconds */
-  averageCheckTimeMs: number;
-  /** Constraint categories breakdown */
-  categoryBreakdown?: object;
-  /** Number of constraints failed */
-  constraintsFailed: number;
-  /** Number of constraints passed */
-  constraintsPassed: number;
-  /** Employee-specific violation counts */
-  employeeViolationCounts?: object;
-  /** Most frequently violated constraint */
-  mostViolatedConstraint?: string;
-  /** Total number of constraints checked */
-  totalConstraintsChecked: number;
-  /** Total validation time in milliseconds */
-  totalValidationTimeMs: number;
-  /** Validation success rate percentage */
-  validationSuccessRate: number;
 }

@@ -48,7 +48,7 @@ export class ShiftRulesController {
   }
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get all shift rules',
     description: 'Retrieves all shift rules with optional filtering for active rules only'
   })
@@ -58,8 +58,8 @@ export class ShiftRulesController {
     type: Boolean,
     description: 'Only return active shift rules'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'List of shift rules',
     type: [ShiftRulesResponseDto]
   })
@@ -68,59 +68,6 @@ export class ShiftRulesController {
   ): Promise<ShiftRulesResponseDto[]> {
     const onlyActive = activeOnly === 'true';
     return this.shiftRulesService.findAll(onlyActive);
-  }
-
-  @Get('stats')
-  @ApiOperation({ 
-    summary: 'Get shift rules statistics',
-    description: 'Retrieves statistics about shift rules including total, active, and inactive counts'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Shift rules statistics',
-    schema: {
-      type: 'object',
-      properties: {
-        total: { type: 'number' },
-        active: { type: 'number' },
-        inactive: { type: 'number' },
-        mostRecentActive: { $ref: '#/components/schemas/ShiftRules' }
-      }
-    }
-  })
-  async getStats() {
-    return this.shiftRulesService.getRuleStats();
-  }
-
-  @Get('active')
-  @ApiOperation({ 
-    summary: 'Get active shift rules',
-    description: 'Retrieves all currently active shift rules'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'List of active shift rules',
-    type: [ShiftRulesResponseDto]
-  })
-  async findActive(): Promise<ShiftRulesResponseDto[]> {
-    return this.shiftRulesService.findActive();
-  }
-
-  @Get('default')
-  @ApiOperation({ 
-    summary: 'Get default shift rules',
-    description: 'Retrieves the default (most recent active) shift rules set'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Default shift rules',
-    type: ShiftRulesResponseDto
-  })
-  @ApiNotFoundResponse({ 
-    description: 'No active shift rules found'
-  })
-  async findDefault(): Promise<ShiftRulesResponseDto | null> {
-    return this.shiftRulesService.findDefault();
   }
 
   @Get(':id')
@@ -173,96 +120,6 @@ export class ShiftRulesController {
     @Body() updateShiftRulesDto: UpdateShiftRulesDto
   ): Promise<ShiftRulesResponseDto> {
     return this.shiftRulesService.update(id, updateShiftRulesDto);
-  }
-
-  @Post(':id/activate')
-  @ApiOperation({ 
-    summary: 'Activate shift rules',
-    description: 'Activates a set of shift rules, making them available for use'
-  })
-  @ApiParam({ 
-    name: 'id', 
-    type: 'string',
-    format: 'uuid',
-    description: 'Shift rules UUID'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Shift rules activated successfully',
-    type: ShiftRulesResponseDto
-  })
-  @ApiNotFoundResponse({ 
-    description: 'Shift rules not found'
-  })
-  async activate(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftRulesResponseDto> {
-    return this.shiftRulesService.activate(id);
-  }
-
-  @Post(':id/deactivate')
-  @ApiOperation({ 
-    summary: 'Deactivate shift rules',
-    description: 'Deactivates a set of shift rules, making them unavailable for new shift plans'
-  })
-  @ApiParam({ 
-    name: 'id', 
-    type: 'string',
-    format: 'uuid',
-    description: 'Shift rules UUID'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Shift rules deactivated successfully',
-    type: ShiftRulesResponseDto
-  })
-  @ApiNotFoundResponse({ 
-    description: 'Shift rules not found'
-  })
-  async deactivate(@Param('id', ParseUUIDPipe) id: string): Promise<ShiftRulesResponseDto> {
-    return this.shiftRulesService.deactivate(id);
-  }
-
-  @Post('validate-assignment')
-  @ApiOperation({ 
-    summary: 'Validate shift assignment',
-    description: 'Validates whether a shift assignment complies with the given rules'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Validation result',
-    schema: {
-      type: 'object',
-      properties: {
-        isValid: { type: 'boolean' },
-        violations: { type: 'array', items: { type: 'string' } },
-        warnings: { type: 'array', items: { type: 'string' } }
-      }
-    }
-  })
-  @ApiBadRequestResponse({ 
-    description: 'Invalid validation parameters'
-  })
-  async validateAssignment(@Body() validationData: {
-    rulesId: string;
-    employeeRole: string;
-    shiftType: string;
-    consecutiveShifts: number;
-    saturdaysWorked: number;
-    weeklyHours: number;
-    restHoursSinceLastShift: number;
-    consecutiveWorkingDays: number;
-  }) {
-    const rules = await this.shiftRulesService.findOne(validationData.rulesId);
-    
-    return this.shiftRulesService.validateShiftAssignment(
-      rules,
-      validationData.employeeRole,
-      validationData.shiftType,
-      validationData.consecutiveShifts,
-      validationData.saturdaysWorked,
-      validationData.weeklyHours,
-      validationData.restHoursSinceLastShift,
-      validationData.consecutiveWorkingDays
-    );
   }
 
   @Delete(':id')

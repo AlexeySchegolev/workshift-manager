@@ -363,6 +363,13 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                             {sortedDays.map(dayKey => {
                                                 const [day, month, year] = dayKey.split('.').map(Number);
                                                 const date = new Date(year, month - 1, day);
+                                                
+                                                // Validate that the date is valid
+                                                if (isNaN(date.getTime()) || isNaN(day) || isNaN(month) || isNaN(year)) {
+                                                    console.warn(`Invalid date key: ${dayKey}`);
+                                                    return null; // Skip invalid dates
+                                                }
+                                                
                                                 const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
                                                 return (
@@ -482,7 +489,10 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
 
                                                     if (dayPlan) {
                                                         for (const shiftName in dayPlan) {
-                                                            if (dayPlan[shiftName]?.includes(emp.id)) {
+                                                            // Defensive programming: ensure dayPlan[shiftName] is an array before calling .includes()
+                                                            // This matches the same pattern used in the backend service
+                                                            const employeeList = Array.isArray(dayPlan[shiftName]) ? dayPlan[shiftName] : [];
+                                                            if (employeeList.includes(emp.id)) {
                                                                 assignedShift = shiftName;
                                                                 break;
                                                             }

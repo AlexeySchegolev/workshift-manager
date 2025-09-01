@@ -20,24 +20,19 @@ import {
 import {
   AdditionalColumnDto,
   AdvancedPlanningOptionsDto,
-  BulkValidationRequestDto,
-  ConstraintValidationResultDto,
   ConstraintViolationDto,
   ConstraintViolationResponseDto,
-  ConstraintViolationsSummaryDto,
   ConstraintWeightsDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
   CreateRoleDto,
   CreateShiftDto,
-  CreateShiftPlanDto,
   CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
-  EmployeeUtilizationDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
   ExcelExportRequestDto,
@@ -46,17 +41,11 @@ import {
   LocationResponseDto,
   LocationStatsDto,
   MonthlyShiftPlanDto,
-  MultipleExcelExportRequestDto,
   OperatingHoursDto,
-  OptimizationCriteriaDto,
   OrganizationResponseDto,
-  PlanningPerformanceDto,
-  QualityMetricsDto,
   RoleResponseDto,
   ShiftAssignmentResponseDto,
-  ShiftDistributionDto,
   ShiftPlanResponseDto,
-  ShiftPlanStatisticsDto,
   ShiftResponseDto,
   ShiftRoleRequirementDto,
   ShiftRulesResponseDto,
@@ -71,9 +60,6 @@ import {
   UpdateUserDto,
   UserResponseDto,
   ValidateShiftPlanDto,
-  ValidationConfigDto,
-  ValidationRecommendationDto,
-  ValidationStatisticsDto,
 } from "./data-contracts";
 
 export class Shifts<SecurityDataType = unknown> {
@@ -138,47 +124,6 @@ export class Shifts<SecurityDataType = unknown> {
       format: "json",
       ...params,
     }); /**
-   * @description Retrieves shifts within a specified date range
-   *
-   * @tags shifts
-   * @name ShiftsControllerFindByDateRange
-   * @summary Get shifts by date range
-   * @request GET:/api/shifts/date-range
-   */
-  shiftsControllerFindByDateRange = (
-    query: {
-      /**
-       * End date (YYYY-MM-DD)
-       * @format date
-       * @example "2024-01-31"
-       */
-      endDate: string;
-      /**
-       * Filter by location ID
-       * @format uuid
-       */
-      locationId?: string;
-      /**
-       * Filter by organization ID
-       * @format uuid
-       */
-      organizationId?: string;
-      /**
-       * Start date (YYYY-MM-DD)
-       * @format date
-       * @example "2024-01-01"
-       */
-      startDate: string;
-    },
-    params: RequestParams = {}
-  ) =>
-    this.http.request<ShiftResponseDto[], void>({
-      path: `/api/shifts/date-range`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    }); /**
    * @description Retrieves a specific shift by its UUID
    *
    * @tags shifts
@@ -199,53 +144,6 @@ export class Shifts<SecurityDataType = unknown> {
       method: "GET",
       query: query,
       format: "json",
-      ...params,
-    }); /**
-   * @description Retrieves statistics about shifts including counts by type, status, and staffing information
-   *
-   * @tags shifts
-   * @name ShiftsControllerGetStats
-   * @summary Get shift statistics
-   * @request GET:/api/shifts/stats
-   */
-  shiftsControllerGetStats = (
-    query?: {
-      /**
-       * Filter statistics by organization ID
-       * @format uuid
-       */
-      organizationId?: string;
-    },
-    params: RequestParams = {}
-  ) =>
-    this.http.request<
-      {
-        active?: number;
-        averageStaffing?: number;
-        byStatus?: Record<string, number>;
-        byType?: Record<string, number>;
-        inactive?: number;
-        total?: number;
-      },
-      any
-    >({
-      path: `/api/shifts/stats`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    }); /**
-   * @description Permanently deletes a shift from the database (cannot be undone)
-   *
-   * @tags shifts
-   * @name ShiftsControllerHardRemove
-   * @summary Hard delete shift
-   * @request DELETE:/api/shifts/{id}/hard
-   */
-  shiftsControllerHardRemove = (id: string, params: RequestParams = {}) =>
-    this.http.request<void, void>({
-      path: `/api/shifts/${id}/hard`,
-      method: "DELETE",
       ...params,
     }); /**
    * @description Soft deletes a shift by marking it as inactive and setting deletedAt timestamp

@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import * as compression from 'compression';
 import * as morgan from 'morgan';
 import { AppModule } from './app.module';
+import {AdvancedPlanningOptionsDto} from "@/modules/shift-plans/dto/advanced-planning-options.dto";
+import {ConstraintViolationDto} from "@/modules/shift-plans/dto/constraint-validation-result.dto";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,7 +36,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   
-  const options = {};
+  const options = {extraModels: [AdvancedPlanningOptionsDto, ConstraintViolationDto]};
   
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api/docs', app, document);

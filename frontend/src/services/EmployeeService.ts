@@ -27,19 +27,8 @@ export class EmployeeService extends BaseService {
     const response = await this.employeesApi.employeesControllerFindAll(options);
     return response.data;
   }
-
-  /**
-   * Get employee by ID
-   */
-  async getEmployeeById(id: string, options?: {
-    includeRelations?: boolean;
-  }): Promise<EmployeeResponseDto> {
-    const response = await this.employeesApi.employeesControllerFindOne(id, options);
-    return response.data;
-  }
-
-  /**
-   * Create a new employee
+    /**
+     * Create a new employee
    */
   async createEmployee(employeeData: CreateEmployeeDto): Promise<EmployeeResponseDto> {
     const response = await this.employeesApi.employeesControllerCreate(employeeData);
@@ -59,33 +48,5 @@ export class EmployeeService extends BaseService {
    */
   async deleteEmployee(id: string): Promise<void> {
     await this.employeesApi.employeesControllerRemove(id);
-  }
-
-  /**
-   * Get employees by location
-   */
-  async getEmployeesByLocation(locationId: string): Promise<EmployeeResponseDto[]> {
-    const response = await this.employeesApi.employeesControllerFindByLocation(locationId);
-    return response.data;
-  }
-
-  /**
-   * Get employees by role
-   */
-  async getEmployeesByRole(role: string): Promise<EmployeeResponseDto[]> {
-    const response = await this.employeesApi.employeesControllerFindByRole(role);
-    return response.data;
-  }
-
-  /**
-   * Get employee statistics
-   */
-  async getEmployeeStats(): Promise<{
-    total?: number;
-    byRole?: object;
-    byLocation?: object;
-  }> {
-    const response = await this.employeesApi.employeesControllerGetStats();
-    return response.data;
   }
 }

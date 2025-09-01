@@ -1,12 +1,23 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinColumn, JoinTable } from 'typeorm';
-import { Organization } from './organization.entity';
-import { Location } from './location.entity';
-import { Role } from './role.entity';
-import { ShiftAssignment } from './shift-assignment.entity';
-import { EmployeeAvailability } from './employee-availability.entity';
-import { ShiftPreference } from './shift-preference.entity';
-import { WorkTimeConstraint } from './work-time-constraint.entity';
-import { ShiftPlanningAvailability } from './shift-planning-availability.entity';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    JoinTable,
+    ManyToMany,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from 'typeorm';
+import {Organization} from './organization.entity';
+import {Location} from './location.entity';
+import {Role} from './role.entity';
+import {ShiftAssignment} from './shift-assignment.entity';
+import {EmployeeAvailability} from './employee-availability.entity';
+import {ShiftPreference} from './shift-preference.entity';
+import {WorkTimeConstraint} from './work-time-constraint.entity';
+import {ShiftPlanningAvailability} from './shift-planning-availability.entity';
 
 export enum EmployeeStatus {
   ACTIVE = 'active',
@@ -228,7 +239,6 @@ export class Employee {
     const now = new Date();
     const hireDate = new Date(this.hireDate);
     const diffTime = Math.abs(now.getTime() - hireDate.getTime());
-    const diffYears = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365.25));
-    return diffYears;
+      return Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365.25));
   }
 }

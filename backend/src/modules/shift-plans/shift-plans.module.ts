@@ -4,8 +4,6 @@ import { ShiftPlansController } from './shift-plans.controller';
 import { ShiftPlansService } from './shift-plans.service';
 import { ShiftPlanningUtilityService } from './services/shift-planning-utility.service';
 import { ExcelExportService } from './services/excel-export.service';
-import { EmployeeAvailabilityService } from '../employees/services/employee-availability.service';
-import { EmployeeSortingService } from '../employees/services/employee-sorting.service';
 import { ShiftPlanningAvailability } from '@/database/entities/shift-planning-availability.entity';
 import { ShiftPlanningRule } from '@/database/entities/shift-planning-rule.entity';
 import { PlanningStatistics } from '@/database/entities/planning-statistics.entity';
@@ -37,15 +35,11 @@ import {Organization} from "@/database/entities/organization.entity";
     ShiftPlansService,
     ShiftPlanningUtilityService,
     ExcelExportService,
-    EmployeeAvailabilityService,
-    EmployeeSortingService,
   ],
   exports: [
     ShiftPlansService,
     ShiftPlanningUtilityService,
     ExcelExportService,
-    EmployeeAvailabilityService,
-    EmployeeSortingService,
     TypeOrmModule,
   ],
 })

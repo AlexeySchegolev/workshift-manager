@@ -1,4 +1,4 @@
-import { RoleResponseDto } from '@/api/data-contracts';
+import { RoleResponseDto, EmployeeResponseDto } from '@/api/data-contracts';
 
 /**
  * Utility-Funktionen für Employee Management
@@ -15,6 +15,22 @@ export const getRoleColor = (role?: RoleResponseDto, theme?: any) => {
       return theme.palette.success.main;
     case 'assistant':
       return theme.palette.info.main;
+    case 'nurse':
+      return theme.palette.secondary.main;
+    case 'nurse_manager':
+      return theme.palette.primary.dark;
+    case 'helper':
+      return theme.palette.warning.main;
+    case 'doctor':
+      return theme.palette.error.main;
+    case 'technician':
+      return theme.palette.info.dark;
+    case 'administrator':
+      return theme.palette.grey[700];
+    case 'cleaner':
+      return theme.palette.grey[500];
+    case 'security':
+      return theme.palette.grey[800];
     default:
       return theme.palette.grey[500];
   }
@@ -26,6 +42,78 @@ export const getInitials = (name: string | undefined | null): string => {
     return '??';
   }
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+};
+
+// Status-spezifische Farben
+export const getEmployeeStatusColor = (status: string, theme: any) => {
+  switch (status) {
+    case 'active':
+      return theme.palette.success.main;
+    case 'inactive':
+      return theme.palette.grey[500];
+    case 'on_leave':
+      return theme.palette.warning.main;
+    case 'terminated':
+      return theme.palette.error.main;
+    case 'suspended':
+      return theme.palette.error.dark;
+    default:
+      return theme.palette.grey[500];
+  }
+};
+
+// Status formatieren
+export const formatEmployeeStatus = (status: string) => {
+  switch (status) {
+    case 'active':
+      return 'Aktiv';
+    case 'inactive':
+      return 'Inaktiv';
+    case 'on_leave':
+      return 'Beurlaubt';
+    case 'terminated':
+      return 'Gekündigt';
+    case 'suspended':
+      return 'Suspendiert';
+    default:
+      return status;
+  }
+};
+
+// Vertragsart-spezifische Farben
+export const getContractTypeColor = (contractType: string, theme: any) => {
+  switch (contractType) {
+    case 'full_time':
+      return theme.palette.primary.main;
+    case 'part_time':
+      return theme.palette.info.main;
+    case 'contract':
+      return theme.palette.warning.main;
+    case 'temporary':
+      return theme.palette.secondary.main;
+    case 'intern':
+      return theme.palette.success.main;
+    default:
+      return theme.palette.grey[500];
+  }
+};
+
+// Vertragsart formatieren
+export const formatContractType = (contractType: string) => {
+  switch (contractType) {
+    case 'full_time':
+      return 'Vollzeit';
+    case 'part_time':
+      return 'Teilzeit';
+    case 'contract':
+      return 'Vertrag';
+    case 'temporary':
+      return 'Befristet';
+    case 'intern':
+      return 'Praktikant';
+    default:
+      return contractType;
+  }
 };
 
 // Validiere Formular-Daten

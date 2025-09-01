@@ -84,7 +84,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
 
     // Use generated days or shift plan days if available
     const sortedDays = shiftPlan
-        ? Object.keys(shiftPlan)
+        ? Object.keys(shiftPlan as Record<string, any>)
             .sort((a, b) => {
                 const [dayA, monthA, yearA] = a.split('.').map(Number);
                 const [dayB, monthB, yearB] = b.split('.').map(Number);

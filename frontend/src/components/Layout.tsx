@@ -214,176 +214,178 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.05)}`,
         }}
       >
-        <Toolbar
-          sx={{
-            px: { xs: 2, md: 4 },
-            py: 1,
-            minHeight: { xs: 56, md: 64 },
-            gap: 2,
-          }}
-        >
-          {/* Mobile Menu Button */}
-          {isMobile && (
-            <IconButton
-              size="medium"
-              edge="start"
-              sx={{
-                color: 'text.primary',
-                backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  transform: 'scale(1.05)',
-                },
-                transition: 'all 0.2s ease-in-out',
-              }}
-              onClick={handleDrawerToggle}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-          
-          {/* Logo/Brand */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Avatar
-              sx={{
-                bgcolor: 'primary.main',
-                width: 32,
-                height: 32,
-                background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-              }}
-            >
-              <DashboardIcon sx={{ fontSize: '1.2rem' }} />
-            </Avatar>
-            <Box>
-              <Typography
-                variant="h6"
-                component={RouterLink}
-                to="/"
+        <Container maxWidth="xl">
+          <Toolbar
+            sx={{
+              px: 0,
+              py: 1,
+              minHeight: { xs: 56, md: 64 },
+              gap: 2,
+            }}
+          >
+            {/* Mobile Menu Button */}
+            {isMobile && (
+              <IconButton
+                size="medium"
+                edge="start"
                 sx={{
-                  fontWeight: 700,
-                  fontSize: { xs: '1.1rem', md: '1.25rem' },
+                  color: 'text.primary',
+                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    transform: 'scale(1.05)',
+                  },
+                  transition: 'all 0.2s ease-in-out',
+                }}
+                onClick={handleDrawerToggle}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+            
+            {/* Logo/Brand */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar
+                sx={{
+                  bgcolor: 'primary.main',
+                  width: 32,
+                  height: 32,
                   background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    opacity: 0.8,
-                  },
-                  transition: 'opacity 0.2s ease-in-out',
                 }}
               >
-                WorkShift Manager
-              </Typography>
-              {!isMobile && (
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1 }}>
-                  {getCurrentPageTitle()}
+                <DashboardIcon sx={{ fontSize: '1.2rem' }} />
+              </Avatar>
+              <Box>
+                <Typography
+                  variant="h6"
+                  component={RouterLink}
+                  to="/"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: { xs: '1.1rem', md: '1.25rem' },
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      opacity: 0.8,
+                    },
+                    transition: 'opacity 0.2s ease-in-out',
+                  }}
+                >
+                  WorkShift Manager
                 </Typography>
-              )}
+                {!isMobile && (
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1 }}>
+                    {getCurrentPageTitle()}
+                  </Typography>
+                )}
+              </Box>
             </Box>
-          </Box>
-          
-          <Box sx={{ flexGrow: 1 }} />
-          
-          {/* Desktop Navigation */}
-          {!isMobile && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {/* Quick Dashboard Access */}
-              <Button
-                component={RouterLink}
-                to="/"
-                startIcon={<DashboardIcon />}
-                sx={{
-                  color: location.pathname === '/' ? 'primary.main' : 'text.primary',
-                  backgroundColor: location.pathname === '/'
-                    ? alpha(theme.palette.primary.main, 0.1)
-                    : alpha(theme.palette.grey[500], 0.05),
-                  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                  borderRadius: 2,
-                  px: 2,
-                  py: 1,
-                  fontWeight: 500,
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                    color: 'primary.main',
-                  },
-                  transition: 'all 0.2s ease-in-out',
-                }}
-              >
-                Dashboard
-              </Button>
-              
-              {/* Schichtbezogene Navigation */}
-              <Button
-                onClick={handleShiftMenuOpen}
-                endIcon={<ArrowDownIcon />}
-                startIcon={<ScheduleIcon />}
-                sx={{
-                  color: 'text.primary',
-                  backgroundColor: isShiftMenuOpen
-                    ? alpha(theme.palette.primary.main, 0.1)
-                    : alpha(theme.palette.grey[500], 0.05),
-                  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                  borderRadius: 2,
-                  px: 2,
-                  py: 1,
-                  fontWeight: 500,
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                    color: 'primary.main',
-                  },
-                  transition: 'all 0.2s ease-in-out',
-                }}
-              >
-                Schichten
-              </Button>
+            
+            <Box sx={{ flexGrow: 1 }} />
+            
+            {/* Desktop Navigation */}
+            {!isMobile && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {/* Quick Dashboard Access */}
+                <Button
+                  component={RouterLink}
+                  to="/"
+                  startIcon={<DashboardIcon />}
+                  sx={{
+                    color: location.pathname === '/' ? 'primary.main' : 'text.primary',
+                    backgroundColor: location.pathname === '/'
+                      ? alpha(theme.palette.primary.main, 0.1)
+                      : alpha(theme.palette.grey[500], 0.05),
+                    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    borderRadius: 2,
+                    px: 2,
+                    py: 1,
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                      color: 'primary.main',
+                    },
+                    transition: 'all 0.2s ease-in-out',
+                  }}
+                >
+                  Dashboard
+                </Button>
+                
+                {/* Schichtbezogene Navigation */}
+                <Button
+                  onClick={handleShiftMenuOpen}
+                  endIcon={<ArrowDownIcon />}
+                  startIcon={<ScheduleIcon />}
+                  sx={{
+                    color: 'text.primary',
+                    backgroundColor: isShiftMenuOpen
+                      ? alpha(theme.palette.primary.main, 0.1)
+                      : alpha(theme.palette.grey[500], 0.05),
+                    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    borderRadius: 2,
+                    px: 2,
+                    py: 1,
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                      color: 'primary.main',
+                    },
+                    transition: 'all 0.2s ease-in-out',
+                  }}
+                >
+                  Schichten
+                </Button>
 
-              {/* Mitarbeiterbezogene Navigation */}
-              <Button
-                onClick={handleEmployeeMenuOpen}
-                endIcon={<ArrowDownIcon />}
-                startIcon={<PeopleIcon />}
+                {/* Mitarbeiterbezogene Navigation */}
+                <Button
+                  onClick={handleEmployeeMenuOpen}
+                  endIcon={<ArrowDownIcon />}
+                  startIcon={<PeopleIcon />}
+                  sx={{
+                    color: 'text.primary',
+                    backgroundColor: isEmployeeMenuOpen
+                      ? alpha(theme.palette.primary.main, 0.1)
+                      : alpha(theme.palette.grey[500], 0.05),
+                    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    borderRadius: 2,
+                    px: 2,
+                    py: 1,
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                      color: 'primary.main',
+                    },
+                    transition: 'all 0.2s ease-in-out',
+                  }}
+                >
+                  Mitarbeiter
+                </Button>
+                
+                {/* User Info */}
+                <UserInfo />
+              </Box>
+            )}
+            
+            {/* Mobile Current Page Indicator */}
+            {isMobile && (
+              <Chip
+                label={getCurrentPageTitle()}
+                size="small"
                 sx={{
-                  color: 'text.primary',
-                  backgroundColor: isEmployeeMenuOpen
-                    ? alpha(theme.palette.primary.main, 0.1)
-                    : alpha(theme.palette.grey[500], 0.05),
-                  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                  borderRadius: 2,
-                  px: 2,
-                  py: 1,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                  color: 'primary.main',
                   fontWeight: 500,
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                    color: 'primary.main',
-                  },
-                  transition: 'all 0.2s ease-in-out',
+                  fontSize: '0.75rem',
                 }}
-              >
-                Mitarbeiter
-              </Button>
-              
-              {/* User Info */}
-              <UserInfo />
-            </Box>
-          )}
-          
-          {/* Mobile Current Page Indicator */}
-          {isMobile && (
-            <Chip
-              label={getCurrentPageTitle()}
-              size="small"
-              sx={{
-                backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                color: 'primary.main',
-                fontWeight: 500,
-                fontSize: '0.75rem',
-              }}
-            />
-          )}
-        </Toolbar>
+              />
+            )}
+          </Toolbar>
+        </Container>
       </AppBar>
       
       {/* Schichtbezogene Navigation Dropdown */}

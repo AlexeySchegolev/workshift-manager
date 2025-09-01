@@ -4,7 +4,7 @@ import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleResponseDto } from './dto/role-response.dto';
-import {Role} from "../../database/entities/role.entity";
+import {Role} from "@/database/entities/role.entity";
 
 @ApiTags('roles')
 @Controller('api/roles')

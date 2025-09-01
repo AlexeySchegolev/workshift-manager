@@ -84,36 +84,6 @@ export class PlanningAlgorithms<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Compare results from different algorithms for the same shift plan
-   *
-   * @tags planning-algorithms
-   * @name PlanningAlgorithmsControllerCompareAlgorithms
-   * @summary Compare algorithm results
-   * @request POST:/api/planning-algorithms/compare
-   */
-  planningAlgorithmsControllerCompareAlgorithms = (
-    params: RequestParams = {}
-  ) =>
-    this.http.request<void, any>({
-      path: `/api/planning-algorithms/compare`,
-      method: "POST",
-      ...params,
-    }); /**
-   * @description Run the constraint satisfaction problem solver algorithm
-   *
-   * @tags planning-algorithms
-   * @name PlanningAlgorithmsControllerExecuteConstraintSatisfaction
-   * @summary Execute constraint satisfaction algorithm
-   * @request POST:/api/planning-algorithms/constraint-satisfaction/execute
-   */
-  planningAlgorithmsControllerExecuteConstraintSatisfaction = (
-    params: RequestParams = {}
-  ) =>
-    this.http.request<void, any>({
-      path: `/api/planning-algorithms/constraint-satisfaction/execute`,
-      method: "POST",
-      ...params,
-    }); /**
    * @description Run the enhanced backtracking algorithm with specific configuration
    *
    * @tags planning-algorithms
@@ -142,51 +112,6 @@ export class PlanningAlgorithms<SecurityDataType = unknown> {
     this.http.request<void, any>({
       path: `/api/planning-algorithms/mixed/execute`,
       method: "POST",
-      ...params,
-    }); /**
-   * @description Retrieve a list of all available planning algorithms with their capabilities
-   *
-   * @tags planning-algorithms
-   * @name PlanningAlgorithmsControllerGetAvailableAlgorithms
-   * @summary Get available planning algorithms
-   * @request GET:/api/planning-algorithms/available
-   */
-  planningAlgorithmsControllerGetAvailableAlgorithms = (
-    params: RequestParams = {}
-  ) =>
-    this.http.request<void, any>({
-      path: `/api/planning-algorithms/available`,
-      method: "GET",
-      ...params,
-    }); /**
-   * @description Retrieve pre-configured templates for different use cases
-   *
-   * @tags planning-algorithms
-   * @name PlanningAlgorithmsControllerGetConfigurationTemplates
-   * @summary Get algorithm configuration templates
-   * @request GET:/api/planning-algorithms/configurations/templates
-   */
-  planningAlgorithmsControllerGetConfigurationTemplates = (
-    params: RequestParams = {}
-  ) =>
-    this.http.request<void, any>({
-      path: `/api/planning-algorithms/configurations/templates`,
-      method: "GET",
-      ...params,
-    }); /**
-   * @description Retrieve performance benchmarks for different algorithms
-   *
-   * @tags planning-algorithms
-   * @name PlanningAlgorithmsControllerGetPerformanceBenchmarks
-   * @summary Get algorithm performance benchmarks
-   * @request GET:/api/planning-algorithms/performance/benchmarks
-   */
-  planningAlgorithmsControllerGetPerformanceBenchmarks = (
-    params: RequestParams = {}
-  ) =>
-    this.http.request<void, any>({
-      path: `/api/planning-algorithms/performance/benchmarks`,
-      method: "GET",
       ...params,
     });
 }

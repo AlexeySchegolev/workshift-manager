@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { RoleType, RoleStatus } from '../../../database/entities/role.entity';
+import { RoleType, RoleStatus } from '@/database/entities/role.entity';
 
 export class RoleResponseDto {
   @ApiProperty({ 

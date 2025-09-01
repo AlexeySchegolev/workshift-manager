@@ -18,6 +18,7 @@ import {Employee} from "@/database/entities/employee.entity";
 import {ShiftAssignment} from "@/database/entities/shift-assignment.entity";
 import {ShiftRules} from "@/database/entities/shift-rules.entity";
 import {ConstraintViolation} from "@/database/entities/constraint-violation.entity";
+import {Organization} from "@/database/entities/organization.entity";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import {ConstraintViolation} from "@/database/entities/constraint-violation.enti
       ShiftRules,
       ShiftAssignment,
       ConstraintViolation,
+      Organization,
       ShiftPlanningAvailability,
       ShiftPlanningRule,
       PlanningStatistics,

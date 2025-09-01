@@ -12,6 +12,7 @@ import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from "@/database/entities/shi
 import {Employee} from "@/database/entities/employee.entity";
 import {ShiftRules} from "@/database/entities/shift-rules.entity";
 import {ShiftAssignment} from "@/database/entities/shift-assignment.entity";
+import {Organization} from "@/database/entities/organization.entity";
 import { toDateString } from '@/common/utils/date.utils';
 
 @Injectable()
@@ -29,7 +30,22 @@ export class ShiftPlansService {
     private readonly shiftAssignmentRepository: Repository<ShiftAssignment>,
     @InjectRepository(ConstraintViolation)
     private readonly constraintViolationRepository: Repository<ConstraintViolation>,
+    @InjectRepository(Organization)
+    private readonly organizationRepository: Repository<Organization>,
   ) {}
+
+  private async getDefaultOrganization(): Promise<Organization> {
+    const organization = await this.organizationRepository.findOne({
+      where: { isActive: true },
+      order: { createdAt: 'ASC' }
+    });
+    
+    if (!organization) {
+      throw new BadRequestException('No active organization found. Please ensure the database is properly seeded.');
+    }
+    
+    return organization;
+  }
 
   async create(createShiftPlanDto: CreateShiftPlanDto): Promise<ShiftPlan> {
     this.logger.log(`Creating new shift plan for ${createShiftPlanDto.month}/${createShiftPlanDto.year}`);
@@ -198,8 +214,11 @@ export class ShiftPlansService {
       const planningPeriodStart = new Date(generateDto.year, generateDto.month - 1, 1);
       const planningPeriodEnd = new Date(generateDto.year, generateDto.month, 0);
       
+      // Get the default organization
+      const organization = await this.getDefaultOrganization();
+      
       shiftPlan = await this.create({
-        organizationId: 'default-org-id', // TODO: Get from context/user
+        organizationId: organization.id,
         name: planName,
         year: generateDto.year,
         month: generateDto.month,
@@ -359,17 +378,24 @@ export class ShiftPlansService {
     const violations: ConstraintViolation[] = [];
     
     // Basic validation - check minimum staffing levels
+    // Only process entries that look like date keys (DD.MM.YYYY format)
+    const datePattern = /^\d{2}\.\d{2}\.\d{4}$/;
+    
     for (const [date, dayPlan] of Object.entries(planData)) {
-      if (!dayPlan) continue;
+      // Skip entries that are not valid date keys
+      if (!datePattern.test(date) || !dayPlan || typeof dayPlan !== 'object') continue;
       
       for (const [shiftType, assignedEmployees] of Object.entries(dayPlan)) {
-        if (assignedEmployees.length < rules.minNursesPerShift) {
+        // Defensive programming: ensure assignedEmployees is an array
+        const employeeArray = Array.isArray(assignedEmployees) ? assignedEmployees : [];
+        
+        if (employeeArray.length < rules.minNursesPerShift) {
           violations.push(this.constraintViolationRepository.create({
             type: ViolationType.HARD,
             category: ConstraintCategory.STAFFING,
             ruleCode: 'MIN_STAFFING',
             ruleName: 'Minimum Staffing Requirement',
-            message: `${shiftType} shift on ${date} has only ${assignedEmployees.length} employees, minimum required is ${rules.minNursesPerShift}`,
+            message: `${shiftType} shift on ${date} has only ${employeeArray.length} employees, minimum required is ${rules.minNursesPerShift}`,
             violationDate: new Date(date.split('.').reverse().join('-')),
             shiftType,
             severity: 5
@@ -382,8 +408,12 @@ export class ShiftPlansService {
   }
 
   private calculatePlanStatistics(planData: MonthlyShiftPlan, employees: Employee[]): any {
+    // Only count entries that look like date keys (DD.MM.YYYY format)
+    const datePattern = /^\d{2}\.\d{2}\.\d{4}$/;
+    const validDateEntries = Object.entries(planData).filter(([date]) => datePattern.test(date));
+    
     const stats = {
-      totalDays: Object.keys(planData).length,
+      totalDays: validDateEntries.length,
       completeDays: 0,
       totalAssignments: 0,
       employeeWorkload: {} as Record<string, number>
@@ -395,14 +425,18 @@ export class ShiftPlansService {
     });
     
     // Calculate statistics
-    for (const [date, dayPlan] of Object.entries(planData)) {
-      if (!dayPlan) continue;
+    for (const [date, dayPlan] of validDateEntries) {
+      // Skip entries that are not valid date keys or don't have proper dayPlan structure
+      if (!dayPlan || typeof dayPlan !== 'object') continue;
       
       let dayAssignments = 0;
       for (const [shiftType, assignedEmployees] of Object.entries(dayPlan)) {
-        dayAssignments += assignedEmployees.length;
-        assignedEmployees.forEach(empId => {
-          if (stats.employeeWorkload[empId] !== undefined) {
+        // Defensive programming: ensure assignedEmployees is an array
+        const employeeArray = Array.isArray(assignedEmployees) ? assignedEmployees : [];
+        
+        dayAssignments += employeeArray.length;
+        employeeArray.forEach(empId => {
+          if (typeof empId === 'string' && stats.employeeWorkload[empId] !== undefined) {
             stats.employeeWorkload[empId]++;
           }
         });

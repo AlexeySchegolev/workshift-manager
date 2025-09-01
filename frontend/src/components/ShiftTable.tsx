@@ -427,7 +427,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                                 color: 'text.primary',
                                                             }}
                                                         >
-                                                            {emp.lastName}
+                                                            {emp.lastName}, {emp.firstName}
                                                         </Typography>
                                                         <Box sx={{
                                                             display: 'flex',

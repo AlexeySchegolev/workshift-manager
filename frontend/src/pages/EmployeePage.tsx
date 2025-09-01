@@ -171,7 +171,7 @@ const EmployeePage: React.FC = () => {
         {
             id: 'location-distribution',
             title: 'Standortverteilung',
-            description: 'Verteilung der Mitarbeiter auf beide Standorte',
+            description: 'Verteilung der Mitarbeiter',
             status: stats.locationB >= 2 && stats.locationA >= 3 ? 'success' : 'warning',
             value: Math.min(stats.locationA, stats.locationB),
             maxValue: Math.max(stats.locationA, stats.locationB),
@@ -233,7 +233,7 @@ const EmployeePage: React.FC = () => {
                             color="text.secondary"
                             sx={{mb: 2, maxWidth: 600}}
                         >
-                            Verwalten Sie Ihr Team und optimieren Sie die Personalplanung für beide Standorte
+                            Verwalten Sie Ihr Team und optimieren Sie die Personalplanung
                         </Typography>
                         <Box sx={{display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap'}}>
                             <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>

@@ -29,7 +29,6 @@ import {
 } from '@mui/icons-material';
 import { EmployeeResponseDto } from '@/api/data-contracts';
 import {
-    getRoleColor,
     getInitials,
     getEmployeeStatusColor,
     formatEmployeeStatus,
@@ -164,7 +163,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                             <Avatar
                                                 sx={{
-                                                    bgcolor: getRoleColor(employee.primaryRole, theme),
+                                                    bgcolor: employee.primaryRole?.colorCode || theme.palette.grey[500],
                                                     width: 40,
                                                     height: 40,
                                                     fontSize: '0.875rem',
@@ -177,21 +176,18 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                                     {employee.fullName || `${employee.firstName} ${employee.lastName}`}
                                                 </Typography>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    {employee.employeeNumber}
-                                                </Typography>
                                             </Box>
                                         </Box>
                                     </TableCell>
                                     <TableCell>
                                         <Chip
-                                            label={employee.primaryRole?.displayName || employee.primaryRole?.name || 'Keine Rolle'}
+                                            label={employee.primaryRole?.name || employee.primaryRole?.displayName || 'Keine Rolle'}
                                             size="small"
                                             sx={{
                                                 backgroundColor: employee.primaryRole?.colorCode
                                                     ? alpha(employee.primaryRole.colorCode, 0.1)
-                                                    : alpha(getRoleColor(employee.primaryRole, theme), 0.1),
-                                                color: employee.primaryRole?.colorCode || getRoleColor(employee.primaryRole, theme),
+                                                    : alpha(theme.palette.grey[500], 0.1),
+                                                color: employee.primaryRole?.colorCode || theme.palette.grey[500],
                                                 fontWeight: 500,
                                             }}
                                         />

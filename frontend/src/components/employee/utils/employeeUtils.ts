@@ -4,38 +4,6 @@ import { RoleResponseDto, EmployeeResponseDto } from '@/api/data-contracts';
  * Utility-Funktionen für Employee Management
  */
 
-// Role-spezifische Farben
-export const getRoleColor = (role?: RoleResponseDto, theme?: any) => {
-  if (!theme) return '#666';
-  
-  switch (role?.type) {
-    case 'shift_leader':
-      return theme.palette.primary.main;
-    case 'specialist':
-      return theme.palette.success.main;
-    case 'assistant':
-      return theme.palette.info.main;
-    case 'nurse':
-      return theme.palette.secondary.main;
-    case 'nurse_manager':
-      return theme.palette.primary.dark;
-    case 'helper':
-      return theme.palette.warning.main;
-    case 'doctor':
-      return theme.palette.error.main;
-    case 'technician':
-      return theme.palette.info.dark;
-    case 'administrator':
-      return theme.palette.grey[700];
-    case 'cleaner':
-      return theme.palette.grey[500];
-    case 'security':
-      return theme.palette.grey[800];
-    default:
-      return theme.palette.grey[500];
-  }
-};
-
 // Generiere Avatar-Initialen
 export const getInitials = (name: string | undefined | null): string => {
   if (!name) {

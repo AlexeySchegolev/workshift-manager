@@ -242,7 +242,7 @@ const ShiftPlanningPage: React.FC = () => {
                             color="text.secondary"
                             sx={{mb: 2, maxWidth: 600}}
                         >
-                            Verwalten Sie Ihre Schichtpläne für{' '}
+                            Verwalten Sie Ihren Schichtplan für{' '}
                             {format(selectedDate, 'MMMM yyyy', {locale: de})}
                         </Typography>
                         <Box sx={{display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap'}}>

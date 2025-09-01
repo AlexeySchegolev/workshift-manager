@@ -395,7 +395,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
 
                                     {/* Table body with employees and shifts */}
                                     <TableBody>
-                                        {employees.map((emp, empIndex) => (
+                                        {employees.map((emp) => (
                                             <TableRow
                                                 key={emp.id}
                                                 hover

@@ -33,6 +33,7 @@ import {
     Warning as WarningIcon,
     CheckCircle as CheckCircleIcon,
     Error as ErrorIcon,
+    Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
@@ -237,21 +238,25 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                 action={
                     <Box sx={{display: 'flex', gap: 1}}>
                         <Tooltip title="Schichtplan generieren">
-                            <Button
-                                variant="contained"
+                            <IconButton
                                 color="primary"
                                 onClick={onGeneratePlan}
                                 disabled={isLoading}
-                                startIcon={isLoading ? <CircularProgress size={16}/> : <PlayArrowIcon/>}
                                 sx={{
+                                    backgroundColor: theme.palette.primary.main,
+                                    color: 'white',
                                     borderRadius: 2,
-                                    textTransform: 'none',
-                                    fontWeight: 600,
-                                    px: 3,
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.primary.dark,
+                                    },
+                                    '&:disabled': {
+                                        backgroundColor: alpha(theme.palette.primary.main, 0.3),
+                                        color: alpha(theme.palette.common.white, 0.5),
+                                    },
                                 }}
                             >
-                                {isLoading ? 'Wird generiert...' : 'Generieren'}
-                            </Button>
+                                {isLoading ? <CircularProgress size={20} sx={{ color: 'inherit' }}/> : <RefreshIcon/>}
+                            </IconButton>
                         </Tooltip>
 
                         <Tooltip title="Als Excel exportieren">

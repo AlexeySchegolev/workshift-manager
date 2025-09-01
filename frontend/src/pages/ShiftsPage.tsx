@@ -241,7 +241,7 @@ const ShiftsPage: React.FC = () => {
                                 WebkitTextFillColor: 'transparent',
                             }}
                         >
-                            Schichtenverwaltung
+                            Schichten
                         </Typography>
                         <Typography
                             variant="h6"

@@ -81,7 +81,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                         <ScheduleIcon sx={{ color: 'primary.main', fontSize: '2rem' }} />
                         <Box>
                             <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5 }}>
-                                Schichtenverwaltung
+                                Schichten
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 {shifts.length} Schichten insgesamt

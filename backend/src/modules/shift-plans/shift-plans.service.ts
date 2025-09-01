@@ -12,6 +12,7 @@ import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from "@/database/entities/shi
 import {Employee} from "@/database/entities/employee.entity";
 import {ShiftRules} from "@/database/entities/shift-rules.entity";
 import {ShiftAssignment} from "@/database/entities/shift-assignment.entity";
+import { toDateString } from '@/common/utils/date.utils';
 
 @Injectable()
 export class ShiftPlansService {
@@ -202,8 +203,8 @@ export class ShiftPlansService {
         name: planName,
         year: generateDto.year,
         month: generateDto.month,
-        planningPeriodStart: planningPeriodStart.toISOString().split('T')[0],
-        planningPeriodEnd: planningPeriodEnd.toISOString().split('T')[0],
+        planningPeriodStart: toDateString(planningPeriodStart),
+        planningPeriodEnd: toDateString(planningPeriodEnd),
         planData,
         createdBy: generateDto.createdBy
       });

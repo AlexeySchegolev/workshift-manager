@@ -17,6 +17,7 @@ import { ConstraintValidationService } from '../services/constraint-validation.s
 import { ShiftPlansService } from '../shift-plans.service';
 import { EmployeeAvailabilityService } from '../../employees/services/employee-availability.service';
 import { AdvancedPlanningOptionsDto, BacktrackingConfigDto, PlanningAlgorithm } from '../dto/advanced-planning-options.dto';
+import { getCurrentTimestamp } from '@/common/utils/date.utils';
 
 /**
  * Controller for specialized planning algorithm operations.
@@ -184,7 +185,7 @@ export class PlanningAlgorithmsController {
       metadata: {
         employeeCount: employees.length,
         planningPeriod: `${shiftPlan.year}-${shiftPlan.month}`,
-        executedAt: new Date().toISOString()
+        executedAt: getCurrentTimestamp()
       }
     };
   }
@@ -410,7 +411,7 @@ export class PlanningAlgorithmsController {
           successfulResults.reduce((sum, r) => sum + r.executionTime, 0) / successfulResults.length : 0
       },
       recommendations: this.generateAlgorithmRecommendations(results),
-      comparisonTimestamp: new Date().toISOString()
+      comparisonTimestamp: getCurrentTimestamp()
     };
   }
 

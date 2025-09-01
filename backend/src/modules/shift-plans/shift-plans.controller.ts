@@ -37,6 +37,7 @@ import {ConstraintValidationService} from './services/constraint-validation.serv
 import {EmployeeAvailabilityService} from '../employees/services/employee-availability.service';
 import {ExcelExportService} from './services/excel-export.service';
 import {ExcelExportRequestDto, ExcelExportResultDto, MultipleExcelExportRequestDto} from './dto/excel-export.dto';
+import { getCurrentTimestamp } from '@/common/utils/date.utils';
 
 @ApiTags('shift-plans')
 @Controller('api/shift-plans')
@@ -471,7 +472,7 @@ export class ShiftPlansController {
         title: 'Optimization Suggestion',
         description: rec
       })),
-      validationTimestamp: new Date().toISOString(),
+      validationTimestamp: getCurrentTimestamp(),
       validationDurationMs,
       statistics: {
         totalConstraintsChecked: transformedHardViolations.length + transformedSoftViolations.length + transformedWarnings.length,
@@ -532,7 +533,7 @@ export class ShiftPlansController {
         averageValidationTime: 0,
         totalValidationTime: 0
       },
-      completionTimestamp: new Date().toISOString()
+      completionTimestamp: getCurrentTimestamp()
     };
   }
 

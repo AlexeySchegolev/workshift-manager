@@ -5,6 +5,7 @@ import { Shift } from '@/database/entities/shift.entity';
 import { CreateShiftDto } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
 import { ShiftResponseDto } from './dto/shift-response.dto';
+import { toDateString, toISOString } from '@/common/utils/date.utils';
 
 @Injectable()
 export class ShiftsService {
@@ -291,7 +292,7 @@ export class ShiftsService {
       type: shift.type,
       status: shift.status,
       priority: shift.priority,
-      shiftDate: shift.shiftDate.toISOString().split('T')[0],
+      shiftDate: toDateString(shift.shiftDate),
       startTime: shift.startTime,
       endTime: shift.endTime,
       breakDuration: shift.breakDuration,
@@ -312,16 +313,16 @@ export class ShiftsService {
       notes: shift.notes,
       isRecurring: shift.isRecurring,
       recurrencePattern: shift.recurrencePattern,
-      recurrenceEndDate: shift.recurrenceEndDate?.toISOString().split('T')[0],
+      recurrenceEndDate: shift.recurrenceEndDate ? toDateString(shift.recurrenceEndDate) : undefined,
       isActive: shift.isActive,
       organization: shift.organization,
       location: shift.location,
       requiredRoles: shift.requiredRoles,
       createdBy: shift.createdBy,
       updatedBy: shift.updatedBy,
-      createdAt: shift.createdAt.toISOString(),
-      updatedAt: shift.updatedAt.toISOString(),
-      deletedAt: shift.deletedAt?.toISOString(),
+      createdAt: toISOString(shift.createdAt),
+      updatedAt: toISOString(shift.updatedAt),
+      deletedAt: shift.deletedAt ? toISOString(shift.deletedAt) : undefined,
       // Virtual fields
       isFullyStaffed: shift.isFullyStaffed,
       isOverStaffed: shift.isOverStaffed,

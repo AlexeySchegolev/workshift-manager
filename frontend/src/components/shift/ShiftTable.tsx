@@ -103,36 +103,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                         Schicht hinzufügen
                     </Button>
                 </Box>
-
-                {/* Quick Stats */}
-                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                    <Chip
-                        icon={<BusinessIcon />}
-                        label={`${shifts.filter(s => s.location?.code === 'DSA').length} Station A`}
-                        variant="outlined"
-                        size="small"
-                    />
-                    <Chip
-                        icon={<BusinessIcon />}
-                        label={`${shifts.filter(s => s.location?.code === 'DSB').length} Station B`}
-                        variant="outlined"
-                        size="small"
-                    />
-                    <Chip
-                        icon={<PeopleIcon />}
-                        label={`${shifts.filter(s => s.isFullyStaffed).length} vollbesetzt`}
-                        variant="outlined"
-                        size="small"
-                        color="success"
-                    />
-                    <Chip
-                        icon={<AccessTimeIcon />}
-                        label={`${shifts.filter(s => s.type === 'night').length} Nachtschichten`}
-                        variant="outlined"
-                        size="small"
-                        color="info"
-                    />
-                </Box>
             </Box>
 
             {/* Table */}

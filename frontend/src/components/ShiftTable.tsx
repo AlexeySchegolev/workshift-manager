@@ -66,7 +66,23 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                }) => {
     const theme = useTheme();
 
-    // Sorted days of the month from the shift plan
+    // Generate all days of the selected month
+    const generateMonthDays = (date: Date): string[] => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        const days: string[] = [];
+        for (let day = 1; day <= daysInMonth; day++) {
+            // Format as DD.MM.YYYY to match the backend format
+            const dayStr = day.toString().padStart(2, '0');
+            const monthStr = (month + 1).toString().padStart(2, '0');
+            days.push(`${dayStr}.${monthStr}.${year}`);
+        }
+        return days;
+    };
+
+    // Use generated days or shift plan days if available
     const sortedDays = shiftPlan
         ? Object.keys(shiftPlan)
             .sort((a, b) => {
@@ -76,7 +92,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                 const dateB = new Date(yearB, monthB - 1, dayB);
                 return dateA.getTime() - dateB.getTime();
             })
-        : [];
+        : generateMonthDays(selectedDate);
 
     // Formatted month name
     const monthName = format(selectedDate, 'MMMM yyyy', {locale: de});
@@ -278,41 +294,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                             Schichtplan wird generiert...
                         </Typography>
                     </Box>
-                ) : !shiftPlan ? (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flex: 1,
-                            py: 8,
-                            textAlign: 'center',
-                        }}
-                    >
-                        <ScheduleIcon sx={{fontSize: 64, color: 'text.disabled', mb: 2}}/>
-                        <Typography variant="h6" color="text.secondary" gutterBottom>
-                            Kein Schichtplan verfügbar
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{mb: 3, maxWidth: 400}}>
-                            Generieren Sie einen neuen Schichtplan für {monthName}, um die Schichtverteilung zu sehen.
-                        </Typography>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={onGeneratePlan}
-                            startIcon={<PlayArrowIcon/>}
-                            sx={{
-                                borderRadius: 2,
-                                textTransform: 'none',
-                                fontWeight: 600,
-                                px: 4,
-                                py: 1.5,
-                            }}
-                        >
-                            Schichtplan generieren
-                        </Button>
-                    </Box>
                 ) : sortedDays.length === 0 ? (
                     <Alert
                         severity="warning"
@@ -324,7 +305,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                         }}
                     >
                         <Typography variant="body2">
-                            Der Schichtplan enthält keine gültigen Tage.
+                            Keine gültigen Tage für den ausgewählten Monat gefunden.
                         </Typography>
                     </Alert>
                 ) : (
@@ -351,9 +332,11 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                     width: '200px',
                                                     position: 'sticky',
                                                     left: 0,
-                                                    zIndex: 3,
+                                                    top: 0,
+                                                    zIndex: 4,
                                                     backgroundColor: theme.palette.background.paper,
                                                     borderRight: `2px solid ${theme.palette.divider}`,
+                                                    borderBottom: `2px solid ${theme.palette.divider}`,
                                                     fontWeight: 700,
                                                     fontSize: '0.875rem',
                                                 }}
@@ -381,8 +364,14 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                             width: '70px',
                                                             fontWeight: 600,
                                                             fontSize: '0.8rem',
-                                                            backgroundColor: isWeekend ? alpha(theme.palette.error.main, 0.05) : 'inherit',
+                                                            backgroundColor: isWeekend
+                                                                ? alpha(theme.palette.error.main, 0.05)
+                                                                : theme.palette.background.paper,
                                                             color: isWeekend ? theme.palette.error.main : 'inherit',
+                                                            position: 'sticky',
+                                                            top: 0,
+                                                            zIndex: 2,
+                                                            borderBottom: `2px solid ${theme.palette.divider}`,
                                                         }}
                                                     >
                                                         <Box>
@@ -426,7 +415,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                         left: 0,
                                                         backgroundColor: 'inherit',
                                                         borderRight: `2px solid ${theme.palette.divider}`,
-                                                        zIndex: 2,
+                                                        zIndex: 1,
                                                     }}
                                                 >
                                                     <Box sx={{py: 0.5}}>

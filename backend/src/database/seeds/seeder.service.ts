@@ -62,7 +62,6 @@ export class SeederService {
             await this.dataSource.query('TRUNCATE TABLE employees CASCADE');
             await this.dataSource.query('TRUNCATE TABLE roles CASCADE');
             await this.dataSource.query('TRUNCATE TABLE locations CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE user_organizations CASCADE');
             await this.dataSource.query('TRUNCATE TABLE users CASCADE');
             await this.dataSource.query('TRUNCATE TABLE organizations CASCADE');
 
@@ -97,7 +96,7 @@ export class SeederService {
             // Update user data with organization reference
             const userData = usersSeedData.map(user => ({
                 ...user,
-                organizations: [organization]
+                organizationId: organization.id
             }));
 
             const users = await userRepo.save(userData);

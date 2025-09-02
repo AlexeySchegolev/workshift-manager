@@ -1,4 +1,4 @@
-import { HttpClient } from './http-client';
+import { HttpClient } from '../api/http-client.ts';
 
 /**
  * Singleton HTTP client manager that ensures all services share the same

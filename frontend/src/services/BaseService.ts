@@ -1,5 +1,5 @@
 import { HttpClient } from '../api/http-client';
-import HttpClientManager from '../api/HttpClientManager';
+import HttpClientManager from './HttpClientManager.ts';
 
 /**
  * Base service class that provides centralized API configuration

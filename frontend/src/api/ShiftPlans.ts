@@ -21,25 +21,20 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
-  ConstraintViolationDto,
-  ConstraintViolationResponseDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
   CreateRoleDto,
   CreateShiftDto,
-  CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
-  EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
   ExcelExportRequestDto,
   ExcelExportResultDto,
-  GenerateShiftPlanDto,
   LocationResponseDto,
   LocationStatsDto,
   LoginDto,
@@ -49,11 +44,9 @@ import {
   RegisterDto,
   RegisterResponseDto,
   RoleResponseDto,
-  ShiftAssignmentResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
   ShiftRoleRequirementDto,
-  ShiftRulesResponseDto,
   TimeSlotDto,
   UpdateEmployeeAbsenceDto,
   UpdateEmployeeDto,
@@ -62,10 +55,8 @@ import {
   UpdateRoleDto,
   UpdateShiftDto,
   UpdateShiftPlanDto,
-  UpdateShiftRulesDto,
   UpdateUserDto,
   UserResponseDto,
-  ValidateShiftPlanDto,
 } from "./data-contracts";
 
 export class ShiftPlans<SecurityDataType = unknown> {
@@ -105,7 +96,7 @@ export class ShiftPlans<SecurityDataType = unknown> {
    */
   shiftPlansControllerFindAll = (
     query?: {
-      /** Include assignments and violations in response */
+      /** Include additional relation data in response */
       includeRelations?: boolean;
     },
     params: RequestParams = {}
@@ -127,7 +118,7 @@ export class ShiftPlans<SecurityDataType = unknown> {
   shiftPlansControllerFindOne = (
     id: string,
     query?: {
-      /** Include assignments and violations in response */
+      /** Include additional relation data in response */
       includeRelations?: boolean;
     },
     params: RequestParams = {}
@@ -136,32 +127,6 @@ export class ShiftPlans<SecurityDataType = unknown> {
       path: `/api/shift-plans/${id}`,
       method: "GET",
       query: query,
-      format: "json",
-      ...params,
-    }); /**
-   * @description Automatically generates a shift plan using algorithms and shift rules
-   *
-   * @tags shift-plans
-   * @name ShiftPlansControllerGenerate
-   * @summary Generate a shift plan automatically
-   * @request POST:/api/shift-plans/generate
-   */
-  shiftPlansControllerGenerate = (
-    data: GenerateShiftPlanDto,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<
-      {
-        shiftPlan?: any;
-        statistics?: object;
-        violations?: any[];
-      },
-      void
-    >({
-      path: `/api/shift-plans/generate`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
       format: "json",
       ...params,
     }); /**
@@ -193,32 +158,6 @@ export class ShiftPlans<SecurityDataType = unknown> {
     this.http.request<ShiftPlanResponseDto, void>({
       path: `/api/shift-plans/${id}`,
       method: "PATCH",
-      body: data,
-      type: ContentType.Json,
-      format: "json",
-      ...params,
-    }); /**
-   * @description Validates a shift plan against current shift rules and constraints
-   *
-   * @tags shift-plans
-   * @name ShiftPlansControllerValidate
-   * @summary Validate a shift plan
-   * @request POST:/api/shift-plans/validate
-   */
-  shiftPlansControllerValidate = (
-    data: ValidateShiftPlanDto,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<
-      {
-        isValid?: boolean;
-        statistics?: object;
-        violations?: any[];
-      },
-      void
-    >({
-      path: `/api/shift-plans/validate`,
-      method: "POST",
       body: data,
       type: ContentType.Json,
       format: "json",

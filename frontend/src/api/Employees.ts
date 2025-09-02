@@ -21,25 +21,20 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
-  ConstraintViolationDto,
-  ConstraintViolationResponseDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
   CreateRoleDto,
   CreateShiftDto,
-  CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
-  EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
   ExcelExportRequestDto,
   ExcelExportResultDto,
-  GenerateShiftPlanDto,
   LocationResponseDto,
   LocationStatsDto,
   LoginDto,
@@ -49,11 +44,9 @@ import {
   RegisterDto,
   RegisterResponseDto,
   RoleResponseDto,
-  ShiftAssignmentResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
   ShiftRoleRequirementDto,
-  ShiftRulesResponseDto,
   TimeSlotDto,
   UpdateEmployeeAbsenceDto,
   UpdateEmployeeDto,
@@ -62,10 +55,8 @@ import {
   UpdateRoleDto,
   UpdateShiftDto,
   UpdateShiftPlanDto,
-  UpdateShiftRulesDto,
   UpdateUserDto,
   UserResponseDto,
-  ValidateShiftPlanDto,
 } from "./data-contracts";
 
 export class Employees<SecurityDataType = unknown> {
@@ -104,7 +95,7 @@ export class Employees<SecurityDataType = unknown> {
    */
   employeesControllerFindAll = (
     query?: {
-      /** Include location and shift assignment relations */
+      /** Include location and role relations */
       includeRelations?: boolean;
     },
     params: RequestParams = {}
@@ -126,7 +117,7 @@ export class Employees<SecurityDataType = unknown> {
   employeesControllerFindOne = (
     id: string,
     query?: {
-      /** Include location and shift assignment relations */
+      /** Include location and role relations */
       includeRelations?: boolean;
     },
     params: RequestParams = {}

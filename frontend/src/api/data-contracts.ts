@@ -62,88 +62,30 @@ export interface AuthUserDto {
    */
   lastName: string;
   /**
+   * User organization (simplified)
+   * @example {"id":"org-uuid-1","name":"Hospital Berlin"}
+   */
+  organization: {
+    /** Organization ID */
+    id?: string;
+    /** Organization name */
+    name?: string;
+  };
+  /**
    * User phone number
    * @example "+1234567890"
    */
-  phoneNumber?: string;
+  phoneNumber: string;
   /**
    * User profile picture URL
    * @example "https://example.com/profile.jpg"
    */
-  profilePictureUrl?: string;
+  profilePictureUrl: string;
   /**
    * User role in the system
    * @example "employee"
    */
-  role:
-    | "super_admin"
-    | "organization_admin"
-    | "manager"
-    | "planner"
-    | "employee"
-    | "viewer";
-}
-
-export interface ConstraintViolationDto {
-  /** Whether violation can be automatically resolved */
-  canAutoResolve?: boolean;
-  /** Category of the constraint */
-  category:
-    | "staffing"
-    | "scheduling"
-    | "worktime"
-    | "skills"
-    | "availability"
-    | "legal"
-    | "preference"
-    | "business_rule"
-    | "overtime"
-    | "rest_period"
-    | "consecutive_days"
-    | "role_requirement"
-    | "location"
-    | "other";
-  /** Additional context data */
-  contextData?: object;
-  /** Date key when violation occurs (DD.MM.YYYY) */
-  dayKey?: string;
-  /** ID of affected employee */
-  employeeId?: string;
-  /** Name of affected employee */
-  employeeName?: string;
-  /** Location ID where violation occurs */
-  locationId?: string;
-  /** Detailed violation message */
-  message: string;
-  /** Priority score for resolution order */
-  priorityScore?: number;
-  /** Estimated impact of violation on overall plan quality */
-  qualityImpact?: number;
-  /** Unique rule code identifying the constraint */
-  ruleCode: string;
-  /** Human-readable rule name */
-  ruleName: string;
-  /**
-   * Severity level (1-5, where 5 is most severe)
-   * @min 1
-   * @max 5
-   */
-  severity: number;
-  /** Affected shift type (F, S, FS) */
-  shiftType?: string;
-  /** Suggested action to resolve violation */
-  suggestedAction?: string;
-  /** Type of violation (hard, soft, warning, info) */
-  type: "hard" | "soft" | "warning" | "info";
-}
-
-export interface ConstraintViolationResponseDto {
-  /**
-   * Unique identifier for the constraint violation
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  id: string;
+  role: "super_admin" | "organization_admin" | "employee";
 }
 
 export interface CreateEmployeeAbsenceDto {
@@ -186,21 +128,6 @@ export interface CreateEmployeeAbsenceDto {
    */
   hoursCount?: number;
   /**
-   * Whether absence is paid
-   * @default true
-   */
-  isPaid?: boolean;
-  /**
-   * Additional notes
-   * @example "Emergency contact available"
-   */
-  notes?: string;
-  /**
-   * Reason for absence
-   * @example "Family vacation"
-   */
-  reason?: string;
-  /**
    * Start date of absence
    * @format date
    * @example "2025-09-15"
@@ -215,11 +142,6 @@ export interface CreateEmployeeDto {
    */
   address?: string;
   /**
-   * Certifications
-   * @example ["Nursing Training","First Aid"]
-   */
-  certifications?: string[];
-  /**
    * City
    * @example "München"
    */
@@ -228,12 +150,7 @@ export interface CreateEmployeeDto {
    * Contract type
    * @example "full_time"
    */
-  contractType?:
-    | "full_time"
-    | "part_time"
-    | "contract"
-    | "temporary"
-    | "intern";
+  contractType?: "full_time" | "part_time";
   /**
    * Country
    * @example "Deutschland"
@@ -249,16 +166,6 @@ export interface CreateEmployeeDto {
    * @example "anna.schneider@dialyse-praxis.de"
    */
   email: string;
-  /**
-   * Emergency contact name
-   * @example "Maria Schneider"
-   */
-  emergencyContactName?: string;
-  /**
-   * Emergency contact phone
-   * @example "+49 89 1234-002"
-   */
-  emergencyContactPhone?: string;
   /**
    * Employee number
    * @example "EMP001"
@@ -294,10 +201,11 @@ export interface CreateEmployeeDto {
    */
   hoursPerWeek?: number;
   /**
-   * Languages
-   * @example ["German","English"]
+   * Whether the employee is active
+   * @default true
+   * @example true
    */
-  languages?: string[];
+  isActive?: boolean;
   /**
    * Employee last name
    * @example "Schneider"
@@ -308,11 +216,6 @@ export interface CreateEmployeeDto {
    * @example "uuid-string"
    */
   locationId?: string;
-  /**
-   * Notes about the employee
-   * @example "Experienced employee specialized in dialysis"
-   */
-  notes?: string;
   /**
    * Organization ID
    * @example "uuid-string"
@@ -339,30 +242,10 @@ export interface CreateEmployeeDto {
    */
   primaryRoleId?: string;
   /**
-   * Profile picture URL
-   * @example "https://example.com/profile.jpg"
-   */
-  profilePictureUrl?: string;
-  /**
    * Additional role IDs
    * @example ["uuid-string-1","uuid-string-2"]
    */
   roleIds?: string[];
-  /**
-   * Skills
-   * @example ["Patient Care","Teamwork"]
-   */
-  skills?: string[];
-  /**
-   * Employee status
-   * @example "active"
-   */
-  status?: "active" | "inactive" | "on_leave" | "terminated" | "suspended";
-  /**
-   * Supervisor ID
-   * @example "uuid-string"
-   */
-  supervisorId?: string;
   /**
    * Termination date
    * @example "2023-12-31"
@@ -371,11 +254,6 @@ export interface CreateEmployeeDto {
 }
 
 export interface CreateLocationDto {
-  /**
-   * Accessibility features available
-   * @example ["Rollstuhlzugang","Aufzug","Behindertengerechte Toiletten"]
-   */
-  accessibilityFeatures?: string[];
   /**
    * Street address
    * @maxLength 500
@@ -420,56 +298,11 @@ export interface CreateLocationDto {
    */
   email?: string;
   /**
-   * Equipment available at this location
-   * @example ["Rollstuhl","Patientenlift","Notfallausrüstung"]
-   */
-  equipment?: string[];
-  /**
-   * Floor area in square meters
-   * @example 250.5
-   */
-  floorArea?: number;
-  /**
    * Whether the location is active
    * @default true
    * @example true
    */
   isActive?: boolean;
-  /**
-   * Latitude coordinate
-   * @example 52.52
-   */
-  latitude?: number;
-  /**
-   * Longitude coordinate
-   * @example 13.405
-   */
-  longitude?: number;
-  /**
-   * Manager email address
-   * @maxLength 255
-   * @example "max.mustermann@workshift.de"
-   */
-  managerEmail?: string;
-  /**
-   * Manager name
-   * @maxLength 255
-   * @example "Max Mustermann"
-   */
-  managerName?: string;
-  /**
-   * Manager phone number
-   * @maxLength 20
-   * @example "+49 30 12345679"
-   */
-  managerPhone?: string;
-  /**
-   * Maximum location capacity (number of people)
-   * @min 1
-   * @max 2000
-   * @example 50
-   */
-  maxCapacity: number;
   /**
    * Location name
    * @minLength 2
@@ -477,18 +310,6 @@ export interface CreateLocationDto {
    * @example "Hauptstandort Berlin"
    */
   name: string;
-  /**
-   * Number of beds
-   * @min 0
-   * @example 25
-   */
-  numberOfBeds?: number;
-  /**
-   * Number of rooms
-   * @min 0
-   * @example 12
-   */
-  numberOfRooms?: number;
   /** Operating hours for each day of the week */
   operatingHours?: OperatingHoursDto;
   /**
@@ -496,12 +317,6 @@ export interface CreateLocationDto {
    * @example "uuid-string"
    */
   organizationId: string;
-  /**
-   * Number of parking spaces
-   * @min 0
-   * @example 30
-   */
-  parkingSpaces?: number;
   /**
    * Phone number
    * @maxLength 20
@@ -515,26 +330,11 @@ export interface CreateLocationDto {
    */
   postalCode: string;
   /**
-   * Safety features available
-   * @example ["Brandmeldeanlage","Notausgang","Erste-Hilfe-Station"]
-   */
-  safetyFeatures?: string[];
-  /**
-   * Services provided at this location
-   * @example ["Pflege","Beratung","Therapie"]
-   */
-  services?: string[];
-  /**
    * State or region
    * @maxLength 100
    * @example "Berlin"
    */
   state?: string;
-  /**
-   * Location status
-   * @example "active"
-   */
-  status?: "active" | "inactive" | "maintenance" | "closed";
   /**
    * Timezone for this location
    * @maxLength 50
@@ -545,16 +345,6 @@ export interface CreateLocationDto {
 }
 
 export interface CreateOrganizationDto {
-  /**
-   * Organization description
-   * @example "Leading dialysis center in Berlin with modern equipment"
-   */
-  description?: string;
-  /**
-   * Enabled features
-   * @example ["shift-planning","reporting"]
-   */
-  features?: string[];
   /**
    * Headquarters address
    * @example "Alexanderplatz 1"
@@ -581,26 +371,6 @@ export interface CreateOrganizationDto {
    */
   isActive?: boolean;
   /**
-   * Legal organization name
-   * @example "Dialyse Zentrum Berlin GmbH"
-   */
-  legalName?: string;
-  /**
-   * Logo URL
-   * @example "https://example.com/logo.png"
-   */
-  logoUrl?: string;
-  /**
-   * Maximum number of employees
-   * @example 50
-   */
-  maxEmployees?: number;
-  /**
-   * Maximum number of locations
-   * @example 5
-   */
-  maxLocations?: number;
-  /**
    * Organization name
    * @example "Dialyse Zentrum Berlin"
    */
@@ -615,47 +385,6 @@ export interface CreateOrganizationDto {
    * @example "+49 30 1234-0"
    */
   primaryPhone?: string;
-  /**
-   * Registration number
-   * @example "HRB 12345"
-   */
-  registrationNumber?: string;
-  /**
-   * Organization settings
-   * @example {"timezone":"Europe/Berlin","currency":"EUR"}
-   */
-  settings?: object;
-  /**
-   * Organization status
-   * @example "trial"
-   */
-  status?: "active" | "inactive" | "suspended" | "trial";
-  /**
-   * Subscription plan
-   * @example "basic"
-   */
-  subscriptionPlan?: string;
-  /**
-   * Tax ID
-   * @example "DE123456789"
-   */
-  taxId?: string;
-  /**
-   * Organization type
-   * @example "medical_center"
-   */
-  type?:
-    | "hospital"
-    | "clinic"
-    | "nursing_home"
-    | "medical_center"
-    | "pharmacy"
-    | "other";
-  /**
-   * Organization website
-   * @example "https://www.dialyse-berlin.de"
-   */
-  website?: string;
 }
 
 export interface CreateRoleDto {
@@ -675,20 +404,10 @@ export interface CreateRoleDto {
    */
   canWorkWeekends?: boolean;
   /**
-   * Color code for UI display (Hex)
-   * @example "#1976d2"
-   */
-  colorCode?: string;
-  /**
    * Created by (User ID)
    * @example "123e4567-e89b-12d3-a456-426614174001"
    */
   createdBy?: string;
-  /**
-   * Role description
-   * @example "Qualified specialist for performing dialysis treatments"
-   */
-  description?: string;
   /**
    * Hourly rate in Euro
    * @example 25.5
@@ -715,16 +434,6 @@ export interface CreateRoleDto {
    */
   maxWeeklyHours?: number;
   /**
-   * Minimum professional experience in months
-   * @example 12
-   */
-  minExperienceMonths?: number;
-  /**
-   * Minimum rest time between shifts in hours
-   * @example 11
-   */
-  minRestHours?: number;
-  /**
    * Role name
    * @example "Dialysis Specialist"
    */
@@ -739,48 +448,6 @@ export interface CreateRoleDto {
    * @example 31.88
    */
   overtimeRate?: number;
-  /**
-   * Permissions
-   * @example ["view_patient_data","manage_dialysis_machines"]
-   */
-  permissions?: string[];
-  /**
-   * Priority level of the role (1-10, higher = more important)
-   * @example 5
-   */
-  priorityLevel?: number;
-  /**
-   * Required certifications
-   * @example ["Basic Dialysis Course","Hygiene Training"]
-   */
-  requiredCertifications?: string[];
-  /**
-   * Required skills
-   * @example ["Patient Care","Machine Operation"]
-   */
-  requiredSkills?: string[];
-  /**
-   * Role status
-   * @example "active"
-   */
-  status?: "active" | "inactive" | "deprecated";
-  /**
-   * Role type
-   * @example "specialist"
-   */
-  type:
-    | "specialist"
-    | "assistant"
-    | "shift_leader"
-    | "nurse"
-    | "nurse_manager"
-    | "helper"
-    | "doctor"
-    | "technician"
-    | "administrator"
-    | "cleaner"
-    | "security"
-    | "other";
 }
 
 export interface CreateShiftDto {
@@ -895,12 +562,6 @@ export interface CreateShiftDto {
    */
   overtimeRate?: number;
   /**
-   * Priority level of the shift
-   * @default 2
-   * @example 2
-   */
-  priority: 1 | 2 | 3 | 4 | 5;
-  /**
    * End date for recurrence
    * @format date
    * @example "2024-12-31"
@@ -948,12 +609,6 @@ export interface CreateShiftDto {
    */
   startTime: string;
   /**
-   * Current status of the shift
-   * @default "draft"
-   * @example "draft"
-   */
-  status: "draft" | "published" | "active" | "completed" | "cancelled";
-  /**
    * Total hours for this shift
    * @min 0
    * @example 8
@@ -980,79 +635,6 @@ export interface CreateShiftDto {
   weekendRate?: number;
 }
 
-export interface CreateShiftRulesDto {
-  /** User ID who created this rule set */
-  createdBy?: string;
-  /**
-   * Description of this rule set
-   * @maxLength 500
-   * @example "Standard shift rules for regular operations"
-   */
-  description?: string;
-  /**
-   * Whether this rule set is active
-   * @default true
-   * @example true
-   */
-  isActive?: boolean;
-  /**
-   * Maximum number of consecutive same shifts
-   * @min 1
-   * @max 10
-   * @example 3
-   */
-  maxConsecutiveSameShifts: number;
-  /**
-   * Maximum consecutive working days
-   * @min 1
-   * @max 14
-   * @example 6
-   */
-  maxConsecutiveWorkingDays: number;
-  /**
-   * Maximum number of Saturdays an employee can work per month
-   * @min 0
-   * @max 5
-   * @example 2
-   */
-  maxSaturdaysPerMonth: number;
-  /**
-   * Minimum number of helpers required
-   * @min 0
-   * @max 10
-   * @example 1
-   */
-  minHelpers: number;
-  /**
-   * Minimum number of nurse managers required per shift
-   * @min 0
-   * @max 10
-   * @example 1
-   */
-  minNurseManagersPerShift: number;
-  /**
-   * Minimum number of nurses required per shift
-   * @min 1
-   * @max 20
-   * @example 2
-   */
-  minNursesPerShift: number;
-  /**
-   * Minimum rest hours between shifts
-   * @min 8
-   * @max 24
-   * @example 11
-   */
-  minRestHoursBetweenShifts: number;
-  /**
-   * Weekly hours overflow tolerance in hours
-   * @min 0
-   * @max 20
-   * @example 5
-   */
-  weeklyHoursOverflowTolerance: number;
-}
-
 export interface CreateUserDto {
   /**
    * User email address
@@ -1060,45 +642,36 @@ export interface CreateUserDto {
    */
   email: string;
   /**
-   * Email address verified
-   * @example false
-   */
-  emailVerified?: boolean;
-  /**
    * User first name
    * @example "John"
    */
   firstName: string;
+  /**
+   * Whether the user is active
+   * @default true
+   * @example true
+   */
+  isActive?: boolean;
   /**
    * User last name
    * @example "Smith"
    */
   lastName: string;
   /**
-   * Organization IDs to assign the user to
-   * @example ["uuid-org-1","uuid-org-2"]
+   * Organization ID to assign the user to
+   * @example "uuid-org-1"
    */
-  organizationIds?: string[];
+  organizationId: string;
   /**
    * User password (minimum 8 characters)
    * @example "SecurePassword123!"
    */
   password: string;
   /**
-   * User permissions
-   * @example ["read:shifts","write:shifts"]
-   */
-  permissions?: string[];
-  /**
    * Phone number
    * @example "+1 555 123-4567"
    */
   phoneNumber?: string;
-  /**
-   * User preferences
-   * @example {"theme":"light","language":"en"}
-   */
-  preferences?: object;
   /**
    * Profile picture URL
    * @example "https://example.com/profile/image.jpg"
@@ -1108,23 +681,7 @@ export interface CreateUserDto {
    * User role
    * @example "employee"
    */
-  role?:
-    | "super_admin"
-    | "organization_admin"
-    | "manager"
-    | "planner"
-    | "employee"
-    | "viewer";
-  /**
-   * User status
-   * @example "pending"
-   */
-  status?: "active" | "inactive" | "suspended" | "pending";
-  /**
-   * Two-factor authentication enabled
-   * @example false
-   */
-  twoFactorEnabled?: boolean;
+  role?: "super_admin" | "organization_admin" | "employee";
 }
 
 export interface DateRangeDto {
@@ -1185,6 +742,12 @@ export interface EmployeeAbsenceResponseDto {
     /** @format uuid */
     id?: string;
     lastName?: string;
+    primaryRole?: {
+      displayName?: string;
+      /** @format uuid */
+      id?: string;
+      name?: string;
+    };
   };
   /**
    * Employee UUID
@@ -1205,12 +768,6 @@ export interface EmployeeAbsenceResponseDto {
   id: string;
   /** Whether absence is currently active */
   isActive: boolean;
-  /** Whether absence is paid */
-  isPaid: boolean;
-  /** Additional notes */
-  notes?: string;
-  /** Reason for absence */
-  reason?: string;
   /**
    * Start date of absence
    * @format date-time
@@ -1228,319 +785,12 @@ export interface EmployeeAbsenceResponseDto {
   updatedBy?: string;
 }
 
-export interface EmployeeAvailabilityResponseDto {
-  /**
-   * Reason for absence
-   * @example "vacation"
-   */
-  absenceReason?:
-    | "vacation"
-    | "sick_leave"
-    | "personal_leave"
-    | "maternity_leave"
-    | "paternity_leave"
-    | "bereavement"
-    | "jury_duty"
-    | "military_duty"
-    | "training"
-    | "conference"
-    | "unpaid_leave"
-    | "sabbatical"
-    | "medical_appointment"
-    | "family_emergency"
-    | "religious_observance"
-    | "other";
-  /**
-   * Affects payroll
-   * @example false
-   */
-  affectsPayroll: boolean;
-  /**
-   * Approval date
-   * @format date-time
-   * @example "2024-01-15T10:30:00Z"
-   */
-  approvedAt?: string;
-  /**
-   * Approved by (User ID)
-   * @example "user-uuid"
-   */
-  approvedBy?: string;
-  /**
-   * Attached documents (URLs or IDs)
-   * @example []
-   */
-  attachedDocuments: string[];
-  /**
-   * Creation date
-   * @format date-time
-   * @example "2024-01-01T00:00:00Z"
-   */
-  createdAt: string;
-  /**
-   * Created by (User ID)
-   * @example "user-uuid"
-   */
-  createdBy?: string;
-  /**
-   * Date range as text
-   * @example "15.01.2024 - 20.01.2024"
-   */
-  dateRange: string;
-  /**
-   * Deletion timestamp (Soft Delete)
-   * @format date-time
-   * @example "2023-12-31T23:59:59Z"
-   */
-  deletedAt?: string;
-  /**
-   * Display name for reason
-   * @example "Available"
-   */
-  displayReason: string;
-  /**
-   * Documentation provided
-   * @example false
-   */
-  documentationProvided: boolean;
-  /**
-   * Documentation required
-   * @example false
-   */
-  documentationRequired: boolean;
-  /**
-   * Duration in days
-   * @example 5
-   */
-  duration: number;
-  /**
-   * Employee ID
-   * @example "uuid-string"
-   */
-  employeeId: string;
-  /**
-   * End date of availability period
-   * @format date
-   * @example "2024-01-20"
-   */
-  endDate?: string;
-  /**
-   * End time for partial day availability (HH:MM)
-   * @example "17:00"
-   */
-  endTime?: string;
-  /**
-   * Excluded locations
-   * @example ["location-uuid-3"]
-   */
-  excludedLocations: string[];
-  /**
-   * Excluded shift types
-   * @example ["N"]
-   */
-  excludedShiftTypes: string[];
-  /**
-   * Unique ID of availability record
-   * @example "uuid-string"
-   */
-  id: string;
-  /**
-   * Internal notes (only visible to managers)
-   * @example "Internal remarks"
-   */
-  internalNotes?: string;
-  /**
-   * Is absence
-   * @example false
-   */
-  isAbsence: boolean;
-  /**
-   * Is active
-   * @example true
-   */
-  isActive: boolean;
-  /**
-   * All-day availability
-   * @example true
-   */
-  isAllDay: boolean;
-  /**
-   * Is currently active
-   * @example true
-   */
-  isCurrentlyActive: boolean;
-  /**
-   * Emergency
-   * @example false
-   */
-  isEmergency: boolean;
-  /**
-   * Is expired
-   * @example false
-   */
-  isExpired: boolean;
-  /**
-   * Waiting for approval
-   * @example false
-   */
-  isPending: boolean;
-  /**
-   * Recurring availability
-   * @example false
-   */
-  isRecurring: boolean;
-  /**
-   * Maximum hours per day
-   * @example 8
-   */
-  maxHoursPerDay?: number;
-  /**
-   * Maximum hours per week
-   * @example 40
-   */
-  maxHoursPerWeek?: number;
-  /**
-   * Needs approval
-   * @example false
-   */
-  needsApproval: boolean;
-  /**
-   * Notes
-   * @example "Additional information"
-   */
-  notes?: string;
-  /**
-   * Notification sent
-   * @example false
-   */
-  notificationSent: boolean;
-  /**
-   * Preferred locations
-   * @example ["location-uuid-1","location-uuid-2"]
-   */
-  preferredLocations: string[];
-  /**
-   * Preferred shift types
-   * @example ["F","S"]
-   */
-  preferredShiftTypes: string[];
-  /**
-   * Priority level (1-5, higher = more important)
-   * @example 1
-   */
-  priorityLevel: number;
-  /**
-   * Detailed reason description
-   * @example "Doctor appointment in the morning"
-   */
-  reasonDescription?: string;
-  /**
-   * Recurrence days (0=Sunday, 1=Monday, etc.)
-   * @example [1,2,3,4,5]
-   */
-  recurrenceDays: number[];
-  /**
-   * End date of recurrence
-   * @format date
-   * @example "2024-12-31"
-   */
-  recurrenceEndDate?: string;
-  /**
-   * Recurrence interval (e.g. every 2 weeks)
-   * @example 1
-   */
-  recurrenceInterval: number;
-  /**
-   * Recurrence pattern
-   * @example "none"
-   */
-  recurrencePattern: "none" | "daily" | "weekly" | "monthly" | "yearly";
-  /**
-   * Rejection date
-   * @format date-time
-   * @example "2024-01-15T10:30:00Z"
-   */
-  rejectedAt?: string;
-  /**
-   * Rejected by (User ID)
-   * @example "user-uuid"
-   */
-  rejectedBy?: string;
-  /**
-   * Rejection reason
-   * @example "Staffing already sufficient"
-   */
-  rejectionReason?: string;
-  /**
-   * Reminder sent
-   * @example false
-   */
-  reminderSent: boolean;
-  /**
-   * Requires approval
-   * @example false
-   */
-  requiresApproval: boolean;
-  /**
-   * Start date of availability period
-   * @format date
-   * @example "2024-01-15"
-   */
-  startDate: string;
-  /**
-   * Start time for partial day availability (HH:MM)
-   * @example "09:00"
-   */
-  startTime?: string;
-  /**
-   * Availability status
-   * @example "active"
-   */
-  status: "active" | "pending" | "approved" | "rejected" | "expired";
-  /**
-   * Submission date
-   * @format date-time
-   * @example "2024-01-15T09:00:00Z"
-   */
-  submittedAt?: string;
-  /**
-   * Time range as text
-   * @example "09:00 - 17:00"
-   */
-  timeRange: string;
-  /**
-   * Availability type
-   * @example "available"
-   */
-  type: "available" | "unavailable" | "preferred" | "limited";
-  /**
-   * Last update date
-   * @format date-time
-   * @example "2024-01-15T10:30:00Z"
-   */
-  updatedAt: string;
-  /**
-   * Updated by (User ID)
-   * @example "user-uuid"
-   */
-  updatedBy?: string;
-  /** Weekly availability times */
-  weeklyAvailability?: Record<string, any>;
-}
-
 export interface EmployeeResponseDto {
   /**
    * Address
    * @example "Musterstraße 123"
    */
   address?: string;
-  /** Employee availability information */
-  availabilities?: EmployeeAvailabilityResponseDto[];
-  /**
-   * Certifications
-   * @example ["Nursing Training","First Aid"]
-   */
-  certifications: string[];
   /**
    * City
    * @example "München"
@@ -1550,7 +800,7 @@ export interface EmployeeResponseDto {
    * Contract type
    * @example "full_time"
    */
-  contractType: "full_time" | "part_time" | "contract" | "temporary" | "intern";
+  contractType: "full_time" | "part_time";
   /**
    * Country
    * @example "Deutschland"
@@ -1589,16 +839,6 @@ export interface EmployeeResponseDto {
    * @example "anna.schneider@dialyse-praxis.de"
    */
   email: string;
-  /**
-   * Emergency contact name
-   * @example "Maria Schneider"
-   */
-  emergencyContactName?: string;
-  /**
-   * Emergency contact phone
-   * @example "+49 89 1234-002"
-   */
-  emergencyContactPhone?: string;
   /**
    * Employee number
    * @example "EMP001"
@@ -1651,11 +891,6 @@ export interface EmployeeResponseDto {
    */
   isAvailable: boolean;
   /**
-   * Languages
-   * @example ["German","English"]
-   */
-  languages: string[];
-  /**
    * Employee last name
    * @example "Schneider"
    */
@@ -1667,11 +902,6 @@ export interface EmployeeResponseDto {
    * @example "uuid-string"
    */
   locationId?: string;
-  /**
-   * Notes
-   * @example "Experienced employee specialized in dialysis"
-   */
-  notes?: string;
   /**
    * Organization ID
    * @example "uuid-string"
@@ -1699,32 +929,8 @@ export interface EmployeeResponseDto {
    * @example "uuid-string"
    */
   primaryRoleId?: string;
-  /**
-   * Profile picture URL
-   * @example "https://example.com/profile.jpg"
-   */
-  profilePictureUrl?: string;
   /** All roles of the employee */
   roles?: RoleResponseDto[];
-  /**
-   * Skills
-   * @example ["Patient Care","Teamwork"]
-   */
-  skills: string[];
-  /**
-   * Employee status
-   * @example "active"
-   */
-  status: "active" | "inactive" | "on_leave" | "terminated" | "suspended";
-  /** Subordinate employees */
-  subordinates?: EmployeeResponseDto[];
-  /** Supervisor information */
-  supervisor?: EmployeeResponseDto;
-  /**
-   * Supervisor ID
-   * @example "uuid-string"
-   */
-  supervisorId?: string;
   /**
    * Termination date
    * @format date-time
@@ -1788,12 +994,6 @@ export interface ExcelExportOptionsDto {
   /** Date range for export (overrides default monthly range) */
   dateRange?: DateRangeDto;
   /**
-   * Include constraint violations in export
-   * @default false
-   * @example true
-   */
-  includeConstraintViolations?: boolean;
-  /**
    * Include detailed employee information
    * @default false
    * @example true
@@ -1848,46 +1048,7 @@ export interface ExcelExportResultDto {
   size: number;
 }
 
-export interface GenerateShiftPlanDto {
-  /** User ID who is generating this shift plan */
-  createdBy?: string;
-  /**
-   * Specific employee IDs to include in planning (if not provided, all active employees will be used)
-   * @example ["employee-uuid-1","employee-uuid-2","employee-uuid-3"]
-   */
-  employeeIds?: string[];
-  /** Location ID to generate plan for (if not provided, all locations will be considered) */
-  locationId?: number;
-  /**
-   * Month for the shift plan (1-12)
-   * @min 1
-   * @max 12
-   * @example 12
-   */
-  month: number;
-  /** Shift rules ID to use for planning (if not provided, default active rules will be used) */
-  shiftRulesId?: string;
-  /**
-   * Whether to use relaxed rules during planning
-   * @default false
-   * @example false
-   */
-  useRelaxedRules?: boolean;
-  /**
-   * Year for the shift plan
-   * @min 2020
-   * @max 2030
-   * @example 2024
-   */
-  year: number;
-}
-
 export interface LocationResponseDto {
-  /**
-   * Accessibility features available
-   * @example ["Rollstuhlzugang","Aufzug","Behindertengerechte Toiletten"]
-   */
-  accessibilityFeatures: string[];
   /**
    * Location address
    * @maxLength 500
@@ -1947,16 +1108,6 @@ export interface LocationResponseDto {
   /** Employees assigned to this location */
   employees: EmployeeResponseDto[];
   /**
-   * Equipment available at this location
-   * @example ["Wheelchair","Hospital Bed","Medical Monitor"]
-   */
-  equipment: string[];
-  /**
-   * Floor area in square meters
-   * @example 250.5
-   */
-  floorArea?: number;
-  /**
    * Unique identifier for the location
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440000"
@@ -1969,52 +1120,11 @@ export interface LocationResponseDto {
    */
   isActive: boolean;
   /**
-   * Latitude coordinate
-   * @example 52.52
-   */
-  latitude?: number;
-  /**
-   * Longitude coordinate
-   * @example 13.405
-   */
-  longitude?: number;
-  /**
-   * Manager email address
-   * @example "anna.schmidt@workshift.de"
-   */
-  managerEmail?: string;
-  /**
-   * Manager name
-   * @example "Anna Schmidt"
-   */
-  managerName?: string;
-  /**
-   * Manager phone number
-   * @example "+49 30 12345679"
-   */
-  managerPhone?: string;
-  /**
-   * Maximum capacity (number of people)
-   * @min 1
-   * @example 50
-   */
-  maxCapacity: number;
-  /**
    * Location name
    * @maxLength 255
    * @example "Berlin Office"
    */
   name: string;
-  /**
-   * Number of beds
-   * @example 25
-   */
-  numberOfBeds?: number;
-  /**
-   * Number of rooms
-   * @example 12
-   */
-  numberOfRooms?: number;
   /**
    * Operating hours for each day of the week
    * @example {"monday":[{"start":"09:00","end":"17:00"}],"tuesday":[{"start":"09:00","end":"17:00"}],"wednesday":[{"start":"09:00","end":"17:00"}],"thursday":[{"start":"09:00","end":"17:00"}],"friday":[{"start":"09:00","end":"17:00"}],"saturday":[],"sunday":[]}
@@ -2025,11 +1135,6 @@ export interface LocationResponseDto {
    * @example "uuid-string"
    */
   organizationId: string;
-  /**
-   * Number of parking spaces
-   * @example 30
-   */
-  parkingSpaces?: number;
   /**
    * Phone number
    * @maxLength 20
@@ -2043,27 +1148,12 @@ export interface LocationResponseDto {
    */
   postalCode: string;
   /**
-   * Safety features available
-   * @example ["Brandmeldeanlage","Notausgang","Erste-Hilfe-Station"]
-   */
-  safetyFeatures: string[];
-  /**
-   * Services provided at this location
-   * @example ["Nursing","Physical Therapy","Medical Consultation"]
-   */
-  services: string[];
-  /**
    * State or region
    * @example "Berlin"
    */
   state?: string;
   /** Location statistics and metrics */
   stats?: LocationStatsDto;
-  /**
-   * Location status
-   * @example "active"
-   */
-  status: "active" | "inactive" | "maintenance" | "closed";
   /**
    * Timezone for this location
    * @example "Europe/Berlin"
@@ -2203,16 +1293,6 @@ export interface OrganizationResponseDto {
    */
   deletedAt?: string;
   /**
-   * Description
-   * @example "Leading dialysis center in Berlin"
-   */
-  description?: string;
-  /**
-   * Enabled features
-   * @example ["shift-planning","reporting"]
-   */
-  features: string[];
-  /**
    * Headquarters address
    * @example "Alexanderplatz 1"
    */
@@ -2243,26 +1323,6 @@ export interface OrganizationResponseDto {
    */
   isActive: boolean;
   /**
-   * Legal organization name
-   * @example "Dialyse Zentrum Berlin GmbH"
-   */
-  legalName?: string;
-  /**
-   * Logo URL
-   * @example "https://example.com/logo.png"
-   */
-  logoUrl?: string;
-  /**
-   * Maximum number of employees
-   * @example 50
-   */
-  maxEmployees: number;
-  /**
-   * Maximum number of locations
-   * @example 5
-   */
-  maxLocations: number;
-  /**
    * Organization name
    * @example "Dialyse Zentrum Berlin"
    */
@@ -2278,58 +1338,11 @@ export interface OrganizationResponseDto {
    */
   primaryPhone?: string;
   /**
-   * Registration number
-   * @example "HRB 12345"
-   */
-  registrationNumber?: string;
-  /**
-   * Settings
-   * @example {"timezone":"Europe/Berlin"}
-   */
-  settings: object;
-  /**
-   * Organization status
-   * @example "active"
-   */
-  status: "active" | "inactive" | "suspended" | "trial";
-  /**
-   * Subscription expiration date
-   * @format date-time
-   * @example "2025-01-01T00:00:00Z"
-   */
-  subscriptionExpiresAt?: string;
-  /**
-   * Subscription plan
-   * @example "basic"
-   */
-  subscriptionPlan: string;
-  /**
-   * Tax ID
-   * @example "DE123456789"
-   */
-  taxId?: string;
-  /**
-   * Organization type
-   * @example "medical_center"
-   */
-  type:
-    | "hospital"
-    | "clinic"
-    | "nursing_home"
-    | "medical_center"
-    | "pharmacy"
-    | "other";
-  /**
    * Updated at
    * @format date-time
    * @example "2024-02-01T12:00:00Z"
    */
   updatedAt?: string;
-  /**
-   * Website
-   * @example "https://www.dialyse-berlin.de"
-   */
-  website?: string;
 }
 
 export interface RegisterDto {
@@ -2349,10 +1362,10 @@ export interface RegisterDto {
    */
   lastName: string;
   /**
-   * Array of organization IDs the user should be associated with
-   * @example ["org-uuid-1","org-uuid-2"]
+   * Organization ID the user should be associated with
+   * @example "org-uuid-1"
    */
-  organizationIds?: string[];
+  organizationId: string;
   /**
    * User password (minimum 8 characters, must contain uppercase, lowercase, number, and special character)
    * @example "Password123!"
@@ -2367,13 +1380,7 @@ export interface RegisterDto {
    * User role in the system
    * @example "employee"
    */
-  role?:
-    | "super_admin"
-    | "organization_admin"
-    | "manager"
-    | "planner"
-    | "employee"
-    | "viewer";
+  role?: "super_admin" | "organization_admin" | "employee";
 }
 
 export interface RegisterResponseDto {
@@ -2403,11 +1410,6 @@ export interface RoleResponseDto {
    */
   canWorkWeekends: boolean;
   /**
-   * Color code for UI display (Hex)
-   * @example "#1976d2"
-   */
-  colorCode?: string;
-  /**
    * Created at
    * @format date-time
    * @example "2024-01-01T12:00:00Z"
@@ -2424,11 +1426,6 @@ export interface RoleResponseDto {
    * @example null
    */
   deletedAt?: string;
-  /**
-   * Role description
-   * @example "Qualified specialist for performing dialysis treatments"
-   */
-  description?: string;
   /**
    * Display name of the role (computed)
    * @example "Dialysis Specialist (specialist)"
@@ -2470,16 +1467,6 @@ export interface RoleResponseDto {
    */
   maxWeeklyHours: number;
   /**
-   * Minimum professional experience in months
-   * @example 12
-   */
-  minExperienceMonths: number;
-  /**
-   * Minimum rest time between shifts in hours
-   * @example 11
-   */
-  minRestHours: number;
-  /**
    * Role name
    * @example "Dialysis Specialist"
    */
@@ -2495,48 +1482,6 @@ export interface RoleResponseDto {
    */
   overtimeRate?: number;
   /**
-   * Permissions
-   * @example ["view_patient_data","manage_dialysis_machines"]
-   */
-  permissions: string[];
-  /**
-   * Priority level of the role (1-10, higher = more important)
-   * @example 1
-   */
-  priorityLevel: number;
-  /**
-   * Required certifications
-   * @example ["Basic Dialysis Course","Hygiene Training"]
-   */
-  requiredCertifications: string[];
-  /**
-   * Required skills
-   * @example ["Patient Care","Machine Operation"]
-   */
-  requiredSkills: string[];
-  /**
-   * Role status
-   * @example "active"
-   */
-  status: "active" | "inactive" | "deprecated";
-  /**
-   * Role type
-   * @example "specialist"
-   */
-  type:
-    | "specialist"
-    | "assistant"
-    | "shift_leader"
-    | "nurse"
-    | "nurse_manager"
-    | "helper"
-    | "doctor"
-    | "technician"
-    | "administrator"
-    | "cleaner"
-    | "security"
-    | "other";
-  /**
    * Updated at
    * @format date-time
    * @example "2024-02-01T12:00:00Z"
@@ -2549,18 +1494,7 @@ export interface RoleResponseDto {
   updatedBy?: string;
 }
 
-export interface ShiftAssignmentResponseDto {
-  /**
-   * Unique identifier for the shift assignment
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  id: string;
-}
-
 export interface ShiftPlanResponseDto {
-  /** Shift assignments for this plan */
-  assignments: ShiftAssignmentResponseDto[];
   /**
    * Date when the shift plan was created
    * @format date-time
@@ -2580,12 +1514,6 @@ export interface ShiftPlanResponseDto {
    */
   id: string;
   /**
-   * Whether the shift plan is published
-   * @default false
-   * @example false
-   */
-  isPublished: boolean;
-  /**
    * Month for the shift plan (1-12)
    * @min 1
    * @max 12
@@ -2603,8 +1531,6 @@ export interface ShiftPlanResponseDto {
    * @example "2024-01-15T10:30:00Z"
    */
   updatedAt: string;
-  /** Constraint violations for this plan */
-  violations: ConstraintViolationResponseDto[];
   /**
    * Year for the shift plan
    * @min 2020
@@ -2621,12 +1547,6 @@ export interface ShiftResponseDto {
    * @example 30
    */
   breakDuration: number;
-  /**
-   * Color code for UI display (hex format)
-   * @pattern ^#[0-9A-F]{6}$
-   * @example "#FF5722"
-   */
-  colorCode?: string;
   /**
    * Date when the shift was created
    * @format date-time
@@ -2717,11 +1637,6 @@ export interface ShiftResponseDto {
    */
   isOvertime: boolean;
   /**
-   * Whether this is a recurring shift
-   * @example false
-   */
-  isRecurring: boolean;
-  /**
    * Whether this shift is on a weekend
    * @example false
    */
@@ -2752,11 +1667,6 @@ export interface ShiftResponseDto {
    * @example "Morning Shift"
    */
   name: string;
-  /**
-   * Additional notes for this shift
-   * @example "Special requirements: Extra attention to patient in room 204"
-   */
-  notes?: string;
   /** Organization this shift belongs to */
   organization?: OrganizationResponseDto;
   /**
@@ -2770,39 +1680,8 @@ export interface ShiftResponseDto {
    * @example 1.5
    */
   overtimeRate?: number;
-  /**
-   * Priority level of the shift
-   * @example 2
-   */
-  priority: 1 | 2 | 3 | 4 | 5;
-  /**
-   * End date for recurrence
-   * @format date
-   * @example "2024-12-31"
-   */
-  recurrenceEndDate?: string;
-  /**
-   * Recurrence pattern (e.g., weekly, monthly)
-   * @example "weekly"
-   */
-  recurrencePattern?: string;
-  /**
-   * Required certifications for this shift
-   * @example ["Nursing License","BLS Certification"]
-   */
-  requiredCertifications: string[];
   /** Required roles for this shift */
   requiredRoles?: RoleResponseDto[];
-  /**
-   * Required skills for this shift
-   * @example ["CPR","First Aid","Patient Care"]
-   */
-  requiredSkills: string[];
-  /**
-   * Role requirements for this shift
-   * @example [{"roleId":"550e8400-e29b-41d4-a716-446655440004","requiredCount":2,"minCount":1,"maxCount":3,"priority":3}]
-   */
-  roleRequirements: ShiftRoleRequirementDto[];
   /**
    * Date when the shift takes place
    * @format date
@@ -2827,11 +1706,6 @@ export interface ShiftResponseDto {
    * @example "08:00"
    */
   startTime: string;
-  /**
-   * Current status of the shift
-   * @example "published"
-   */
-  status: "draft" | "published" | "active" | "completed" | "cancelled";
   /**
    * Total hours for this shift
    * @min 0
@@ -2904,109 +1778,6 @@ export interface ShiftRoleRequirementDto {
   roleId: string;
 }
 
-export interface ShiftRulesResponseDto {
-  /**
-   * Date when the shift rules were created
-   * @format date-time
-   * @example "2024-01-15T10:30:00Z"
-   */
-  createdAt: string;
-  /**
-   * User ID who created this rule set
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  createdBy?: string;
-  /**
-   * Description of this rule set
-   * @maxLength 500
-   * @example "Standard shift rules for regular operations"
-   */
-  description?: string;
-  /**
-   * Unique identifier for the shift rules
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  id: string;
-  /**
-   * Whether this rule set is active
-   * @default true
-   * @example true
-   */
-  isActive: boolean;
-  /**
-   * Maximum number of consecutive same shifts
-   * @min 1
-   * @max 10
-   * @default 3
-   * @example 3
-   */
-  maxConsecutiveSameShifts: number;
-  /**
-   * Maximum consecutive working days
-   * @min 1
-   * @max 14
-   * @default 6
-   * @example 6
-   */
-  maxConsecutiveWorkingDays: number;
-  /**
-   * Maximum number of Saturdays an employee can work per month
-   * @min 0
-   * @max 5
-   * @default 2
-   * @example 2
-   */
-  maxSaturdaysPerMonth: number;
-  /**
-   * Minimum number of helpers required
-   * @min 0
-   * @max 10
-   * @default 1
-   * @example 1
-   */
-  minHelpers: number;
-  /**
-   * Minimum number of nurse managers required per shift
-   * @min 0
-   * @max 10
-   * @default 1
-   * @example 1
-   */
-  minNurseManagersPerShift: number;
-  /**
-   * Minimum number of nurses required per shift
-   * @min 1
-   * @max 20
-   * @default 2
-   * @example 2
-   */
-  minNursesPerShift: number;
-  /**
-   * Minimum rest hours between shifts
-   * @min 8
-   * @max 24
-   * @default 11
-   * @example 11
-   */
-  minRestHoursBetweenShifts: number;
-  /**
-   * Date when the shift rules were last updated
-   * @format date-time
-   * @example "2024-01-15T10:30:00Z"
-   */
-  updatedAt: string;
-  /**
-   * Weekly hours overflow tolerance in hours
-   * @min 0
-   * @max 20
-   * @default 5
-   * @example 5
-   */
-  weeklyHoursOverflowTolerance: number;
-}
-
 export interface TimeSlotDto {
   /**
    * End time in HH:MM format
@@ -3031,11 +1802,6 @@ export interface UpdateEmployeeDto {
    */
   address?: string;
   /**
-   * Certifications
-   * @example ["Nursing Training","First Aid"]
-   */
-  certifications?: string[];
-  /**
    * City
    * @example "München"
    */
@@ -3044,12 +1810,7 @@ export interface UpdateEmployeeDto {
    * Contract type
    * @example "full_time"
    */
-  contractType?:
-    | "full_time"
-    | "part_time"
-    | "contract"
-    | "temporary"
-    | "intern";
+  contractType?: "full_time" | "part_time";
   /**
    * Country
    * @example "Deutschland"
@@ -3065,16 +1826,6 @@ export interface UpdateEmployeeDto {
    * @example "anna.schneider@dialyse-praxis.de"
    */
   email?: string;
-  /**
-   * Emergency contact name
-   * @example "Maria Schneider"
-   */
-  emergencyContactName?: string;
-  /**
-   * Emergency contact phone
-   * @example "+49 89 1234-002"
-   */
-  emergencyContactPhone?: string;
   /**
    * Employee number
    * @example "EMP001"
@@ -3111,14 +1862,10 @@ export interface UpdateEmployeeDto {
   hoursPerWeek?: number;
   /**
    * Is the employee active
+   * @default true
    * @example true
    */
   isActive?: boolean;
-  /**
-   * Languages
-   * @example ["German","English"]
-   */
-  languages?: string[];
   /**
    * Employee last name
    * @example "Schneider"
@@ -3129,11 +1876,6 @@ export interface UpdateEmployeeDto {
    * @example "uuid-string"
    */
   locationId?: string;
-  /**
-   * Notes about the employee
-   * @example "Experienced employee specialized in dialysis"
-   */
-  notes?: string;
   /**
    * Organization ID
    * @example "uuid-string"
@@ -3160,30 +1902,10 @@ export interface UpdateEmployeeDto {
    */
   primaryRoleId?: string;
   /**
-   * Profile picture URL
-   * @example "https://example.com/profile.jpg"
-   */
-  profilePictureUrl?: string;
-  /**
    * Additional role IDs
    * @example ["uuid-string-1","uuid-string-2"]
    */
   roleIds?: string[];
-  /**
-   * Skills
-   * @example ["Patient Care","Teamwork"]
-   */
-  skills?: string[];
-  /**
-   * Employee status
-   * @example "active"
-   */
-  status?: "active" | "inactive" | "on_leave" | "terminated" | "suspended";
-  /**
-   * Supervisor ID
-   * @example "uuid-string"
-   */
-  supervisorId?: string;
   /**
    * Termination date
    * @example "2023-12-31"
@@ -3192,11 +1914,6 @@ export interface UpdateEmployeeDto {
 }
 
 export interface UpdateLocationDto {
-  /**
-   * Accessibility features available
-   * @example ["Rollstuhlzugang","Aufzug","Behindertengerechte Toiletten"]
-   */
-  accessibilityFeatures?: string[];
   /**
    * Street address
    * @maxLength 500
@@ -3241,56 +1958,11 @@ export interface UpdateLocationDto {
    */
   email?: string;
   /**
-   * Equipment available at this location
-   * @example ["Rollstuhl","Patientenlift","Notfallausrüstung"]
-   */
-  equipment?: string[];
-  /**
-   * Floor area in square meters
-   * @example 250.5
-   */
-  floorArea?: number;
-  /**
    * Whether the location is active
    * @default true
    * @example true
    */
   isActive?: boolean;
-  /**
-   * Latitude coordinate
-   * @example 52.52
-   */
-  latitude?: number;
-  /**
-   * Longitude coordinate
-   * @example 13.405
-   */
-  longitude?: number;
-  /**
-   * Manager email address
-   * @maxLength 255
-   * @example "max.mustermann@workshift.de"
-   */
-  managerEmail?: string;
-  /**
-   * Manager name
-   * @maxLength 255
-   * @example "Max Mustermann"
-   */
-  managerName?: string;
-  /**
-   * Manager phone number
-   * @maxLength 20
-   * @example "+49 30 12345679"
-   */
-  managerPhone?: string;
-  /**
-   * Maximum location capacity (number of people)
-   * @min 1
-   * @max 2000
-   * @example 50
-   */
-  maxCapacity?: number;
   /**
    * Location name
    * @minLength 2
@@ -3298,18 +1970,6 @@ export interface UpdateLocationDto {
    * @example "Hauptstandort Berlin"
    */
   name?: string;
-  /**
-   * Number of beds
-   * @min 0
-   * @example 25
-   */
-  numberOfBeds?: number;
-  /**
-   * Number of rooms
-   * @min 0
-   * @example 12
-   */
-  numberOfRooms?: number;
   /** Operating hours for each day of the week */
   operatingHours?: OperatingHoursDto;
   /**
@@ -3317,12 +1977,6 @@ export interface UpdateLocationDto {
    * @example "uuid-string"
    */
   organizationId?: string;
-  /**
-   * Number of parking spaces
-   * @min 0
-   * @example 30
-   */
-  parkingSpaces?: number;
   /**
    * Phone number
    * @maxLength 20
@@ -3336,26 +1990,11 @@ export interface UpdateLocationDto {
    */
   postalCode?: string;
   /**
-   * Safety features available
-   * @example ["Brandmeldeanlage","Notausgang","Erste-Hilfe-Station"]
-   */
-  safetyFeatures?: string[];
-  /**
-   * Services provided at this location
-   * @example ["Pflege","Beratung","Therapie"]
-   */
-  services?: string[];
-  /**
    * State or region
    * @maxLength 100
    * @example "Berlin"
    */
   state?: string;
-  /**
-   * Location status
-   * @example "active"
-   */
-  status?: "active" | "inactive" | "maintenance" | "closed";
   /**
    * Timezone for this location
    * @maxLength 50
@@ -3366,16 +2005,6 @@ export interface UpdateLocationDto {
 }
 
 export interface UpdateOrganizationDto {
-  /**
-   * Organization description
-   * @example "Leading dialysis center in Berlin"
-   */
-  description?: string;
-  /**
-   * Enabled features
-   * @example ["shift-planning","reporting"]
-   */
-  features?: string[];
   /**
    * Headquarters address
    * @example "Alexanderplatz 1"
@@ -3402,26 +2031,6 @@ export interface UpdateOrganizationDto {
    */
   isActive?: boolean;
   /**
-   * Legal organization name
-   * @example "Dialyse Zentrum Berlin GmbH"
-   */
-  legalName?: string;
-  /**
-   * Logo URL
-   * @example "https://example.com/logo.png"
-   */
-  logoUrl?: string;
-  /**
-   * Maximum number of employees
-   * @example 200
-   */
-  maxEmployees?: number;
-  /**
-   * Maximum number of locations
-   * @example 20
-   */
-  maxLocations?: number;
-  /**
    * Organization name
    * @example "Dialyse Zentrum Berlin"
    */
@@ -3436,47 +2045,6 @@ export interface UpdateOrganizationDto {
    * @example "+49 30 1234-0"
    */
   primaryPhone?: string;
-  /**
-   * Registration number
-   * @example "HRB 12345"
-   */
-  registrationNumber?: string;
-  /**
-   * Organization settings
-   * @example {"timezone":"Europe/Berlin"}
-   */
-  settings?: object;
-  /**
-   * Organization status
-   * @example "active"
-   */
-  status?: "active" | "inactive" | "suspended" | "trial";
-  /**
-   * Subscription plan
-   * @example "pro"
-   */
-  subscriptionPlan?: string;
-  /**
-   * Tax ID
-   * @example "DE123456789"
-   */
-  taxId?: string;
-  /**
-   * Organization type
-   * @example "medical_center"
-   */
-  type?:
-    | "hospital"
-    | "clinic"
-    | "nursing_home"
-    | "medical_center"
-    | "pharmacy"
-    | "other";
-  /**
-   * Organization website
-   * @example "https://www.dialyse-berlin.de"
-   */
-  website?: string;
 }
 
 export interface UpdateRoleDto {
@@ -3496,20 +2064,10 @@ export interface UpdateRoleDto {
    */
   canWorkWeekends?: boolean;
   /**
-   * Color code for UI display (Hex)
-   * @example "#1976d2"
-   */
-  colorCode?: string;
-  /**
    * Created by (User ID)
    * @example "123e4567-e89b-12d3-a456-426614174001"
    */
   createdBy?: string;
-  /**
-   * Role description
-   * @example "Qualified specialist for performing dialysis treatments"
-   */
-  description?: string;
   /**
    * Hourly rate in Euro
    * @example 25.5
@@ -3536,16 +2094,6 @@ export interface UpdateRoleDto {
    */
   maxWeeklyHours?: number;
   /**
-   * Minimum professional experience in months
-   * @example 12
-   */
-  minExperienceMonths?: number;
-  /**
-   * Minimum rest time between shifts in hours
-   * @example 11
-   */
-  minRestHours?: number;
-  /**
    * Role name
    * @example "Dialysis Specialist"
    */
@@ -3560,48 +2108,6 @@ export interface UpdateRoleDto {
    * @example 31.88
    */
   overtimeRate?: number;
-  /**
-   * Permissions
-   * @example ["view_patient_data","manage_dialysis_machines"]
-   */
-  permissions?: string[];
-  /**
-   * Priority level of the role (1-10, higher = more important)
-   * @example 5
-   */
-  priorityLevel?: number;
-  /**
-   * Required certifications
-   * @example ["Basic Dialysis Course","Hygiene Training"]
-   */
-  requiredCertifications?: string[];
-  /**
-   * Required skills
-   * @example ["Patient Care","Machine Operation"]
-   */
-  requiredSkills?: string[];
-  /**
-   * Role status
-   * @example "active"
-   */
-  status?: "active" | "inactive" | "deprecated";
-  /**
-   * Role type
-   * @example "specialist"
-   */
-  type?:
-    | "specialist"
-    | "assistant"
-    | "shift_leader"
-    | "nurse"
-    | "nurse_manager"
-    | "helper"
-    | "doctor"
-    | "technician"
-    | "administrator"
-    | "cleaner"
-    | "security"
-    | "other";
   /**
    * Updated by (User ID)
    * @example "123e4567-e89b-12d3-a456-426614174001"
@@ -3721,12 +2227,6 @@ export interface UpdateShiftDto {
    */
   overtimeRate?: number;
   /**
-   * Priority level of the shift
-   * @default 2
-   * @example 2
-   */
-  priority?: 1 | 2 | 3 | 4 | 5;
-  /**
    * End date for recurrence
    * @format date
    * @example "2024-12-31"
@@ -3774,12 +2274,6 @@ export interface UpdateShiftDto {
    */
   startTime?: string;
   /**
-   * Current status of the shift
-   * @default "draft"
-   * @example "draft"
-   */
-  status?: "draft" | "published" | "active" | "completed" | "cancelled";
-  /**
    * Total hours for this shift
    * @min 0
    * @example 8
@@ -3814,17 +2308,6 @@ export interface UpdateShiftDto {
 
 export interface UpdateShiftPlanDto {
   /**
-   * Approval status
-   * @example "pending"
-   */
-  approvalStatus?: "pending" | "approved" | "rejected" | "needs_revision";
-  /**
-   * Number of constraint violations
-   * @min 0
-   * @example 2
-   */
-  constraintViolations?: number;
-  /**
    * Coverage percentage
    * @min 0
    * @max 100
@@ -3843,22 +2326,6 @@ export interface UpdateShiftPlanDto {
    */
   description?: string;
   /**
-   * Time taken to generate this shift plan in milliseconds
-   * @example 15000
-   */
-  generationTimeMs?: number;
-  /**
-   * Whether this shift plan is published
-   * @default false
-   * @example false
-   */
-  isPublished?: boolean;
-  /**
-   * Metadata for the shift plan
-   * @example {"generatedBy":"system","version":"1.0"}
-   */
-  metadata?: Record<string, any>;
-  /**
    * Month for the shift plan (1-12)
    * @min 1
    * @max 12
@@ -3872,11 +2339,6 @@ export interface UpdateShiftPlanDto {
    */
   name?: string;
   /**
-   * Optimization level used for this shift plan
-   * @example "standard"
-   */
-  optimizationLevel?: string;
-  /**
    * Organization ID
    * @example "uuid-string"
    */
@@ -3887,16 +2349,6 @@ export interface UpdateShiftPlanDto {
    */
   planData?: Record<string, any>;
   /**
-   * Planning algorithm used for this shift plan
-   * @example "enhanced_backtracking"
-   */
-  planningAlgorithm?: string;
-  /**
-   * Number of planning attempts made
-   * @example 3
-   */
-  planningAttempts?: number;
-  /**
    * End date of planning period
    * @example "2024-12-31"
    */
@@ -3906,18 +2358,6 @@ export interface UpdateShiftPlanDto {
    * @example "2024-12-01"
    */
   planningPeriodStart?: string;
-  /**
-   * Status of the shift plan
-   * @example "draft"
-   */
-  status?:
-    | "draft"
-    | "in_review"
-    | "approved"
-    | "published"
-    | "active"
-    | "completed"
-    | "cancelled";
   /**
    * Total number of employees in the plan
    * @min 0
@@ -3944,79 +2384,6 @@ export interface UpdateShiftPlanDto {
   year?: number;
 }
 
-export interface UpdateShiftRulesDto {
-  /** User ID who created this rule set */
-  createdBy?: string;
-  /**
-   * Description of this rule set
-   * @maxLength 500
-   * @example "Standard shift rules for regular operations"
-   */
-  description?: string;
-  /**
-   * Whether this rule set is active
-   * @default true
-   * @example true
-   */
-  isActive?: boolean;
-  /**
-   * Maximum number of consecutive same shifts
-   * @min 1
-   * @max 10
-   * @example 3
-   */
-  maxConsecutiveSameShifts?: number;
-  /**
-   * Maximum consecutive working days
-   * @min 1
-   * @max 14
-   * @example 6
-   */
-  maxConsecutiveWorkingDays?: number;
-  /**
-   * Maximum number of Saturdays an employee can work per month
-   * @min 0
-   * @max 5
-   * @example 2
-   */
-  maxSaturdaysPerMonth?: number;
-  /**
-   * Minimum number of helpers required
-   * @min 0
-   * @max 10
-   * @example 1
-   */
-  minHelpers?: number;
-  /**
-   * Minimum number of nurse managers required per shift
-   * @min 0
-   * @max 10
-   * @example 1
-   */
-  minNurseManagersPerShift?: number;
-  /**
-   * Minimum number of nurses required per shift
-   * @min 1
-   * @max 20
-   * @example 2
-   */
-  minNursesPerShift?: number;
-  /**
-   * Minimum rest hours between shifts
-   * @min 8
-   * @max 24
-   * @example 11
-   */
-  minRestHoursBetweenShifts?: number;
-  /**
-   * Weekly hours overflow tolerance in hours
-   * @min 0
-   * @max 20
-   * @example 5
-   */
-  weeklyHoursOverflowTolerance?: number;
-}
-
 export interface UpdateUserDto {
   /**
    * User email address
@@ -4024,45 +2391,35 @@ export interface UpdateUserDto {
    */
   email?: string;
   /**
-   * Email address verified
-   * @example true
-   */
-  emailVerified?: boolean;
-  /**
    * User first name
    * @example "John"
    */
   firstName?: string;
+  /**
+   * Whether the user is active
+   * @example true
+   */
+  isActive?: boolean;
   /**
    * User last name
    * @example "Smith"
    */
   lastName?: string;
   /**
-   * Organization IDs to assign the user to
-   * @example ["uuid-org-1","uuid-org-2"]
+   * Organization ID to assign the user to
+   * @example "uuid-org-1"
    */
-  organizationIds?: string[];
+  organizationId?: string;
   /**
    * New user password (minimum 8 characters)
    * @example "NewSecurePassword123!"
    */
   password?: string;
   /**
-   * User permissions
-   * @example ["read:shifts","write:shifts","manage:users"]
-   */
-  permissions?: string[];
-  /**
    * Phone number
    * @example "+1 555 123-4567"
    */
   phoneNumber?: string;
-  /**
-   * User preferences
-   * @example {"theme":"dark","language":"en"}
-   */
-  preferences?: object;
   /**
    * Profile picture URL
    * @example "https://example.com/profile/image.jpg"
@@ -4072,23 +2429,7 @@ export interface UpdateUserDto {
    * User role
    * @example "employee"
    */
-  role?:
-    | "super_admin"
-    | "organization_admin"
-    | "manager"
-    | "planner"
-    | "employee"
-    | "viewer";
-  /**
-   * User status
-   * @example "active"
-   */
-  status?: "active" | "inactive" | "suspended" | "pending";
-  /**
-   * Two-factor authentication enabled
-   * @example false
-   */
-  twoFactorEnabled?: boolean;
+  role?: "super_admin" | "organization_admin" | "employee";
 }
 
 export interface UserResponseDto {
@@ -4109,11 +2450,6 @@ export interface UserResponseDto {
    * @example "john.smith@example.com"
    */
   email: string;
-  /**
-   * Email address verified
-   * @example true
-   */
-  emailVerified: boolean;
   /**
    * User first name
    * @example "John"
@@ -4146,25 +2482,15 @@ export interface UserResponseDto {
    */
   lastName: string;
   /**
-   * User organization IDs list
-   * @example ["uuid-org-1","uuid-org-2"]
+   * Organization ID
+   * @example "uuid-org-1"
    */
-  organizationIds: string[];
-  /**
-   * User permissions
-   * @example ["read:shifts","write:shifts"]
-   */
-  permissions: string[];
+  organizationId: string;
   /**
    * Phone number
    * @example "+1 555 123-4567"
    */
   phoneNumber?: string;
-  /**
-   * User preferences
-   * @example {"theme":"dark","language":"en"}
-   */
-  preferences: object;
   /**
    * Profile picture URL
    * @example "https://example.com/profile/image.jpg"
@@ -4174,46 +2500,11 @@ export interface UserResponseDto {
    * User role
    * @example "employee"
    */
-  role:
-    | "super_admin"
-    | "organization_admin"
-    | "manager"
-    | "planner"
-    | "employee"
-    | "viewer";
-  /**
-   * User status
-   * @example "active"
-   */
-  status: "active" | "inactive" | "suspended" | "pending";
-  /**
-   * Two-factor authentication enabled
-   * @example false
-   */
-  twoFactorEnabled: boolean;
+  role: "super_admin" | "organization_admin" | "employee";
   /**
    * Last update date
    * @format date-time
    * @example "2023-12-01T14:30:00Z"
    */
   updatedAt?: string;
-}
-
-export interface ValidateShiftPlanDto {
-  /** Employee IDs involved in the plan */
-  employeeIds: string[];
-  /**
-   * Month for validation (1-12)
-   * @example 12
-   */
-  month: number;
-  /** Monthly shift plan data to validate */
-  planData: Record<string, any>;
-  /** Shift rules ID to validate against (if not provided, default active rules will be used) */
-  shiftRulesId?: string;
-  /**
-   * Year for validation
-   * @example 2024
-   */
-  year: number;
 }

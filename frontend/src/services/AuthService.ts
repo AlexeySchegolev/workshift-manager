@@ -1,6 +1,6 @@
 import { BaseService } from './BaseService';
 import { Authentication } from '../api/Authentication';
-import HttpClientManager from '../api/HttpClientManager';
+import HttpClientManager from './HttpClientManager.ts';
 import {
   LoginDto,
   RegisterDto,

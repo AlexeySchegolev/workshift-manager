@@ -85,7 +85,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
                             variant="outlined"
                         />
                         <Chip
-                            label={formatShiftStatus(shift.status)}
+                            label={formatShiftStatus(shift.isActive, shift.isAvailable, shift.isFullyStaffed)}
                             size="small"
                             color="secondary"
                             variant="outlined"

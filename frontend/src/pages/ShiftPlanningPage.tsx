@@ -18,7 +18,6 @@ import {de} from 'date-fns/locale';
 import ShiftTable from '../components/ShiftTable';
 import {EmployeeService} from "@/services";
 import {
-    ConstraintViolationDto,
     EmployeeResponseDto,
     MonthlyShiftPlanDto
 } from "@/api/data-contracts.ts";
@@ -54,8 +53,6 @@ const ShiftPlanningPage: React.FC = () => {
     // Shift plan
     const [shiftPlan, setShiftPlan] = useState<MonthlyShiftPlanDto | null>(null);
 
-    // Rule violations
-    const [constraints, setConstraints] = useState<ConstraintViolationDto[]>([]);
 
     // Loading state
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -77,7 +74,6 @@ const ShiftPlanningPage: React.FC = () => {
     // Initialize shift plan
     const initializeShiftPlan = () => {
         setShiftPlan(null);
-        setConstraints([]);
     };
 
     // Calculate statistics
@@ -101,10 +97,9 @@ const ShiftPlanningPage: React.FC = () => {
             totalPossibleShifts = currentMonthDays * 6; // Assumption: 6 shifts per day
         }
 
-        constraints.forEach(constraint => {
-            if (constraint.type === 'hard' || constraint.type === 'soft') violations++;
-            if (constraint.type === 'warning') warnings++;
-        });
+        // Constraint validation not available - set to 0
+        violations = 0;
+        warnings = 0;
 
         const coverage = totalPossibleShifts > 0 ? Math.round((plannedShifts / totalPossibleShifts) * 100) : 0;
         const avgHoursPerEmployee = totalEmployees > 0 ? Math.round((plannedShifts * 8) / totalEmployees) : 0;
@@ -134,9 +129,6 @@ const ShiftPlanningPage: React.FC = () => {
                 setShiftPlan(parsedPlan);
 
                 // TODO: Implement constraint checking with backend integration
-                // For now, set empty constraints to avoid async issues in useEffect
-                const newConstraints: ConstraintViolationDto[] = [];
-                setConstraints(newConstraints);
             } catch (error) {
                 console.error('Error loading shift plan from sessionStorage:', error);
                 initializeShiftPlan();
@@ -175,12 +167,7 @@ const ShiftPlanningPage: React.FC = () => {
                 employees
             );
 
-            const newConstraints = await shiftPlanningService.validatePlan(
-                generatedPlan
-            );
-
             setShiftPlan(generatedPlan);
-            setConstraints(newConstraints);
 
             const planKey = getSessionKey(selectedDate, 'plan');
             const availabilityKey = getSessionKey(selectedDate, 'availability');
@@ -303,7 +290,6 @@ const ShiftPlanningPage: React.FC = () => {
                         selectedDate={selectedDate}
                         onDateChange={setSelectedDate}
                         shiftPlan={shiftPlan}
-                        constraints={constraints}
                         isLoading={isLoading}
                         onGeneratePlan={generateShiftPlan}
                     />

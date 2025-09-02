@@ -7,7 +7,6 @@ export interface ShiftFormData {
   name: string;
   description: string;
   type: string;
-  status: string;
   priority: number;
   shiftDate: string;
   startTime: string;
@@ -50,7 +49,6 @@ const initialFormData: ShiftFormData = {
   name: '',
   description: '',
   type: 'morning',
-  status: 'draft',
   priority: 2,
   shiftDate: getTodayDateString(),
   startTime: '08:00',

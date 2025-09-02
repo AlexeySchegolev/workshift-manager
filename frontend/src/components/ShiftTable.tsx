@@ -10,14 +10,10 @@ import {
     Paper,
     Typography,
     Alert,
-    List,
-    ListItem,
-    ListItemText,
     CircularProgress,
     Chip,
     CardContent,
     CardHeader,
-    Card,
     useTheme,
     alpha,
     Fade,
@@ -26,17 +22,13 @@ import {
 } from '@mui/material';
 import {
     FileDownload as FileDownloadIcon,
-    Assessment as AssessmentIcon,
     Schedule as ScheduleIcon,
-    Warning as WarningIcon,
-    CheckCircle as CheckCircleIcon,
-    Error as ErrorIcon,
     Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
-import {ConstraintViolationDto, EmployeeResponseDto, MonthlyShiftPlanDto} from "@/api/data-contracts.ts";
-import { excelExportService } from '@/services';
+import {EmployeeResponseDto, MonthlyShiftPlanDto} from "@/api/data-contracts.ts";
+import {excelExportService} from '@/services';
 import MonthSelector from './MonthSelector';
 
 interface ShiftTableProps {
@@ -45,7 +37,6 @@ interface ShiftTableProps {
     onDateChange: (date: Date) => void;
     shiftPlan: MonthlyShiftPlanDto | null;
     shiftPlanId?: string | null; // Optional shift plan ID for Excel export
-    constraints: ConstraintViolationDto[];
     isLoading: boolean;
     onGeneratePlan: () => void;
 }
@@ -59,7 +50,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                    onDateChange,
                                                    shiftPlan,
                                                    shiftPlanId,
-                                                   constraints,
                                                    isLoading,
                                                    onGeneratePlan
                                                }) => {
@@ -70,7 +60,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
         const year = date.getFullYear();
         const month = date.getMonth();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
+
         const days: string[] = [];
         for (let day = 1; day <= daysInMonth; day++) {
             // Format as DD.MM.YYYY to match the backend format
@@ -106,10 +96,10 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
         try {
             const blob = await excelExportService.exportShiftPlan(
                 shiftPlanId,
-                { 
-                    includeStatistics: true, 
-                    includePlanning: true, 
-                    dateRange: { 
+                {
+                    includeStatistics: true,
+                    includePlanning: true,
+                    dateRange: {
                         start: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
                         end: new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
                     }
@@ -164,37 +154,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                 return theme.palette.text.secondary;
         }
     };
-
-    // Function to render status color for constraints
-    const getConstraintColor = (type: "hard" | "soft" | "warning" | "info"): 'success' | 'warning' | 'error' | 'default' => {
-        switch (type) {
-            case 'info':
-                return 'success';
-            case 'warning':
-                return 'warning';
-            case 'hard':
-            case 'soft':
-                return 'error';
-            default:
-                return 'default';
-        }
-    };
-
-    // Constraint icon based on status
-    const getConstraintIcon = (type: "hard" | "soft" | "warning" | "info") => {
-        switch (type) {
-            case 'info':
-                return <CheckCircleIcon sx={{fontSize: '1rem'}}/>;
-            case 'warning':
-                return <WarningIcon sx={{fontSize: '1rem'}}/>;
-            case 'hard':
-            case 'soft':
-                return <ErrorIcon sx={{fontSize: '1rem'}}/>;
-            default:
-                return <WarningIcon sx={{fontSize: '1rem'}}/>;
-        }
-    };
-
     return (
         <Box sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
             {/* Header */}
@@ -253,7 +212,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                     },
                                 }}
                             >
-                                {isLoading ? <CircularProgress size={20} sx={{ color: 'inherit' }}/> : <RefreshIcon/>}
+                                {isLoading ? <CircularProgress size={20} sx={{color: 'inherit'}}/> : <RefreshIcon/>}
                             </IconButton>
                         </Tooltip>
 
@@ -349,13 +308,13 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                             {sortedDays.map(dayKey => {
                                                 const [day, month, year] = dayKey.split('.').map(Number);
                                                 const date = new Date(year, month - 1, day);
-                                                
+
                                                 // Validate that the date is valid
                                                 if (isNaN(date.getTime()) || isNaN(day) || isNaN(month) || isNaN(year)) {
                                                     console.warn(`Invalid date key: ${dayKey}`);
                                                     return null; // Skip invalid dates
                                                 }
-                                                
+
                                                 const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
                                                 return (
@@ -439,9 +398,9 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                             mt: 0.5
                                                         }}>
                                                             <Chip
-                                                                label={emp.primaryRole?.name || emp.primaryRole?.type}
+                                                                label={emp.primaryRole?.name}
                                                                 size="small"
-                                                                color={emp.primaryRole?.type === 'shift_leader' ? 'primary' : 'default'}
+                                                                color={"primary"}
                                                                 sx={{
                                                                     height: 18,
                                                                     fontSize: '0.7rem',
@@ -570,92 +529,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                 </Table>
                             </TableContainer>
                         </Box>
-                    </Fade>
-                )}
-
-                {/* Constraints summary */}
-                {constraints.length > 0 && (
-                    <Fade in timeout={800}>
-                        <Card
-                            sx={{
-                                mt: 3,
-                                borderRadius: 2,
-                                border: `1px solid ${theme.palette.divider}`,
-                            }}
-                        >
-                            <CardHeader
-                                title={
-                                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                        <AssessmentIcon sx={{fontSize: '1.25rem', color: 'warning.main'}}/>
-                                        <Typography variant="h6" component="div">
-                                            Planungsvalidierung
-                                        </Typography>
-                                    </Box>
-                                }
-                                subheader={`${constraints.length} Prüfungen durchgeführt`}
-                                sx={{pb: 1}}
-                            />
-                            <CardContent sx={{pt: 0}}>
-                                <List sx={{py: 0}}>
-                                    {constraints.map((constraint, index) => (
-                                        <ListItem
-                                            key={`constraint-${index}`}
-                                            sx={{
-                                                borderRadius: 2,
-                                                mb: 1,
-                                                backgroundColor: alpha(
-                                                    constraint.type === 'hard' || constraint.type === 'soft' ? theme.palette.error.main :
-                                                        constraint.type === 'warning' ? theme.palette.warning.main :
-                                                            theme.palette.success.main,
-                                                    0.05
-                                                ),
-                                                border: `1px solid ${alpha(
-                                                    constraint.type === 'hard' || constraint.type === 'soft' ? theme.palette.error.main :
-                                                        constraint.type === 'warning' ? theme.palette.warning.main :
-                                                            theme.palette.success.main,
-                                                    0.2
-                                                )}`,
-                                                '&:last-child': {
-                                                    mb: 0,
-                                                },
-                                            }}
-                                        >
-                                            <ListItemText
-                                                primary={
-                                                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1.5}}>
-                                                        <Chip
-                                                            icon={getConstraintIcon(constraint.type)}
-                                                            label={
-                                                                constraint.type === 'hard' || constraint.type === 'soft' ? 'Fehler' :
-                                                                    constraint.type === 'warning' ? 'Warnung' :
-                                                                        'OK'
-                                                            }
-                                                            color={getConstraintColor(constraint.type)}
-                                                            size="small"
-                                                            sx={{
-                                                                fontWeight: 600,
-                                                                '& .MuiChip-icon': {
-                                                                    fontSize: '0.9rem',
-                                                                },
-                                                            }}
-                                                        />
-                                                        <Typography
-                                                            variant="body2"
-                                                            sx={{
-                                                                fontWeight: 500,
-                                                                color: 'text.primary',
-                                                            }}
-                                                        >
-                                                            {constraint.message}
-                                                        </Typography>
-                                                    </Box>
-                                                }
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </CardContent>
-                        </Card>
                     </Fade>
                 )}
             </CardContent>

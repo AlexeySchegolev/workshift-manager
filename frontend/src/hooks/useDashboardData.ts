@@ -4,7 +4,6 @@ import { WeekDay } from '../components/dashboard/WeekOverview';
 import { StatusItem } from '../components/dashboard/StatusLight';
 import {
     EmployeeResponseDto,
-    ConstraintViolationDto,
 } from '../api/data-contracts';
 
 type Employee = EmployeeResponseDto;
@@ -37,7 +36,6 @@ interface DashboardData {
 export const useDashboardData = (
   employees: Employee[],
   currentShiftPlan: MonthlyShiftPlanData | null,
-  constraints: ConstraintViolationDto[],
   selectedDate: Date = new Date()
 ): DashboardData => {
   const [isLoading, setIsLoading] = useState(false);
@@ -62,9 +60,9 @@ export const useDashboardData = (
       averageWorkload = Math.ceil((totalHours / employees.length) * 10) / 10;
     }
 
-    // Count warnings and rule violations
-    const currentWarnings = constraints.filter(c => c.type === 'warning').length;
-    const ruleViolations = constraints.filter(c => c.type === 'hard' || c.type === 'soft').length;
+    // Constraint validation not available - set to 0
+    const currentWarnings = 0;
+    const ruleViolations = 0;
 
     return {
       employeeCount,
@@ -73,7 +71,7 @@ export const useDashboardData = (
       currentWarnings,
       ruleViolations,
     };
-  }, [employees, currentShiftPlan, constraints]);
+  }, [employees, currentShiftPlan]);
 
   // Generate current week
   const currentWeek = useMemo((): WeekDay[] => {

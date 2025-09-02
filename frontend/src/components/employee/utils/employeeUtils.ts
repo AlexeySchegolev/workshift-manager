@@ -12,40 +12,32 @@ export const getInitials = (name: string | undefined | null): string => {
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 };
 
-// Status-spezifische Farben
-export const getEmployeeStatusColor = (status: string, theme: any) => {
-  switch (status) {
-    case 'active':
-      return theme.palette.success.main;
-    case 'inactive':
-      return theme.palette.grey[500];
-    case 'on_leave':
-      return theme.palette.warning.main;
-    case 'terminated':
-      return theme.palette.error.main;
-    case 'suspended':
-      return theme.palette.error.dark;
-    default:
-      return theme.palette.grey[500];
+// Status-spezifische Farben basierend auf isActive und isAvailable
+export const getEmployeeStatusColor = (isActive: boolean, isAvailable: boolean, theme: any) => {
+  if (!isActive) {
+    return theme.palette.error.main;
   }
+  if (isActive && isAvailable) {
+    return theme.palette.success.main;
+  }
+  if (isActive && !isAvailable) {
+    return theme.palette.warning.main;
+  }
+  return theme.palette.grey[500];
 };
 
-// Status formatieren
-export const formatEmployeeStatus = (status: string) => {
-  switch (status) {
-    case 'active':
-      return 'Aktiv';
-    case 'inactive':
-      return 'Inaktiv';
-    case 'on_leave':
-      return 'Beurlaubt';
-    case 'terminated':
-      return 'Gekündigt';
-    case 'suspended':
-      return 'Suspendiert';
-    default:
-      return status;
+// Status formatieren basierend auf isActive und isAvailable
+export const formatEmployeeStatus = (isActive: boolean, isAvailable: boolean) => {
+  if (!isActive) {
+    return 'Inaktiv';
   }
+  if (isActive && isAvailable) {
+    return 'Verfügbar';
+  }
+  if (isActive && !isAvailable) {
+    return 'Nicht verfügbar';
+  }
+  return 'Unbekannt';
 };
 
 // Vertragsart-spezifische Farben

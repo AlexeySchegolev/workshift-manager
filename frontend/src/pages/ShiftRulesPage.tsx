@@ -12,12 +12,8 @@ import {
 } from '@mui/material';
 import {
     Rule as RuleIcon,
-    Settings as SettingsIcon,
-    Security as SecurityIcon,
+    Construction as ConstructionIcon,
 } from '@mui/icons-material';
-
-import ShiftRuleManager from '../components/ShiftRuleManager';
-import { ShiftRulesResponseDto } from '../api/data-contracts';
 
 /**
  * Modern Shift Rules Page in Dashboard Style
@@ -32,12 +28,6 @@ const ShiftRulesPage: React.FC = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    const handleSaveConfiguration = (config: ShiftRulesResponseDto) => {
-        // Here the configuration would be saved
-        console.log('Schichtregeln-Konfiguration gespeichert:', config);
-        // TODO: Integration with Backend/LocalStorage
-        alert('Schichtregeln-Konfiguration wurde gespeichert!');
-    };
 
     return (
         <Container maxWidth="xl" sx={{py: 3}}>
@@ -93,40 +83,27 @@ const ShiftRulesPage: React.FC = () => {
                                     Automatische Regelanwendung
                                 </Typography>
                             </Box>
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <SettingsIcon sx={{color: 'info.main', fontSize: '1.2rem'}}/>
-                                <Typography variant="body2" color="text.secondary">
-                                    Konfigurierbare Parameter
-                                </Typography>
-                            </Box>
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <SecurityIcon sx={{color: 'success.main', fontSize: '1.2rem'}}/>
-                                <Typography variant="body2" color="text.secondary">
-                                    Strikte & gelockerte Modi
-                                </Typography>
-                            </Box>
                         </Box>
                     </Box>
                 </Paper>
             </Fade>
 
-            {/* Info Alert */}
+            {/* Feature Unavailable Alert */}
             <Fade in={showCards} timeout={1000}>
                 <Alert
-                    severity="info"
+                    severity="warning"
                     sx={{
                         mb: 4,
                         borderRadius: 2,
-                        border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`,
+                        border: `1px solid ${alpha(theme.palette.warning.main, 0.2)}`,
                     }}
                 >
-                    <AlertTitle>Wichtige Information</AlertTitle>
-                    Diese Regeln werden automatisch bei der Schichtplanung angewendet.
-                    Bei Konflikten wird zunächst der strikte Modus verwendet, bei Bedarf auf den gelockerten Modus gewechselt.
+                    <AlertTitle>Feature nicht verfügbar</AlertTitle>
+                    Die Schichtregeln-Funktionalität ist derzeit nicht verfügbar, da das entsprechende Backend-Modul noch nicht implementiert wurde.
                 </Alert>
             </Fade>
 
-            {/* Shift rules configuration - full width */}
+            {/* Feature unavailable content */}
             <Fade in={showCards} timeout={1200}>
                 <Paper
                     sx={{
@@ -134,9 +111,17 @@ const ShiftRulesPage: React.FC = () => {
                         border: `1px solid ${theme.palette.divider}`,
                         overflow: 'hidden',
                         mb: 4,
+                        p: 4,
+                        textAlign: 'center',
                     }}
                 >
-                    <ShiftRuleManager onSave={handleSaveConfiguration} />
+                    <ConstructionIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
+                    <Typography variant="h5" color="text.secondary" gutterBottom>
+                        Feature in Entwicklung
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                        Die Schichtregeln-Verwaltung wird in einer zukünftigen Version verfügbar sein.
+                    </Typography>
                 </Paper>
             </Fade>
         </Container>

@@ -158,11 +158,11 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                 </TableCell>
                                 <TableCell>
                                     <Chip
-                                        label={formatShiftStatus(shift.status)}
+                                        label={formatShiftStatus(shift.isActive, shift.isAvailable, shift.isFullyStaffed)}
                                         size="small"
                                         sx={{
-                                            backgroundColor: alpha(getShiftStatusColor(shift.status), 0.1),
-                                            color: getShiftStatusColor(shift.status),
+                                            backgroundColor: alpha(getShiftStatusColor(shift.isActive, shift.isAvailable, shift.isFullyStaffed), 0.1),
+                                            color: getShiftStatusColor(shift.isActive, shift.isAvailable, shift.isFullyStaffed),
                                             fontWeight: 500,
                                         }}
                                     />

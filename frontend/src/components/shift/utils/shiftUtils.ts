@@ -15,16 +15,21 @@ export const formatShiftType = (type: string): string => {
   return typeMap[type] || type;
 };
 
-// Shift Status Formatting
-export const formatShiftStatus = (status: string): string => {
-  const statusMap: Record<string, string> = {
-    draft: 'Entwurf',
-    published: 'Veröffentlicht',
-    active: 'Aktiv',
-    completed: 'Abgeschlossen',
-    cancelled: 'Abgesagt',
-  };
-  return statusMap[status] || status;
+// Shift Status Formatting based on boolean properties
+export const formatShiftStatus = (isActive: boolean, isAvailable: boolean, isFullyStaffed: boolean): string => {
+  if (!isActive) {
+    return 'Inaktiv';
+  }
+  if (isActive && isAvailable && isFullyStaffed) {
+    return 'Vollbesetzt';
+  }
+  if (isActive && isAvailable) {
+    return 'Verfügbar';
+  }
+  if (isActive && !isAvailable) {
+    return 'Nicht verfügbar';
+  }
+  return 'Unbekannt';
 };
 
 // Shift Priority Formatting
@@ -43,15 +48,20 @@ export const getShiftTypeColor = (type: string): string => {
   return colorMap[type] || '#757575';
 };
 
-export const getShiftStatusColor = (status: string): string => {
-  const colorMap: Record<string, string> = {
-    draft: '#757575',
-    published: '#2196F3',
-    active: '#4CAF50',
-    completed: '#9E9E9E',
-    cancelled: '#F44336',
-  };
-  return colorMap[status] || '#757575';
+export const getShiftStatusColor = (isActive: boolean, isAvailable: boolean, isFullyStaffed: boolean): string => {
+  if (!isActive) {
+    return '#F44336'; // Red for inactive
+  }
+  if (isActive && isAvailable && isFullyStaffed) {
+    return '#4CAF50'; // Green for fully staffed
+  }
+  if (isActive && isAvailable) {
+    return '#2196F3'; // Blue for available
+  }
+  if (isActive && !isAvailable) {
+    return '#FF9800'; // Orange for not available
+  }
+  return '#757575'; // Grey for unknown
 };
 // Validation functions
 export const validateShiftTime = (startTime: string, endTime: string): boolean => {
@@ -94,8 +104,8 @@ export const isWeekend = (date: string): boolean => {
 // Statistics functions
 export const calculateShiftStatistics = (shifts: ShiftResponseDto[]) => {
   const total = shifts.length;
-  const active = shifts.filter(s => s.status === 'active').length;
-  const published = shifts.filter(s => s.status === 'published').length;
+  const active = shifts.filter(s => s.isActive).length;
+  const available = shifts.filter(s => s.isAvailable).length;
   const fullyStaffed = shifts.filter(s => s.isFullyStaffed).length;
   const understaffed = shifts.filter(s => !s.isFullyStaffed).length;
   
@@ -116,7 +126,7 @@ export const calculateShiftStatistics = (shifts: ShiftResponseDto[]) => {
   return {
     total,
     active,
-    published,
+    available,
     fullyStaffed,
     understaffed,
     averageStaffing: Math.round(averageStaffing * 100) / 100,

@@ -161,7 +161,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                             <Avatar
                                                 sx={{
-                                                    bgcolor: employee.primaryRole?.colorCode || theme.palette.grey[500],
+                                                    bgcolor: theme.palette.grey[500],
                                                     width: 40,
                                                     height: 40,
                                                     fontSize: '0.875rem',
@@ -182,21 +182,19 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                             label={employee.primaryRole?.name || employee.primaryRole?.displayName || 'Keine Rolle'}
                                             size="small"
                                             sx={{
-                                                backgroundColor: employee.primaryRole?.colorCode
-                                                    ? alpha(employee.primaryRole.colorCode, 0.1)
-                                                    : alpha(theme.palette.grey[500], 0.1),
-                                                color: employee.primaryRole?.colorCode || theme.palette.grey[500],
+                                                backgroundColor: alpha(theme.palette.grey[500], 0.1),
+                                                color: theme.palette.grey[500],
                                                 fontWeight: 500,
                                             }}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Chip
-                                            label={formatEmployeeStatus(employee.status)}
+                                            label={formatEmployeeStatus(employee.isActive, employee.isAvailable)}
                                             size="small"
                                             sx={{
-                                                backgroundColor: alpha(getEmployeeStatusColor(employee.status, theme), 0.1),
-                                                color: getEmployeeStatusColor(employee.status, theme),
+                                                backgroundColor: alpha(getEmployeeStatusColor(employee.isActive, employee.isAvailable, theme), 0.1),
+                                                color: getEmployeeStatusColor(employee.isActive, employee.isAvailable, theme),
                                                 fontWeight: 500,
                                             }}
                                         />

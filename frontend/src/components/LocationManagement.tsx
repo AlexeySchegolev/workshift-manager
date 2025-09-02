@@ -27,7 +27,6 @@ import {
   LocationOn as LocationIcon,
   Phone as PhoneIcon,
   Email as EmailIcon,
-  Person as PersonIcon,
   Schedule as ScheduleIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
@@ -91,9 +90,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     
     // Calculate statistics from available location data
     const employeeCount = location.employees?.length || 0;
-    const occupancyRate = location.maxCapacity > 0 
-      ? (location.currentCapacity / location.maxCapacity) * 100 
-      : 0;
+    // Since maxCapacity is not available in backend, set occupancy rate to 0
+    const occupancyRate = 0;
     
     return {
       activeShifts: 0, // Default value for required field
@@ -121,13 +119,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         country: 'Germany',
         phone: '',
         email: '',
-        managerName: '',
-        maxCapacity: 0,
         currentCapacity: 0,
-        status: 'active',
         timezone: 'Europe/Berlin',
-        accessibilityFeatures: [],
-        safetyFeatures: [],
         operatingHours: {
           monday: [],
           tuesday: [],
@@ -137,8 +130,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
           saturday: [],
           sunday: [],
         },
-        services: [],
-        equipment: [],
         isActive: true,
         createdAt: getCurrentTimestamp(),
         updatedAt: getCurrentTimestamp(),
@@ -345,16 +336,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Box>
                   )}
 
-                  {/* Manager */}
-                  {location.managerName && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                      <PersonIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
-                      <Typography variant="body2" color="text.secondary">
-                        Leitung: {location.managerName}
-                      </Typography>
-                    </Box>
-                  )}
-
                   <Divider sx={{ my: 2 }} />
 
                   {/* Statistics */}
@@ -369,10 +350,10 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
                       <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>
-                        {location.maxCapacity}
+                        {location.currentCapacity}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        Kapazität
+                        Aktuelle Kapazität
                       </Typography>
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
@@ -385,31 +366,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Box>
                   </Box>
 
-                  {/* Services */}
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                      Services:
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {location.services.slice(0, 3).map((service, index) => (
-                        <Chip
-                          key={index}
-                          label={service}
-                          size="small"
-                          variant="outlined"
-                          sx={{ fontSize: '0.7rem' }}
-                        />
-                      ))}
-                      {location.services.length > 3 && (
-                        <Chip
-                          label={`+${location.services.length - 3}`}
-                          size="small"
-                          variant="outlined"
-                          sx={{ fontSize: '0.7rem' }}
-                        />
-                      )}
-                    </Box>
-                  </Box>
 
                   {/* Operating hours */}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -471,17 +427,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     })}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Manager"
-                    value={selectedLocation.managerName || ''}
-                    onChange={(e) => setSelectedLocation({
-                      ...selectedLocation,
-                      managerName: e.target.value
-                    })}
-                  />
-                </Grid>
                 <Grid size={{ xs: 12 }}>
                   <TextField
                     fullWidth
@@ -534,18 +479,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     onChange={(e) => setSelectedLocation({
                       ...selectedLocation,
                       email: e.target.value
-                    })}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Kapazität"
-                    type="number"
-                    value={selectedLocation.maxCapacity}
-                    onChange={(e) => setSelectedLocation({
-                      ...selectedLocation,
-                      maxCapacity: parseInt(e.target.value) || 0
                     })}
                   />
                 </Grid>

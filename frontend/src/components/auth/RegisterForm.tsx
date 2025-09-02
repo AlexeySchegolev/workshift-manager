@@ -29,6 +29,7 @@ export const RegisterForm: React.FC = () => {
     password: '',
     role: 'employee',
     phoneNumber: '',
+    organizationId: 'default-org-id', // TODO: Implement organization selection
   });
   
   const [confirmPassword, setConfirmPassword] = useState('');

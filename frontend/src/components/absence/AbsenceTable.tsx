@@ -356,11 +356,6 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                                             <Typography variant="caption">
                                                                                 {format(new Date(absence.startDate), 'dd.MM.yyyy')} - {format(new Date(absence.endDate), 'dd.MM.yyyy')}
                                                                             </Typography>
-                                                                            {absence.reason && (
-                                                                                <Typography variant="caption" sx={{ display: 'block' }}>
-                                                                                    {absence.reason}
-                                                                                </Typography>
-                                                                            )}
                                                                         </Box>
                                                                     ))}
                                                                 </Box>

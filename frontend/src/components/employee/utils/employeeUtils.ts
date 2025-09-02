@@ -1,4 +1,4 @@
-import { RoleResponseDto, EmployeeResponseDto } from '@/api/data-contracts';
+import { RoleResponseDto } from '@/api/data-contracts';
 
 /**
  * Utility-Funktionen für Employee Management
@@ -129,20 +129,5 @@ export const validateEmployeeForm = (data: {
   return {
     errors,
     isValid: Object.keys(errors).length === 0
-  };
-};
-
-// Berechne Statistiken
-export const calculateEmployeeStatistics = (employees: any[]) => {
-  const totalEmployees = employees.length;
-  const activeEmployees = employees.filter(emp => emp.status === 'active').length;
-  const totalHours = employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0);
-  const avgHours = totalEmployees > 0 ? totalHours / totalEmployees : 0;
-
-  return {
-    totalEmployees,
-    activeEmployees,
-    totalHours,
-    avgHours: Math.round(avgHours * 10) / 10
   };
 };

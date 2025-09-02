@@ -24,7 +24,7 @@ import {
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
-import { format, getDaysInMonth, startOfMonth, addDays, isSameDay } from 'date-fns';
+import { format, getDaysInMonth, startOfMonth, addDays } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { EmployeeResponseDto, EmployeeAbsenceResponseDto } from '@/api/data-contracts';
 

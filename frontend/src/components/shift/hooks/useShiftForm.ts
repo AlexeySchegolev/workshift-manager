@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ShiftResponseDto } from '@/api/data-contracts';
 import { validateShiftTime, calculateShiftDuration } from '../utils/shiftUtils';
-import { getTodayDateString } from '../../../utils/date.utils';
+import { getTodayDateString } from '@/utils/date.utils.ts';
 
 export interface ShiftFormData {
   name: string;

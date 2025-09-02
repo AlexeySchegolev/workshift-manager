@@ -19,7 +19,7 @@ import {
   Add as AddIcon,
   PersonAdd as PersonAddIcon,
 } from '@mui/icons-material';
-import { LocationResponseDto, RoleResponseDto } from '@/api/data-contracts';
+import { RoleResponseDto } from '@/api/data-contracts';
 import { EmployeeFormData, EmployeeFormErrors } from './hooks/useEmployeeForm';
 import { useLocations } from '@/hooks/useLocations';
 import { useRoles } from '@/hooks/useRoles';

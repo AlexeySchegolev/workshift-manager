@@ -23,8 +23,6 @@ import {
     Delete as DeleteIcon,
     Add as AddIcon,
     People as PeopleIcon,
-    Business as BusinessIcon,
-    Schedule as ScheduleIcon,
     Badge as BadgeIcon,
 } from '@mui/icons-material';
 import { EmployeeResponseDto } from '@/api/data-contracts';

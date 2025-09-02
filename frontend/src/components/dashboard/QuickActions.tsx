@@ -17,10 +17,6 @@ import {
 } from '@mui/material';
 import {
   PlayArrow as PlayArrowIcon,
-  Add as AddIcon,
-  FileDownload as FileDownloadIcon,
-  Settings as SettingsIcon,
-  Assessment as AssessmentIcon,
   Schedule as ScheduleIcon,
 } from '@mui/icons-material';
 
@@ -250,57 +246,4 @@ const QuickActions: React.FC<QuickActionsProps> = ({
 };
 
 // Predefined quick actions for shift planning
-export const createDefaultQuickActions = (
-  onGenerateShiftPlan: () => void,
-  onAddEmployee: () => void,
-  onExportExcel: () => void,
-  onOpenSettings: () => void,
-  onViewReports: () => void,
-  hasCurrentPlan: boolean = false,
-  warningCount: number = 0
-): QuickAction[] => [
-  {
-    id: 'generate-plan',
-    title: 'Schichtplan generieren',
-    description: 'Neuen Schichtplan für den ausgewählten Monat erstellen',
-    icon: <ScheduleIcon />,
-    color: 'primary',
-    onClick: onGenerateShiftPlan,
-  },
-  {
-    id: 'add-employee',
-    title: 'Mitarbeiter hinzufügen',
-    description: 'Neuen Mitarbeiter zur Datenbank hinzufügen',
-    icon: <AddIcon />,
-    color: 'success',
-    onClick: onAddEmployee,
-  },
-  {
-    id: 'export-excel',
-    title: 'Excel exportieren',
-    description: 'Aktuellen Schichtplan als Excel-Datei herunterladen',
-    icon: <FileDownloadIcon />,
-    color: 'info',
-    onClick: onExportExcel,
-    disabled: !hasCurrentPlan,
-  },
-  {
-    id: 'view-reports',
-    title: 'Berichte anzeigen',
-    description: 'Statistiken und Auswertungen der Schichtplanung',
-    icon: <AssessmentIcon />,
-    color: 'warning',
-    onClick: onViewReports,
-    badge: warningCount > 0 ? warningCount : undefined,
-  },
-  {
-    id: 'settings',
-    title: 'Einstellungen',
-    description: 'Schichtregeln und Systemeinstellungen anpassen',
-    icon: <SettingsIcon />,
-    color: 'primary',
-    onClick: onOpenSettings,
-  },
-];
-
 export default QuickActions;

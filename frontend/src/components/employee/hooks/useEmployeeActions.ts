@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { EmployeeResponseDto, CreateEmployeeDto, UpdateEmployeeDto } from '@/api/data-contracts';
 import { EmployeeFormData } from './useEmployeeForm';
 import { EmployeeService } from '@/services';
-import { getTodayDateString } from '../../../utils/date.utils';
+import { getTodayDateString } from '@/utils/date.utils.ts';
 
 export interface SnackbarState {
   open: boolean;

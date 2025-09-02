@@ -77,19 +77,4 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Render protected content
   return <>{children}</>;
 };
-
-/**
- * Higher-order component version of ProtectedRoute
- */
-export const withProtectedRoute = (
-  Component: React.ComponentType<any>,
-  options?: Omit<ProtectedRouteProps, 'children'>
-) => {
-  return (props: any) => (
-    <ProtectedRoute {...options}>
-      <Component {...props} />
-    </ProtectedRoute>
-  );
-};
-
 export default ProtectedRoute;

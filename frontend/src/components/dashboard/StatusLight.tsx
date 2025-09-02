@@ -178,7 +178,7 @@ const StatusLight: React.FC<StatusLightProps> = ({
           </Box>
         ) : (
           <List sx={{ flex: 1, py: 0 }}>
-            {statusItems.map((item, index) => {
+            {statusItems.map((item) => {
               const statusColor = getStatusColor(item.status);
               const backgroundColor = getStatusBackgroundColor(item.status);
 
@@ -298,48 +298,4 @@ const StatusLight: React.FC<StatusLightProps> = ({
 };
 
 // Helper function to create standard status items for shift planning
-export const createShiftPlanningStatusItems = (
-  employeeCount: number,
-  currentMonthCoverage: number,
-  violationCount: number,
-  warningCount: number
-): StatusItem[] => [
-  {
-    id: 'employees',
-    title: 'Mitarbeiter',
-    description: 'Verfügbare Mitarbeiter im System',
-    status: employeeCount >= 5 ? 'success' : employeeCount >= 3 ? 'warning' : 'error',
-    value: employeeCount,
-    maxValue: 20,
-    details: employeeCount < 5 ? ['Zu wenige Mitarbeiter für optimale Schichtplanung'] : undefined,
-  },
-  {
-    id: 'coverage',
-    title: 'Schichtabdeckung',
-    description: 'Prozent der geplanten Schichten im aktuellen Monat',
-    status: currentMonthCoverage >= 90 ? 'success' : currentMonthCoverage >= 70 ? 'warning' : 'error',
-    value: currentMonthCoverage,
-    maxValue: 100,
-    details: currentMonthCoverage < 90 ? ['Unvollständige Schichtabdeckung'] : undefined,
-  },
-  {
-    id: 'violations',
-    title: 'Regelverletzungen',
-    description: 'Anzahl der Regelverletzungen im aktuellen Plan',
-    status: violationCount === 0 ? 'success' : violationCount <= 2 ? 'warning' : 'error',
-    value: violationCount,
-    maxValue: 0,
-    details: violationCount > 0 ? [`${violationCount} Regelverletzungen gefunden`] : undefined,
-  },
-  {
-    id: 'warnings',
-    title: 'Warnungen',
-    description: 'Anzahl der Warnungen und Optimierungsvorschläge',
-    status: warningCount === 0 ? 'success' : warningCount <= 5 ? 'warning' : 'error',
-    value: warningCount,
-    maxValue: 0,
-    details: warningCount > 0 ? [`${warningCount} Warnungen vorhanden`] : undefined,
-  },
-];
-
 export default StatusLight;

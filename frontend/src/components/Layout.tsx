@@ -75,12 +75,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigationLinks = [
     { title: 'Dashboard', path: '/', icon: <DashboardIcon />, description: 'Übersicht und Statistiken', category: 'main' },
-    { title: 'Schichtplan', path: '/schichtplan', icon: <CalendarIcon />, description: 'Schichtpläne erstellen und verwalten', category: 'shifts' },
-    { title: 'Schichten', path: '/schichten', icon: <ScheduleIcon />, description: 'Einzelne Schichten verwalten', category: 'shifts' },
-    { title: 'Schichtkonfiguration', path: '/schichtregeln', icon: <RuleIcon />, description: 'Konfiguration und Vorgaben für die Schichtplanung', category: 'shifts' },
-    { title: 'Mitarbeiter', path: '/mitarbeiter', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten', category: 'employees' },
-    { title: 'Standorte', path: '/standorte', icon: <BusinessIcon />, description: 'Standorte und Betriebsstätten verwalten', category: 'employees' },
-    { title: 'Rollen', path: '/rollen', icon: <AdminPanelSettingsIcon />, description: 'Rollen und Berechtigungen verwalten', category: 'employees' }
+    { title: 'Schichtplan', path: '/shift-planning', icon: <CalendarIcon />, description: 'Schichtpläne erstellen und verwalten', category: 'shifts' },
+    { title: 'Schichten', path: '/shifts', icon: <ScheduleIcon />, description: 'Einzelne Schichten verwalten', category: 'shifts' },
+    { title: 'Schichtkonfiguration', path: '/shift-rules', icon: <RuleIcon />, description: 'Konfiguration und Vorgaben für die Schichtplanung', category: 'shifts' },
+    { title: 'Mitarbeiter', path: '/employees', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten', category: 'employees' },
+    { title: 'Standorte', path: '/locations', icon: <BusinessIcon />, description: 'Standorte und Betriebsstätten verwalten', category: 'employees' },
+    { title: 'Rollen', path: '/roles', icon: <AdminPanelSettingsIcon />, description: 'Rollen und Berechtigungen verwalten', category: 'employees' }
   ];
 
   const shiftLinks = navigationLinks.filter(link => link.category === 'shifts');

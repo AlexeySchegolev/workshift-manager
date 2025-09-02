@@ -26,12 +26,12 @@ const App: React.FC = () => {
           <Layout>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/schichtplan" element={<ShiftPlanningPage />} />
-              <Route path="/schichten" element={<ShiftsPage />} />
-              <Route path="/mitarbeiter" element={<EmployeePage />} />
-              <Route path="/standorte" element={<LocationManagementPage />} />
-              <Route path="/rollen" element={<RoleManagementPage />} />
-              <Route path="/schichtregeln" element={<ShiftRulesPage />} />
+              <Route path="/shift-planning" element={<ShiftPlanningPage />} />
+              <Route path="/shifts" element={<ShiftsPage />} />
+              <Route path="/employees" element={<EmployeePage />} />
+              <Route path="/locations" element={<LocationManagementPage />} />
+              <Route path="/roles" element={<RoleManagementPage />} />
+              <Route path="/shift-rules" element={<ShiftRulesPage />} />
               {/* Fallback route to homepage */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

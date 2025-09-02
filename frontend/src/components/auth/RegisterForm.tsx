@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -37,17 +37,15 @@ export const RegisterForm: React.FC = () => {
   const [success, setSuccess] = useState(false);
   
   const { register } = useAuth();
-  const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate password confirmation
@@ -157,7 +155,7 @@ export const RegisterForm: React.FC = () => {
 
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   autoComplete="given-name"
                   name="firstName"
@@ -172,7 +170,7 @@ export const RegisterForm: React.FC = () => {
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   required
                   fullWidth
@@ -186,7 +184,7 @@ export const RegisterForm: React.FC = () => {
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   required
                   fullWidth
@@ -201,7 +199,7 @@ export const RegisterForm: React.FC = () => {
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   id="phoneNumber"
@@ -214,7 +212,7 @@ export const RegisterForm: React.FC = () => {
                   variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel id="role-label">Rolle</InputLabel>
                   <Select
@@ -232,7 +230,7 @@ export const RegisterForm: React.FC = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   required
                   fullWidth
@@ -248,7 +246,7 @@ export const RegisterForm: React.FC = () => {
                   helperText="Mindestens 8 Zeichen"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   required
                   fullWidth
@@ -289,7 +287,7 @@ export const RegisterForm: React.FC = () => {
             </Button>
 
             <Grid container justifyContent="center">
-              <Grid item>
+              <Grid size={{ xs: 12 }}>
                 <Link 
                   component={RouterLink} 
                   to="/login" 

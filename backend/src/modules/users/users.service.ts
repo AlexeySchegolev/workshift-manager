@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import {BadRequestException, Injectable, Logger, NotFoundException} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {In, Repository} from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {CreateUserDto} from './dto/create-user.dto';
+import {UpdateUserDto} from './dto/update-user.dto';
 import {User} from "@/database/entities/user.entity";
 import {Organization} from "@/database/entities/organization.entity";
 
@@ -96,8 +96,7 @@ export class UsersService {
 
     if (updateUserDto.password) {
       const saltRounds = 12;
-      const hashedPassword = await bcrypt.hash(updateUserDto.password, saltRounds);
-      (updateUserDto as any).passwordHash = hashedPassword;
+        (updateUserDto as any).passwordHash = await bcrypt.hash(updateUserDto.password, saltRounds);
       delete (updateUserDto as any).password;
     }
 

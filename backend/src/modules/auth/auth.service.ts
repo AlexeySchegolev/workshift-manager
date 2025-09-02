@@ -4,7 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { AuthResponseDto, AuthUserDto, RegisterResponseDto } from './dto/auth-response.dto';
-import { User, UserStatus, UserRole } from '../../database/entities/user.entity';
+import { User, UserStatus, UserRole } from '@/database/entities/user.entity';
 import { JwtPayload } from './strategies/jwt.strategy';
 
 @Injectable()

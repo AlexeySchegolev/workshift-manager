@@ -143,7 +143,7 @@ export const LoginForm: React.FC = () => {
             </Button>
 
             <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Link 
                   component={RouterLink} 
                   to="/register" 
@@ -153,7 +153,7 @@ export const LoginForm: React.FC = () => {
                   Noch kein Konto? Registrieren
                 </Link>
               </Grid>
-              <Grid item xs={12} sm={6} sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
+              <Grid size={{ xs: 12, sm: 6 }} sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
                 <Link 
                   component={RouterLink} 
                   to="/forgot-password" 

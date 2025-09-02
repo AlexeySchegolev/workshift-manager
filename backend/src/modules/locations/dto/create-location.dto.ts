@@ -1,7 +1,7 @@
 import { IsString, IsInt, IsOptional, IsEmail, IsBoolean, IsArray, ValidateNested, Min, Max, IsEnum, IsNumber, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {LocationStatus, OperatingHours, TimeSlot} from "@/database/entities/location.entity";
+import {OperatingHours, TimeSlot} from "@/database/entities/location.entity";
 
 class TimeSlotDto implements TimeSlot {
   @ApiProperty({ 
@@ -208,15 +208,6 @@ export class CreateLocationDto {
   @IsInt()
   @Min(0)
   currentCapacity?: number;
-
-  @ApiPropertyOptional({
-    description: 'Location status',
-    enum: LocationStatus,
-    example: LocationStatus.ACTIVE
-  })
-  @IsOptional()
-  @IsEnum(LocationStatus)
-  status?: LocationStatus;
 
 
 

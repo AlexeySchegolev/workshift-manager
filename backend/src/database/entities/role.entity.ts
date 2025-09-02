@@ -18,8 +18,6 @@ export class Role {
   @Column({ type: 'varchar', length: 500, nullable: true })
   description?: string;
 
-
-
   @Column({ name: 'hourly_rate', type: 'decimal', precision: 10, scale: 2, nullable: true })
   hourlyRate?: number;
 

@@ -53,7 +53,6 @@ export class Employee {
   @Column({ name: 'termination_date', type: 'date', nullable: true })
   terminationDate?: Date;
 
-
   @Column({
     name: 'contract_type',
     type: 'enum',
@@ -67,7 +66,6 @@ export class Employee {
 
   @Column({ name: 'max_consecutive_days', type: 'integer', default: 5 })
   maxConsecutiveDays: number;
-
 
   @Column({ name: 'saturday_availability', type: 'boolean', default: true })
   saturdayAvailability: boolean;
@@ -90,8 +88,6 @@ export class Employee {
   @Column({ name: 'primary_role_id', type: 'uuid', nullable: true })
   primaryRoleId?: string;
 
-
-
   @Column({ name: 'address', type: 'varchar', length: 500, nullable: true })
   address?: string;
 
@@ -103,7 +99,6 @@ export class Employee {
 
   @Column({ name: 'country', type: 'varchar', length: 100, nullable: true })
   country?: string;
-
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
@@ -128,8 +123,6 @@ export class Employee {
     inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' }
   })
   roles: Role[];
-
-
 
   @OneToMany(() => EmployeeAbsence, absence => absence.employee)
   absences: EmployeeAbsence[];

@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { EmployeeResponseDto } from '../../employees/dto/employee-response.dto';
 import { LocationStatsDto } from './location-stats.dto';
-import {LocationStatus} from "@/database/entities/location.entity";
 
 export interface TimeSlot {
   /** Start time in HH:MM format */
@@ -117,13 +116,6 @@ export class LocationResponseDto {
     minimum: 0,
   })
   currentCapacity: number;
-
-  @ApiProperty({
-    description: 'Location status',
-    enum: LocationStatus,
-    example: LocationStatus.ACTIVE
-  })
-  status: LocationStatus;
 
 
 

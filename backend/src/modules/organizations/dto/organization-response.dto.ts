@@ -7,21 +7,6 @@ export class OrganizationResponseDto {
   @ApiProperty({ description: 'Organization name', example: 'Dialyse Zentrum Berlin' })
   name: string;
 
-  @ApiPropertyOptional({ description: 'Legal organization name', example: 'Dialyse Zentrum Berlin GmbH' })
-  legalName?: string;
-
-  @ApiPropertyOptional({ description: 'Tax ID', example: 'DE123456789' })
-  taxId?: string;
-
-  @ApiPropertyOptional({ description: 'Registration number', example: 'HRB 12345' })
-  registrationNumber?: string;
-
-
-  @ApiPropertyOptional({ description: 'Description', example: 'Leading dialysis center in Berlin' })
-  description?: string;
-
-  @ApiPropertyOptional({ description: 'Website', example: 'https://www.dialyse-berlin.de' })
-  website?: string;
 
   @ApiPropertyOptional({ description: 'Primary email address', example: 'info@dialyse-berlin.de' })
   primaryEmail?: string;
@@ -41,26 +26,6 @@ export class OrganizationResponseDto {
   @ApiPropertyOptional({ description: 'Headquarters country', example: 'Germany' })
   headquartersCountry?: string;
 
-  @ApiPropertyOptional({ description: 'Logo URL', example: 'https://example.com/logo.png' })
-  logoUrl?: string;
-
-  @ApiProperty({ description: 'Subscription plan', example: 'basic' })
-  subscriptionPlan: string;
-
-  @ApiPropertyOptional({ description: 'Subscription expiration date', example: '2025-01-01T00:00:00Z' })
-  subscriptionExpiresAt?: Date;
-
-  @ApiProperty({ description: 'Maximum number of employees', example: 50 })
-  maxEmployees: number;
-
-  @ApiProperty({ description: 'Maximum number of locations', example: 5 })
-  maxLocations: number;
-
-  @ApiProperty({ description: 'Settings', example: { timezone: 'Europe/Berlin' } })
-  settings: Record<string, any>;
-
-  @ApiProperty({ description: 'Enabled features', example: ['shift-planning', 'reporting'] })
-  features: string[];
 
   @ApiProperty({ description: 'Is active', example: true })
   isActive: boolean;

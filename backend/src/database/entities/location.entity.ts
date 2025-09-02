@@ -27,12 +27,6 @@ export interface OperatingHours {
   sunday: TimeSlot[];
 }
 
-export enum LocationStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  MAINTENANCE = 'maintenance',
-  CLOSED = 'closed'
-}
 
 @Entity('locations')
 export class Location {
@@ -66,26 +60,14 @@ export class Location {
   @Column({ type: 'varchar', length: 100, default: 'Germany' })
   country: string;
 
-
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone?: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   email?: string;
 
-
-
   @Column({ name: 'current_capacity', type: 'integer', default: 0 })
   currentCapacity: number;
-
-  @Column({
-    type: 'enum',
-    enum: LocationStatus,
-    default: LocationStatus.ACTIVE,
-  })
-  status: LocationStatus;
-
-
 
   @Column({ 
     name: 'operating_hours',
@@ -101,7 +83,6 @@ export class Location {
     }
   })
   operatingHours: OperatingHours;
-
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;

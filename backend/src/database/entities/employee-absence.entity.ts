@@ -64,7 +64,6 @@ export class EmployeeAbsence {
     @JoinColumn({name: 'employee_id'})
     employee: Employee;
 
-
     // Audit fields
     @Column({name: 'created_by', type: 'uuid', nullable: true})
     createdBy?: string;

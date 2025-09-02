@@ -1,4 +1,4 @@
-import {LocationStatus, OperatingHours} from "@/database/entities/location.entity";
+import {OperatingHours} from "@/database/entities/location.entity";
 
 const standardOperatingHours: OperatingHours = {
   monday: [{ start: '06:00', end: '22:00' }],
@@ -33,7 +33,6 @@ export const locationsSeedData = [
     phone: '+49 89 4400-3301',
     email: 'dialyse.a@dialyse-praxis.de',
     currentCapacity: 0,
-    status: LocationStatus.ACTIVE,
     operatingHours: fullTimeOperatingHours,
     isActive: true,
     timezone: 'Europe/Berlin'
@@ -50,7 +49,6 @@ export const locationsSeedData = [
     phone: '+49 89 4400-2201',
     email: 'dialyse.b@dialyse-praxis.de',
     currentCapacity: 0,
-    status: LocationStatus.ACTIVE,
     operatingHours: fullTimeOperatingHours,
     isActive: true,
     timezone: 'Europe/Berlin'

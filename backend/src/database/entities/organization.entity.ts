@@ -14,21 +14,6 @@ export class Organization {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ name: 'legal_name', type: 'varchar', length: 255, nullable: true })
-  legalName?: string;
-
-  @Column({ name: 'tax_id', type: 'varchar', length: 50, nullable: true })
-  taxId?: string;
-
-  @Column({ name: 'registration_number', type: 'varchar', length: 100, nullable: true })
-  registrationNumber?: string;
-
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  description?: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  website?: string;
 
   @Column({ name: 'primary_email', type: 'varchar', length: 255, nullable: true })
   primaryEmail?: string;
@@ -48,32 +33,6 @@ export class Organization {
   @Column({ name: 'headquarters_country', type: 'varchar', length: 100, nullable: true })
   headquartersCountry?: string;
 
-  @Column({ name: 'logo_url', type: 'varchar', length: 500, nullable: true })
-  logoUrl?: string;
-
-  @Column({ name: 'subscription_plan', type: 'varchar', length: 50, default: 'basic' })
-  subscriptionPlan: string;
-
-  @Column({ name: 'subscription_expires_at', type: 'timestamp', nullable: true })
-  subscriptionExpiresAt?: Date;
-
-  @Column({ name: 'max_employees', type: 'integer', default: 50 })
-  maxEmployees: number;
-
-  @Column({ name: 'max_locations', type: 'integer', default: 5 })
-  maxLocations: number;
-
-  @Column({ 
-    type: 'jsonb',
-    default: {}
-  })
-  settings: Record<string, any>;
-
-  @Column({ 
-    type: 'jsonb',
-    default: []
-  })
-  features: string[];
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;

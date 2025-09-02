@@ -9,46 +9,6 @@ export class CreateOrganizationDto {
   @IsString()
   name: string;
 
-  @ApiPropertyOptional({
-    description: 'Legal organization name',
-    example: 'Dialyse Zentrum Berlin GmbH'
-  })
-  @IsOptional()
-  @IsString()
-  legalName?: string;
-
-  @ApiPropertyOptional({
-    description: 'Tax ID',
-    example: 'DE123456789'
-  })
-  @IsOptional()
-  @IsString()
-  taxId?: string;
-
-  @ApiPropertyOptional({
-    description: 'Registration number',
-    example: 'HRB 12345'
-  })
-  @IsOptional()
-  @IsString()
-  registrationNumber?: string;
-
-
-  @ApiPropertyOptional({
-    description: 'Organization description',
-    example: 'Leading dialysis center in Berlin with modern equipment'
-  })
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @ApiPropertyOptional({
-    description: 'Organization website',
-    example: 'https://www.dialyse-berlin.de'
-  })
-  @IsOptional()
-  @IsUrl()
-  website?: string;
 
   @ApiPropertyOptional({
     description: 'Primary email address',
@@ -98,54 +58,6 @@ export class CreateOrganizationDto {
   @IsString()
   headquartersCountry?: string;
 
-  @ApiPropertyOptional({
-    description: 'Logo URL',
-    example: 'https://example.com/logo.png'
-  })
-  @IsOptional()
-  @IsUrl()
-  logoUrl?: string;
-
-  @ApiPropertyOptional({
-    description: 'Subscription plan',
-    example: 'basic'
-  })
-  @IsOptional()
-  @IsString()
-  subscriptionPlan?: string;
-
-  @ApiPropertyOptional({
-    description: 'Maximum number of employees',
-    example: 50
-  })
-  @IsOptional()
-  @IsNumber()
-  maxEmployees?: number;
-
-  @ApiPropertyOptional({
-    description: 'Maximum number of locations',
-    example: 5
-  })
-  @IsOptional()
-  @IsNumber()
-  maxLocations?: number;
-
-  @ApiPropertyOptional({
-    description: 'Organization settings',
-    example: { timezone: 'Europe/Berlin', currency: 'EUR' }
-  })
-  @IsOptional()
-  @IsObject()
-  settings?: Record<string, any>;
-
-  @ApiPropertyOptional({
-    description: 'Enabled features',
-    example: ['shift-planning', 'reporting']
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  features?: string[];
 
   @ApiPropertyOptional({
     description: 'Organization is active',

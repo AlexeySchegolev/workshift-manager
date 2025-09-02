@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsEmail, IsUrl, IsNumber, IsBoolean, IsArray, IsObject } from 'class-validator';
+import { IsString, IsOptional, IsEmail, IsBoolean } from 'class-validator';
 
 export class CreateOrganizationDto {
   @ApiProperty({

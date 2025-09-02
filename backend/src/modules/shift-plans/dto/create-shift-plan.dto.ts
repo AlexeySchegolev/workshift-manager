@@ -1,6 +1,5 @@
-import { IsInt, IsOptional, IsBoolean, IsString, IsObject, Min, Max, IsUUID, IsDateString, IsNumber } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsObject, Min, Max, IsUUID, IsDateString, IsNumber } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {MonthlyShiftPlan} from "@/database/entities/shift-plan.entity";
 import {MonthlyShiftPlanDto} from "@/modules/shift-plans/dto/monthly-shift-plan.dto";
 
 export class CreateShiftPlanDto {

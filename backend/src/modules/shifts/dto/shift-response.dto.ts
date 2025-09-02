@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ShiftType } from '@/database/entities/shift.entity';
-import { ShiftRoleRequirementDto } from './shift-role-requirement.dto';
 import { RoleResponseDto } from '@/modules/roles/dto/role-response.dto';
 import { LocationResponseDto } from '@/modules/locations/dto/location-response.dto';
 import { OrganizationResponseDto } from '@/modules/organizations/dto/organization-response.dto';

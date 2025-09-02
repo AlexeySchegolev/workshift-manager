@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsOptional, IsEmail, IsBoolean, IsArray, ValidateNested, Min, Max, IsEnum, IsNumber, IsUUID } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsEmail, IsBoolean, IsArray, ValidateNested, Min, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {OperatingHours, TimeSlot} from "@/database/entities/location.entity";

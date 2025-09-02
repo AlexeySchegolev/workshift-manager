@@ -6,7 +6,6 @@ import {UpdateShiftPlanDto} from './dto/update-shift-plan.dto';
 import {ShiftPlan} from "@/database/entities/shift-plan.entity";
 import {Employee} from "@/database/entities/employee.entity";
 import {Organization} from "@/database/entities/organization.entity";
-import { toDateString } from '@/common/utils/date.utils';
 
 @Injectable()
 export class ShiftPlansService {

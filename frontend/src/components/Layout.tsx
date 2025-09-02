@@ -34,6 +34,7 @@ import {
   KeyboardArrowDown as ArrowDownIcon,
   WorkOutline as WorkIcon,
   GroupWork as GroupIcon,
+  EventBusy as EventBusyIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import UserInfo from './UserInfo';
@@ -79,6 +80,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { title: 'Schichten', path: '/shifts', icon: <ScheduleIcon />, description: 'Einzelne Schichten verwalten', category: 'shifts' },
     { title: 'Schichtkonfiguration', path: '/shift-rules', icon: <RuleIcon />, description: 'Konfiguration und Vorgaben für die Schichtplanung', category: 'shifts' },
     { title: 'Mitarbeiter', path: '/employees', icon: <PeopleIcon />, description: 'Mitarbeiterdaten verwalten', category: 'employees' },
+    { title: 'Abwesenheiten', path: '/absences', icon: <EventBusyIcon />, description: 'Mitarbeiterabwesenheiten verwalten', category: 'employees' },
     { title: 'Standorte', path: '/locations', icon: <BusinessIcon />, description: 'Standorte und Betriebsstätten verwalten', category: 'employees' },
     { title: 'Rollen', path: '/roles', icon: <AdminPanelSettingsIcon />, description: 'Rollen und Berechtigungen verwalten', category: 'employees' }
   ];

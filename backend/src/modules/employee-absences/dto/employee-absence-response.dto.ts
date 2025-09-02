@@ -63,7 +63,15 @@ export class EmployeeAbsenceResponseDto {
             firstName: { type: 'string' },
             lastName: { type: 'string' },
             employeeNumber: { type: 'string' },
-            email: { type: 'string', format: 'email' }
+            email: { type: 'string', format: 'email' },
+            primaryRole: {
+                type: 'object',
+                properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    name: { type: 'string' },
+                    displayName: { type: 'string' }
+                }
+            }
         }
     })
     employee?: {
@@ -72,5 +80,10 @@ export class EmployeeAbsenceResponseDto {
         lastName: string;
         employeeNumber: string;
         email: string;
+        primaryRole?: {
+            id: string;
+            name: string;
+            displayName: string;
+        };
     };
 }

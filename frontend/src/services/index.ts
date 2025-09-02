@@ -4,6 +4,7 @@
 export { BaseService } from './BaseService';
 export { LocationService } from './LocationService';
 export { EmployeeService } from './EmployeeService';
+export { EmployeeAbsenceService } from './EmployeeAbsenceService';
 export { RoleService } from './RoleService';
 export { ShiftRuleService } from './ShiftRuleService';
 export { ShiftService } from './ShiftService';
@@ -16,6 +17,7 @@ export { UserService } from './UserService';
 // These instances use the centralized base URL configuration from env.local
 import { LocationService } from './LocationService';
 import { EmployeeService } from './EmployeeService';
+import { EmployeeAbsenceService } from './EmployeeAbsenceService';
 import { RoleService } from './RoleService';
 import { ShiftRuleService } from './ShiftRuleService';
 import { ShiftService } from './ShiftService';
@@ -26,6 +28,7 @@ import { UserService } from './UserService';
 
 export const locationService = new LocationService();
 export const employeeService = new EmployeeService();
+export const employeeAbsenceService = new EmployeeAbsenceService();
 export const roleService = new RoleService();
 export const shiftRuleService = new ShiftRuleService();
 export const shiftService = new ShiftService();

@@ -92,6 +92,68 @@ export interface ConstraintViolationResponseDto {
   id: string;
 }
 
+export interface CreateEmployeeAbsenceDto {
+  /**
+   * Type of absence
+   * @example "vacation"
+   */
+  absenceType:
+    | "vacation"
+    | "sick_leave"
+    | "personal_leave"
+    | "maternity_leave"
+    | "paternity_leave"
+    | "unpaid_leave"
+    | "training"
+    | "conference"
+    | "bereavement"
+    | "jury_duty"
+    | "military_leave"
+    | "other";
+  /**
+   * Number of days for absence
+   * @example 3
+   */
+  daysCount: number;
+  /**
+   * Employee UUID
+   * @format uuid
+   */
+  employeeId: string;
+  /**
+   * End date of absence
+   * @format date
+   * @example "2025-09-17"
+   */
+  endDate: string;
+  /**
+   * Number of hours for absence
+   * @example 24
+   */
+  hoursCount?: number;
+  /**
+   * Whether absence is paid
+   * @default true
+   */
+  isPaid?: boolean;
+  /**
+   * Additional notes
+   * @example "Emergency contact available"
+   */
+  notes?: string;
+  /**
+   * Reason for absence
+   * @example "Family vacation"
+   */
+  reason?: string;
+  /**
+   * Start date of absence
+   * @format date
+   * @example "2025-09-15"
+   */
+  startDate: string;
+}
+
 export interface CreateEmployeeDto {
   /**
    * Address
@@ -1024,6 +1086,92 @@ export interface DateRangeDto {
    * @example "2024-12-01T00:00:00Z"
    */
   start: string;
+}
+
+export interface EmployeeAbsenceResponseDto {
+  /** Type of absence */
+  absenceType:
+    | "vacation"
+    | "sick_leave"
+    | "personal_leave"
+    | "maternity_leave"
+    | "paternity_leave"
+    | "unpaid_leave"
+    | "training"
+    | "conference"
+    | "bereavement"
+    | "jury_duty"
+    | "military_leave"
+    | "other";
+  /**
+   * Creation timestamp
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * UUID of creator
+   * @format uuid
+   */
+  createdBy?: string;
+  /** Number of days for absence */
+  daysCount: number;
+  /**
+   * Deletion timestamp
+   * @format date-time
+   */
+  deletedAt?: string;
+  /** Duration in days (calculated) */
+  duration: number;
+  /** Employee information */
+  employee?: {
+    /** @format email */
+    email?: string;
+    employeeNumber?: string;
+    firstName?: string;
+    /** @format uuid */
+    id?: string;
+    lastName?: string;
+  };
+  /**
+   * Employee UUID
+   * @format uuid
+   */
+  employeeId: string;
+  /**
+   * End date of absence
+   * @format date-time
+   */
+  endDate: string;
+  /** Number of hours for absence */
+  hoursCount?: number;
+  /**
+   * Absence UUID
+   * @format uuid
+   */
+  id: string;
+  /** Whether absence is currently active */
+  isActive: boolean;
+  /** Whether absence is paid */
+  isPaid: boolean;
+  /** Additional notes */
+  notes?: string;
+  /** Reason for absence */
+  reason?: string;
+  /**
+   * Start date of absence
+   * @format date-time
+   */
+  startDate: string;
+  /**
+   * Last update timestamp
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * UUID of last updater
+   * @format uuid
+   */
+  updatedBy?: string;
 }
 
 export interface EmployeeAvailabilityResponseDto {
@@ -2752,6 +2900,8 @@ export interface TimeSlotDto {
    */
   start: string;
 }
+
+export type UpdateEmployeeAbsenceDto = object;
 
 export interface UpdateEmployeeDto {
   /**

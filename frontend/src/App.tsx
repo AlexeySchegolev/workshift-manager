@@ -10,6 +10,7 @@ import EmployeePage from './pages/EmployeePage';
 import ShiftRulesPage from './pages/ShiftRulesPage';
 import LocationManagementPage from './pages/LocationManagementPage';
 import RoleManagementPage from './pages/RoleManagementPage';
+import AbsencesPage from './pages/AbsencesPage';
 import { extendedTheme } from './theme/extendedTheme';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -29,6 +30,7 @@ const App: React.FC = () => {
               <Route path="/shift-planning" element={<ShiftPlanningPage />} />
               <Route path="/shifts" element={<ShiftsPage />} />
               <Route path="/employees" element={<EmployeePage />} />
+              <Route path="/absences" element={<AbsencesPage />} />
               <Route path="/locations" element={<LocationManagementPage />} />
               <Route path="/roles" element={<RoleManagementPage />} />
               <Route path="/shift-rules" element={<ShiftRulesPage />} />

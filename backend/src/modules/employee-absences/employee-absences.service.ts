@@ -80,7 +80,7 @@ export class EmployeeAbsencesService {
 
         const absences = await this.absenceRepository.find({
             where,
-            relations: ['employee'],
+            relations: ['employee', 'employee.primaryRole'],
             order: { startDate: 'DESC' }
         });
 
@@ -90,7 +90,7 @@ export class EmployeeAbsencesService {
     async findOne(id: string): Promise<EmployeeAbsenceResponseDto> {
         const absence = await this.absenceRepository.findOne({
             where: { id },
-            relations: ['employee']
+            relations: ['employee', 'employee.primaryRole']
         });
 
         if (!absence) {
@@ -176,6 +176,11 @@ export class EmployeeAbsencesService {
                 lastName: absence.employee.lastName,
                 employeeNumber: absence.employee.employeeNumber,
                 email: absence.employee.email,
+                primaryRole: absence.employee.primaryRole ? {
+                    id: absence.employee.primaryRole.id,
+                    name: absence.employee.primaryRole.name,
+                    displayName: absence.employee.primaryRole.displayName,
+                } : undefined,
             };
         }
 

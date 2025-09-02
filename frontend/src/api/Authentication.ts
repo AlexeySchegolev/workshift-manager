@@ -23,7 +23,6 @@ import {
   AuthUserDto,
   ConstraintViolationDto,
   ConstraintViolationResponseDto,
-  CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
   CreateOrganizationDto,
@@ -32,7 +31,6 @@ import {
   CreateShiftRulesDto,
   CreateUserDto,
   DateRangeDto,
-  EmployeeAbsenceResponseDto,
   EmployeeAvailabilityResponseDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
@@ -55,7 +53,6 @@ import {
   ShiftRoleRequirementDto,
   ShiftRulesResponseDto,
   TimeSlotDto,
-  UpdateEmployeeAbsenceDto,
   UpdateEmployeeDto,
   UpdateLocationDto,
   UpdateOrganizationDto,
@@ -68,7 +65,7 @@ import {
   ValidateShiftPlanDto,
 } from "./data-contracts";
 
-export class Organizations<SecurityDataType = unknown> {
+export class Authentication<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -78,17 +75,30 @@ export class Organizations<SecurityDataType = unknown> {
   /**
    * No description
    *
-   * @tags organizations
-   * @name OrganizationsControllerCreate
-   * @summary Create a new organization
-   * @request POST:/api/organizations
+   * @tags Authentication
+   * @name AuthControllerGetProfile
+   * @summary Get current user profile
+   * @request GET:/auth/profile
+   * @secure
    */
-  organizationsControllerCreate = (
-    data: CreateOrganizationDto,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<OrganizationResponseDto, any>({
-      path: `/api/organizations`,
+  authControllerGetProfile = (params: RequestParams = {}) =>
+    this.http.request<AuthUserDto, void>({
+      path: `/auth/profile`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    }); /**
+   * No description
+   *
+   * @tags Authentication
+   * @name AuthControllerLogin
+   * @summary User login
+   * @request POST:/auth/login
+   */
+  authControllerLogin = (data: LoginDto, params: RequestParams = {}) =>
+    this.http.request<AuthResponseDto, void>({
+      path: `/auth/login`,
       method: "POST",
       body: data,
       type: ContentType.Json,
@@ -97,74 +107,30 @@ export class Organizations<SecurityDataType = unknown> {
     }); /**
    * No description
    *
-   * @tags organizations
-   * @name OrganizationsControllerFindAll
-   * @summary Get all organizations
-   * @request GET:/api/organizations
+   * @tags Authentication
+   * @name AuthControllerLogout
+   * @summary User logout
+   * @request POST:/auth/logout
+   * @secure
    */
-  organizationsControllerFindAll = (
-    query?: {
-      /** Include related entities */
-      includeRelations?: boolean;
-    },
-    params: RequestParams = {}
-  ) =>
-    this.http.request<OrganizationResponseDto[], any>({
-      path: `/api/organizations`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags organizations
-   * @name OrganizationsControllerFindOne
-   * @summary Get organization by ID
-   * @request GET:/api/organizations/{id}
-   */
-  organizationsControllerFindOne = (
-    id: string,
-    query?: {
-      includeRelations?: boolean;
-    },
-    params: RequestParams = {}
-  ) =>
-    this.http.request<OrganizationResponseDto, void>({
-      path: `/api/organizations/${id}`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags organizations
-   * @name OrganizationsControllerRemove
-   * @summary Delete organization by ID
-   * @request DELETE:/api/organizations/{id}
-   */
-  organizationsControllerRemove = (id: string, params: RequestParams = {}) =>
+  authControllerLogout = (params: RequestParams = {}) =>
     this.http.request<void, any>({
-      path: `/api/organizations/${id}`,
-      method: "DELETE",
+      path: `/auth/logout`,
+      method: "POST",
+      secure: true,
       ...params,
     }); /**
    * No description
    *
-   * @tags organizations
-   * @name OrganizationsControllerUpdate
-   * @summary Update organization by ID
-   * @request PATCH:/api/organizations/{id}
+   * @tags Authentication
+   * @name AuthControllerRegister
+   * @summary User registration
+   * @request POST:/auth/register
    */
-  organizationsControllerUpdate = (
-    id: string,
-    data: UpdateOrganizationDto,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<OrganizationResponseDto, any>({
-      path: `/api/organizations/${id}`,
-      method: "PATCH",
+  authControllerRegister = (data: RegisterDto, params: RequestParams = {}) =>
+    this.http.request<RegisterResponseDto, void>({
+      path: `/auth/register`,
+      method: "POST",
       body: data,
       type: ContentType.Json,
       format: "json",

@@ -30,6 +30,60 @@ export interface AdditionalColumnDto {
   width?: number;
 }
 
+export interface AuthResponseDto {
+  /**
+   * JWT access token
+   * @example "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+   */
+  access_token: string;
+  /** Authenticated user information */
+  user: AuthUserDto;
+}
+
+export interface AuthUserDto {
+  /**
+   * User email address
+   * @example "user@example.com"
+   */
+  email: string;
+  /**
+   * User first name
+   * @example "John"
+   */
+  firstName: string;
+  /**
+   * User unique identifier
+   * @example "uuid-123"
+   */
+  id: string;
+  /**
+   * User last name
+   * @example "Doe"
+   */
+  lastName: string;
+  /**
+   * User phone number
+   * @example "+1234567890"
+   */
+  phoneNumber?: string;
+  /**
+   * User profile picture URL
+   * @example "https://example.com/profile.jpg"
+   */
+  profilePictureUrl?: string;
+  /**
+   * User role in the system
+   * @example "employee"
+   */
+  role:
+    | "super_admin"
+    | "organization_admin"
+    | "manager"
+    | "planner"
+    | "employee"
+    | "viewer";
+}
+
 export interface ConstraintViolationDto {
   /** Whether violation can be automatically resolved */
   canAutoResolve?: boolean;
@@ -2082,6 +2136,19 @@ export interface LocationStatsDto {
   totalClients: number;
 }
 
+export interface LoginDto {
+  /**
+   * User email address
+   * @example "user@example.com"
+   */
+  email: string;
+  /**
+   * User password (minimum 8 characters)
+   * @example "password123"
+   */
+  password: string;
+}
+
 export type MonthlyShiftPlanDto = object;
 
 export interface OperatingHoursDto {
@@ -2263,6 +2330,60 @@ export interface OrganizationResponseDto {
    * @example "https://www.dialyse-berlin.de"
    */
   website?: string;
+}
+
+export interface RegisterDto {
+  /**
+   * User email address
+   * @example "user@example.com"
+   */
+  email: string;
+  /**
+   * User first name
+   * @example "John"
+   */
+  firstName: string;
+  /**
+   * User last name
+   * @example "Doe"
+   */
+  lastName: string;
+  /**
+   * Array of organization IDs the user should be associated with
+   * @example ["org-uuid-1","org-uuid-2"]
+   */
+  organizationIds?: string[];
+  /**
+   * User password (minimum 8 characters, must contain uppercase, lowercase, number, and special character)
+   * @example "Password123!"
+   */
+  password: string;
+  /**
+   * User phone number
+   * @example "+1234567890"
+   */
+  phoneNumber?: string;
+  /**
+   * User role in the system
+   * @example "employee"
+   */
+  role?:
+    | "super_admin"
+    | "organization_admin"
+    | "manager"
+    | "planner"
+    | "employee"
+    | "viewer";
+}
+
+export interface RegisterResponseDto {
+  /**
+   * Success message
+   * @example "User registered successfully"
+   */
+  message: string;
+  /** Created user information */
+  user: AuthUserDto;
 }
 
 export interface RoleResponseDto {

@@ -19,6 +19,8 @@ import {
 } from "./http-client";
 import {
   AdditionalColumnDto,
+  AuthResponseDto,
+  AuthUserDto,
   ConstraintViolationDto,
   ConstraintViolationResponseDto,
   CreateEmployeeAbsenceDto,
@@ -40,9 +42,12 @@ import {
   GenerateShiftPlanDto,
   LocationResponseDto,
   LocationStatsDto,
+  LoginDto,
   MonthlyShiftPlanDto,
   OperatingHoursDto,
   OrganizationResponseDto,
+  RegisterDto,
+  RegisterResponseDto,
   RoleResponseDto,
   ShiftAssignmentResponseDto,
   ShiftPlanResponseDto,

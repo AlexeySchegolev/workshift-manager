@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {User} from "@/database/entities/user.entity";
@@ -20,12 +21,21 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     this.logger.log(`Creating new user: ${createUserDto.email}`);
 
+    // Check if user with email already exists
+    const existingUser = await this.findByEmail(createUserDto.email, false);
+    if (existingUser) {
+      throw new BadRequestException('User with this email already exists');
+    }
+
+    // Hash password
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
+
     const user = this.userRepository.create({
       email: createUserDto.email,
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
-      // NOTE: In production, hash the password properly (e.g., bcrypt)
-      passwordHash: createUserDto.password,
+      passwordHash: hashedPassword,
       role: createUserDto.role,
       status: createUserDto.status,
       phoneNumber: createUserDto.phoneNumber,
@@ -67,13 +77,27 @@ export class UsersService {
     return user;
   }
 
+  async findByEmail(email: string, includeRelations: boolean = true): Promise<User | null> {
+    this.logger.log(`Retrieving user with email: ${email}`);
+    const options = includeRelations ? { where: { email }, relations: ['organizations'] } : { where: { email } };
+    return this.userRepository.findOne(options);
+  }
+
+  async updateLastLogin(id: string): Promise<void> {
+    this.logger.log(`Updating last login for user with ID: ${id}`);
+    await this.userRepository.update(id, { 
+      lastLoginAt: new Date() 
+    });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     this.logger.log(`Updating user with ID: ${id}`);
     const user = await this.findOne(id, false);
 
     if (updateUserDto.password) {
-      // NOTE: In production, hash the password properly (e.g., bcrypt)
-      (updateUserDto as any).passwordHash = updateUserDto.password;
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(updateUserDto.password, saltRounds);
+      (updateUserDto as any).passwordHash = hashedPassword;
       delete (updateUserDto as any).password;
     }
 

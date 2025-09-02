@@ -1,13 +1,9 @@
-import { OrganizationType, OrganizationStatus } from '../../entities/organization.entity';
-
 export const organizationsSeedData = [
   {
     name: 'Dialyse Praxis',
     legalName: 'Dialyse Praxis GmbH',
     taxId: 'DE123456789',
     registrationNumber: 'HRB 123456',
-    type: OrganizationType.MEDICAL_CENTER,
-    status: OrganizationStatus.ACTIVE,
     description: 'Spezialisierte Dialyse-Praxis mit modernster Ausstattung und erfahrenem Personal',
     website: 'https://www.dialyse-praxis.de',
     primaryEmail: 'info@dialyse-praxis.de',

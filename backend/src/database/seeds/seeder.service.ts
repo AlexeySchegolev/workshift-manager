@@ -10,8 +10,6 @@ import {Role} from "@/database/entities/role.entity";
 import {Employee} from "@/database/entities/employee.entity";
 import {employeesSeedData} from "@/database/seeds/data/employees.seed";
 import {locationsSeedData} from "@/database/seeds/data/locations.seed";
-import {ShiftRules} from "@/database/entities/shift-rules.entity";
-import {shiftRulesSeedData} from "@/database/seeds/data/shift-rules.seed";
 import {usersSeedData} from "@/database/seeds/data/users.seed";
 import {rolesSeedData} from "@/database/seeds/data/roles.seed";
 import {shiftsSeedData} from "@/database/seeds/data/shifts.seed";
@@ -41,7 +39,6 @@ export class SeederService {
             const roles = await this.seedRoles(organization);
             const locations = await this.seedLocations(organization);
             const employees = await this.seedEmployees(organization, roles, locations);
-            await this.seedShiftRules();
             await this.seedShifts(organization, locations);
             await this.seedEmployeeAbsences(employees);
 
@@ -57,8 +54,6 @@ export class SeederService {
 
         try {
             // Order is important due to Foreign Key Constraints
-            await this.dataSource.query('TRUNCATE TABLE shift_assignments CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE constraint_violations CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shift_plans CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shift_required_roles CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shifts CASCADE');
@@ -70,7 +65,6 @@ export class SeederService {
             await this.dataSource.query('TRUNCATE TABLE user_organizations CASCADE');
             await this.dataSource.query('TRUNCATE TABLE users CASCADE');
             await this.dataSource.query('TRUNCATE TABLE organizations CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE shift_rules CASCADE');
 
             this.logger.log('✅ Database cleared successfully');
         } catch (error) {
@@ -190,19 +184,6 @@ export class SeederService {
         }
     }
 
-    private async seedShiftRules(): Promise<void> {
-        this.logger.log('📋 Adding shift rules...');
-
-        try {
-            const shiftRulesRepo = this.dataSource.getRepository(ShiftRules);
-            const shiftRules = await shiftRulesRepo.save(shiftRulesSeedData);
-
-            this.logger.log(`✅ ${shiftRules.length} shift rules added successfully`);
-        } catch (error) {
-            this.logger.error('❌ Error adding shift rules:', error);
-            throw error;
-        }
-    }
 
     private async seedShifts(organization: Organization, locations: Location[]): Promise<void> {
         this.logger.log('⏰ Adding shifts...');
@@ -262,7 +243,6 @@ export class SeederService {
         locations: number;
         employees: number;
         employeeAbsences: number;
-        shiftRules: number;
         shifts: number;
     }> {
         const organizationRepo = this.dataSource.getRepository(Organization);
@@ -271,20 +251,18 @@ export class SeederService {
         const locationRepo = this.dataSource.getRepository(Location);
         const employeeRepo = this.dataSource.getRepository(Employee);
         const absenceRepo = this.dataSource.getRepository(EmployeeAbsence);
-        const shiftRulesRepo = this.dataSource.getRepository(ShiftRules);
         const shiftRepo = this.dataSource.getRepository(Shift);
 
-        const [organizations, users, roles, locations, employees, employeeAbsences, shiftRules, shifts] = await Promise.all([
+        const [organizations, users, roles, locations, employees, employeeAbsences, shifts] = await Promise.all([
             organizationRepo.count(),
             userRepo.count(),
             roleRepo.count(),
             locationRepo.count(),
             employeeRepo.count(),
             absenceRepo.count(),
-            shiftRulesRepo.count(),
             shiftRepo.count(),
         ]);
 
-        return {organizations, users, roles, locations, employees, employeeAbsences, shiftRules, shifts};
+        return {organizations, users, roles, locations, employees, employeeAbsences, shifts};
     }
 }

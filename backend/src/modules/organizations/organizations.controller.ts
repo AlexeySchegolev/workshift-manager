@@ -18,8 +18,6 @@ export class OrganizationsController {
       legalName: org.legalName,
       taxId: org.taxId,
       registrationNumber: org.registrationNumber,
-      type: org.type,
-      status: org.status,
       description: org.description,
       website: org.website,
       primaryEmail: org.primaryEmail,

@@ -1,12 +1,9 @@
-import {RoleStatus, RoleType} from "@/database/entities/role.entity";
 
 export const rolesSeedData = [
   {
     organizationId: '1', // Will be replaced with actual organization ID during seeding
     name: 'Schichtleiter',
     description: 'Leitung der Schicht und Koordination des Teams',
-    type: RoleType.SHIFT_LEADER,
-    status: RoleStatus.ACTIVE,
     hourlyRate: 32.00,
     overtimeRate: 40.00,
     minExperienceMonths: 36,
@@ -57,8 +54,6 @@ export const rolesSeedData = [
     organizationId: '1',
     name: 'Krankenpfleger',
     description: 'Qualifizierte Krankenpflege und Patientenbetreuung',
-    type: RoleType.NURSE,
-    status: RoleStatus.ACTIVE,
     hourlyRate: 28.50,
     overtimeRate: 35.60,
     minExperienceMonths: 24,
@@ -106,8 +101,6 @@ export const rolesSeedData = [
     organizationId: '1',
     name: 'Pflegerassistent',
     description: 'Unterstützung bei der Patientenbetreuung und pflegerischen Tätigkeiten',
-    type: RoleType.ASSISTANT,
-    status: RoleStatus.ACTIVE,
     hourlyRate: 18.50,
     overtimeRate: 23.10,
     minExperienceMonths: 6,

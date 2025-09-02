@@ -1,23 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {MonthlyShiftPlanDto} from "@/modules/shift-plans/dto/monthly-shift-plan.dto";
 
-export class ShiftAssignmentResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the shift assignment',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-    format: 'uuid',
-  })
-  id: string;
-}
-
-export class ConstraintViolationResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the constraint violation',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-    format: 'uuid',
-  })
-  id: string;
-}
 
 export class ShiftPlanResponseDto {
   @ApiProperty({
@@ -74,17 +57,6 @@ export class ShiftPlanResponseDto {
   })
   createdBy?: string;
 
-  @ApiProperty({
-    description: 'Shift assignments for this plan',
-    type: () => [ShiftAssignmentResponseDto],
-  })
-  assignments: ShiftAssignmentResponseDto[];
-
-  @ApiProperty({
-    description: 'Constraint violations for this plan',
-    type: () => [ConstraintViolationResponseDto],
-  })
-  violations: ConstraintViolationResponseDto[];
 
   @ApiProperty({
     description: 'Date when the shift plan was created',

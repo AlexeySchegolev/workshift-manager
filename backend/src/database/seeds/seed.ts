@@ -18,7 +18,6 @@ async function runSeed() {
     logger.log(`📊 Seeding-Zusammenfassung:`);
     logger.log(`   • Standorte: ${summary.locations}`);
     logger.log(`   • Mitarbeiter: ${summary.employees}`);
-    logger.log(`   • Schichtregeln: ${summary.shiftRules}`);
     
     await app.close();
     logger.log('✅ Manuelles Database Seeding erfolgreich abgeschlossen!');

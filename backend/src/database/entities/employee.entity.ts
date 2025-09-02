@@ -13,27 +13,12 @@ import {
 import {Organization} from './organization.entity';
 import {Location} from './location.entity';
 import {Role} from './role.entity';
-import {ShiftAssignment} from './shift-assignment.entity';
-import {EmployeeAvailability} from './employee-availability.entity';
-import {ShiftPreference} from './shift-preference.entity';
-import {WorkTimeConstraint} from './work-time-constraint.entity';
-import {ShiftPlanningAvailability} from './shift-planning-availability.entity';
 import {EmployeeAbsence} from './employee-absence.entity';
 
-export enum EmployeeStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  ON_LEAVE = 'on_leave',
-  TERMINATED = 'terminated',
-  SUSPENDED = 'suspended'
-}
 
 export enum ContractType {
   FULL_TIME = 'full_time',
   PART_TIME = 'part_time',
-  CONTRACT = 'contract',
-  TEMPORARY = 'temporary',
-  INTERN = 'intern'
 }
 
 @Entity('employees')
@@ -68,12 +53,6 @@ export class Employee {
   @Column({ name: 'termination_date', type: 'date', nullable: true })
   terminationDate?: Date;
 
-  @Column({
-    type: 'enum',
-    enum: EmployeeStatus,
-    default: EmployeeStatus.ACTIVE,
-  })
-  status: EmployeeStatus;
 
   @Column({
     name: 'contract_type',
@@ -192,20 +171,6 @@ export class Employee {
   @OneToMany(() => Employee, employee => employee.supervisor)
   subordinates: Employee[];
 
-  @OneToMany(() => ShiftAssignment, assignment => assignment.employee)
-  shiftAssignments: ShiftAssignment[];
-
-  @OneToMany(() => EmployeeAvailability, availability => availability.employee)
-  availabilities: EmployeeAvailability[];
-
-  @OneToMany(() => ShiftPreference, preference => preference.employee)
-  shiftPreferences: ShiftPreference[];
-
-  @OneToMany(() => WorkTimeConstraint, constraint => constraint.employee)
-  workTimeConstraints: WorkTimeConstraint[];
-
-  @OneToMany(() => ShiftPlanningAvailability, availability => availability.employee)
-  shiftPlanningAvailabilities: ShiftPlanningAvailability[];
 
   @OneToMany(() => EmployeeAbsence, absence => absence.employee)
   absences: EmployeeAbsence[];
@@ -236,7 +201,7 @@ export class Employee {
   }
 
   get isAvailable(): boolean {
-    return this.isActive && this.status === EmployeeStatus.ACTIVE;
+    return this.isActive;
   }
 
   get yearsOfService(): number {

@@ -57,14 +57,6 @@ export class ExcelExportOptionsDto {
   @IsBoolean()
   includeStatistics?: boolean;
 
-  @ApiPropertyOptional({
-    description: 'Include constraint violations in export',
-    example: true,
-    default: false
-  })
-  @IsOptional()
-  @IsBoolean()
-  includeConstraintViolations?: boolean;
 
   @ApiPropertyOptional({
     description: 'Include detailed employee information',

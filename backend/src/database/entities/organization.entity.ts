@@ -5,21 +5,6 @@ import { Location } from './location.entity';
 import { ShiftPlan } from './shift-plan.entity';
 import { Role } from './role.entity';
 
-export enum OrganizationType {
-  HOSPITAL = 'hospital',
-  CLINIC = 'clinic',
-  NURSING_HOME = 'nursing_home',
-  MEDICAL_CENTER = 'medical_center',
-  PHARMACY = 'pharmacy',
-  OTHER = 'other'
-}
-
-export enum OrganizationStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
-  TRIAL = 'trial'
-}
 
 @Entity('organizations')
 export class Organization {
@@ -38,19 +23,6 @@ export class Organization {
   @Column({ name: 'registration_number', type: 'varchar', length: 100, nullable: true })
   registrationNumber?: string;
 
-  @Column({
-    type: 'enum',
-    enum: OrganizationType,
-    default: OrganizationType.OTHER,
-  })
-  type: OrganizationType;
-
-  @Column({
-    type: 'enum',
-    enum: OrganizationStatus,
-    default: OrganizationStatus.TRIAL,
-  })
-  status: OrganizationStatus;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   description?: string;

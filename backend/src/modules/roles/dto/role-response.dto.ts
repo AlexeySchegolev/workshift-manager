@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { RoleType, RoleStatus } from '@/database/entities/role.entity';
 
 export class RoleResponseDto {
   @ApiProperty({ 
@@ -26,19 +25,7 @@ export class RoleResponseDto {
   })
   description?: string;
 
-  @ApiProperty({ 
-    description: 'Role type', 
-    enum: RoleType, 
-    example: RoleType.SPECIALIST 
-  })
-  type: RoleType;
 
-  @ApiProperty({ 
-    description: 'Role status', 
-    enum: RoleStatus, 
-    example: RoleStatus.ACTIVE 
-  })
-  status: RoleStatus;
 
   @ApiPropertyOptional({ 
     description: 'Hourly rate in Euro', 

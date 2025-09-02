@@ -1,8 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { LocationResponseDto } from '../../locations/dto/location-response.dto';
 import { RoleResponseDto } from '../../roles/dto/role-response.dto';
-import { EmployeeAvailabilityResponseDto } from './employee-availability-response.dto';
-import {ContractType, EmployeeStatus} from "@/database/entities/employee.entity";
+import {ContractType} from "@/database/entities/employee.entity";
 
 export class EmployeeResponseDto {
   @ApiProperty({
@@ -77,12 +76,6 @@ export class EmployeeResponseDto {
   })
   terminationDate?: Date;
 
-  @ApiProperty({
-    description: 'Employee status',
-    enum: EmployeeStatus,
-    example: EmployeeStatus.ACTIVE
-  })
-  status: EmployeeStatus;
 
   @ApiProperty({
     description: 'Contract type',
@@ -278,9 +271,4 @@ export class EmployeeResponseDto {
   })
   subordinates?: EmployeeResponseDto[];
 
-  @ApiPropertyOptional({
-    description: 'Employee availability information',
-    type: () => [EmployeeAvailabilityResponseDto]
-  })
-  availabilities?: EmployeeAvailabilityResponseDto[];
 }

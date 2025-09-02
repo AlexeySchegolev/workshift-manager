@@ -1,15 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Organization } from './organization.entity';
 import { ShiftPlan } from './shift-plan.entity';
-import { ConstraintViolation } from './constraint-violation.entity';
 
 export enum UserRole {
   SUPER_ADMIN = 'super_admin',
   ORGANIZATION_ADMIN = 'organization_admin',
-  MANAGER = 'manager',
-  PLANNER = 'planner',
-  EMPLOYEE = 'employee',
-  VIEWER = 'viewer'
+  EMPLOYEE = 'employee'
 }
 
 export enum UserStatus {
@@ -101,8 +97,6 @@ export class User {
   @OneToMany(() => ShiftPlan, shiftPlan => shiftPlan.createdByUser)
   createdShiftPlans: ShiftPlan[];
 
-  @OneToMany(() => ConstraintViolation, violation => violation.resolvedByUser)
-  resolvedViolations: ConstraintViolation[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

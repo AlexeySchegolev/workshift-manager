@@ -10,7 +10,6 @@ import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from "@/database/entities/shi
 
 export interface ExcelExportOptions {
   includeStatistics?: boolean;
-  includeConstraintViolations?: boolean;
   includeEmployeeDetails?: boolean;
   customTitle?: string;
   companyLogo?: string;
@@ -302,7 +301,7 @@ export class ExcelExportService {
       worksheet.getCell(`D${row}`).value = employee.location?.name || 'N/A';
       worksheet.getCell(`E${row}`).value = employee.hoursPerMonth;
       worksheet.getCell(`F${row}`).value = employee.contractType;
-      worksheet.getCell(`G${row}`).value = employee.status;
+      worksheet.getCell(`G${row}`).value = employee.isActive ? 'Aktiv' : 'Inaktiv';
       worksheet.getCell(`H${row}`).value = employee.saturdayAvailability ? 'Ja' : 'Nein';
       worksheet.getCell(`I${row}`).value = employee.sundayAvailability ? 'Ja' : 'Nein';
     });

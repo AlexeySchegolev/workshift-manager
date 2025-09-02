@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsEnum, IsOptional, IsNumber, IsBoolean, IsArray, IsUUID, Min, Max, Length } from 'class-validator';
-import {RoleStatus, RoleType} from "@/database/entities/role.entity";
+import { IsString, IsOptional, IsNumber, IsBoolean, IsArray, IsUUID, Min, Max, Length } from 'class-validator';
 
 export class CreateRoleDto {
   @ApiProperty({
@@ -27,22 +26,7 @@ export class CreateRoleDto {
   @Length(0, 500)
   description?: string;
 
-  @ApiProperty({
-    description: 'Role type',
-    enum: RoleType,
-    example: RoleType.SPECIALIST
-  })
-  @IsEnum(RoleType)
-  type: RoleType;
 
-  @ApiPropertyOptional({
-    description: 'Role status',
-    enum: RoleStatus,
-    example: RoleStatus.ACTIVE
-  })
-  @IsOptional()
-  @IsEnum(RoleStatus)
-  status?: RoleStatus;
 
   @ApiPropertyOptional({
     description: 'Hourly rate in Euro',

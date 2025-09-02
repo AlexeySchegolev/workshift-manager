@@ -21,7 +21,6 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import {ShiftPlansService} from './shift-plans.service';
-import {GenerateShiftPlanDto, ValidateShiftPlanDto} from './dto/create-shift-plan.dto';
 import {UpdateShiftPlanDto} from './dto/update-shift-plan.dto';
 import {ShiftPlanResponseDto} from './dto/shift-plan-response.dto';
 import {ExcelExportService} from './services/excel-export.service';
@@ -35,53 +34,7 @@ export class ShiftPlansController {
     private readonly excelExportService: ExcelExportService,
   ) {}
 
-  @Post('generate')
-  @ApiOperation({ 
-    summary: 'Generate a shift plan automatically',
-    description: 'Automatically generates a shift plan using algorithms and shift rules'
-  })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'Shift plan generated successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        shiftPlan: { $ref: '#/components/schemas/ShiftPlan' },
-        statistics: { type: 'object' },
-        violations: { type: 'array', items: { $ref: '#/components/schemas/ConstraintViolation' } }
-      }
-    }
-  })
-  @ApiBadRequestResponse({ 
-    description: 'Invalid generation parameters or no active shift rules found'
-  })
-  async generate(@Body() generateShiftPlanDto: GenerateShiftPlanDto) {
-    return this.shiftPlansService.generateShiftPlan(generateShiftPlanDto);
-  }
 
-  @Post('validate')
-  @ApiOperation({ 
-    summary: 'Validate a shift plan',
-    description: 'Validates a shift plan against current shift rules and constraints'
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Validation completed',
-    schema: {
-      type: 'object',
-      properties: {
-        isValid: { type: 'boolean' },
-        violations: { type: 'array', items: { $ref: '#/components/schemas/ConstraintViolation' } },
-        statistics: { type: 'object' }
-      }
-    }
-  })
-  @ApiBadRequestResponse({ 
-    description: 'Invalid validation parameters'
-  })
-  async validate(@Body() validateShiftPlanDto: ValidateShiftPlanDto) {
-    return this.shiftPlansService.validateShiftPlan(validateShiftPlanDto);
-  }
 
   @Get()
   @ApiOperation({ 
@@ -92,7 +45,7 @@ export class ShiftPlansController {
     name: 'includeRelations',
     required: false,
     type: Boolean,
-    description: 'Include assignments and violations in response'
+    description: 'Include additional relation data in response'
   })
   @ApiResponse({ 
     status: 200, 
@@ -121,7 +74,7 @@ export class ShiftPlansController {
     name: 'includeRelations',
     required: false,
     type: Boolean,
-    description: 'Include assignments and violations in response'
+    description: 'Include additional relation data in response'
   })
   @ApiResponse({ 
     status: 200, 

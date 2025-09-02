@@ -2,10 +2,6 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { Organization } from './organization.entity';
 import { User } from './user.entity';
 import { Shift } from './shift.entity';
-import { ShiftAssignment } from './shift-assignment.entity';
-import { ConstraintViolation } from './constraint-violation.entity';
-import { ShiftPlanningAvailability } from './shift-planning-availability.entity';
-import { PlanningStatistics } from './planning-statistics.entity';
 
 export interface DayShiftPlan {
   /** Shift name mapped to array of employee IDs */
@@ -17,22 +13,6 @@ export interface MonthlyShiftPlan {
   [dateKey: string]: DayShiftPlan | null;
 }
 
-export enum ShiftPlanStatus {
-  DRAFT = 'draft',
-  IN_REVIEW = 'in_review',
-  APPROVED = 'approved',
-  PUBLISHED = 'published',
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
-}
-
-export enum ApprovalStatus {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
-  NEEDS_REVISION = 'needs_revision'
-}
 
 @Entity('shift_plans')
 export class ShiftPlan {
@@ -60,20 +40,6 @@ export class ShiftPlan {
   @Column({ name: 'planning_period_end', type: 'date' })
   planningPeriodEnd: Date;
 
-  @Column({
-    type: 'enum',
-    enum: ShiftPlanStatus,
-    default: ShiftPlanStatus.DRAFT,
-  })
-  status: ShiftPlanStatus;
-
-  @Column({
-    name: 'approval_status',
-    type: 'enum',
-    enum: ApprovalStatus,
-    default: ApprovalStatus.PENDING,
-  })
-  approvalStatus: ApprovalStatus;
 
   @Column({
     name: 'plan_data',
@@ -101,8 +67,6 @@ export class ShiftPlan {
   @Column({ name: 'coverage_percentage', type: 'decimal', precision: 5, scale: 2, default: 0 })
   coveragePercentage: number;
 
-  @Column({ name: 'constraint_violations', type: 'integer', default: 0 })
-  constraintViolations: number;
 
   @Column({ name: 'is_published', type: 'boolean', default: false })
   isPublished: boolean;
@@ -198,17 +162,6 @@ export class ShiftPlan {
   @OneToMany(() => Shift, shift => shift.shiftPlan)
   shifts: Shift[];
 
-  @OneToMany(() => ShiftAssignment, assignment => assignment.shiftPlan)
-  assignments: ShiftAssignment[];
-
-  @OneToMany(() => ConstraintViolation, violation => violation.shiftPlan)
-  violations: ConstraintViolation[];
-
-  @OneToMany(() => ShiftPlanningAvailability, availability => availability.shiftPlan)
-  shiftPlanningAvailabilities: ShiftPlanningAvailability[];
-
-  @OneToMany(() => PlanningStatistics, statistics => statistics.shiftPlan)
-  planningStatisticsRecords: PlanningStatistics[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -220,6 +173,6 @@ export class ShiftPlan {
   deletedAt?: Date;
 
   get isActive(): boolean {
-    return this.status === ShiftPlanStatus.ACTIVE && !this.deletedAt;
+    return !this.deletedAt;
   }
 }

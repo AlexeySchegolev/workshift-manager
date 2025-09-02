@@ -57,7 +57,7 @@ export class EmployeesController {
     name: 'includeRelations',
     required: false,
     type: Boolean,
-    description: 'Include location and shift assignment relations'
+    description: 'Include location and role relations'
   })
   @ApiResponse({ 
     status: 200, 
@@ -86,7 +86,7 @@ export class EmployeesController {
     name: 'includeRelations',
     required: false,
     type: Boolean,
-    description: 'Include location and shift assignment relations'
+    description: 'Include location and role relations'
   })
   @ApiResponse({ 
     status: 200, 

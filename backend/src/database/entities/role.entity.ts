@@ -3,26 +3,6 @@ import { Organization } from './organization.entity';
 import { Employee } from './employee.entity';
 import { Shift } from './shift.entity';
 
-export enum RoleType {
-  SPECIALIST = 'specialist',
-  ASSISTANT = 'assistant',
-  SHIFT_LEADER = 'shift_leader',
-  NURSE = 'nurse',
-  NURSE_MANAGER = 'nurse_manager',
-  HELPER = 'helper',
-  DOCTOR = 'doctor',
-  TECHNICIAN = 'technician',
-  ADMINISTRATOR = 'administrator',
-  CLEANER = 'cleaner',
-  SECURITY = 'security',
-  OTHER = 'other'
-}
-
-export enum RoleStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DEPRECATED = 'deprecated'
-}
 
 @Entity('roles')
 export class Role {
@@ -38,19 +18,7 @@ export class Role {
   @Column({ type: 'varchar', length: 500, nullable: true })
   description?: string;
 
-  @Column({
-    type: 'enum',
-    enum: RoleType,
-    default: RoleType.OTHER,
-  })
-  type: RoleType;
 
-  @Column({
-    type: 'enum',
-    enum: RoleStatus,
-    default: RoleStatus.ACTIVE,
-  })
-  status: RoleStatus;
 
   @Column({ name: 'hourly_rate', type: 'decimal', precision: 10, scale: 2, nullable: true })
   hourlyRate?: number;
@@ -141,10 +109,10 @@ export class Role {
 
   // Virtual fields
   get isAvailable(): boolean {
-    return this.status === RoleStatus.ACTIVE && this.isActive && !this.deletedAt;
+    return this.isActive && !this.deletedAt;
   }
 
   get displayName(): string {
-    return `${this.name} (${this.type})`;
+    return this.name;
   }
 }

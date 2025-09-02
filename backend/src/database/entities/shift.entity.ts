@@ -3,8 +3,6 @@ import { Organization } from './organization.entity';
 import { Location } from './location.entity';
 import { Role } from './role.entity';
 import { ShiftPlan } from './shift-plan.entity';
-import { ShiftAssignment } from './shift-assignment.entity';
-import { ShiftConstraint } from './shift-constraint.entity';
 
 export enum ShiftType {
   MORNING = 'morning',
@@ -184,11 +182,6 @@ export class Shift {
   })
   requiredRoles: Role[];
 
-  @OneToMany(() => ShiftAssignment, assignment => assignment.shift)
-  assignments: ShiftAssignment[];
-
-  @OneToMany(() => ShiftConstraint, constraint => constraint.shift)
-  constraints: ShiftConstraint[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

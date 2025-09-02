@@ -66,11 +66,7 @@ export class EmployeesService {
         'primaryRole',
         'roles', 
         'supervisor',
-        'subordinates',
-        'shiftAssignments',
-        'availabilities',
-        'shiftPreferences',
-        'workTimeConstraints'
+        'subordinates'
       ]
     } : {};
 
@@ -88,11 +84,7 @@ export class EmployeesService {
         'primaryRole',
         'roles', 
         'supervisor',
-        'subordinates',
-        'shiftAssignments',
-        'availabilities',
-        'shiftPreferences',
-        'workTimeConstraints'
+        'subordinates'
       ]
     } : { where: { id } };
 

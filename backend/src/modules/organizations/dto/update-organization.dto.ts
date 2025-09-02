@@ -1,6 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsEnum, IsOptional, IsEmail, IsUrl, IsNumber, IsBoolean, IsArray, IsObject } from 'class-validator';
-import {OrganizationStatus, OrganizationType} from "@/database/entities/organization.entity";
+import { IsString, IsOptional, IsEmail, IsUrl, IsNumber, IsBoolean, IsArray, IsObject } from 'class-validator';
 
 export class UpdateOrganizationDto {
   @ApiPropertyOptional({ description: 'Organization name', example: 'Dialyse Zentrum Berlin' })
@@ -23,15 +22,6 @@ export class UpdateOrganizationDto {
   @IsString()
   registrationNumber?: string;
 
-  @ApiPropertyOptional({ description: 'Organization type', enum: OrganizationType, example: OrganizationType.MEDICAL_CENTER })
-  @IsOptional()
-  @IsEnum(OrganizationType)
-  type?: OrganizationType;
-
-  @ApiPropertyOptional({ description: 'Organization status', enum: OrganizationStatus, example: OrganizationStatus.ACTIVE })
-  @IsOptional()
-  @IsEnum(OrganizationStatus)
-  status?: OrganizationStatus;
 
   @ApiPropertyOptional({ description: 'Organization description', example: 'Leading dialysis center in Berlin' })
   @IsOptional()

@@ -17,8 +17,6 @@ export class RolesController {
       organizationId: role.organizationId,
       name: role.name,
       description: role.description,
-      type: role.type,
-      status: role.status,
       hourlyRate: role.hourlyRate,
       overtimeRate: role.overtimeRate,
       minExperienceMonths: role.minExperienceMonths,

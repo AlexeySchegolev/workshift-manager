@@ -28,17 +28,6 @@ export const formatShiftStatus = (status: string): string => {
 };
 
 // Shift Priority Formatting
-export const formatShiftPriority = (priority: number): string => {
-  const priorityMap: Record<number, string> = {
-    1: 'Niedrig',
-    2: 'Normal',
-    3: 'Hoch',
-    4: 'Kritisch',
-    5: 'Notfall',
-  };
-  return priorityMap[priority] || 'Normal';
-};
-
 // Color functions
 export const getShiftTypeColor = (type: string): string => {
   const colorMap: Record<string, string> = {
@@ -64,18 +53,6 @@ export const getShiftStatusColor = (status: string): string => {
   };
   return colorMap[status] || '#757575';
 };
-
-export const getShiftPriorityColor = (priority: number): string => {
-  const colorMap: Record<number, string> = {
-    1: '#4CAF50',
-    2: '#2196F3',
-    3: '#FF9800',
-    4: '#FF5722',
-    5: '#F44336',
-  };
-  return colorMap[priority] || '#2196F3';
-};
-
 // Validation functions
 export const validateShiftTime = (startTime: string, endTime: string): boolean => {
   if (!startTime || !endTime) return false;
@@ -108,81 +85,10 @@ export const calculateShiftDuration = (startTime: string, endTime: string, break
   return Math.max(0, durationHours - (breakDuration / 60));
 };
 
-// Staffing functions
-export const getStaffingStatus = (shift: ShiftResponseDto): 'understaffed' | 'adequate' | 'overstaffed' => {
-  if (shift.currentEmployees < shift.minEmployees) return 'understaffed';
-  if (shift.currentEmployees > shift.maxEmployees) return 'overstaffed';
-  return 'adequate';
-};
-
-export const getStaffingStatusColor = (status: 'understaffed' | 'adequate' | 'overstaffed'): string => {
-  const colorMap = {
-    understaffed: '#F44336',
-    adequate: '#4CAF50',
-    overstaffed: '#FF9800',
-  };
-  return colorMap[status];
-};
-
 // Date functions
-export const formatShiftDate = (date: string): string => {
-  return new Date(date).toLocaleDateString('de-DE', {
-    weekday: 'short',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-};
-
 export const isWeekend = (date: string): boolean => {
   const day = new Date(date).getDay();
   return day === 0 || day === 6; // Sunday or Saturday
-};
-
-export const isToday = (date: string): boolean => {
-  const today = new Date();
-  const shiftDate = new Date(date);
-  return today.toDateString() === shiftDate.toDateString();
-};
-
-// Sorting functions
-export const sortShiftsByDate = (shifts: ShiftResponseDto[]): ShiftResponseDto[] => {
-  return [...shifts].sort((a, b) => {
-    const dateA = new Date(`${a.shiftDate}T${a.startTime}`);
-    const dateB = new Date(`${b.shiftDate}T${b.startTime}`);
-    return dateA.getTime() - dateB.getTime();
-  });
-};
-
-export const sortShiftsByStaffing = (shifts: ShiftResponseDto[]): ShiftResponseDto[] => {
-  return [...shifts].sort((a, b) => a.staffingPercentage - b.staffingPercentage);
-};
-
-// Filter functions
-export const filterShiftsByLocation = (shifts: ShiftResponseDto[], locationId: string): ShiftResponseDto[] => {
-  return shifts.filter(shift => shift.locationId === locationId);
-};
-
-export const filterShiftsByType = (shifts: ShiftResponseDto[], type: string): ShiftResponseDto[] => {
-  return shifts.filter(shift => shift.type === type);
-};
-
-export const filterShiftsByStatus = (shifts: ShiftResponseDto[], status: string): ShiftResponseDto[] => {
-  return shifts.filter(shift => shift.status === status);
-};
-
-export const filterShiftsByDateRange = (
-  shifts: ShiftResponseDto[], 
-  startDate: string, 
-  endDate: string
-): ShiftResponseDto[] => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  
-  return shifts.filter(shift => {
-    const shiftDate = new Date(shift.shiftDate);
-    return shiftDate >= start && shiftDate <= end;
-  });
 };
 
 // Statistics functions

@@ -22,9 +22,7 @@ import {
     Delete as DeleteIcon,
     Add as AddIcon,
     Schedule as ScheduleIcon,
-    Business as BusinessIcon,
-    People as PeopleIcon,
-    AccessTime as AccessTimeIcon,
+
 } from '@mui/icons-material';
 import { ShiftResponseDto } from '@/api/data-contracts';
 import { formatShiftType, formatShiftStatus, getShiftTypeColor, getShiftStatusColor } from './utils/shiftUtils';

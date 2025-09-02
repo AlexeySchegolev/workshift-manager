@@ -10,18 +10,12 @@ import {
 } from '@mui/material';
 import {
     Schedule as ScheduleIcon,
-    Add as AddIcon,
-    Assessment as AssessmentIcon,
     Business as BusinessIcon,
-    AccessTime as AccessTimeIcon,
-    TrendingUp as TrendingUpIcon,
+    AccessTime as AccessTimeIcon
 } from '@mui/icons-material';
 import ShiftManagement from '../components/ShiftManagement';
 import {shiftService} from "@/services/ShiftService";
 import {ShiftResponseDto} from "@/api/data-contracts.ts";
-import QuickActions from "@/components/dashboard/QuickActions.tsx";
-import StatusLight from "@/components/dashboard/StatusLight.tsx";
-import StatisticsCard from "@/components/dashboard/StatisticsCard.tsx";
 
 /**
  * Modern Shift Management Page in Dashboard Style
@@ -103,97 +97,6 @@ const ShiftsPage: React.FC = () => {
     };
 
     const stats = calculateStatistics();
-
-    // Define quick actions
-    const quickActions = [
-        {
-            id: 'add-shift',
-            title: 'Schicht hinzufügen',
-            description: 'Neue Schicht zur Planung hinzufügen',
-            icon: <AddIcon/>,
-            color: 'success' as const,
-            onClick: () => {
-                // Scroll to form
-                const formElement = document.querySelector('[data-testid="shift-form"]');
-                if (formElement) {
-                    formElement.scrollIntoView({behavior: 'smooth'});
-                }
-            },
-        },
-        {
-            id: 'export-schedule',
-            title: 'Schichtplan exportieren',
-            description: 'Aktuellen Schichtplan als Excel-Datei herunterladen',
-            icon: <AssessmentIcon/>,
-            color: 'info' as const,
-            onClick: () => {
-                // TODO: Implement Excel export
-                console.log('Excel-Export für Schichtplan');
-            },
-        },
-        {
-            id: 'manage-templates',
-            title: 'Schichtvorlagen verwalten',
-            description: 'Wiederkehrende Schichtmuster erstellen und bearbeiten',
-            icon: <BusinessIcon/>,
-            color: 'warning' as const,
-            onClick: () => {
-                // TODO: Implement template management
-                console.log('Schichtvorlagen verwalten');
-            },
-        },
-        {
-            id: 'staffing-analysis',
-            title: 'Personalbesetzung analysieren',
-            description: 'Übersicht über Personalbesetzung und Auslastung',
-            icon: <AccessTimeIcon/>,
-            color: 'primary' as const,
-            onClick: () => {
-                // TODO: Implement staffing analysis
-                console.log('Personalbesetzungsanalyse öffnen');
-            },
-        },
-    ];
-
-    // Status items for the status light
-    const statusItems = [
-        {
-            id: 'total-shifts',
-            title: 'Schichtanzahl',
-            description: 'Gesamtanzahl der geplanten Schichten',
-            status: stats.totalShifts >= 10 ? 'success' : stats.totalShifts >= 5 ? 'warning' : 'error',
-            value: stats.totalShifts,
-            maxValue: 20,
-            details: stats.totalShifts < 10 ? ['Für optimale Abdeckung werden mehr Schichten empfohlen'] : undefined,
-        } as const,
-        {
-            id: 'staffing-level',
-            title: 'Personalbesetzung',
-            description: 'Durchschnittliche Personalbesetzung aller Schichten',
-            status: stats.avgStaffing >= 100 ? 'success' : stats.avgStaffing >= 80 ? 'warning' : 'error',
-            value: stats.avgStaffing,
-            maxValue: 120,
-            details: stats.avgStaffing < 100 ? ['Einige Schichten sind unterbesetzt'] : undefined,
-        } as const,
-        {
-            id: 'station-distribution',
-            title: 'Stationsverteilung',
-            description: 'Verteilung der Schichten auf beide Stationen',
-            status: stats.stationB >= 2 && stats.stationA >= 3 ? 'success' : 'warning',
-            value: Math.min(stats.stationA, stats.stationB),
-            maxValue: Math.max(stats.stationA, stats.stationB),
-            details: stats.stationB < 2 ? ['Zu wenige Schichten für Station B'] : undefined,
-        } as const,
-        {
-            id: 'night-coverage',
-            title: 'Nachtabdeckung',
-            description: 'Anzahl der Nachtschichten für kontinuierliche Betreuung',
-            status: stats.nightShifts >= 3 ? 'success' : stats.nightShifts >= 2 ? 'warning' : 'error',
-            value: stats.nightShifts,
-            maxValue: 7,
-            details: stats.nightShifts < 3 ? ['Unzureichende Nachtabdeckung'] : undefined,
-        } as const,
-    ];
 
     if (loading) {
         return (

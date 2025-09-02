@@ -10,18 +10,11 @@ import {
 } from '@mui/material';
 import {
     People as PeopleIcon,
-    PersonAdd as PersonAddIcon,
-    Assessment as AssessmentIcon,
-    Business as BusinessIcon,
-    Schedule as ScheduleIcon,
-    TrendingUp as TrendingUpIcon,
+    Business as BusinessIcon
 } from '@mui/icons-material';
 import EmployeeManagement from '../components/EmployeeManagement';
 import {EmployeeService} from "@/services";
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
-import QuickActions from "@/components/dashboard/QuickActions.tsx";
-import StatusLight from "@/components/dashboard/StatusLight.tsx";
-import StatisticsCard from "@/components/dashboard/StatisticsCard.tsx";
 
 /**
  * Modern Employee Management Page in Dashboard Style
@@ -59,11 +52,6 @@ const EmployeePage: React.FC = () => {
         setEmployees(updatedEmployees);
     };
 
-    // Refresh employees from API
-    const refreshEmployees = () => {
-        loadEmployees();
-    };
-
     // Calculate statistics
     const calculateStatistics = () => {
         const totalEmployees = employees.length;
@@ -96,97 +84,6 @@ const EmployeePage: React.FC = () => {
     };
 
     const stats = calculateStatistics();
-
-    // Define quick actions
-    const quickActions = [
-        {
-            id: 'add-employee',
-            title: 'Mitarbeiter hinzufügen',
-            description: 'Neuen Mitarbeiter zur Datenbank hinzufügen',
-            icon: <PersonAddIcon/>,
-            color: 'success' as const,
-            onClick: () => {
-                // Scroll to form
-                const formElement = document.querySelector('[data-testid="employee-form"]');
-                if (formElement) {
-                    formElement.scrollIntoView({behavior: 'smooth'});
-                }
-            },
-        },
-        {
-            id: 'export-list',
-            title: 'Mitarbeiterliste exportieren',
-            description: 'Aktuelle Mitarbeiterliste als Excel-Datei herunterladen',
-            icon: <AssessmentIcon/>,
-            color: 'info' as const,
-            onClick: () => {
-                // TODO: Implement Excel export
-                console.log('Excel-Export für Mitarbeiterliste');
-            },
-        },
-        {
-            id: 'manage-roles',
-            title: 'Rollen verwalten',
-            description: 'Mitarbeiterrollen und Berechtigungen anpassen',
-            icon: <BusinessIcon/>,
-            color: 'warning' as const,
-            onClick: () => {
-                // TODO: Implement role management
-                console.log('Rollen öffnen');
-            },
-        },
-        {
-            id: 'working-hours',
-            title: 'Arbeitszeiten analysieren',
-            description: 'Übersicht über Arbeitszeiten und Auslastung',
-            icon: <ScheduleIcon/>,
-            color: 'primary' as const,
-            onClick: () => {
-                // TODO: Implement working time analysis
-                console.log('Arbeitszeitanalyse öffnen');
-            },
-        },
-    ];
-
-    // Status items for the status light
-    const statusItems = [
-        {
-            id: 'total-employees',
-            title: 'Mitarbeiteranzahl',
-            description: 'Gesamtanzahl der registrierten Mitarbeiter',
-            status: stats.totalEmployees >= 8 ? 'success' : stats.totalEmployees >= 5 ? 'warning' : 'error',
-            value: stats.totalEmployees,
-            maxValue: 15,
-            details: stats.totalEmployees < 8 ? ['Für optimale Schichtplanung werden mindestens 8 Mitarbeiter empfohlen'] : undefined,
-        } as const,
-        {
-            id: 'shift-leaders',
-            title: 'Schichtleiter',
-            description: 'Anzahl der verfügbaren Schichtleiter',
-            status: stats.shiftLeaders >= 3 ? 'success' : stats.shiftLeaders >= 2 ? 'warning' : 'error',
-            value: stats.shiftLeaders,
-            maxValue: 5,
-            details: stats.shiftLeaders < 3 ? ['Mindestens 3 Schichtleiter für kontinuierliche Abdeckung empfohlen'] : undefined,
-        } as const,
-        {
-            id: 'location-distribution',
-            title: 'Standortverteilung',
-            description: 'Verteilung der Mitarbeiter',
-            status: stats.locationB >= 2 && stats.locationA >= 3 ? 'success' : 'warning',
-            value: Math.min(stats.locationA, stats.locationB),
-            maxValue: Math.max(stats.locationA, stats.locationB),
-            details: stats.locationB < 2 ? ['Zu wenige Mitarbeiter für Standort B'] : undefined,
-        } as const,
-        {
-            id: 'working-hours',
-            title: 'Arbeitszeiten',
-            description: 'Durchschnittliche Monatsstunden pro Mitarbeiter',
-            status: stats.avgHours <= 160 ? 'success' : stats.avgHours <= 170 ? 'warning' : 'error',
-            value: stats.avgHours,
-            maxValue: 180,
-            details: stats.avgHours > 160 ? ['Hohe durchschnittliche Arbeitszeit - Überlastung möglich'] : undefined,
-        } as const,
-    ];
 
     return (
         <Container maxWidth="xl" sx={{py: 3}}>

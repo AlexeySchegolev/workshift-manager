@@ -30,10 +30,7 @@ import {
   Rule as RuleIcon,
   Business as BusinessIcon,
   AdminPanelSettings as AdminPanelSettingsIcon,
-  Apps as AppsIcon,
   KeyboardArrowDown as ArrowDownIcon,
-  WorkOutline as WorkIcon,
-  GroupWork as GroupIcon,
   EventBusy as EventBusyIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';

@@ -193,39 +193,3 @@ export const useDashboardData = (
     error,
   };
 };
-
-/**
- * Hook for Dashboard Actions
- */
-export const useDashboardActions = () => {
-  const navigateToShiftPlanning = () => {
-    window.location.href = '/schichtplan';
-  };
-
-  const navigateToEmployees = () => {
-    window.location.href = '/mitarbeiter';
-  };
-
-  const exportCurrentPlan = () => {
-    // TODO: Implement Excel export
-    console.log('Excel-Export wird implementiert...');
-  };
-
-  const openSettings = () => {
-    // TODO: Implement settings dialog
-    console.log('Einstellungen werden implementiert...');
-  };
-
-  const viewReports = () => {
-    // TODO: Implement reports page
-    console.log('Berichte werden implementiert...');
-  };
-
-  return {
-    navigateToShiftPlanning,
-    navigateToEmployees,
-    exportCurrentPlan,
-    openSettings,
-    viewReports,
-  };
-};

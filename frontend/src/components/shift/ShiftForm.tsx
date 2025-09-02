@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -51,42 +51,8 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
     onUpdateField,
     isEditing,
 }) => {
-    const [skillInput, setSkillInput] = useState('');
-    const [certificationInput, setCertificationInput] = useState('');
-    
     // Fetch locations from API
-    const { locations, loading: locationsLoading, error: locationsError } = useLocations();
-
-
-    const handleAddSkill = () => {
-        if (skillInput.trim() && !formData.requiredSkills.includes(skillInput.trim())) {
-            onUpdateField('requiredSkills', [...formData.requiredSkills, skillInput.trim()]);
-            setSkillInput('');
-        }
-    };
-
-    const handleRemoveSkill = (skill: string) => {
-        onUpdateField('requiredSkills', formData.requiredSkills.filter(s => s !== skill));
-    };
-
-    const handleAddCertification = () => {
-        if (certificationInput.trim() && !formData.requiredCertifications.includes(certificationInput.trim())) {
-            onUpdateField('requiredCertifications', [...formData.requiredCertifications, certificationInput.trim()]);
-            setCertificationInput('');
-        }
-    };
-
-    const handleRemoveCertification = (certification: string) => {
-        onUpdateField('requiredCertifications', formData.requiredCertifications.filter(c => c !== certification));
-    };
-
-    const handleKeyPress = (event: React.KeyboardEvent, action: () => void) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            action();
-        }
-    };
-
+    const { locations, loading: locationsLoading} = useLocations();
     return (
         <Dialog
             open={open}

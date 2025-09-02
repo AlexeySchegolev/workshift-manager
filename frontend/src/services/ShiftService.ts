@@ -1,15 +1,13 @@
 import { Shifts } from '@/api/Shifts';
-import { HttpClient } from '@/api/http-client';
 import { ShiftResponseDto, CreateShiftDto, UpdateShiftDto } from '@/api/data-contracts';
+import { BaseService } from './BaseService';
 
-export class ShiftService {
+export class ShiftService extends BaseService {
   private shiftsApi: Shifts;
 
   constructor() {
-    const httpClient = new HttpClient({
-      baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
-    });
-    this.shiftsApi = new Shifts(httpClient);
+    super();
+    this.shiftsApi = new Shifts(this.getHttpClient());
   }
 
   /**

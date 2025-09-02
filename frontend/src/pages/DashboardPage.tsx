@@ -11,25 +11,19 @@ import {
 import {
     People as PeopleIcon,
     Schedule as ScheduleIcon,
-    Assessment as AssessmentIcon,
     Warning as WarningIcon,
     TrendingUp as TrendingUpIcon,
     CalendarMonth as CalendarIcon,
-    Add as AddIcon,
-    FileDownload as FileDownloadIcon,
-    Settings as SettingsIcon,
+
 } from '@mui/icons-material';
 import {useNavigate} from 'react-router-dom';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
-import { QuickAction } from '../components/dashboard/QuickActions';
-import {useDashboardData, useDashboardActions} from '../hooks/useDashboardData';
+import {useDashboardData} from '../hooks/useDashboardData';
 import {employeeService} from '@/services';
 import {EmployeeResponseDto} from '../api/data-contracts';
 import StatisticsCard from "@/components/dashboard/StatisticsCard.tsx";
 import WeekOverview from "@/components/dashboard/WeekOverview.tsx";
-import QuickActions from "@/components/dashboard/QuickActions.tsx";
-import StatusLight from "@/components/dashboard/StatusLight.tsx";
 
 /**
  * Professional Dashboard Page for authenticated users
@@ -37,7 +31,6 @@ import StatusLight from "@/components/dashboard/StatusLight.tsx";
 const DashboardPage: React.FC = () => {
     const navigate = useNavigate();
     const theme = useTheme();
-    const dashboardActions = useDashboardActions();
 
     // State for current data
     const [selectedDate] = useState<Date>(new Date());
@@ -46,19 +39,15 @@ const DashboardPage: React.FC = () => {
 
     // Load employee list via API
     const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
-    const [loadingEmployees, setLoadingEmployees] = useState(true);
 
     // Fetch employees when component loads
     useEffect(() => {
         const loadEmployees = async () => {
             try {
-                setLoadingEmployees(true);
                 const employees = await employeeService.getAllEmployees();
                 setEmployees(employees);
             } catch (error) {
                 console.error('Error loading employees:', error);
-            } finally {
-                setLoadingEmployees(false);
             }
         };
 
@@ -66,56 +55,12 @@ const DashboardPage: React.FC = () => {
     }, []);
 
     // Load dashboard data
-    const {statistics, currentWeek, statusItems, isLoading} = useDashboardData(
+    const {statistics, currentWeek} = useDashboardData(
         employees, // Now the loaded employees are passed
         currentShiftPlan,
         constraints,
         selectedDate
     );
-
-    // Define quick actions
-    const quickActions: QuickAction[] = [
-        {
-            id: 'create-shift-plan',
-            title: 'Schichtplan erstellen',
-            description: 'Neuen Schichtplan generieren',
-            icon: <AddIcon/>,
-            color: 'primary',
-            onClick: () => navigate('/schichtplan'),
-        },
-        {
-            id: 'manage-employees',
-            title: 'Mitarbeiter verwalten',
-            description: 'Mitarbeiterdaten bearbeiten',
-            icon: <PeopleIcon/>,
-            color: 'info',
-            onClick: () => navigate('/mitarbeiter'),
-        },
-        {
-            id: 'export-plan',
-            title: 'Plan exportieren',
-            description: 'Als Excel-Datei herunterladen',
-            icon: <FileDownloadIcon/>,
-            color: 'success',
-            onClick: dashboardActions.exportCurrentPlan,
-        },
-        {
-            id: 'settings',
-            title: 'Einstellungen',
-            description: 'Systemeinstellungen öffnen',
-            icon: <SettingsIcon/>,
-            color: 'warning',
-            onClick: dashboardActions.openSettings,
-        },
-        {
-            id: 'reports',
-            title: 'Berichte',
-            description: 'Statistiken und Auswertungen',
-            icon: <AssessmentIcon/>,
-            color: 'info',
-            onClick: dashboardActions.viewReports,
-        },
-    ];
 
     // Animation delay for cards
     const [showCards, setShowCards] = useState(false);
@@ -241,7 +186,7 @@ const DashboardPage: React.FC = () => {
 
             {/* Main content */}
             <Fade in={showCards} timeout={1200}>
-                <Box sx={{ mb: 4 }}>
+                <Box sx={{mb: 4}}>
                     {/* Week overview - full width */}
                     <WeekOverview
                         woche={currentWeek}

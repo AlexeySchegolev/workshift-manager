@@ -11,8 +11,7 @@ import {
 import {
     AdminPanelSettings as AdminPanelSettingsIcon,
     Security as SecurityIcon,
-    Group as GroupIcon,
-    Settings as SettingsIcon,
+    Group as GroupIcon
 } from '@mui/icons-material';
 import RoleManagement from '../components/RoleManagement';
 

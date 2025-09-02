@@ -20,14 +20,6 @@ export class RoleResponseDto {
   name: string;
 
   @ApiPropertyOptional({ 
-    description: 'Role description', 
-    example: 'Qualified specialist for performing dialysis treatments' 
-  })
-  description?: string;
-
-
-
-  @ApiPropertyOptional({ 
     description: 'Hourly rate in Euro', 
     example: 25.50 
   })
@@ -38,30 +30,6 @@ export class RoleResponseDto {
     example: 31.88 
   })
   overtimeRate?: number;
-
-  @ApiProperty({ 
-    description: 'Minimum professional experience in months', 
-    example: 12 
-  })
-  minExperienceMonths: number;
-
-  @ApiProperty({ 
-    description: 'Required certifications', 
-    example: ['Basic Dialysis Course', 'Hygiene Training'] 
-  })
-  requiredCertifications: string[];
-
-  @ApiProperty({ 
-    description: 'Required skills', 
-    example: ['Patient Care', 'Machine Operation'] 
-  })
-  requiredSkills: string[];
-
-  @ApiProperty({ 
-    description: 'Permissions', 
-    example: ['view_patient_data', 'manage_dialysis_machines'] 
-  })
-  permissions: string[];
 
   @ApiProperty({ 
     description: 'Can work night shifts', 
@@ -88,12 +56,6 @@ export class RoleResponseDto {
   maxConsecutiveDays: number;
 
   @ApiProperty({ 
-    description: 'Minimum rest time between shifts in hours', 
-    example: 11 
-  })
-  minRestHours: number;
-
-  @ApiProperty({ 
     description: 'Maximum weekly working hours', 
     example: 40.0 
   })
@@ -104,18 +66,6 @@ export class RoleResponseDto {
     example: 160.0 
   })
   maxMonthlyHours: number;
-
-  @ApiProperty({ 
-    description: 'Priority level of the role (1-10, higher = more important)', 
-    example: 1 
-  })
-  priorityLevel: number;
-
-  @ApiPropertyOptional({ 
-    description: 'Color code for UI display (Hex)', 
-    example: '#1976d2' 
-  })
-  colorCode?: string;
 
   @ApiProperty({ 
     description: 'Role is active', 

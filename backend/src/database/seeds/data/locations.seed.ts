@@ -49,6 +49,8 @@ export const locationsSeedData = [
     phone: '+49 89 4400-2201',
     email: 'dialyse.b@dialyse-praxis.de',
     currentCapacity: 0,
+    active: true,
+    inactive: false,
     operatingHours: fullTimeOperatingHours,
     isActive: true,
     timezone: 'Europe/Berlin'

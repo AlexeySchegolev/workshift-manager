@@ -15,38 +15,11 @@ export class Role {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  description?: string;
-
   @Column({ name: 'hourly_rate', type: 'decimal', precision: 10, scale: 2, nullable: true })
   hourlyRate?: number;
 
   @Column({ name: 'overtime_rate', type: 'decimal', precision: 10, scale: 2, nullable: true })
   overtimeRate?: number;
-
-  @Column({ name: 'min_experience_months', type: 'integer', default: 0 })
-  minExperienceMonths: number;
-
-  @Column({ 
-    name: 'required_certifications',
-    type: 'jsonb',
-    default: []
-  })
-  requiredCertifications: string[];
-
-  @Column({ 
-    name: 'required_skills',
-    type: 'jsonb',
-    default: []
-  })
-  requiredSkills: string[];
-
-  @Column({ 
-    name: 'permissions',
-    type: 'jsonb',
-    default: []
-  })
-  permissions: string[];
 
   @Column({ name: 'can_work_nights', type: 'boolean', default: true })
   canWorkNights: boolean;
@@ -60,20 +33,11 @@ export class Role {
   @Column({ name: 'max_consecutive_days', type: 'integer', default: 6 })
   maxConsecutiveDays: number;
 
-  @Column({ name: 'min_rest_hours', type: 'integer', default: 11 })
-  minRestHours: number;
-
   @Column({ name: 'max_weekly_hours', type: 'decimal', precision: 5, scale: 2, default: 40.0 })
   maxWeeklyHours: number;
 
   @Column({ name: 'max_monthly_hours', type: 'decimal', precision: 5, scale: 2, default: 160.0 })
   maxMonthlyHours: number;
-
-  @Column({ name: 'priority_level', type: 'integer', default: 1 })
-  priorityLevel: number; // 1-10, higher = more important
-
-  @Column({ name: 'color_code', type: 'varchar', length: 7, nullable: true })
-  colorCode?: string; // Hex color for UI display
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;

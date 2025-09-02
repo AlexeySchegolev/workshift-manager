@@ -18,17 +18,6 @@ export class CreateRoleDto {
   name: string;
 
   @ApiPropertyOptional({
-    description: 'Role description',
-    example: 'Qualified specialist for performing dialysis treatments'
-  })
-  @IsOptional()
-  @IsString()
-  @Length(0, 500)
-  description?: string;
-
-
-
-  @ApiPropertyOptional({
     description: 'Hourly rate in Euro',
     example: 25.50
   })
@@ -45,42 +34,6 @@ export class CreateRoleDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   overtimeRate?: number;
-
-  @ApiPropertyOptional({
-    description: 'Minimum professional experience in months',
-    example: 12
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  minExperienceMonths?: number;
-
-  @ApiPropertyOptional({
-    description: 'Required certifications',
-    example: ['Basic Dialysis Course', 'Hygiene Training']
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  requiredCertifications?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Required skills',
-    example: ['Patient Care', 'Machine Operation']
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  requiredSkills?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Permissions',
-    example: ['view_patient_data', 'manage_dialysis_machines']
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  permissions?: string[];
 
   @ApiPropertyOptional({
     description: 'Can work night shifts',
@@ -117,16 +70,6 @@ export class CreateRoleDto {
   maxConsecutiveDays?: number;
 
   @ApiPropertyOptional({
-    description: 'Minimum rest time between shifts in hours',
-    example: 11
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(8)
-  @Max(24)
-  minRestHours?: number;
-
-  @ApiPropertyOptional({
     description: 'Maximum weekly working hours',
     example: 40.0
   })
@@ -145,25 +88,6 @@ export class CreateRoleDto {
   @Min(1)
   @Max(250)
   maxMonthlyHours?: number;
-
-  @ApiPropertyOptional({
-    description: 'Priority level of the role (1-10, higher = more important)',
-    example: 5
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(1)
-  @Max(10)
-  priorityLevel?: number;
-
-  @ApiPropertyOptional({
-    description: 'Color code for UI display (Hex)',
-    example: '#1976d2'
-  })
-  @IsOptional()
-  @IsString()
-  @Length(7, 7)
-  colorCode?: string;
 
   @ApiPropertyOptional({
     description: 'Role is active',

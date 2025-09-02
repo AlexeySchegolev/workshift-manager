@@ -15,6 +15,8 @@ import {shiftRulesSeedData} from "@/database/seeds/data/shift-rules.seed";
 import {usersSeedData} from "@/database/seeds/data/users.seed";
 import {rolesSeedData} from "@/database/seeds/data/roles.seed";
 import {shiftsSeedData} from "@/database/seeds/data/shifts.seed";
+import {EmployeeAbsence} from "@/database/entities/employee-absence.entity";
+import {employeeAbsencesSeedData} from "@/database/seeds/data/employee-absences.seed";
 
 @Injectable()
 export class SeederService {
@@ -38,9 +40,10 @@ export class SeederService {
             await this.seedUsers(organization);
             const roles = await this.seedRoles(organization);
             const locations = await this.seedLocations(organization);
-            await this.seedEmployees(organization, roles, locations);
+            const employees = await this.seedEmployees(organization, roles, locations);
             await this.seedShiftRules();
             await this.seedShifts(organization, locations);
+            await this.seedEmployeeAbsences(employees);
 
             this.logger.log('✅ Database Seeding completed successfully!');
         } catch (error) {
@@ -59,6 +62,7 @@ export class SeederService {
             await this.dataSource.query('TRUNCATE TABLE shift_plans CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shift_required_roles CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shifts CASCADE');
+            await this.dataSource.query('TRUNCATE TABLE employee_absences CASCADE');
             await this.dataSource.query('TRUNCATE TABLE employee_roles CASCADE');
             await this.dataSource.query('TRUNCATE TABLE employees CASCADE');
             await this.dataSource.query('TRUNCATE TABLE roles CASCADE');
@@ -156,7 +160,7 @@ export class SeederService {
         }
     }
 
-    private async seedEmployees(organization: Organization, roles: Role[], locations: Location[]): Promise<void> {
+    private async seedEmployees(organization: Organization, roles: Role[], locations: Location[]): Promise<Employee[]> {
         this.logger.log('👥 Adding employees...');
 
         try {
@@ -179,6 +183,7 @@ export class SeederService {
             const employees = await employeeRepo.save(employeeData);
 
             this.logger.log(`✅ ${employees.length} employees added successfully`);
+            return employees;
         } catch (error) {
             this.logger.error('❌ Error adding employees:', error);
             throw error;
@@ -225,12 +230,38 @@ export class SeederService {
         }
     }
 
+    private async seedEmployeeAbsences(employees: Employee[]): Promise<void> {
+        this.logger.log('🏖️ Adding employee absences...');
+
+        try {
+            const absenceRepo = this.dataSource.getRepository(EmployeeAbsence);
+
+            // Update absence data with proper employee references
+            const absenceData = employeeAbsencesSeedData.map(absence => {
+                const employeeIndex = parseInt(absence.employeeId as string) - 1;
+
+                return {
+                    ...absence,
+                    employeeId: employees[employeeIndex]?.id || employees[0].id,
+                };
+            });
+
+            const absences = await absenceRepo.save(absenceData);
+
+            this.logger.log(`✅ ${absences.length} employee absences added successfully`);
+        } catch (error) {
+            this.logger.error('❌ Error adding employee absences:', error);
+            throw error;
+        }
+    }
+
     async getSeededDataSummary(): Promise<{
         organizations: number;
         users: number;
         roles: number;
         locations: number;
         employees: number;
+        employeeAbsences: number;
         shiftRules: number;
         shifts: number;
     }> {
@@ -239,19 +270,21 @@ export class SeederService {
         const roleRepo = this.dataSource.getRepository(Role);
         const locationRepo = this.dataSource.getRepository(Location);
         const employeeRepo = this.dataSource.getRepository(Employee);
+        const absenceRepo = this.dataSource.getRepository(EmployeeAbsence);
         const shiftRulesRepo = this.dataSource.getRepository(ShiftRules);
         const shiftRepo = this.dataSource.getRepository(Shift);
 
-        const [organizations, users, roles, locations, employees, shiftRules, shifts] = await Promise.all([
+        const [organizations, users, roles, locations, employees, employeeAbsences, shiftRules, shifts] = await Promise.all([
             organizationRepo.count(),
             userRepo.count(),
             roleRepo.count(),
             locationRepo.count(),
             employeeRepo.count(),
+            absenceRepo.count(),
             shiftRulesRepo.count(),
             shiftRepo.count(),
         ]);
 
-        return {organizations, users, roles, locations, employees, shiftRules, shifts};
+        return {organizations, users, roles, locations, employees, employeeAbsences, shiftRules, shifts};
     }
 }

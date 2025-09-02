@@ -18,6 +18,7 @@ import {EmployeeAvailability} from './employee-availability.entity';
 import {ShiftPreference} from './shift-preference.entity';
 import {WorkTimeConstraint} from './work-time-constraint.entity';
 import {ShiftPlanningAvailability} from './shift-planning-availability.entity';
+import {EmployeeAbsence} from './employee-absence.entity';
 
 export enum EmployeeStatus {
   ACTIVE = 'active',
@@ -205,6 +206,9 @@ export class Employee {
 
   @OneToMany(() => ShiftPlanningAvailability, availability => availability.employee)
   shiftPlanningAvailabilities: ShiftPlanningAvailability[];
+
+  @OneToMany(() => EmployeeAbsence, absence => absence.employee)
+  absences: EmployeeAbsence[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

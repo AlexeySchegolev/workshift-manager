@@ -11,6 +11,7 @@ import { ShiftPlansModule } from './modules/shift-plans/shift-plans.module';
 import { ShiftRulesModule } from './modules/shift-rules/shift-rules.module';
 import { UsersModule } from './modules/users/users.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
+import { EmployeeAbsencesModule } from './modules/employee-absences/employee-absences.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
     
     // Feature modules
     EmployeesModule,
+    EmployeeAbsencesModule,
     LocationsModule,
     ShiftRulesModule,
     ShiftPlansModule,

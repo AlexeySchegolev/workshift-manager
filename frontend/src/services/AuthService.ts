@@ -1,5 +1,6 @@
 import { BaseService } from './BaseService';
 import { Authentication } from '../api/Authentication';
+import HttpClientManager from '../api/HttpClientManager';
 import {
   LoginDto,
   RegisterDto,
@@ -104,19 +105,19 @@ export class AuthService extends BaseService {
   }
 
   /**
-   * Set auth token in storage and axios headers
+   * Set auth token in storage and shared HTTP client headers
    */
   private setAuthToken(token: string): void {
     localStorage.setItem('auth_token', token);
-    this.getHttpClient().instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    HttpClientManager.getInstance().setAuthToken(token);
   }
 
   /**
-   * Clear auth token from storage and axios headers
+   * Clear auth token from storage and shared HTTP client headers
    */
   private clearAuthToken(): void {
     localStorage.removeItem('auth_token');
-    delete this.getHttpClient().instance.defaults.headers.common['Authorization'];
+    HttpClientManager.getInstance().clearAuthToken();
   }
 
   /**

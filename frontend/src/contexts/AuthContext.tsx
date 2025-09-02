@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService, organizationsService } from '../services';
+import { authService, organizationsService } from '@/services';
 import { 
   AuthUserDto, 
   OrganizationResponseDto, 

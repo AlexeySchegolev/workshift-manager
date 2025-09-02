@@ -1,24 +1,22 @@
 import { HttpClient } from '../api/http-client';
+import HttpClientManager from '../api/HttpClientManager';
 
 /**
  * Base service class that provides centralized API configuration
- * Uses environment variable VITE_API_URL for base URL configuration
+ * Uses a shared HTTP client instance to ensure authentication tokens
+ * are properly propagated across all services
  */
 export class BaseService {
-  protected httpClient: HttpClient;
+  private httpClientManager: HttpClientManager;
   
   constructor() {
-    const baseURL = import.meta.env.VITE_API_URL;
-    
-    this.httpClient = new HttpClient({
-      baseURL: baseURL,
-    });
+    this.httpClientManager = HttpClientManager.getInstance();
   }
   
   /**
-   * Get the configured HTTP client instance
+   * Get the shared HTTP client instance
    */
   protected getHttpClient(): HttpClient {
-    return this.httpClient;
+    return this.httpClientManager.getHttpClient();
   }
 }

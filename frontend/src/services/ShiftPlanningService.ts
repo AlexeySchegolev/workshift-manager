@@ -15,7 +15,7 @@ export class ShiftPlanningService extends BaseService {
 
     constructor() {
         super();
-        this.shiftPlansApi = new ShiftPlans(this.httpClient);
+        this.shiftPlansApi = new ShiftPlans(this.getHttpClient());
     }
 
     /**

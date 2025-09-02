@@ -1,4 +1,4 @@
-import {UserRole, UserStatus} from "@/database/entities/user.entity";
+import {UserRole} from "@/database/entities/user.entity";
 
 export const usersSeedData = [
   {
@@ -7,40 +7,8 @@ export const usersSeedData = [
     lastName: 'Administrator',
     passwordHash: '$2b$10$Y4MhIXpsrrS8VCHfKAsE4uW8K00loO1KoRRaiNubCFuYMbMh4.luy', // password: admin123
     role: UserRole.SUPER_ADMIN,
-    status: UserStatus.ACTIVE,
+    isActive: true,
     phoneNumber: '+49 89 4400-1001',
-    emailVerified: true,
-    preferences: {
-      language: 'de',
-      timezone: 'Europe/Berlin',
-      notifications: {
-        email: true,
-        push: true,
-        sms: false
-      },
-      dashboard: {
-        defaultView: 'overview',
-        refreshInterval: 30
-      }
-    },
-    permissions: [
-      'user.create',
-      'user.read',
-      'user.update',
-      'user.delete',
-      'organization.create',
-      'organization.read',
-      'organization.update',
-      'organization.delete',
-      'employee.create',
-      'employee.read',
-      'employee.update',
-      'employee.delete',
-      'shift.create',
-      'shift.read',
-      'shift.update',
-      'shift.delete',
-      'audit.read'
-    ]
+    organizationId: '1' // Will be replaced with actual organization ID during seeding
   }
 ];

@@ -66,11 +66,6 @@ export class Location {
   @Column({ type: 'varchar', length: 100, default: 'Germany' })
   country: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
-  latitude?: number;
-
-  @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
-  longitude?: number;
 
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone?: string;
@@ -78,17 +73,7 @@ export class Location {
   @Column({ type: 'varchar', length: 255, nullable: true })
   email?: string;
 
-  @Column({ name: 'manager_name', type: 'varchar', length: 255, nullable: true })
-  managerName?: string;
 
-  @Column({ name: 'manager_email', type: 'varchar', length: 255, nullable: true })
-  managerEmail?: string;
-
-  @Column({ name: 'manager_phone', type: 'varchar', length: 20, nullable: true })
-  managerPhone?: string;
-
-  @Column({ name: 'max_capacity', type: 'integer' })
-  maxCapacity: number;
 
   @Column({ name: 'current_capacity', type: 'integer', default: 0 })
   currentCapacity: number;
@@ -100,23 +85,7 @@ export class Location {
   })
   status: LocationStatus;
 
-  @Column({ name: 'floor_area', type: 'decimal', precision: 10, scale: 2, nullable: true })
-  floorArea?: number; // in square meters
 
-  @Column({ name: 'number_of_rooms', type: 'integer', nullable: true })
-  numberOfRooms?: number;
-
-  @Column({ name: 'number_of_beds', type: 'integer', nullable: true })
-  numberOfBeds?: number;
-
-  @Column({ name: 'parking_spaces', type: 'integer', nullable: true })
-  parkingSpaces?: number;
-
-  @Column({ name: 'accessibility_features', type: 'jsonb', default: [] })
-  accessibilityFeatures: string[];
-
-  @Column({ name: 'safety_features', type: 'jsonb', default: [] })
-  safetyFeatures: string[];
 
   @Column({ 
     name: 'operating_hours',
@@ -133,17 +102,6 @@ export class Location {
   })
   operatingHours: OperatingHours;
 
-  @Column({ 
-    type: 'jsonb',
-    default: []
-  })
-  services: string[];
-
-  @Column({ 
-    type: 'jsonb',
-    default: []
-  })
-  equipment: string[];
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;

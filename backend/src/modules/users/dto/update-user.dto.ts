@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsString, IsEnum, IsOptional, IsBoolean, IsArray, IsObject, MinLength } from 'class-validator';
-import {UserRole, UserStatus} from "@/database/entities/user.entity";
+import { IsEmail, IsString, IsEnum, IsOptional, IsBoolean, IsUUID, MinLength } from 'class-validator';
+import {UserRole} from "@/database/entities/user.entity";
 
 export class UpdateUserDto {
   @ApiPropertyOptional({
@@ -46,13 +46,12 @@ export class UpdateUserDto {
   role?: UserRole;
 
   @ApiPropertyOptional({
-    description: 'User status',
-    enum: UserStatus,
-    example: UserStatus.ACTIVE
+    description: 'Whether the user is active',
+    example: true
   })
   @IsOptional()
-  @IsEnum(UserStatus)
-  status?: UserStatus;
+  @IsBoolean()
+  isActive?: boolean;
 
   @ApiPropertyOptional({
     description: 'Phone number',
@@ -71,46 +70,10 @@ export class UpdateUserDto {
   profilePictureUrl?: string;
 
   @ApiPropertyOptional({
-    description: 'Email address verified',
-    example: true
+    description: 'Organization ID to assign the user to',
+    example: 'uuid-org-1'
   })
   @IsOptional()
-  @IsBoolean()
-  emailVerified?: boolean;
-
-  @ApiPropertyOptional({
-    description: 'Two-factor authentication enabled',
-    example: false
-  })
-  @IsOptional()
-  @IsBoolean()
-  twoFactorEnabled?: boolean;
-
-  @ApiPropertyOptional({
-    description: 'User preferences',
-    example: { theme: 'dark', language: 'en' }
-  })
-  @IsOptional()
-  @IsObject()
-  preferences?: Record<string, any>;
-
-  @ApiPropertyOptional({
-    description: 'User permissions',
-    example: ['read:shifts', 'write:shifts', 'manage:users']
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  permissions?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Organization IDs to assign the user to',
-    type: 'array',
-    items: { type: 'string' },
-    example: ['uuid-org-1', 'uuid-org-2']
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  organizationIds?: string[];
+  @IsUUID()
+  organizationId?: string;
 }

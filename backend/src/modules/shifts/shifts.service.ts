@@ -30,8 +30,6 @@ export class ShiftsService {
     const shift = this.shiftRepository.create({
       ...createShiftDto,
       shiftDate: new Date(createShiftDto.shiftDate),
-      recurrenceEndDate: createShiftDto.recurrenceEndDate ? 
-        new Date(createShiftDto.recurrenceEndDate) : undefined,
     });
 
     const savedShift = await this.shiftRepository.save(shift);
@@ -97,8 +95,6 @@ export class ShiftsService {
       queryBuilder.leftJoinAndSelect('shift.organization', 'organization');
       queryBuilder.leftJoinAndSelect('shift.location', 'location');
       queryBuilder.leftJoinAndSelect('shift.requiredRoles', 'requiredRoles');
-      queryBuilder.leftJoinAndSelect('shift.assignments', 'assignments');
-      queryBuilder.leftJoinAndSelect('assignments.employee', 'employee');
     }
 
     const shift = await queryBuilder.getOne();
@@ -134,8 +130,6 @@ export class ShiftsService {
     Object.assign(shift, {
       ...updateShiftDto,
       shiftDate: updateShiftDto.shiftDate ? new Date(updateShiftDto.shiftDate) : shift.shiftDate,
-      recurrenceEndDate: updateShiftDto.recurrenceEndDate ? 
-        new Date(updateShiftDto.recurrenceEndDate) : shift.recurrenceEndDate,
       updatedAt: new Date(),
     });
 
@@ -169,8 +163,6 @@ export class ShiftsService {
       name: shift.name,
       description: shift.description,
       type: shift.type,
-      status: shift.status,
-      priority: shift.priority,
       shiftDate: toDateString(shift.shiftDate),
       startTime: shift.startTime,
       endTime: shift.endTime,
@@ -179,20 +171,12 @@ export class ShiftsService {
       minEmployees: shift.minEmployees,
       maxEmployees: shift.maxEmployees,
       currentEmployees: shift.currentEmployees,
-      roleRequirements: shift.roleRequirements,
-      requiredSkills: shift.requiredSkills,
-      requiredCertifications: shift.requiredCertifications,
       isOvertime: shift.isOvertime,
       overtimeRate: shift.overtimeRate,
       isHoliday: shift.isHoliday,
       holidayRate: shift.holidayRate,
       isWeekend: shift.isWeekend,
       weekendRate: shift.weekendRate,
-      colorCode: shift.colorCode,
-      notes: shift.notes,
-      isRecurring: shift.isRecurring,
-      recurrencePattern: shift.recurrencePattern,
-      recurrenceEndDate: shift.recurrenceEndDate ? toDateString(shift.recurrenceEndDate) : undefined,
       isActive: shift.isActive,
       organization: shift.organization,
       location: shift.location,

@@ -35,38 +35,29 @@ export class AuthUserDto {
 
   @ApiProperty({ 
     example: '+1234567890',
-    description: 'User phone number',
-    required: false
+    description: 'User phone number'
   })
   phoneNumber?: string;
 
   @ApiProperty({ 
     example: 'https://example.com/profile.jpg',
-    description: 'User profile picture URL',
-    required: false
+    description: 'User profile picture URL'
   })
   profilePictureUrl?: string;
 
   @ApiProperty({
-    type: 'array',
-    items: {
-      type: 'object',
-      properties: {
-        id: { type: 'string', description: 'Organization ID' },
-        name: { type: 'string', description: 'Organization name' }
-      }
+    type: 'object',
+    properties: {
+      id: { type: 'string', description: 'Organization ID' },
+      name: { type: 'string', description: 'Organization name' }
     },
-    description: 'User organizations (simplified)',
-    required: false,
-    example: [
-      { id: 'org-uuid-1', name: 'Hospital Berlin' },
-      { id: 'org-uuid-2', name: 'Clinic Munich' }
-    ]
+    description: 'User organization (simplified)',
+    example: { id: 'org-uuid-1', name: 'Hospital Berlin' }
   })
-  organizations?: Array<{
+  organization?: {
     id: string;
     name: string;
-  }>;
+  };
 }
 
 export class AuthResponseDto {

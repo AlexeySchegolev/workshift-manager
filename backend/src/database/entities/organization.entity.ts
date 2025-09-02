@@ -79,7 +79,7 @@ export class Organization {
   isActive: boolean;
 
   // Relationships
-  @ManyToMany(() => User, user => user.organizations)
+  @OneToMany(() => User, user => user.organization)
   users: User[];
 
   @OneToMany(() => Employee, employee => employee.organization)

@@ -15,29 +15,6 @@ export enum ShiftType {
   OVERTIME = 'overtime'
 }
 
-export enum ShiftStatus {
-  DRAFT = 'draft',
-  PUBLISHED = 'published',
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
-}
-
-export enum ShiftPriority {
-  LOW = 1,
-  NORMAL = 2,
-  HIGH = 3,
-  CRITICAL = 4,
-  EMERGENCY = 5
-}
-
-export interface ShiftRoleRequirement {
-  roleId: string;
-  requiredCount: number;
-  minCount: number;
-  maxCount: number;
-  priority: number;
-}
 
 @Entity('shifts')
 export class Shift {
@@ -66,19 +43,6 @@ export class Shift {
   })
   type: ShiftType;
 
-  @Column({
-    type: 'enum',
-    enum: ShiftStatus,
-    default: ShiftStatus.DRAFT,
-  })
-  status: ShiftStatus;
-
-  @Column({
-    type: 'enum',
-    enum: ShiftPriority,
-    default: ShiftPriority.NORMAL,
-  })
-  priority: ShiftPriority;
 
   @Column({ name: 'shift_date', type: 'date' })
   shiftDate: Date;
@@ -104,26 +68,6 @@ export class Shift {
   @Column({ name: 'current_employees', type: 'integer', default: 0 })
   currentEmployees: number;
 
-  @Column({ 
-    name: 'role_requirements',
-    type: 'jsonb',
-    default: []
-  })
-  roleRequirements: ShiftRoleRequirement[];
-
-  @Column({ 
-    name: 'required_skills',
-    type: 'jsonb',
-    default: []
-  })
-  requiredSkills: string[];
-
-  @Column({ 
-    name: 'required_certifications',
-    type: 'jsonb',
-    default: []
-  })
-  requiredCertifications: string[];
 
   @Column({ name: 'is_overtime', type: 'boolean', default: false })
   isOvertime: boolean;
@@ -143,20 +87,6 @@ export class Shift {
   @Column({ name: 'weekend_rate', type: 'decimal', precision: 5, scale: 2, nullable: true })
   weekendRate?: number;
 
-  @Column({ name: 'color_code', type: 'varchar', length: 7, nullable: true })
-  colorCode?: string; // Hex color for UI display
-
-  @Column({ name: 'notes', type: 'text', nullable: true })
-  notes?: string;
-
-  @Column({ name: 'is_recurring', type: 'boolean', default: false })
-  isRecurring: boolean;
-
-  @Column({ name: 'recurrence_pattern', type: 'varchar', length: 100, nullable: true })
-  recurrencePattern?: string; // e.g., "weekly", "monthly", "daily"
-
-  @Column({ name: 'recurrence_end_date', type: 'date', nullable: true })
-  recurrenceEndDate?: Date;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
@@ -230,6 +160,6 @@ export class Shift {
   }
 
   get isAvailable(): boolean {
-    return this.status === ShiftStatus.PUBLISHED && this.isActive && !this.deletedAt;
+    return this.isActive && !this.deletedAt;
   }
 }

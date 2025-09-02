@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength, IsEnum, IsOptional, Matches } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsEnum, IsOptional, Matches, IsUUID } from 'class-validator';
 import { UserRole } from '@/database/entities/user.entity';
 
 export class RegisterDto {
@@ -57,10 +57,9 @@ export class RegisterDto {
   phoneNumber?: string;
 
   @ApiProperty({ 
-    example: ['org-uuid-1', 'org-uuid-2'],
-    description: 'Array of organization IDs the user should be associated with',
-    required: false
+    example: 'org-uuid-1',
+    description: 'Organization ID the user should be associated with'
   })
-  @IsOptional()
-  organizationIds?: string[];
+  @IsUUID()
+  organizationId: string;
 }

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsString, IsEnum, IsOptional, IsBoolean, IsArray, IsObject, MinLength } from 'class-validator';
-import {UserRole, UserStatus} from "@/database/entities/user.entity";
+import { IsEmail, IsString, IsEnum, IsOptional, IsBoolean, IsUUID, MinLength } from 'class-validator';
+import {UserRole} from "@/database/entities/user.entity";
 
 export class CreateUserDto {
   @ApiProperty({
@@ -42,13 +42,13 @@ export class CreateUserDto {
   role?: UserRole;
 
   @ApiPropertyOptional({
-    description: 'User status',
-    enum: UserStatus,
-    example: UserStatus.PENDING
+    description: 'Whether the user is active',
+    example: true,
+    default: true
   })
   @IsOptional()
-  @IsEnum(UserStatus)
-  status?: UserStatus;
+  @IsBoolean()
+  isActive?: boolean;
 
   @ApiPropertyOptional({
     description: 'Phone number',
@@ -66,47 +66,10 @@ export class CreateUserDto {
   @IsString()
   profilePictureUrl?: string;
 
-  @ApiPropertyOptional({
-    description: 'Email address verified',
-    example: false
+  @ApiProperty({
+    description: 'Organization ID to assign the user to',
+    example: 'uuid-org-1'
   })
-  @IsOptional()
-  @IsBoolean()
-  emailVerified?: boolean;
-
-  @ApiPropertyOptional({
-    description: 'Two-factor authentication enabled',
-    example: false
-  })
-  @IsOptional()
-  @IsBoolean()
-  twoFactorEnabled?: boolean;
-
-  @ApiPropertyOptional({
-    description: 'User preferences',
-    example: { theme: 'light', language: 'en' }
-  })
-  @IsOptional()
-  @IsObject()
-  preferences?: Record<string, any>;
-
-  @ApiPropertyOptional({
-    description: 'User permissions',
-    example: ['read:shifts', 'write:shifts']
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  permissions?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Organization IDs to assign the user to',
-    type: 'array',
-    items: { type: 'string' },
-    example: ['uuid-org-1', 'uuid-org-2']
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  organizationIds?: string[];
+  @IsUUID()
+  organizationId: string;
 }

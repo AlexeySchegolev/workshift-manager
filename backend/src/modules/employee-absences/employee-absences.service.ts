@@ -153,11 +153,8 @@ export class EmployeeAbsencesService {
         dto.startDate = absence.startDate;
         dto.endDate = absence.endDate;
         dto.absenceType = absence.absenceType;
-        dto.reason = absence.reason;
-        dto.notes = absence.notes;
         dto.daysCount = absence.daysCount;
         dto.hoursCount = absence.hoursCount;
-        dto.isPaid = absence.isPaid;
         dto.createdBy = absence.createdBy;
         dto.updatedBy = absence.updatedBy;
         dto.createdAt = absence.createdAt;

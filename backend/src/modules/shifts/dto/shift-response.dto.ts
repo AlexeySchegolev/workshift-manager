@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ShiftType, ShiftStatus, ShiftPriority } from '@/database/entities/shift.entity';
+import { ShiftType } from '@/database/entities/shift.entity';
 import { ShiftRoleRequirementDto } from './shift-role-requirement.dto';
 import { RoleResponseDto } from '@/modules/roles/dto/role-response.dto';
 import { LocationResponseDto } from '@/modules/locations/dto/location-response.dto';
@@ -57,19 +57,6 @@ export class ShiftResponseDto {
   })
   type: ShiftType;
 
-  @ApiProperty({
-    description: 'Current status of the shift',
-    enum: ShiftStatus,
-    example: ShiftStatus.PUBLISHED
-  })
-  status: ShiftStatus;
-
-  @ApiProperty({
-    description: 'Priority level of the shift',
-    enum: ShiftPriority,
-    example: ShiftPriority.NORMAL
-  })
-  priority: ShiftPriority;
 
   @ApiProperty({
     description: 'Date when the shift takes place',
@@ -127,34 +114,6 @@ export class ShiftResponseDto {
   })
   currentEmployees: number;
 
-  @ApiProperty({
-    description: 'Role requirements for this shift',
-    type: [ShiftRoleRequirementDto],
-    example: [
-      {
-        roleId: '550e8400-e29b-41d4-a716-446655440004',
-        requiredCount: 2,
-        minCount: 1,
-        maxCount: 3,
-        priority: 3
-      }
-    ]
-  })
-  roleRequirements: ShiftRoleRequirementDto[];
-
-  @ApiProperty({
-    description: 'Required skills for this shift',
-    type: [String],
-    example: ['CPR', 'First Aid', 'Patient Care']
-  })
-  requiredSkills: string[];
-
-  @ApiProperty({
-    description: 'Required certifications for this shift',
-    type: [String],
-    example: ['Nursing License', 'BLS Certification']
-  })
-  requiredCertifications: string[];
 
   @ApiProperty({
     description: 'Whether this shift counts as overtime',
@@ -195,41 +154,6 @@ export class ShiftResponseDto {
   })
   weekendRate?: number;
 
-  @ApiProperty({
-    description: 'Color code for UI display (hex format)',
-    example: '#FF5722',
-    pattern: '^#[0-9A-F]{6}$',
-    required: false
-  })
-  colorCode?: string;
-
-  @ApiProperty({
-    description: 'Additional notes for this shift',
-    example: 'Special requirements: Extra attention to patient in room 204',
-    required: false
-  })
-  notes?: string;
-
-  @ApiProperty({
-    description: 'Whether this is a recurring shift',
-    example: false
-  })
-  isRecurring: boolean;
-
-  @ApiProperty({
-    description: 'Recurrence pattern (e.g., weekly, monthly)',
-    example: 'weekly',
-    required: false
-  })
-  recurrencePattern?: string;
-
-  @ApiProperty({
-    description: 'End date for recurrence',
-    example: '2024-12-31',
-    format: 'date',
-    required: false
-  })
-  recurrenceEndDate?: string;
 
   @ApiProperty({
     description: 'Whether this shift is active',

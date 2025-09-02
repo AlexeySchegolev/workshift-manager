@@ -17,11 +17,6 @@ export class EmployeeAbsenceResponseDto {
     @ApiProperty({ description: 'Type of absence', enum: AbsenceType })
     absenceType: AbsenceType;
 
-    @ApiPropertyOptional({ description: 'Reason for absence' })
-    reason?: string;
-
-    @ApiPropertyOptional({ description: 'Additional notes' })
-    notes?: string;
 
     @ApiProperty({ description: 'Number of days for absence' })
     daysCount: number;
@@ -29,8 +24,6 @@ export class EmployeeAbsenceResponseDto {
     @ApiPropertyOptional({ description: 'Number of hours for absence' })
     hoursCount?: number;
 
-    @ApiProperty({ description: 'Whether absence is paid' })
-    isPaid: boolean;
 
     @ApiPropertyOptional({ description: 'UUID of creator', format: 'uuid' })
     createdBy?: string;

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Organization } from './organization.entity';
 import { ShiftPlan } from './shift-plan.entity';
 
@@ -6,13 +6,6 @@ export enum UserRole {
   SUPER_ADMIN = 'super_admin',
   ORGANIZATION_ADMIN = 'organization_admin',
   EMPLOYEE = 'employee'
-}
-
-export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
-  PENDING = 'pending'
 }
 
 @Entity('users')
@@ -39,12 +32,8 @@ export class User {
   })
   role: UserRole;
 
-  @Column({
-    type: 'enum',
-    enum: UserStatus,
-    default: UserStatus.PENDING,
-  })
-  status: UserStatus;
+  @Column({ name: 'is_active', type: 'boolean', default: true })
+  isActive: boolean;
 
   @Column({ name: 'phone_number', type: 'varchar', length: 20, nullable: true })
   phoneNumber?: string;
@@ -55,44 +44,13 @@ export class User {
   @Column({ name: 'last_login_at', type: 'timestamp', nullable: true })
   lastLoginAt?: Date;
 
-  @Column({ name: 'password_reset_token', type: 'varchar', length: 255, nullable: true })
-  passwordResetToken?: string;
-
-  @Column({ name: 'password_reset_expires', type: 'timestamp', nullable: true })
-  passwordResetExpires?: Date;
-
-  @Column({ name: 'email_verified', type: 'boolean', default: false })
-  emailVerified: boolean;
-
-  @Column({ name: 'email_verification_token', type: 'varchar', length: 255, nullable: true })
-  emailVerificationToken?: string;
-
-  @Column({ name: 'two_factor_enabled', type: 'boolean', default: false })
-  twoFactorEnabled: boolean;
-
-  @Column({ name: 'two_factor_secret', type: 'varchar', length: 255, nullable: true })
-  twoFactorSecret?: string;
-
-  @Column({ 
-    type: 'jsonb',
-    default: {}
-  })
-  preferences: Record<string, any>;
-
-  @Column({ 
-    type: 'jsonb',
-    default: []
-  })
-  permissions: string[];
+  @Column({ name: 'organization_id', type: 'uuid' })
+  organizationId: string;
 
   // Relationships
-  @ManyToMany(() => Organization, organization => organization.users)
-  @JoinTable({
-    name: 'user_organizations',
-    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'organization_id', referencedColumnName: 'id' }
-  })
-  organizations: Organization[];
+  @ManyToOne(() => Organization, organization => organization.users)
+  @JoinColumn({ name: 'organization_id' })
+  organization: Organization;
 
   @OneToMany(() => ShiftPlan, shiftPlan => shiftPlan.createdByUser)
   createdShiftPlans: ShiftPlan[];
@@ -117,9 +75,5 @@ export class User {
   // Virtual fields
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
-  }
-
-  get isActive(): boolean {
-    return this.status === UserStatus.ACTIVE && !this.deletedAt;
   }
 }

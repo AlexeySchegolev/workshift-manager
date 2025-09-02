@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {UserRole, UserStatus} from "@/database/entities/user.entity";
+import {UserRole} from "@/database/entities/user.entity";
 
 export class UserResponseDto {
   @ApiProperty({
@@ -39,13 +39,6 @@ export class UserResponseDto {
   })
   role: UserRole;
 
-  @ApiProperty({
-    description: 'User status',
-    enum: UserStatus,
-    example: UserStatus.ACTIVE
-  })
-  status: UserStatus;
-
   @ApiPropertyOptional({
     description: 'Phone number',
     example: '+1 555 123-4567'
@@ -65,36 +58,10 @@ export class UserResponseDto {
   lastLoginAt?: Date;
 
   @ApiProperty({
-    description: 'Email address verified',
-    example: true
+    description: 'Organization ID',
+    example: 'uuid-org-1'
   })
-  emailVerified: boolean;
-
-  @ApiProperty({
-    description: 'Two-factor authentication enabled',
-    example: false
-  })
-  twoFactorEnabled: boolean;
-
-  @ApiProperty({
-    description: 'User preferences',
-    example: { theme: 'dark', language: 'en' }
-  })
-  preferences: Record<string, any>;
-
-  @ApiProperty({
-    description: 'User permissions',
-    example: ['read:shifts', 'write:shifts']
-  })
-  permissions: string[];
-
-  @ApiProperty({
-    description: 'User organization IDs list',
-    type: 'array',
-    items: { type: 'string' },
-    example: ['uuid-org-1', 'uuid-org-2']
-  })
-  organizationIds: string[];
+  organizationId: string;
 
   @ApiProperty({
     description: 'Is user active',

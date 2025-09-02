@@ -4,7 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { AuthResponseDto, AuthUserDto, RegisterResponseDto } from './dto/auth-response.dto';
-import { User, UserStatus, UserRole } from '@/database/entities/user.entity';
+import { User, UserRole } from '@/database/entities/user.entity';
 import { JwtPayload } from './strategies/jwt.strategy';
 
 @Injectable()
@@ -46,7 +46,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.role,
-      organizationIds: user.organizations?.map(org => org.id) || [],
+      organizationId: user.organizationId,
     };
 
     // Update last login timestamp
@@ -60,10 +60,10 @@ export class AuthService {
       role: user.role,
       phoneNumber: user.phoneNumber,
       profilePictureUrl: user.profilePictureUrl,
-      organizations: user.organizations?.map(org => ({
-        id: org.id,
-        name: org.name,
-      })),
+      organization: user.organization ? {
+        id: user.organization.id,
+        name: user.organization.name,
+      } : undefined,
     };
 
     return {
@@ -88,13 +88,9 @@ export class AuthService {
       lastName: registerDto.lastName,
       password: registerDto.password,
       role: registerDto.role || UserRole.EMPLOYEE,
-      status: UserStatus.ACTIVE, // Set as active since no email verification
+      isActive: true, // Set as active since no email verification
       phoneNumber: registerDto.phoneNumber,
-      organizationIds: registerDto.organizationIds,
-      emailVerified: true, // Set as verified since no email verification process
-      twoFactorEnabled: false,
-      preferences: {},
-      permissions: [],
+      organizationId: registerDto.organizationId,
     };
 
     const user = await this.usersService.create(userData);
@@ -107,10 +103,10 @@ export class AuthService {
       role: user.role,
       phoneNumber: user.phoneNumber,
       profilePictureUrl: user.profilePictureUrl,
-      organizations: user.organizations?.map(org => ({
-        id: org.id,
-        name: org.name,
-      })),
+      organization: user.organization ? {
+        id: user.organization.id,
+        name: user.organization.name,
+      } : undefined,
     };
 
     this.logger.log(`User registered successfully: ${user.email}`);
@@ -134,10 +130,10 @@ export class AuthService {
       role: user.role,
       phoneNumber: user.phoneNumber,
       profilePictureUrl: user.profilePictureUrl,
-      organizations: user.organizations?.map(org => ({
-        id: org.id,
-        name: org.name,
-      })),
+      organization: user.organization ? {
+        id: user.organization.id,
+        name: user.organization.name,
+      } : undefined,
     };
   }
 }

@@ -64,9 +64,7 @@ export class EmployeesService {
         'organization',
         'location', 
         'primaryRole',
-        'roles', 
-        'supervisor',
-        'subordinates'
+        'roles'
       ]
     } : {};
 
@@ -82,9 +80,7 @@ export class EmployeesService {
         'organization',
         'location', 
         'primaryRole',
-        'roles', 
-        'supervisor',
-        'subordinates'
+        'roles'
       ]
     } : { where: { id } };
 

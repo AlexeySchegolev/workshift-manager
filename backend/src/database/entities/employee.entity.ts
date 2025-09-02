@@ -68,8 +68,6 @@ export class Employee {
   @Column({ name: 'max_consecutive_days', type: 'integer', default: 5 })
   maxConsecutiveDays: number;
 
-  @Column({ name: 'preferred_shift_types', type: 'jsonb', default: [] })
-  preferredShiftTypes: string[];
 
   @Column({ name: 'saturday_availability', type: 'boolean', default: true })
   saturdayAvailability: boolean;
@@ -92,14 +90,7 @@ export class Employee {
   @Column({ name: 'primary_role_id', type: 'uuid', nullable: true })
   primaryRoleId?: string;
 
-  @Column({ name: 'supervisor_id', type: 'uuid', nullable: true })
-  supervisorId?: string;
 
-  @Column({ name: 'emergency_contact_name', type: 'varchar', length: 255, nullable: true })
-  emergencyContactName?: string;
-
-  @Column({ name: 'emergency_contact_phone', type: 'varchar', length: 20, nullable: true })
-  emergencyContactPhone?: string;
 
   @Column({ name: 'address', type: 'varchar', length: 500, nullable: true })
   address?: string;
@@ -113,32 +104,6 @@ export class Employee {
   @Column({ name: 'country', type: 'varchar', length: 100, nullable: true })
   country?: string;
 
-  @Column({
-    name: 'certifications',
-    type: 'jsonb',
-    default: []
-  })
-  certifications: string[];
-
-  @Column({
-    name: 'skills',
-    type: 'jsonb',
-    default: []
-  })
-  skills: string[];
-
-  @Column({
-    name: 'languages',
-    type: 'jsonb',
-    default: []
-  })
-  languages: string[];
-
-  @Column({ name: 'profile_picture_url', type: 'varchar', length: 500, nullable: true })
-  profilePictureUrl?: string;
-
-  @Column({ name: 'notes', type: 'text', nullable: true })
-  notes?: string;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
@@ -164,12 +129,6 @@ export class Employee {
   })
   roles: Role[];
 
-  @ManyToOne(() => Employee, { nullable: true })
-  @JoinColumn({ name: 'supervisor_id' })
-  supervisor?: Employee;
-
-  @OneToMany(() => Employee, employee => employee.supervisor)
-  subordinates: Employee[];
 
 
   @OneToMany(() => EmployeeAbsence, absence => absence.employee)

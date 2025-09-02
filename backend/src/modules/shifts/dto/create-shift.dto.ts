@@ -13,7 +13,7 @@ import {
   IsUUID
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ShiftType, ShiftStatus, ShiftPriority } from '@/database/entities/shift.entity';
+import { ShiftType } from '@/database/entities/shift.entity';
 import { ShiftRoleRequirementDto } from './shift-role-requirement.dto';
 
 export class CreateShiftDto {
@@ -69,25 +69,6 @@ export class CreateShiftDto {
   @IsEnum(ShiftType)
   type: ShiftType;
 
-  @ApiProperty({
-    description: 'Current status of the shift',
-    enum: ShiftStatus,
-    example: ShiftStatus.DRAFT,
-    default: ShiftStatus.DRAFT
-  })
-  @IsOptional()
-  @IsEnum(ShiftStatus)
-  status?: ShiftStatus = ShiftStatus.DRAFT;
-
-  @ApiProperty({
-    description: 'Priority level of the shift',
-    enum: ShiftPriority,
-    example: ShiftPriority.NORMAL,
-    default: ShiftPriority.NORMAL
-  })
-  @IsOptional()
-  @IsEnum(ShiftPriority)
-  priority?: ShiftPriority = ShiftPriority.NORMAL;
 
   @ApiProperty({
     description: 'Date when the shift takes place',

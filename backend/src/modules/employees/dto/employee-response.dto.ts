@@ -120,23 +120,6 @@ export class EmployeeResponseDto {
   })
   primaryRoleId?: string;
 
-  @ApiPropertyOptional({
-    description: 'Supervisor ID',
-    example: 'uuid-string'
-  })
-  supervisorId?: string;
-
-  @ApiPropertyOptional({
-    description: 'Emergency contact name',
-    example: 'Maria Schneider'
-  })
-  emergencyContactName?: string;
-
-  @ApiPropertyOptional({
-    description: 'Emergency contact phone',
-    example: '+49 89 1234-002'
-  })
-  emergencyContactPhone?: string;
 
   @ApiPropertyOptional({
     description: 'Address',
@@ -162,35 +145,6 @@ export class EmployeeResponseDto {
   })
   country?: string;
 
-  @ApiProperty({
-    description: 'Certifications',
-    example: ['Nursing Training', 'First Aid']
-  })
-  certifications: string[];
-
-  @ApiProperty({
-    description: 'Skills',
-    example: ['Patient Care', 'Teamwork']
-  })
-  skills: string[];
-
-  @ApiProperty({
-    description: 'Languages',
-    example: ['German', 'English']
-  })
-  languages: string[];
-
-  @ApiPropertyOptional({
-    description: 'Profile picture URL',
-    example: 'https://example.com/profile.jpg'
-  })
-  profilePictureUrl?: string;
-
-  @ApiPropertyOptional({
-    description: 'Notes',
-    example: 'Experienced employee specialized in dialysis'
-  })
-  notes?: string;
 
   @ApiProperty({
     description: 'Is the employee active',
@@ -259,16 +213,5 @@ export class EmployeeResponseDto {
   })
   roles?: RoleResponseDto[];
 
-  @ApiPropertyOptional({
-    description: 'Supervisor information',
-    type: () => EmployeeResponseDto
-  })
-  supervisor?: EmployeeResponseDto;
-
-  @ApiPropertyOptional({
-    description: 'Subordinate employees',
-    type: () => [EmployeeResponseDto]
-  })
-  subordinates?: EmployeeResponseDto[];
 
 }

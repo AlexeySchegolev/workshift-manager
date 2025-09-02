@@ -31,29 +31,23 @@ export class UsersService {
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
 
+    // Validate organization exists
+    const organization = await this.organizationRepository.findOne({ where: { id: createUserDto.organizationId } });
+    if (!organization) {
+      throw new BadRequestException('Organization not found');
+    }
+
     const user = this.userRepository.create({
       email: createUserDto.email,
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
       passwordHash: hashedPassword,
       role: createUserDto.role,
-      status: createUserDto.status,
+      isActive: createUserDto.isActive ?? true,
       phoneNumber: createUserDto.phoneNumber,
       profilePictureUrl: createUserDto.profilePictureUrl,
-      emailVerified: createUserDto.emailVerified ?? false,
-      twoFactorEnabled: createUserDto.twoFactorEnabled ?? false,
-      preferences: createUserDto.preferences ?? {},
-      permissions: createUserDto.permissions ?? [],
+      organizationId: createUserDto.organizationId,
     });
-
-    // Assign organizations if provided
-    if (createUserDto.organizationIds && createUserDto.organizationIds.length > 0) {
-      const organizations = await this.organizationRepository.find({ where: { id: In(createUserDto.organizationIds) } });
-      if (organizations.length !== createUserDto.organizationIds.length) {
-        throw new BadRequestException('One or more organizations not found');
-      }
-      user.organizations = organizations;
-    }
 
     const saved = await this.userRepository.save(user);
     this.logger.log(`User created successfully with ID: ${saved.id}`);
@@ -62,13 +56,13 @@ export class UsersService {
 
   async findAll(includeRelations: boolean = true): Promise<User[]> {
     this.logger.log('Retrieving all users');
-    const options = includeRelations ? { relations: ['organizations'] } : {};
+    const options = includeRelations ? { relations: ['organization'] } : {};
     return this.userRepository.find(options);
   }
 
   async findOne(id: string, includeRelations: boolean = true): Promise<User> {
     this.logger.log(`Retrieving user with ID: ${id}`);
-    const options = includeRelations ? { where: { id }, relations: ['organizations'] } : { where: { id } };
+    const options = includeRelations ? { where: { id }, relations: ['organization'] } : { where: { id } };
     const user = await this.userRepository.findOne(options);
     if (!user) {
       this.logger.warn(`User with ID ${id} not found`);
@@ -79,7 +73,7 @@ export class UsersService {
 
   async findByEmail(email: string, includeRelations: boolean = true): Promise<User | null> {
     this.logger.log(`Retrieving user with email: ${email}`);
-    const options = includeRelations ? { where: { email }, relations: ['organizations'] } : { where: { email } };
+    const options = includeRelations ? { where: { email }, relations: ['organization'] } : { where: { email } };
     return this.userRepository.findOne(options);
   }
 
@@ -96,17 +90,15 @@ export class UsersService {
 
     if (updateUserDto.password) {
       const saltRounds = 12;
-        (updateUserDto as any).passwordHash = await bcrypt.hash(updateUserDto.password, saltRounds);
+      (updateUserDto as any).passwordHash = await bcrypt.hash(updateUserDto.password, saltRounds);
       delete (updateUserDto as any).password;
     }
 
-    if (updateUserDto.organizationIds) {
-      const organizations = await this.organizationRepository.find({ where: { id: In(updateUserDto.organizationIds) } });
-      if (organizations.length !== updateUserDto.organizationIds.length) {
-        throw new BadRequestException('One or more organizations not found');
+    if (updateUserDto.organizationId) {
+      const organization = await this.organizationRepository.findOne({ where: { id: updateUserDto.organizationId } });
+      if (!organization) {
+        throw new BadRequestException('Organization not found');
       }
-      (updateUserDto as any).organizations = organizations;
-      delete (updateUserDto as any).organizationIds;
     }
 
     await this.userRepository.save({ ...user, ...updateUserDto });

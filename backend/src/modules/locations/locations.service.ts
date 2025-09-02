@@ -32,8 +32,6 @@ export class LocationsService {
         const location = this.locationRepository.create({
             ...createLocationDto,
             operatingHours,
-            services: createLocationDto.services || [],
-            equipment: createLocationDto.equipment || [],
             isActive: createLocationDto.isActive !== undefined ? createLocationDto.isActive : true
         });
 

@@ -7,7 +7,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from 'typeorm';
-import { Employee } from './employee.entity';
+import {Employee} from './employee.entity';
 
 export enum AbsenceType {
     VACATION = 'vacation',
@@ -30,13 +30,13 @@ export class EmployeeAbsence {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ name: 'employee_id', type: 'uuid' })
+    @Column({name: 'employee_id', type: 'uuid'})
     employeeId: string;
 
-    @Column({ name: 'start_date', type: 'date' })
+    @Column({name: 'start_date', type: 'date'})
     startDate: Date;
 
-    @Column({ name: 'end_date', type: 'date' })
+    @Column({name: 'end_date', type: 'date'})
     endDate: Date;
 
     @Column({
@@ -46,43 +46,39 @@ export class EmployeeAbsence {
     })
     absenceType: AbsenceType;
 
-
-    @Column({ name: 'reason', type: 'text', nullable: true })
-    reason?: string;
-
-    @Column({ name: 'notes', type: 'text', nullable: true })
-    notes?: string;
-
-    @Column({ name: 'days_count', type: 'integer' })
+    @Column({name: 'days_count', type: 'integer'})
     daysCount: number;
 
-    @Column({ name: 'hours_count', type: 'decimal', precision: 5, scale: 2, nullable: true, transformer: { to: (value) => value, from: (value) => value ? parseFloat(value) : value } })
+    @Column({
+        name: 'hours_count',
+        type: 'decimal',
+        precision: 5,
+        scale: 2,
+        nullable: true,
+        transformer: {to: (value) => value, from: (value) => value ? parseFloat(value) : value}
+    })
     hoursCount?: number;
-
-    @Column({ name: 'is_paid', type: 'boolean', default: true })
-    isPaid: boolean;
-
 
     // Relationships
     @ManyToOne(() => Employee, employee => employee.absences)
-    @JoinColumn({ name: 'employee_id' })
+    @JoinColumn({name: 'employee_id'})
     employee: Employee;
 
 
     // Audit fields
-    @Column({ name: 'created_by', type: 'uuid', nullable: true })
+    @Column({name: 'created_by', type: 'uuid', nullable: true})
     createdBy?: string;
 
-    @Column({ name: 'updated_by', type: 'uuid', nullable: true })
+    @Column({name: 'updated_by', type: 'uuid', nullable: true})
     updatedBy?: string;
 
-    @CreateDateColumn({ name: 'created_at' })
+    @CreateDateColumn({name: 'created_at'})
     createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at' })
+    @UpdateDateColumn({name: 'updated_at'})
     updatedAt: Date;
 
-    @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
+    @Column({name: 'deleted_at', type: 'timestamp', nullable: true})
     deletedAt?: Date;
 
     // Virtual fields

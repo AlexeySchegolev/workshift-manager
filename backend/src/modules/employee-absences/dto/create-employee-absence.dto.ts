@@ -19,15 +19,6 @@ export class CreateEmployeeAbsenceDto {
     @IsEnum(AbsenceType)
     absenceType: AbsenceType;
 
-    @ApiPropertyOptional({ description: 'Reason for absence', example: 'Family vacation' })
-    @IsOptional()
-    @IsString()
-    reason?: string;
-
-    @ApiPropertyOptional({ description: 'Additional notes', example: 'Emergency contact available' })
-    @IsOptional()
-    @IsString()
-    notes?: string;
 
     @ApiProperty({ description: 'Number of days for absence', example: 3 })
     @IsNumber()
@@ -38,8 +29,4 @@ export class CreateEmployeeAbsenceDto {
     @IsNumber()
     hoursCount?: number;
 
-    @ApiPropertyOptional({ description: 'Whether absence is paid', default: true })
-    @IsOptional()
-    @IsBoolean()
-    isPaid?: boolean;
 }

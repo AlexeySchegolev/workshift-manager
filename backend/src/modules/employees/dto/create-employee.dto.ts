@@ -152,29 +152,6 @@ export class CreateEmployeeDto {
   @IsUUID('4', { each: true })
   roleIds?: string[];
 
-  @ApiPropertyOptional({
-    description: 'Supervisor ID',
-    example: 'uuid-string'
-  })
-  @IsOptional()
-  @IsUUID()
-  supervisorId?: string;
-
-  @ApiPropertyOptional({
-    description: 'Emergency contact name',
-    example: 'Maria Schneider'
-  })
-  @IsOptional()
-  @IsString()
-  emergencyContactName?: string;
-
-  @ApiPropertyOptional({
-    description: 'Emergency contact phone',
-    example: '+49 89 1234-002'
-  })
-  @IsOptional()
-  @IsString()
-  emergencyContactPhone?: string;
 
   @ApiPropertyOptional({
     description: 'Address',
@@ -208,49 +185,4 @@ export class CreateEmployeeDto {
   @IsString()
   country?: string;
 
-  @ApiPropertyOptional({
-    description: 'Certifications',
-    example: ['Nursing Training', 'First Aid'],
-    type: [String]
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  certifications?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Skills',
-    example: ['Patient Care', 'Teamwork'],
-    type: [String]
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  skills?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Languages',
-    example: ['German', 'English'],
-    type: [String]
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  languages?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Profile picture URL',
-    example: 'https://example.com/profile.jpg'
-  })
-  @IsOptional()
-  @IsString()
-  profilePictureUrl?: string;
-
-  @ApiPropertyOptional({
-    description: 'Notes about the employee',
-    example: 'Experienced employee specialized in dialysis'
-  })
-  @IsOptional()
-  @IsString()
-  notes?: string;
 }

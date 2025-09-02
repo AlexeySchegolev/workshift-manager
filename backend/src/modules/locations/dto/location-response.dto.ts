@@ -94,17 +94,6 @@ export class LocationResponseDto {
   })
   country: string;
 
-  @ApiPropertyOptional({
-    description: 'Latitude coordinate',
-    example: 52.5200
-  })
-  latitude?: number;
-
-  @ApiPropertyOptional({
-    description: 'Longitude coordinate',
-    example: 13.4050
-  })
-  longitude?: number;
 
   @ApiPropertyOptional({
     description: 'Phone number',
@@ -120,30 +109,7 @@ export class LocationResponseDto {
   })
   email?: string;
 
-  @ApiPropertyOptional({
-    description: 'Manager name',
-    example: 'Anna Schmidt'
-  })
-  managerName?: string;
 
-  @ApiPropertyOptional({
-    description: 'Manager email address',
-    example: 'anna.schmidt@workshift.de'
-  })
-  managerEmail?: string;
-
-  @ApiPropertyOptional({
-    description: 'Manager phone number',
-    example: '+49 30 12345679'
-  })
-  managerPhone?: string;
-
-  @ApiProperty({
-    description: 'Maximum capacity (number of people)',
-    example: 50,
-    minimum: 1,
-  })
-  maxCapacity: number;
 
   @ApiProperty({
     description: 'Current capacity (number of people currently)',
@@ -159,43 +125,7 @@ export class LocationResponseDto {
   })
   status: LocationStatus;
 
-  @ApiPropertyOptional({
-    description: 'Floor area in square meters',
-    example: 250.5
-  })
-  floorArea?: number;
 
-  @ApiPropertyOptional({
-    description: 'Number of rooms',
-    example: 12
-  })
-  numberOfRooms?: number;
-
-  @ApiPropertyOptional({
-    description: 'Number of beds',
-    example: 25
-  })
-  numberOfBeds?: number;
-
-  @ApiPropertyOptional({
-    description: 'Number of parking spaces',
-    example: 30
-  })
-  parkingSpaces?: number;
-
-  @ApiProperty({
-    description: 'Accessibility features available',
-    example: ['Rollstuhlzugang', 'Aufzug', 'Behindertengerechte Toiletten'],
-    type: [String]
-  })
-  accessibilityFeatures: string[];
-
-  @ApiProperty({
-    description: 'Safety features available',
-    example: ['Brandmeldeanlage', 'Notausgang', 'Erste-Hilfe-Station'],
-    type: [String]
-  })
-  safetyFeatures: string[];
 
   @ApiProperty({
     description: 'Timezone for this location',
@@ -219,19 +149,6 @@ export class LocationResponseDto {
   })
   operatingHours: OperatingHours;
 
-  @ApiProperty({
-    description: 'Services provided at this location',
-    type: [String],
-    example: ['Nursing', 'Physical Therapy', 'Medical Consultation'],
-  })
-  services: string[];
-
-  @ApiProperty({
-    description: 'Equipment available at this location',
-    type: [String],
-    example: ['Wheelchair', 'Hospital Bed', 'Medical Monitor'],
-  })
-  equipment: string[];
 
   @ApiProperty({
     description: 'Whether the location is currently active',

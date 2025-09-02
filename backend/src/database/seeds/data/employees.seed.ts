@@ -15,8 +15,6 @@ export const employeesSeedData = [
     hoursPerWeek: 40,
     locationId: '1', // Will be replaced with actual location ID
     primaryRoleId: '1', // Will be replaced with Schichtleiter role ID
-    certifications: ['Krankenpflege-Ausbildung', 'Führungsqualifikation', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Teamführung', 'Qualitätsmanagement'],
     isActive: true
   },
   {
@@ -32,8 +30,6 @@ export const employeesSeedData = [
     hoursPerWeek: 40,
     locationId: '1',
     primaryRoleId: '2', // Krankenpfleger
-    certifications: ['Krankenpflege-Ausbildung', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Medikamentengabe', 'Wundversorgung'],
     isActive: true
   },
   {
@@ -49,8 +45,6 @@ export const employeesSeedData = [
     hoursPerWeek: 30,
     locationId: '1',
     primaryRoleId: '2', // Krankenpfleger
-    certifications: ['Krankenpflege-Ausbildung', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Dokumentation'],
     isActive: true
   },
   {
@@ -66,8 +60,6 @@ export const employeesSeedData = [
     hoursPerWeek: 40,
     locationId: '1',
     primaryRoleId: '3', // Pflegerassistent
-    certifications: ['Pflegehelfer-Ausbildung', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Grundpflege', 'Teamarbeit'],
     isActive: true
   },
   {
@@ -83,8 +75,6 @@ export const employeesSeedData = [
     hoursPerWeek: 20,
     locationId: '1',
     primaryRoleId: '3', // Pflegerassistent
-    certifications: ['Pflegehelfer-Ausbildung', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Dokumentation'],
     isActive: true
   },
 
@@ -102,8 +92,6 @@ export const employeesSeedData = [
     hoursPerWeek: 40,
     locationId: '2',
     primaryRoleId: '1', // Schichtleiter
-    certifications: ['Krankenpflege-Ausbildung', 'Führungsqualifikation', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Teamführung', 'Notfallmanagement'],
     isActive: true
   },
   {
@@ -119,8 +107,6 @@ export const employeesSeedData = [
     hoursPerWeek: 40,
     locationId: '2',
     primaryRoleId: '2', // Krankenpfleger
-    certifications: ['Krankenpflege-Ausbildung', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Medikamentengabe'],
     isActive: true
   },
   {
@@ -136,8 +122,6 @@ export const employeesSeedData = [
     hoursPerWeek: 40,
     locationId: '2',
     primaryRoleId: '2', // Krankenpfleger
-    certifications: ['Krankenpflege-Ausbildung', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Wundversorgung'],
     isActive: true
   },
   {
@@ -153,8 +137,6 @@ export const employeesSeedData = [
     hoursPerWeek: 35,
     locationId: '2',
     primaryRoleId: '3', // Pflegerassistent
-    certifications: ['Pflegehelfer-Ausbildung', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Grundpflege'],
     isActive: true
   },
   {
@@ -170,8 +152,6 @@ export const employeesSeedData = [
     hoursPerWeek: 40,
     locationId: '2',
     primaryRoleId: '3', // Pflegerassistent
-    certifications: ['Pflegehelfer-Ausbildung', 'Erste Hilfe'],
-    skills: ['Patientenbetreuung', 'Teamarbeit'],
     isActive: true
   }
 ];

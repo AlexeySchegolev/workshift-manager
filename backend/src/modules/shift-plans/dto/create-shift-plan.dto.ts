@@ -85,15 +85,6 @@ export class CreateShiftPlanDto {
   @IsObject()
   planData?: MonthlyShiftPlanDto;
 
-  @ApiPropertyOptional({
-    description: 'Metadata for the shift plan',
-    type: 'object',
-    additionalProperties: true,
-    example: { generatedBy: 'system', version: '1.0' }
-  })
-  @IsOptional()
-  @IsObject()
-  metadata?: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Total number of shifts in the plan',
@@ -134,14 +125,6 @@ export class CreateShiftPlanDto {
   coveragePercentage?: number;
 
 
-  @ApiPropertyOptional({ 
-    description: 'Whether this shift plan is published',
-    example: false,
-    default: false
-  })
-  @IsOptional()
-  @IsBoolean()
-  isPublished?: boolean;
 
   @ApiPropertyOptional({
     description: 'ID of user who created this shift plan',

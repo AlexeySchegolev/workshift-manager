@@ -43,12 +43,6 @@ export class ShiftPlanResponseDto {
   })
   planData: MonthlyShiftPlanDto;
 
-  @ApiProperty({
-    description: 'Whether the shift plan is published',
-    example: false,
-    default: false,
-  })
-  isPublished: boolean;
 
   @ApiPropertyOptional({
     description: 'User ID who created this shift plan',

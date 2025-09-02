@@ -68,7 +68,6 @@ export class Shift {
   @Column({ name: 'current_employees', type: 'integer', default: 0 })
   currentEmployees: number;
 
-
   @Column({ name: 'is_overtime', type: 'boolean', default: false })
   isOvertime: boolean;
 

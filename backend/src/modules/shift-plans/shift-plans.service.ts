@@ -51,8 +51,7 @@ export class ShiftPlansService {
     }
 
     const shiftPlan = this.shiftPlanRepository.create({
-      ...createShiftPlanDto,
-      isPublished: createShiftPlanDto.isPublished || false
+      ...createShiftPlanDto
     });
 
     const savedPlan = await this.shiftPlanRepository.save(shiftPlan);
@@ -125,17 +124,4 @@ export class ShiftPlansService {
     this.logger.log(`Shift plan with ID ${id} removed successfully`);
   }
 
-  async publish(id: string): Promise<ShiftPlan> {
-    this.logger.log(`Publishing shift plan with ID: ${id}`);
-    
-    const shiftPlan = await this.findOne(id);
-    
-    // Validate the plan before publishing
-    if (!shiftPlan.planData || Object.keys(shiftPlan.planData).length === 0) {
-      throw new BadRequestException('Cannot publish empty shift plan');
-    }
-
-    await this.shiftPlanRepository.update(id, { isPublished: true });
-    return this.findOne(id);
-  }
 }

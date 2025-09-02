@@ -32,9 +32,9 @@ import QuickActions from "@/components/dashboard/QuickActions.tsx";
 import StatusLight from "@/components/dashboard/StatusLight.tsx";
 
 /**
- * Professional Dashboard Homepage
+ * Professional Dashboard Page for authenticated users
  */
-const HomePage: React.FC = () => {
+const DashboardPage: React.FC = () => {
     const navigate = useNavigate();
     const theme = useTheme();
     const dashboardActions = useDashboardActions();
@@ -258,4 +258,4 @@ const HomePage: React.FC = () => {
     );
 };
 
-export default HomePage;
+export default DashboardPage;

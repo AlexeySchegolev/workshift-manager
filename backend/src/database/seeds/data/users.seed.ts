@@ -5,7 +5,7 @@ export const usersSeedData = [
     email: 'admin@dialyse-praxis.de',
     firstName: 'System',
     lastName: 'Administrator',
-    passwordHash: '$2b$10$rQZ8kZKjZQZ8kZKjZQZ8kOeKqGqGqGqGqGqGqGqGqGqGqGqGqGqGq', // password: admin123
+    passwordHash: '$2b$10$Y4MhIXpsrrS8VCHfKAsE4uW8K00loO1KoRRaiNubCFuYMbMh4.luy', // password: admin123
     role: UserRole.SUPER_ADMIN,
     status: UserStatus.ACTIVE,
     phoneNumber: '+49 89 4400-1001',

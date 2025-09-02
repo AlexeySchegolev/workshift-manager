@@ -43,7 +43,7 @@ export const LoginForm: React.FC = () => {
 
     try {
       await login(formData);
-      navigate('/dashboard');
+      navigate('/');
     } catch (error: any) {
       console.error('Login error:', error);
       setError(
@@ -142,28 +142,6 @@ export const LoginForm: React.FC = () => {
               )}
             </Button>
 
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Link 
-                  component={RouterLink} 
-                  to="/register" 
-                  variant="body2"
-                  sx={{ textDecoration: 'none' }}
-                >
-                  Noch kein Konto? Registrieren
-                </Link>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }} sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
-                <Link 
-                  component={RouterLink} 
-                  to="/forgot-password" 
-                  variant="body2"
-                  sx={{ textDecoration: 'none' }}
-                >
-                  Passwort vergessen?
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Paper>
       </Box>

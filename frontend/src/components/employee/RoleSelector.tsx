@@ -46,26 +46,7 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
       onRolesChange(newRoles);
     }
   };
-
-  const getRoleColor = (roleType: string) => {
-    const colors = {
-      specialist: '#1976d2',
-      assistant: '#388e3c',
-      shift_leader: '#f57c00',
-      nurse: '#7b1fa2',
-      nurse_manager: '#c2185b',
-      helper: '#5d4037',
-      doctor: '#d32f2f',
-      technician: '#455a64',
-      administrator: '#616161',
-      cleaner: '#795548',
-      security: '#424242',
-      other: '#9e9e9e',
-    };
-    return colors[roleType as keyof typeof colors] || colors.other;
-  };
-
-  if (loading) {
+    if (loading) {
     return (
       <FormControl component="fieldset" fullWidth>
         <FormLabel component="legend" sx={{ mb: 2, fontSize: '0.875rem', fontWeight: 600 }}>

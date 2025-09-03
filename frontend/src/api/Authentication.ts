@@ -46,7 +46,6 @@ import {
   RoleResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
-  ShiftRoleRequirementDto,
   TimeSlotDto,
   UpdateEmployeeAbsenceDto,
   UpdateEmployeeDto,

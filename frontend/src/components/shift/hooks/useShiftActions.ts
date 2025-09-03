@@ -98,16 +98,12 @@ export const useShiftActions = (
           totalHours: formData.totalHours,
           minEmployees: formData.minEmployees,
           maxEmployees: formData.maxEmployees,
-          roleRequirements: [],
-          requiredSkills: [],
-          requiredCertifications: [],
           isOvertime: formData.isOvertime,
           overtimeRate: formData.overtimeRate,
           isHoliday: formData.isHoliday,
           holidayRate: formData.holidayRate,
           isWeekend: formData.isWeekend,
           weekendRate: formData.weekendRate,
-          isRecurring: false,
           isActive: formData.isActive,
         });
 
@@ -161,16 +157,12 @@ export const useShiftActions = (
         totalHours: shift.totalHours,
         minEmployees: shift.minEmployees,
         maxEmployees: shift.maxEmployees,
-        roleRequirements: [],
-        requiredSkills: [],
-        requiredCertifications: [],
         isOvertime: shift.isOvertime,
         overtimeRate: shift.overtimeRate,
         isHoliday: false, // Reset holiday flag
         holidayRate: shift.holidayRate,
         isWeekend: shift.isWeekend,
         weekendRate: shift.weekendRate,
-        isRecurring: false,
         isActive: true,
       });
 

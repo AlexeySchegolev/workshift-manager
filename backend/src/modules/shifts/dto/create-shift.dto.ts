@@ -7,14 +7,10 @@ import {
   Matches, 
   IsNumber, 
   Min, 
-  IsArray,
   IsBoolean, 
-  ValidateNested,
   IsUUID
 } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ShiftType } from '@/database/entities/shift.entity';
-import { ShiftRoleRequirementDto } from './shift-role-requirement.dto';
 
 export class CreateShiftDto {
   @ApiProperty({
@@ -140,47 +136,8 @@ export class CreateShiftDto {
   @Min(1)
   maxEmployees?: number = 10;
 
-  @ApiProperty({
-    description: 'Role requirements for this shift',
-    type: [ShiftRoleRequirementDto],
-    example: [
-      {
-        roleId: '550e8400-e29b-41d4-a716-446655440004',
-        requiredCount: 2,
-        minCount: 1,
-        maxCount: 3,
-        priority: 3
-      }
-    ],
-    default: []
-  })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ShiftRoleRequirementDto)
-  roleRequirements?: ShiftRoleRequirementDto[] = [];
 
-  @ApiProperty({
-    description: 'Required skills for this shift',
-    type: [String],
-    example: ['CPR', 'First Aid', 'Patient Care'],
-    default: []
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  requiredSkills?: string[] = [];
 
-  @ApiProperty({
-    description: 'Required certifications for this shift',
-    type: [String],
-    example: ['Nursing License', 'BLS Certification'],
-    default: []
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  requiredCertifications?: string[] = [];
 
   @ApiProperty({
     description: 'Whether this shift counts as overtime',
@@ -242,54 +199,10 @@ export class CreateShiftDto {
   @Min(1)
   weekendRate?: number;
 
-  @ApiProperty({
-    description: 'Color code for UI display (hex format)',
-    example: '#FF5722',
-    pattern: '^#[0-9A-F]{6}$',
-    required: false
-  })
-  @IsOptional()
-  @Matches(/^#[0-9A-F]{6}$/i, {
-    message: 'Color code must be in hex format (#RRGGBB)'
-  })
-  colorCode?: string;
 
-  @ApiProperty({
-    description: 'Additional notes for this shift',
-    example: 'Special requirements: Extra attention to patient in room 204',
-    required: false
-  })
-  @IsOptional()
-  @IsString()
-  notes?: string;
 
-  @ApiProperty({
-    description: 'Whether this is a recurring shift',
-    example: false,
-    default: false
-  })
-  @IsOptional()
-  @IsBoolean()
-  isRecurring?: boolean = false;
 
-  @ApiProperty({
-    description: 'Recurrence pattern (e.g., weekly, monthly)',
-    example: 'weekly',
-    required: false
-  })
-  @IsOptional()
-  @IsString()
-  recurrencePattern?: string;
 
-  @ApiProperty({
-    description: 'End date for recurrence',
-    example: '2024-12-31',
-    format: 'date',
-    required: false
-  })
-  @IsOptional()
-  @IsDateString()
-  recurrenceEndDate?: string;
 
   @ApiProperty({
     description: 'Whether this shift is active',

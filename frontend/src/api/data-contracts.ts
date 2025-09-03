@@ -459,12 +459,6 @@ export interface CreateShiftDto {
    */
   breakDuration: number;
   /**
-   * Color code for UI display (hex format)
-   * @pattern ^#[0-9A-F]{6}$
-   * @example "#FF5722"
-   */
-  colorCode?: string;
-  /**
    * User ID who is creating this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440005"
@@ -507,12 +501,6 @@ export interface CreateShiftDto {
    */
   isOvertime: boolean;
   /**
-   * Whether this is a recurring shift
-   * @default false
-   * @example false
-   */
-  isRecurring: boolean;
-  /**
    * Whether this shift is on a weekend
    * @default false
    * @example false
@@ -545,11 +533,6 @@ export interface CreateShiftDto {
    */
   name: string;
   /**
-   * Additional notes for this shift
-   * @example "Special requirements: Extra attention to patient in room 204"
-   */
-  notes?: string;
-  /**
    * Organization ID this shift belongs to
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440001"
@@ -561,35 +544,6 @@ export interface CreateShiftDto {
    * @example 1.5
    */
   overtimeRate?: number;
-  /**
-   * End date for recurrence
-   * @format date
-   * @example "2024-12-31"
-   */
-  recurrenceEndDate?: string;
-  /**
-   * Recurrence pattern (e.g., weekly, monthly)
-   * @example "weekly"
-   */
-  recurrencePattern?: string;
-  /**
-   * Required certifications for this shift
-   * @default []
-   * @example ["Nursing License","BLS Certification"]
-   */
-  requiredCertifications: string[];
-  /**
-   * Required skills for this shift
-   * @default []
-   * @example ["CPR","First Aid","Patient Care"]
-   */
-  requiredSkills: string[];
-  /**
-   * Role requirements for this shift
-   * @default []
-   * @example [{"roleId":"550e8400-e29b-41d4-a716-446655440004","requiredCount":2,"minCount":1,"maxCount":3,"priority":3}]
-   */
-  roleRequirements: ShiftRoleRequirementDto[];
   /**
    * Date when the shift takes place
    * @format date
@@ -1744,40 +1698,6 @@ export interface ShiftResponseDto {
   weekendRate?: number;
 }
 
-export interface ShiftRoleRequirementDto {
-  /**
-   * Maximum number of employees with this role
-   * @min 0
-   * @example 3
-   */
-  maxCount: number;
-  /**
-   * Minimum number of employees with this role
-   * @min 0
-   * @example 1
-   */
-  minCount: number;
-  /**
-   * Priority level for this role requirement (1 = lowest, 5 = highest)
-   * @min 1
-   * @max 5
-   * @example 3
-   */
-  priority: number;
-  /**
-   * Required number of employees with this role
-   * @min 0
-   * @example 2
-   */
-  requiredCount: number;
-  /**
-   * Role ID for this requirement
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  roleId: string;
-}
-
 export interface TimeSlotDto {
   /**
    * End time in HH:MM format
@@ -2124,12 +2044,6 @@ export interface UpdateShiftDto {
    */
   breakDuration?: number;
   /**
-   * Color code for UI display (hex format)
-   * @pattern ^#[0-9A-F]{6}$
-   * @example "#FF5722"
-   */
-  colorCode?: string;
-  /**
    * User ID who is creating this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440005"
@@ -2172,12 +2086,6 @@ export interface UpdateShiftDto {
    */
   isOvertime?: boolean;
   /**
-   * Whether this is a recurring shift
-   * @default false
-   * @example false
-   */
-  isRecurring?: boolean;
-  /**
    * Whether this shift is on a weekend
    * @default false
    * @example false
@@ -2210,11 +2118,6 @@ export interface UpdateShiftDto {
    */
   name?: string;
   /**
-   * Additional notes for this shift
-   * @example "Special requirements: Extra attention to patient in room 204"
-   */
-  notes?: string;
-  /**
    * Organization ID this shift belongs to
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440001"
@@ -2226,35 +2129,6 @@ export interface UpdateShiftDto {
    * @example 1.5
    */
   overtimeRate?: number;
-  /**
-   * End date for recurrence
-   * @format date
-   * @example "2024-12-31"
-   */
-  recurrenceEndDate?: string;
-  /**
-   * Recurrence pattern (e.g., weekly, monthly)
-   * @example "weekly"
-   */
-  recurrencePattern?: string;
-  /**
-   * Required certifications for this shift
-   * @default []
-   * @example ["Nursing License","BLS Certification"]
-   */
-  requiredCertifications?: string[];
-  /**
-   * Required skills for this shift
-   * @default []
-   * @example ["CPR","First Aid","Patient Care"]
-   */
-  requiredSkills?: string[];
-  /**
-   * Role requirements for this shift
-   * @default []
-   * @example [{"roleId":"550e8400-e29b-41d4-a716-446655440004","requiredCount":2,"minCount":1,"maxCount":3,"priority":3}]
-   */
-  roleRequirements?: ShiftRoleRequirementDto[];
   /**
    * Date when the shift takes place
    * @format date

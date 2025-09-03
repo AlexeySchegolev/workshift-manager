@@ -1,10 +1,20 @@
 import { useState, useMemo } from 'react';
 import { format, startOfWeek, addDays } from 'date-fns';
 import { WeekDay } from '../components/dashboard/WeekOverview';
-import { StatusItem } from '../components/dashboard/StatusLight';
 import {
     EmployeeResponseDto,
 } from '../api/data-contracts';
+
+// StatusItem interface for dashboard status items
+export interface StatusItem {
+  id: string;
+  title: string;
+  description: string;
+  status: 'success' | 'warning' | 'error';
+  value: number;
+  maxValue: number;
+  details?: string[];
+}
 
 type Employee = EmployeeResponseDto;
 

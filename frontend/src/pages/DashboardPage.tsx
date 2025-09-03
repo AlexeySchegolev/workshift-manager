@@ -20,7 +20,7 @@ import {useNavigate} from 'react-router-dom';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {useDashboardData} from '../hooks/useDashboardData';
-import {employeeService} from '@/services';
+import {employeeService, shiftPlanService} from '@/services';
 import {EmployeeResponseDto} from '../api/data-contracts';
 import StatisticsCard from "@/components/dashboard/StatisticsCard.tsx";
 import WeekOverview from "@/components/dashboard/WeekOverview.tsx";
@@ -34,8 +34,7 @@ const DashboardPage: React.FC = () => {
 
     // State for current data
     const [selectedDate] = useState<Date>(new Date());
-    const [currentShiftPlan] = useState(null); // TODO: Load current shift plan
-    const [constraints] = useState([]); // TODO: Load current constraints
+    const [currentShiftPlan, setCurrentShiftPlan] = useState<any>(null);
 
     // Load employee list via API
     const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
@@ -52,6 +51,33 @@ const DashboardPage: React.FC = () => {
         };
 
         loadEmployees();
+    }, []);
+
+    // Load current shift plan
+    useEffect(() => {
+        const loadCurrentShiftPlan = async () => {
+            try {
+                // Get all shift plans and find the most recent one or current month's plan
+                const shiftPlans = await shiftPlanService.getAllShiftPlans({ includeRelations: true });
+                
+                if (shiftPlans && shiftPlans.length > 0) {
+                    // For now, use the first available shift plan
+                    // In a real scenario, you'd filter by current month/date
+                    const currentPlan = shiftPlans[0];
+                    
+                    // Transform the shift plan data to match the expected MonthlyShiftPlanData format
+                    // The planData is an array, so we use the first item if available
+                    if (currentPlan.planData && currentPlan.planData.length > 0) {
+                        setCurrentShiftPlan(currentPlan.planData[0]);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading current shift plan:', error);
+                // Keep currentShiftPlan as null if loading fails
+            }
+        };
+
+        loadCurrentShiftPlan();
     }, []);
 
     // Load dashboard data

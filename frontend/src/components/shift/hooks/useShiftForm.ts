@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ShiftResponseDto } from '@/api/data-contracts';
 import { validateShiftTime, calculateShiftDuration } from '../utils/shiftUtils';
 import { getTodayDateString } from '@/utils/date.utils.ts';
+import { useAuth } from '@/contexts/AuthContext.tsx';
 
 export interface ShiftFormData {
   name: string;
@@ -45,33 +46,35 @@ export interface ShiftFormErrors {
   totalHours?: string;
 }
 
-const initialFormData: ShiftFormData = {
-  name: '',
-  description: '',
-  type: 'morning',
-  priority: 2,
-  shiftDate: getTodayDateString(),
-  startTime: '08:00',
-  endTime: '16:00',
-  breakDuration: 30,
-  totalHours: 8.0,
-  minEmployees: 1,
-  maxEmployees: 5,
-  locationId: '',
-  organizationId: '1', // Default organization
-  requiredSkills: [],
-  requiredCertifications: [],
-  isOvertime: false,
-  isHoliday: false,
-  isWeekend: false,
-  colorCode: '#4CAF50',
-  notes: '',
-  isRecurring: false,
-  isActive: true,
-};
-
 export const useShiftForm = () => {
-  const [formData, setFormData] = useState<ShiftFormData>(initialFormData);
+  const { organizationId } = useAuth();
+  
+  const getInitialFormData = (): ShiftFormData => ({
+    name: '',
+    description: '',
+    type: 'morning',
+    priority: 2,
+    shiftDate: getTodayDateString(),
+    startTime: '08:00',
+    endTime: '16:00',
+    breakDuration: 30,
+    totalHours: 8.0,
+    minEmployees: 1,
+    maxEmployees: 5,
+    locationId: '',
+    organizationId: organizationId || '',
+    requiredSkills: [],
+    requiredCertifications: [],
+    isOvertime: false,
+    isHoliday: false,
+    isWeekend: false,
+    colorCode: '#4CAF50',
+    notes: '',
+    isRecurring: false,
+    isActive: true,
+  });
+
+  const [formData, setFormData] = useState<ShiftFormData>(getInitialFormData());
   const [errors, setErrors] = useState<ShiftFormErrors>({});
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -197,7 +200,7 @@ export const useShiftForm = () => {
   };
 
   const resetForm = () => {
-    setFormData(initialFormData);
+    setFormData(getInitialFormData());
     setErrors({});
     setEditingId(null);
   };

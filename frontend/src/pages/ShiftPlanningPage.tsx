@@ -127,8 +127,6 @@ const ShiftPlanningPage: React.FC = () => {
             try {
                 const parsedPlan = JSON.parse(storedPlan);
                 setShiftPlan(parsedPlan);
-
-                // TODO: Implement constraint checking with backend integration
             } catch (error) {
                 console.error('Error loading shift plan from sessionStorage:', error);
                 initializeShiftPlan();

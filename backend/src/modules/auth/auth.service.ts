@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, BadRequestException, Logger } from '
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
+import { OrganizationsService } from '../organizations/organizations.service';
 import { RegisterDto } from './dto/register.dto';
 import { AuthResponseDto, AuthUserDto, RegisterResponseDto } from './dto/auth-response.dto';
 import { User, UserRole } from '@/database/entities/user.entity';
@@ -14,6 +15,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly organizationsService: OrganizationsService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User | null> {
@@ -81,7 +83,14 @@ export class AuthService {
       throw new BadRequestException('User with this email already exists');
     }
 
-    // Create user with default values for registration
+    // Create organization first
+    this.logger.log(`Creating organization: ${registerDto.organizationName}`);
+    const organization = await this.organizationsService.create({
+      name: registerDto.organizationName,
+      isActive: true,
+    });
+
+    // Create user with the newly created organization
     const userData = {
       email: registerDto.email,
       firstName: registerDto.firstName,
@@ -90,7 +99,7 @@ export class AuthService {
       role: registerDto.role || UserRole.EMPLOYEE,
       isActive: true, // Set as active since no email verification
       phoneNumber: registerDto.phoneNumber,
-      organizationId: registerDto.organizationId,
+      organizationId: organization.id,
     };
 
     const user = await this.usersService.create(userData);

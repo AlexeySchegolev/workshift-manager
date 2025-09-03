@@ -1260,10 +1260,10 @@ export interface RegisterDto {
    */
   lastName: string;
   /**
-   * Organization ID the user should be associated with
-   * @example "org-uuid-1"
+   * Organization name to be created for the user
+   * @example "Dialyse Zentrum Berlin"
    */
-  organizationId: string;
+  organizationName: string;
   /**
    * User password (minimum 8 characters, must contain uppercase, lowercase, number, and special character)
    * @example "Password123!"

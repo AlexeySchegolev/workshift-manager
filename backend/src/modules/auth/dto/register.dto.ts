@@ -57,9 +57,10 @@ export class RegisterDto {
   phoneNumber?: string;
 
   @ApiProperty({ 
-    example: 'org-uuid-1',
-    description: 'Organization ID the user should be associated with'
+    example: 'Dialyse Zentrum Berlin',
+    description: 'Organization name to be created for the user'
   })
-  @IsUUID()
-  organizationId: string;
+  @IsString()
+  @MinLength(2)
+  organizationName: string;
 }

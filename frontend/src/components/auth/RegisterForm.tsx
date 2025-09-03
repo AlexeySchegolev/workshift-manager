@@ -21,15 +21,25 @@ import { PersonAdd as PersonAddIcon, CheckCircle as CheckCircleIcon } from '@mui
 import { useAuth } from '../../contexts/AuthContext';
 import { RegisterDto } from '@/api/data-contracts.ts';
 
+interface RegisterFormData {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  role: 'super_admin' | 'organization_admin' | 'employee';
+  phoneNumber: string;
+  organizationName: string;
+}
+
 export const RegisterForm: React.FC = () => {
-  const [formData, setFormData] = useState<RegisterDto>({
+  const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
     firstName: '',
     lastName: '',
     password: '',
     role: 'employee',
     phoneNumber: '',
-    organizationId: 'default-org-id', // TODO: Implement organization selection
+    organizationName: '',
   });
   
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -61,11 +71,33 @@ export const RegisterForm: React.FC = () => {
       return;
     }
 
+    // Validate organization name
+    if (!formData.organizationName.trim()) {
+      setError('Organisationsname ist erforderlich');
+      return;
+    }
+
+    if (formData.organizationName.trim().length < 2) {
+      setError('Organisationsname muss mindestens 2 Zeichen lang sein');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      await register(formData);
+      // Map local form data to the format expected by the backend
+      const registerData = {
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        password: formData.password,
+        role: formData.role,
+        phoneNumber: formData.phoneNumber,
+        organizationName: formData.organizationName.trim(),
+      };
+      
+      await register(registerData as any); // Cast as any since the API types haven't been updated yet
       setSuccess(true);
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -202,6 +234,20 @@ export const RegisterForm: React.FC = () => {
               </Grid>
               <Grid size={{ xs: 12 }}>
                 <TextField
+                  required
+                  fullWidth
+                  id="organizationName"
+                  label="Organisationsname"
+                  name="organizationName"
+                  value={formData.organizationName}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  variant="outlined"
+                  helperText="Name Ihrer Organisation (wird automatisch erstellt)"
+                />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <TextField
                   fullWidth
                   id="phoneNumber"
                   label="Telefonnummer (optional)"
@@ -274,7 +320,7 @@ export const RegisterForm: React.FC = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={isLoading || !formData.email || !formData.password || !formData.firstName || !formData.lastName}
+              disabled={isLoading || !formData.email || !formData.password || !formData.firstName || !formData.lastName || !formData.organizationName}
               size="large"
             >
               {isLoading ? (

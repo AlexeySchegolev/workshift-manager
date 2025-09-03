@@ -35,7 +35,7 @@ import {
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import { locationService } from '@/services';
-import {CreateLocationDto, UpdateLocationDto, LocationResponseDto, LocationStatsDto} from '../api/data-contracts';
+import {CreateLocationDto, UpdateLocationDto, LocationResponseDto} from '../api/data-contracts';
 import { getCurrentTimestamp } from '../utils/date.utils';
 
 interface LocationManagementProps {
@@ -79,28 +79,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     } finally {
       setLoading(false);
     }
-  };
-
-  // Get real statistics from location data
-  const getLocationStats = (location: LocationResponseDto): LocationStatsDto => {
-    // Use backend stats if available, otherwise calculate from available data
-    if (location.stats) {
-      return location.stats;
-    }
-    
-    // Calculate statistics from available location data
-    const employeeCount = location.employees?.length || 0;
-    // Since maxCapacity is not available in backend, set occupancy rate to 0
-    const occupancyRate = 0;
-    
-    return {
-      activeShifts: 0, // Default value for required field
-      averageStaffing: 0, // Default value for required field
-      averageUtilization: 0, // Default value for required field
-      employeeCount,
-      occupancyRate,
-      totalClients: location.currentCapacity, // Use current capacity as proxy for clients
-    };
   };
 
   // Open dialog
@@ -251,7 +229,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       {/* Location Cards */}
       <Grid container spacing={3}>
         {locations.map((location) => {
-          const stats = getLocationStats(location);
           return (
             <Grid size={{ xs: 12, md: 6, lg: 4 }} key={location.id}>
               <Card
@@ -341,14 +318,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                   {/* Statistics */}
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, mb: 2 }}>
                     <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600 }}>
-                        {stats.totalClients}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Kunden
-                      </Typography>
-                    </Box>
-                    <Box sx={{ textAlign: 'center' }}>
                       <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>
                         {location.currentCapacity}
                       </Typography>
@@ -356,14 +325,14 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                         Aktuelle Kapazität
                       </Typography>
                     </Box>
-                    <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="h6" color="warning.main" sx={{ fontWeight: 600 }}>
-                        {stats.employeeCount}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Mitarbeiter
-                      </Typography>
-                    </Box>
+                      <Box sx={{ textAlign: 'center' }}>
+                          <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>
+                              {location.employees.length}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                              Anzahl Mitarbeiter
+                          </Typography>
+                      </Box>
                   </Box>
 
 

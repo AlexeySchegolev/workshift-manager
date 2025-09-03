@@ -1106,8 +1106,6 @@ export interface LocationResponseDto {
    * @example "Berlin"
    */
   state?: string;
-  /** Location statistics and metrics */
-  stats?: LocationStatsDto;
   /**
    * Timezone for this location
    * @example "Europe/Berlin"
@@ -1124,60 +1122,6 @@ export interface LocationResponseDto {
    * @example "uuid-string"
    */
   updatedBy?: string;
-}
-
-export interface LocationStatsDto {
-  /**
-   * Number of active shifts at this location
-   * @min 0
-   * @example 12
-   */
-  activeShifts: number;
-  /**
-   * Average staffing percentage across all shifts
-   * @min 0
-   * @example 92.3
-   */
-  averageStaffing: number;
-  /**
-   * Average utilization percentage of the location
-   * @min 0
-   * @max 100
-   * @example 85.5
-   */
-  averageUtilization: number;
-  /**
-   * Client satisfaction rating (1-5 stars)
-   * @min 1
-   * @max 5
-   * @example 4.2
-   */
-  clientSatisfaction?: number;
-  /**
-   * Number of employees assigned to this location
-   * @min 0
-   * @example 8
-   */
-  employeeCount: number;
-  /**
-   * Monthly revenue generated at this location
-   * @min 0
-   * @example 15000
-   */
-  monthlyRevenue?: number;
-  /**
-   * Current occupancy rate as percentage of max capacity
-   * @min 0
-   * @max 100
-   * @example 78.5
-   */
-  occupancyRate: number;
-  /**
-   * Total number of clients at this location
-   * @min 0
-   * @example 25
-   */
-  totalClients: number;
 }
 
 export interface LoginDto {

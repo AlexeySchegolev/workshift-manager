@@ -36,7 +36,6 @@ import {
   ExcelExportRequestDto,
   ExcelExportResultDto,
   LocationResponseDto,
-  LocationStatsDto,
   LoginDto,
   MonthlyShiftPlanDto,
   OperatingHoursDto,

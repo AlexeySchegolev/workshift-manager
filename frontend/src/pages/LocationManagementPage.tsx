@@ -50,52 +50,6 @@ const LocationManagementPage: React.FC = () => {
         setLocations(updatedLocations);
     };
 
-    // Calculate overall statistics
-    const calculateOverallStatistics = () => {
-        const activeLocations = locations.filter(loc => loc.isActive);
-        const totalLocations = locations.length;
-        const totalCapacity = locations.reduce((sum, loc) => sum + loc.currentCapacity, 0);
-
-        let totalClients = 0;
-        let totalEmployees = 0;
-        let totalRevenue = 0;
-        let avgSatisfaction = 0;
-        let avgUtilization = 0;
-
-        activeLocations.forEach(location => {
-            // TODO: Load statistics from database
-            // Temporary default values until DB integration is implemented
-            const defaultStats = {
-                totalClients: 25,
-                employeeCount: 8,
-                monthlyRevenue: 15000,
-                clientSatisfaction: 4.2,
-                averageUtilization: 85
-            };
-
-            totalClients += defaultStats.totalClients;
-            totalEmployees += defaultStats.employeeCount;
-            totalRevenue += defaultStats.monthlyRevenue;
-            avgSatisfaction += defaultStats.clientSatisfaction;
-            avgUtilization += defaultStats.averageUtilization;
-        });
-
-        avgSatisfaction = activeLocations.length > 0 ? avgSatisfaction / activeLocations.length : 0;
-        avgUtilization = activeLocations.length > 0 ? avgUtilization / activeLocations.length : 0;
-
-        return {
-            totalLocations,
-            activeLocations: activeLocations.length,
-            totalCapacity,
-            totalClients,
-            totalEmployees,
-            totalRevenue,
-            avgSatisfaction: Math.round(avgSatisfaction * 10) / 10,
-            avgUtilization: Math.round(avgUtilization),
-        };
-    };
-
-    const stats = calculateOverallStatistics();
 
     return (
         <Container maxWidth="xl" sx={{py: 3}}>
@@ -148,7 +102,7 @@ const LocationManagementPage: React.FC = () => {
                             <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
                                 <BusinessIcon sx={{color: 'primary.main', fontSize: '1.2rem'}}/>
                                 <Typography variant="body2" color="text.secondary">
-                                    {stats.activeLocations} von {stats.totalLocations} Standorten aktiv
+                                    {locations.filter(loc => loc.isActive).length} von {locations.length} Standorten aktiv
                                 </Typography>
                             </Box>
                         </Box>

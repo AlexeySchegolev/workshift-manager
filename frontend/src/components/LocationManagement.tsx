@@ -33,6 +33,7 @@ import {
   Add as AddIcon,
   Business as BusinessIcon,
   Assessment as AssessmentIcon,
+  People as PeopleIcon,
 } from '@mui/icons-material';
 import { locationService } from '@/services';
 import {CreateLocationDto, UpdateLocationDto, LocationResponseDto} from '../api/data-contracts';
@@ -242,36 +243,108 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                   height: '100%',
                   borderRadius: 3,
                   border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                  transition: 'all 0.2s ease-in-out',
+                  background: 'linear-gradient(145deg, #ffffff 0%, #fafafa 100%)',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: location.isActive 
+                      ? 'linear-gradient(90deg, #4caf50, #81c784)'
+                      : 'linear-gradient(90deg, #f44336, #ef5350)',
+                    zIndex: 1,
+                  },
                   '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: theme.shadows[8],
+                    transform: 'translateY(-6px) scale(1.02)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                    '&::before': {
+                      height: '6px',
+                    },
                   },
                 }}
               >
                 <CardContent sx={{ pb: 1 }}>
                   {/* Header */}
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                       <Avatar
                         sx={{
-                          bgcolor: location.isActive ? 'success.main' : 'grey.400',
-                          width: 40,
-                          height: 40,
+                          background: location.isActive
+                            ? 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)'
+                            : 'linear-gradient(135deg, #757575 0%, #9e9e9e 100%)',
+                          width: 56,
+                          height: 56,
+                          border: `3px solid ${location.isActive 
+                            ? alpha(theme.palette.primary.main, 0.2)
+                            : alpha(theme.palette.grey[400], 0.2)}`,
+                          boxShadow: location.isActive
+                            ? '0 4px 12px rgba(25, 118, 210, 0.15)'
+                            : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                          transition: 'all 0.3s ease',
                         }}
                       >
-                        <BusinessIcon />
+                        <BusinessIcon sx={{ fontSize: '1.8rem', color: 'white' }} />
                       </Avatar>
                       <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+                        <Typography 
+                          variant="h6" 
+                          sx={{ 
+                            fontWeight: 700, 
+                            lineHeight: 1.2, 
+                            mb: 0.5,
+                            fontSize: '1.2rem',
+                            background: location.isActive
+                              ? 'linear-gradient(135deg, #1976d2, #42a5f5)'
+                              : 'linear-gradient(135deg, #757575, #9e9e9e)',
+                            backgroundClip: 'text',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                          }}
+                        >
                           {location.name}
                         </Typography>
-                        <Chip
-                          label={location.isActive ? 'Aktiv' : 'Inaktiv'}
-                          size="small"
-                          color={location.isActive ? 'success' : 'default'}
-                          sx={{ mt: 0.5 }}
-                        />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                          <Chip
+                            label={location.isActive ? 'Aktiv' : 'Inaktiv'}
+                            size="small"
+                            sx={{
+                              background: location.isActive
+                                ? 'linear-gradient(135deg, #4caf50, #81c784)'
+                                : 'linear-gradient(135deg, #f44336, #ef5350)',
+                              color: 'white',
+                              fontWeight: 600,
+                              borderRadius: '12px',
+                              height: '26px',
+                              boxShadow: location.isActive
+                                ? '0 2px 8px rgba(76, 175, 80, 0.3)'
+                                : '0 2px 8px rgba(244, 67, 54, 0.3)',
+                              '& .MuiChip-label': {
+                                px: 1.5,
+                              },
+                            }}
+                          />
+                          {location.code && (
+                            <Chip
+                              label={location.code}
+                              size="small"
+                              variant="outlined"
+                              sx={{
+                                borderColor: alpha(theme.palette.info.main, 0.4),
+                                color: 'info.main',
+                                fontWeight: 600,
+                                borderRadius: '12px',
+                                height: '26px',
+                                backgroundColor: alpha(theme.palette.info.main, 0.05),
+                              }}
+                            />
+                          )}
+                        </Box>
                       </Box>
                     </Box>
                     <Box>
@@ -292,62 +365,204 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     </Box>
                   </Box>
 
-                  {/* Address */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <LocationIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {location.address}, {location.postalCode} {location.city}
-                    </Typography>
+                  {/* Address & Contact Info */}
+                  <Box 
+                    sx={{ 
+                      mb: 3,
+                      p: 2.5,
+                      borderRadius: 2,
+                      backgroundColor: alpha(theme.palette.primary.main, 0.02),
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.08)}`,
+                    }}
+                  >
+                    {/* Address */}
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 2.5 }}>
+                      <Box
+                        sx={{
+                          p: 0.75,
+                          borderRadius: '50%',
+                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minWidth: 32,
+                          minHeight: 32,
+                        }}
+                      >
+                        <LocationIcon sx={{ color: 'primary.main', fontSize: '1.1rem' }} />
+                      </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+                          Adresse
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.4 }}>
+                          {location.address}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.4 }}>
+                          {location.postalCode} {location.city}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    {/* Contact */}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      {location.phone && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                          <Box
+                            sx={{
+                              p: 0.75,
+                              borderRadius: '50%',
+                              backgroundColor: alpha(theme.palette.success.main, 0.1),
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              minWidth: 32,
+                              minHeight: 32,
+                            }}
+                          >
+                            <PhoneIcon sx={{ color: 'success.main', fontSize: '1.1rem' }} />
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                              Telefon
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {location.phone}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      )}
+
+                      {location.email && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                          <Box
+                            sx={{
+                              p: 0.75,
+                              borderRadius: '50%',
+                              backgroundColor: alpha(theme.palette.info.main, 0.1),
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              minWidth: 32,
+                              minHeight: 32,
+                            }}
+                          >
+                            <EmailIcon sx={{ color: 'info.main', fontSize: '1.1rem' }} />
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                              E-Mail
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {location.email}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
-
-                  {/* Contact */}
-                  {location.phone && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <PhoneIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
-                      <Typography variant="body2" color="text.secondary">
-                        {location.phone}
-                      </Typography>
-                    </Box>
-                  )}
-
-                  {location.email && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <EmailIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
-                      <Typography variant="body2" color="text.secondary">
-                        {location.email}
-                      </Typography>
-                    </Box>
-                  )}
-
-                  <Divider sx={{ my: 2 }} />
 
                   {/* Statistics */}
-                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 2 }}>
-                      <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>
-                              {location.employees.length}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                              Anzahl Mitarbeiter
-                          </Typography>
+                  <Box 
+                    sx={{ 
+                      mb: 3,
+                      p: 2.5,
+                      borderRadius: 2,
+                      backgroundColor: alpha(theme.palette.secondary.main, 0.02),
+                      border: `1px solid ${alpha(theme.palette.secondary.main, 0.08)}`,
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                      <Box
+                        sx={{
+                          p: 0.75,
+                          borderRadius: '50%',
+                          backgroundColor: alpha(theme.palette.secondary.main, 0.1),
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minWidth: 32,
+                          minHeight: 32,
+                        }}
+                      >
+                        <PeopleIcon sx={{ color: 'secondary.main', fontSize: '1.1rem' }} />
                       </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: 'secondary.main', lineHeight: 1 }}>
+                          {location.employees.length}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                          Mitarbeiter zugeordnet
+                        </Typography>
+                      </Box>
+                    </Box>
                   </Box>
 
-
                   {/* Operating hours */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <ScheduleIcon sx={{ color: 'text.secondary', fontSize: '1rem' }} />
-                    <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.3 }}>
-                      {formatOperatingHours(location)}
-                    </Typography>
+                  <Box 
+                    sx={{ 
+                      p: 2.5,
+                      borderRadius: 2,
+                      backgroundColor: alpha(theme.palette.warning.main, 0.02),
+                      border: `1px solid ${alpha(theme.palette.warning.main, 0.08)}`,
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                      <Box
+                        sx={{
+                          p: 0.75,
+                          borderRadius: '50%',
+                          backgroundColor: alpha(theme.palette.warning.main, 0.1),
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minWidth: 32,
+                          minHeight: 32,
+                        }}
+                      >
+                        <ScheduleIcon sx={{ color: 'warning.main', fontSize: '1.1rem' }} />
+                      </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+                          Öffnungszeiten
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.4 }}>
+                          {formatOperatingHours(location)}
+                        </Typography>
+                      </Box>
+                    </Box>
                   </Box>
                 </CardContent>
 
-                <CardActions sx={{ pt: 0, px: 2, pb: 2 }}>
+                <CardActions 
+                  sx={{ 
+                    pt: 0, 
+                    px: 3, 
+                    pb: 3,
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.grey[50], 0.8)} 0%, ${alpha(theme.palette.grey[100], 0.4)} 100%)`,
+                    borderTop: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+                    gap: 1
+                  }}
+                >
                   <Button
                     size="small"
                     startIcon={<AssessmentIcon />}
-                    sx={{ color: 'primary.main' }}
+                    sx={{ 
+                      color: 'primary.main',
+                      fontWeight: 600,
+                      borderRadius: 2,
+                      px: 2,
+                      py: 1,
+                      textTransform: 'none',
+                      background: alpha(theme.palette.primary.main, 0.05),
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        background: alpha(theme.palette.primary.main, 0.1),
+                        transform: 'translateY(-1px)',
+                        boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.2)}`,
+                      }
+                    }}
                   >
                     Details
                   </Button>
@@ -355,7 +570,22 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                     size="small"
                     startIcon={<EditIcon />}
                     onClick={() => handleOpenDialog(location)}
-                    sx={{ color: 'info.main' }}
+                    sx={{ 
+                      color: 'info.main',
+                      fontWeight: 600,
+                      borderRadius: 2,
+                      px: 2,
+                      py: 1,
+                      textTransform: 'none',
+                      background: alpha(theme.palette.info.main, 0.05),
+                      border: `1px solid ${alpha(theme.palette.info.main, 0.1)}`,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        background: alpha(theme.palette.info.main, 0.1),
+                        transform: 'translateY(-1px)',
+                        boxShadow: `0 4px 12px ${alpha(theme.palette.info.main, 0.2)}`,
+                      }
+                    }}
                   >
                     Bearbeiten
                   </Button>

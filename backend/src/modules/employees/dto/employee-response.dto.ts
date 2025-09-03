@@ -16,11 +16,6 @@ export class EmployeeResponseDto {
   })
   organizationId: string;
 
-  @ApiProperty({
-    description: 'Employee number',
-    example: 'EMP001'
-  })
-  employeeNumber: string;
 
   @ApiProperty({
     description: 'Employee first name',
@@ -84,29 +79,9 @@ export class EmployeeResponseDto {
   })
   contractType: ContractType;
 
-  @ApiProperty({
-    description: 'Working hours per month',
-    example: 160
-  })
-  hoursPerMonth: number;
 
-  @ApiPropertyOptional({
-    description: 'Working hours per week',
-    example: 40
-  })
-  hoursPerWeek?: number;
 
-  @ApiPropertyOptional({
-    description: 'Hourly rate',
-    example: 28.50
-  })
-  hourlyRate?: number;
 
-  @ApiPropertyOptional({
-    description: 'Overtime rate',
-    example: 35.60
-  })
-  overtimeRate?: number;
 
   @ApiPropertyOptional({
     description: 'Location ID',

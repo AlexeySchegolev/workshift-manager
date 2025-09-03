@@ -12,7 +12,6 @@ import {
     People as PeopleIcon,
     Schedule as ScheduleIcon,
     Warning as WarningIcon,
-    TrendingUp as TrendingUpIcon,
     CalendarMonth as CalendarIcon,
 
 } from '@mui/icons-material';
@@ -191,13 +190,6 @@ const DashboardPage: React.FC = () => {
                         icon={<ScheduleIcon/>}
                         color={statistics.shiftCoverage >= 90 ? 'success' : statistics.shiftCoverage >= 70 ? 'warning' : 'error'}
                         onClick={() => navigate('/schichtplan')}
-                    />
-                    <StatisticsCard
-                        title="Ø Auslastung"
-                        value={`${statistics.averageWorkload.toFixed(1)}h`}
-                        subtitle="Pro Mitarbeiter/Monat"
-                        icon={<TrendingUpIcon/>}
-                        color={statistics.averageWorkload <= 160 ? 'success' : 'warning'}
                     />
                     <StatisticsCard
                         title="Warnungen"

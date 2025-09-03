@@ -3,7 +3,7 @@ import { EmployeeResponseDto, CreateEmployeeDto, UpdateEmployeeDto } from '@/api
 import { EmployeeFormData } from './useEmployeeForm';
 import { EmployeeService } from '@/services';
 import { getTodayDateString } from '@/utils/date.utils.ts';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext.tsx';
 
 export interface SnackbarState {
   open: boolean;
@@ -97,8 +97,6 @@ export const useEmployeeActions = (
 
   // Save employee (add or update) - now with API calls
   const saveEmployee = async (formData: EmployeeFormData, editingId: string | null) => {
-    if (typeof formData.hoursPerMonth !== 'number') return;
-
     try {
       const employeeService = new EmployeeService();
 
@@ -107,7 +105,6 @@ export const useEmployeeActions = (
         const updateData: UpdateEmployeeDto = {
           firstName: formData.firstName,
           lastName: formData.lastName,
-          hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
           locationId: formData.location?.id,
           primaryRoleId: formData.primaryRole?.id
         };
@@ -134,12 +131,10 @@ export const useEmployeeActions = (
         // Create new employee via API
         const createData: CreateEmployeeDto = {
           organizationId: organizationId,
-          employeeNumber: `EMP${Date.now()}`, // Generate unique employee number
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@dialyse-praxis.de`,
           hireDate: getTodayDateString(), // Today's date in YYYY-MM-DD format
-          hoursPerMonth: Number(formData.hoursPerMonth!.toFixed(1)),
           locationId: formData.location?.id,
           primaryRoleId: formData.primaryRole?.id
         };

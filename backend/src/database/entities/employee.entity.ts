@@ -29,8 +29,6 @@ export class Employee {
   @Column({ name: 'organization_id', type: 'uuid' })
   organizationId: string;
 
-  @Column({ name: 'employee_number', type: 'varchar', length: 50, unique: true })
-  employeeNumber: string;
 
   @Column({ name: 'first_name', type: 'varchar', length: 100 })
   firstName: string;
@@ -61,26 +59,12 @@ export class Employee {
   })
   contractType: ContractType;
 
-  @Column({ name: 'hours_per_month', type: 'decimal', precision: 5, scale: 2, transformer: { to: (value) => value, from: (value) => parseFloat(value) } })
-  hoursPerMonth: number;
 
-  @Column({ name: 'max_consecutive_days', type: 'integer', default: 5 })
-  maxConsecutiveDays: number;
 
-  @Column({ name: 'saturday_availability', type: 'boolean', default: true })
-  saturdayAvailability: boolean;
 
-  @Column({ name: 'sunday_availability', type: 'boolean', default: false })
-  sundayAvailability: boolean;
 
-  @Column({ name: 'hours_per_week', type: 'decimal', precision: 5, scale: 2, nullable: true, transformer: { to: (value) => value, from: (value) => value ? parseFloat(value) : value } })
-  hoursPerWeek?: number;
 
-  @Column({ name: 'hourly_rate', type: 'decimal', precision: 10, scale: 2, nullable: true, transformer: { to: (value) => value, from: (value) => value ? parseFloat(value) : value } })
-  hourlyRate?: number;
 
-  @Column({ name: 'overtime_rate', type: 'decimal', precision: 10, scale: 2, nullable: true, transformer: { to: (value) => value, from: (value) => value ? parseFloat(value) : value } })
-  overtimeRate?: number;
 
   @Column({ name: 'location_id', type: 'uuid', nullable: true })
   locationId?: string;

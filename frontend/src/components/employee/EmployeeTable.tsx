@@ -120,7 +120,6 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                             <TableCell sx={{ fontWeight: 600 }}>Rolle</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Vertragsart</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Stunden/Monat</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Standort</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Dienstjahre</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Aktionen</TableCell>
@@ -129,7 +128,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                     <TableBody>
                         {paginatedEmployees.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={8} align="center" sx={{ py: 8 }}>
+                                <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
                                     <Box sx={{ textAlign: 'center' }}>
                                         <PeopleIcon
                                             sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }}
@@ -209,16 +208,6 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                                 fontWeight: 500,
                                             }}
                                         />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                            {employee.hoursPerMonth?.toFixed(1) || '0.0'}h
-                                        </Typography>
-                                        {employee.hoursPerWeek && (
-                                            <Typography variant="caption" color="text.secondary">
-                                                {employee.hoursPerWeek}h/Woche
-                                            </Typography>
-                                        )}
                                     </TableCell>
                                     <TableCell>
                                         <Typography variant="body2">

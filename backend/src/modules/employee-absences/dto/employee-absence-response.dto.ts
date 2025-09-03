@@ -55,7 +55,6 @@ export class EmployeeAbsenceResponseDto {
             id: { type: 'string', format: 'uuid' },
             firstName: { type: 'string' },
             lastName: { type: 'string' },
-            employeeNumber: { type: 'string' },
             email: { type: 'string', format: 'email' },
             primaryRole: {
                 type: 'object',
@@ -71,7 +70,6 @@ export class EmployeeAbsenceResponseDto {
         id: string;
         firstName: string;
         lastName: string;
-        employeeNumber: string;
         email: string;
         primaryRole?: {
             id: string;

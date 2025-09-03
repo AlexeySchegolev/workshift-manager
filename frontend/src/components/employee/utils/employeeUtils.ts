@@ -81,14 +81,12 @@ export const validateEmployeeForm = (data: {
   firstName: string;
   lastName: string;
   primaryRole: RoleResponseDto | null;
-  hoursPerMonth: number | null;
   location: any | null;
 }) => {
   const errors: {
     firstName?: string;
     lastName?: string;
     role?: string;
-    hoursPerMonth?: string;
     location?: string;
   } = {};
 
@@ -102,16 +100,6 @@ export const validateEmployeeForm = (data: {
 
   if (!data.primaryRole) {
     errors.role = 'Rolle ist erforderlich';
-  }
-
-  if (data.hoursPerMonth === null) {
-    errors.hoursPerMonth = 'Monatsstunden sind erforderlich';
-  } else {
-    if (data.hoursPerMonth <= 0) {
-      errors.hoursPerMonth = 'Monatsstunden müssen größer als 0 sein';
-    } else if (data.hoursPerMonth > 180) {
-      errors.hoursPerMonth = 'Monatsstunden sollten nicht mehr als 180 sein';
-    }
   }
 
   if (!data.location) {

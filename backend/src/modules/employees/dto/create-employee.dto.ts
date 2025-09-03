@@ -10,12 +10,6 @@ export class CreateEmployeeDto {
   @IsUUID()
   organizationId: string;
 
-  @ApiProperty({
-    description: 'Employee number',
-    example: 'EMP001'
-  })
-  @IsString()
-  employeeNumber: string;
 
   @ApiProperty({
     description: 'Employee first name',
@@ -87,44 +81,9 @@ export class CreateEmployeeDto {
   @IsEnum(ContractType)
   contractType?: ContractType;
 
-  @ApiProperty({
-    description: 'Working hours per month',
-    example: 160,
-    minimum: 1,
-    maximum: 400
-  })
-  @IsNumber()
-  @Min(1)
-  @Max(400)
-  hoursPerMonth: number;
 
-  @ApiPropertyOptional({
-    description: 'Working hours per week',
-    example: 40,
-    minimum: 1,
-    maximum: 60
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(1)
-  @Max(60)
-  hoursPerWeek?: number;
 
-  @ApiPropertyOptional({
-    description: 'Hourly rate',
-    example: 25.50
-  })
-  @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  hourlyRate?: number;
 
-  @ApiPropertyOptional({
-    description: 'Overtime rate',
-    example: 32.50
-  })
-  @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  overtimeRate?: number;
 
   @ApiPropertyOptional({
     description: 'Location ID',

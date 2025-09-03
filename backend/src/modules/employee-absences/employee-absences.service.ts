@@ -171,7 +171,6 @@ export class EmployeeAbsencesService {
                 id: absence.employee.id,
                 firstName: absence.employee.firstName,
                 lastName: absence.employee.lastName,
-                employeeNumber: absence.employee.employeeNumber,
                 email: absence.employee.email,
                 primaryRole: absence.employee.primaryRole ? {
                     id: absence.employee.primaryRole.id,

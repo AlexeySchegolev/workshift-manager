@@ -26,7 +26,6 @@ type MonthlyShiftPlanData = Record<string, Record<string, string[]> | null>;
 interface DashboardStatistics {
   employeeCount: number;
   shiftCoverage: number;
-  averageWorkload: number;
   currentWarnings: number;
   ruleViolations: number;
 }
@@ -36,8 +35,6 @@ interface DashboardData {
   statistics: DashboardStatistics;
   currentWeek: WeekDay[];
   statusItems: StatusItem[];
-  isLoading: boolean;
-  error: string | null;
 }
 
 /**
@@ -48,9 +45,6 @@ export const useDashboardData = (
   currentShiftPlan: MonthlyShiftPlanData | null,
   selectedDate: Date = new Date()
 ): DashboardData => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   // Calculate statistics
   const statistics = useMemo((): DashboardStatistics => {
     const employeeCount = employees.length;
@@ -63,13 +57,6 @@ export const useDashboardData = (
       shiftCoverage = totalDays > 0 ? Math.round((coveredDays / totalDays) * 100) : 0;
     }
 
-    // Calculate average workload
-    let averageWorkload = 0;
-    if (employees.length > 0) {
-      const totalHours = employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0);
-      averageWorkload = Math.ceil((totalHours / employees.length) * 10) / 10;
-    }
-
     // Constraint validation not available - set to 0
     const currentWarnings = 0;
     const ruleViolations = 0;
@@ -77,7 +64,6 @@ export const useDashboardData = (
     return {
       employeeCount,
       shiftCoverage,
-      averageWorkload,
       currentWarnings,
       ruleViolations,
     };
@@ -175,21 +161,6 @@ export const useDashboardData = (
       });
     }
 
-    // Workload status
-    items.push({
-      id: 'workload',
-      title: 'Durchschnittliche Auslastung',
-      description: 'Durchschnittliche Monatsstunden pro Mitarbeiter',
-      status: statistics.averageWorkload <= 160 && statistics.averageWorkload >= 120 ? 'success' :
-              statistics.averageWorkload <= 180 ? 'warning' : 'error',
-      value: statistics.averageWorkload,
-      maxValue: 160,
-      details: statistics.averageWorkload > 160 ? 
-        ['Überdurchschnittliche Arbeitsbelastung'] : 
-        statistics.averageWorkload < 120 ? 
-        ['Unterdurchschnittliche Arbeitsbelastung'] : undefined,
-    });
-
     return items;
   }, [statistics]);
 
@@ -197,7 +168,5 @@ export const useDashboardData = (
     statistics,
     currentWeek,
     statusItems,
-    isLoading,
-    error,
   };
 };

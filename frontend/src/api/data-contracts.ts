@@ -167,11 +167,6 @@ export interface CreateEmployeeDto {
    */
   email: string;
   /**
-   * Employee number
-   * @example "EMP001"
-   */
-  employeeNumber: string;
-  /**
    * Employee first name
    * @example "Anna"
    */
@@ -181,25 +176,6 @@ export interface CreateEmployeeDto {
    * @example "2020-01-15"
    */
   hireDate: string;
-  /**
-   * Hourly rate
-   * @example 25.5
-   */
-  hourlyRate?: number;
-  /**
-   * Working hours per month
-   * @min 1
-   * @max 400
-   * @example 160
-   */
-  hoursPerMonth: number;
-  /**
-   * Working hours per week
-   * @min 1
-   * @max 60
-   * @example 40
-   */
-  hoursPerWeek?: number;
   /**
    * Whether the employee is active
    * @default true
@@ -221,11 +197,6 @@ export interface CreateEmployeeDto {
    * @example "uuid-string"
    */
   organizationId: string;
-  /**
-   * Overtime rate
-   * @example 32.5
-   */
-  overtimeRate?: number;
   /**
    * Phone number
    * @example "+49 89 1234-001"
@@ -691,7 +662,6 @@ export interface EmployeeAbsenceResponseDto {
   employee?: {
     /** @format email */
     email?: string;
-    employeeNumber?: string;
     firstName?: string;
     /** @format uuid */
     id?: string;
@@ -794,11 +764,6 @@ export interface EmployeeResponseDto {
    */
   email: string;
   /**
-   * Employee number
-   * @example "EMP001"
-   */
-  employeeNumber: string;
-  /**
    * Employee first name
    * @example "Anna"
    */
@@ -814,21 +779,6 @@ export interface EmployeeResponseDto {
    * @example "2020-01-15"
    */
   hireDate: string;
-  /**
-   * Hourly rate
-   * @example 28.5
-   */
-  hourlyRate?: number;
-  /**
-   * Working hours per month
-   * @example 160
-   */
-  hoursPerMonth: number;
-  /**
-   * Working hours per week
-   * @example 40
-   */
-  hoursPerWeek?: number;
   /**
    * Unique ID of the employee
    * @example "uuid-string"
@@ -861,11 +811,6 @@ export interface EmployeeResponseDto {
    * @example "uuid-string"
    */
   organizationId: string;
-  /**
-   * Overtime rate
-   * @example 35.6
-   */
-  overtimeRate?: number;
   /**
    * Phone number
    * @example "+49 89 1234-001"
@@ -1691,11 +1636,6 @@ export interface UpdateEmployeeDto {
    */
   email?: string;
   /**
-   * Employee number
-   * @example "EMP001"
-   */
-  employeeNumber?: string;
-  /**
    * Employee first name
    * @example "Anna"
    */
@@ -1705,25 +1645,6 @@ export interface UpdateEmployeeDto {
    * @example "2020-01-15"
    */
   hireDate?: string;
-  /**
-   * Hourly rate
-   * @example 25.5
-   */
-  hourlyRate?: number;
-  /**
-   * Working hours per month
-   * @min 1
-   * @max 400
-   * @example 160
-   */
-  hoursPerMonth?: number;
-  /**
-   * Working hours per week
-   * @min 1
-   * @max 60
-   * @example 40
-   */
-  hoursPerWeek?: number;
   /**
    * Is the employee active
    * @default true
@@ -1745,11 +1666,6 @@ export interface UpdateEmployeeDto {
    * @example "uuid-string"
    */
   organizationId?: string;
-  /**
-   * Overtime rate
-   * @example 32.5
-   */
-  overtimeRate?: number;
   /**
    * Phone number
    * @example "+49 89 1234-001"

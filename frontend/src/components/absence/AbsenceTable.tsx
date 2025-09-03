@@ -308,19 +308,6 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                         />
                                                     )}
                                                 </Box>
-                                                {employee.hoursPerMonth && (
-                                                    <Typography
-                                                        variant="caption"
-                                                        sx={{
-                                                            color: 'text.secondary',
-                                                            fontSize: '0.7rem',
-                                                            display: 'block',
-                                                            mt: 0.5,
-                                                        }}
-                                                    >
-                                                        {employee.hoursPerMonth}h/Monat
-                                                    </Typography>
-                                                )}
                                             </Box>
                                         </TableCell>
 

@@ -418,19 +418,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                                                 }}
                                                             />
                                                         </Box>
-                                                        {emp.hoursPerMonth && (
-                                                            <Typography
-                                                                variant="caption"
-                                                                sx={{
-                                                                    color: 'text.secondary',
-                                                                    fontSize: '0.7rem',
-                                                                    display: 'block',
-                                                                    mt: 0.5,
-                                                                }}
-                                                            >
-                                                                {emp.hoursPerMonth}h/Monat
-                                                            </Typography>
-                                                        )}
                                                     </Box>
                                                 </TableCell>
 

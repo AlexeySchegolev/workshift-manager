@@ -135,28 +135,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             />
           </Box>
 
-          <TextField
-            label="Stunden pro Monat"
-            variant="outlined"
-            type="number"
-            inputProps={{ min: 1, max: 180, step: '0.1' }}
-            value={formData.hoursPerMonth || ''}
-            onChange={(e) =>
-              onUpdateField(
-                'hoursPerMonth',
-                e.target.value === '' ? null : Number(e.target.value)
-              )
-            }
-            error={!!errors.hoursPerMonth}
-            helperText={errors.hoursPerMonth}
-            fullWidth
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 2,
-              },
-            }}
-          />
-
           <FormControl fullWidth error={!!errors.location} sx={{ gridColumn: { md: 'span 2' } }}>
             <InputLabel id="modal-location-label">Standort</InputLabel>
             <Select

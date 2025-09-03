@@ -277,11 +277,8 @@ export class ExcelExportService {
       'Rolle',
       'E-Mail',
       'Standort',
-      'Stunden/Monat',
       'Vertrag',
-      'Status',
-      'Samstag verfügbar',
-      'Sonntag verfügbar'
+      'Status'
     ];
 
     // Add headers
@@ -299,18 +296,15 @@ export class ExcelExportService {
       worksheet.getCell(`B${row}`).value = employee.primaryRole?.name || 'N/A';
       worksheet.getCell(`C${row}`).value = employee.email;
       worksheet.getCell(`D${row}`).value = employee.location?.name || 'N/A';
-      worksheet.getCell(`E${row}`).value = employee.hoursPerMonth;
-      worksheet.getCell(`F${row}`).value = employee.contractType;
-      worksheet.getCell(`G${row}`).value = employee.isActive ? 'Aktiv' : 'Inaktiv';
-      worksheet.getCell(`H${row}`).value = employee.saturdayAvailability ? 'Ja' : 'Nein';
-      worksheet.getCell(`I${row}`).value = employee.sundayAvailability ? 'Ja' : 'Nein';
+      worksheet.getCell(`E${row}`).value = employee.contractType;
+      worksheet.getCell(`F${row}`).value = employee.isActive ? 'Aktiv' : 'Inaktiv';
     });
 
     // Auto-fit columns
     this.autoFitColumns(worksheet);
 
     // Apply borders
-    const range = `A3:I${employees.length + 3}`;
+    const range = `A3:F${employees.length + 3}`;
     this.applyBorders(worksheet, range);
   }
 
@@ -579,7 +573,6 @@ export class ExcelExportService {
         role: employee.primaryRole?.name || 'N/A',
         shiftsCount,
         totalHours,
-        utilizationPercent: employee.hoursPerMonth > 0 ? (totalHours / employee.hoursPerMonth) * 100 : 0
       });
 
       stats.totalHours += totalHours;

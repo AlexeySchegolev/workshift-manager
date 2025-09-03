@@ -61,7 +61,10 @@ const EmployeePage: React.FC = () => {
         const specialists = employees.filter(emp => emp.primaryRoleId === "2").length;
         const assistants = employees.filter(emp => emp.primaryRoleId === "3").length;
 
-        const totalHours = employees.reduce((sum, emp) => sum + (emp.hoursPerMonth || 0), 0);
+        const totalHours = employees.reduce((sum, emp) => {
+            const defaultHours = emp.contractType === 'full_time' ? 160 : 80;
+            return sum + defaultHours;
+        }, 0);
         const avgHours = totalEmployees > 0 ? Math.ceil((totalHours / totalEmployees) * 10) / 10 : 0;
 
         // Calculate warnings

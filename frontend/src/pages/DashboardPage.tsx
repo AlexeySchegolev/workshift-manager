@@ -58,7 +58,6 @@ const DashboardPage: React.FC = () => {
     const {statistics, currentWeek} = useDashboardData(
         employees, // Now the loaded employees are passed
         currentShiftPlan,
-        constraints,
         selectedDate
     );
 

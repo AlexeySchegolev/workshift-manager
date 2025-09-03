@@ -39,7 +39,6 @@ export class ExcelExportService extends BaseService {
             const backendOptions: ExcelExportOptionsDto = {
                 includeStatistics: options.includeStatistics,
                 includeEmployeeDetails: options.includePlanning,
-                includeConstraintViolations: options.includeConstraints,
             };
 
             // Add date range if provided

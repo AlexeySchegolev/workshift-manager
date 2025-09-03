@@ -130,7 +130,7 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
           ) : (
             roles.map((role) => {
               const isSelected = selectedRoles.some(selectedRole => selectedRole.id === role.id);
-              const roleColor = getRoleColor(role.type);
+              const roleColor = '#1976d2'; // Default color since role.type doesn't exist
               
               return (
                 <Chip

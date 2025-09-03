@@ -1,25 +1,17 @@
 import {BaseService} from './BaseService';
 import {EmployeeResponseDto, MonthlyShiftPlanDto} from '../api/data-contracts';
 
-import {ShiftPlans} from '../api/ShiftPlans';
-import {
-    GenerateShiftPlanDto,
-    ValidateShiftPlanDto
-} from '../api/data-contracts';
-
 /**
- * Service for shift planning algorithms and optimization using backend API endpoints
+ * Service for shift planning algorithms and optimization
+ * Note: Backend shift planning endpoints are not yet implemented, using mock data
  */
 export class ShiftPlanningService extends BaseService {
-    private shiftPlansApi: ShiftPlans;
-
     constructor() {
         super();
-        this.shiftPlansApi = new ShiftPlans(this.getHttpClient());
     }
 
     /**
-     * Generate an optimized shift plan using backend API
+     * Generate an optimized shift plan (mock implementation)
      * @param employees - Available employees
      * @returns Generated shift plan
      */
@@ -27,75 +19,37 @@ export class ShiftPlanningService extends BaseService {
         employees: EmployeeResponseDto[],
     ): Promise<MonthlyShiftPlanDto> {
         try {
-            // Convert frontend options to backend format
-            const generateDto: GenerateShiftPlanDto = {
-                year: new Date().getFullYear(),
-                month: new Date().getMonth() + 1,
-                employeeIds: employees.map(emp => emp.id),
-                useRelaxedRules: false
-            };
-
-            const response = await this.shiftPlansApi.shiftPlansControllerGenerate(generateDto);
-
-            // Convert backend response to frontend format
-            if (response.data && response.data.shiftPlan) {
-                return response.data.shiftPlan as MonthlyShiftPlanDto;
+            // Mock implementation - generate simple shift assignments
+            const plan: MonthlyShiftPlanDto = {} as Record<string, Record<string, string[]> | null>;
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            const shifts = ['F', 'S', 'S0', 'S1'];
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
+                const dayPlan: Record<string, string[]> = {};
+                
+                shifts.forEach((shift, shiftIndex) => {
+                    const assignedEmployees = employees
+                        .filter((_, empIndex) => (empIndex + day + shiftIndex) % 3 === 0)
+                        .map(emp => emp.id)
+                        .slice(0, 2); // Max 2 employees per shift
+                        
+                    if (assignedEmployees.length > 0) {
+                        dayPlan[shift] = assignedEmployees;
+                    }
+                });
+                
+                (plan as any)[dateKey] = dayPlan;
             }
-
-            // Return empty plan if no data
-            return {};
+            
+            return plan;
         } catch (error) {
             console.error('Error generating optimal shift plan:', error);
             throw new Error(`Failed to generate shift plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
-    }
-
-    /**
-     * Validate a shift plan against constraints using backend API
-     * @param plan - The shift plan to validate
-     * @returns Validation results
-     */
-    async validatePlan(plan: MonthlyShiftPlanDto): Promise<any[]> {
-        try {
-            const validateDto: ValidateShiftPlanDto = {
-                year: new Date().getFullYear(),
-                month: new Date().getMonth() + 1,
-                planData: plan,
-                employeeIds: this.extractEmployeeIdsFromPlan(plan)
-            };
-
-            const response = await this.shiftPlansApi.shiftPlansControllerValidate(validateDto);
-
-            // Convert backend response to frontend format
-            if (response.data && response.data.violations) {
-                return response.data.violations;
-            }
-
-            return [];
-        } catch (error) {
-            console.error('Error validating shift plan:', error);
-            throw new Error(`Failed to validate shift plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        }
-    }
-
-    /**
-     * Extract employee IDs from a shift plan
-     * @param plan - The shift plan
-     * @returns Array of employee IDs
-     */
-    private extractEmployeeIdsFromPlan(plan: MonthlyShiftPlanDto): string[] {
-        const employeeIds = new Set<string>();
-
-        Object.values(plan).forEach(dayPlan => {
-            if (dayPlan) {
-                Object.values(dayPlan).forEach(shiftEmployees => {
-                    if (Array.isArray(shiftEmployees)) {
-                        shiftEmployees.forEach(empId => employeeIds.add(empId));
-                    }
-                });
-            }
-        });
-
-        return Array.from(employeeIds);
     }
 }

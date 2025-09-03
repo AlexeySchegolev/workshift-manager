@@ -27,8 +27,6 @@ import { ShiftFormData, ShiftFormErrors } from './hooks/useShiftForm';
 import { useLocations } from '@/hooks/useLocations';
 import { 
     SHIFT_TYPES, 
-    SHIFT_STATUSES, 
-    SHIFT_PRIORITIES, 
     RECURRENCE_PATTERNS 
 } from '@/constants/shiftConstants';
 
@@ -134,39 +132,6 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                            <InputLabel>Status</InputLabel>
-                            <Select
-                                value={formData.status}
-                                onChange={(e) => onUpdateField('status', e.target.value)}
-                                label="Status"
-                            >
-                                {SHIFT_STATUSES.map((status) => (
-                                    <MenuItem key={status.value} value={status.value}>
-                                        {status.label}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                            <InputLabel>Priorität</InputLabel>
-                            <Select
-                                value={formData.priority}
-                                onChange={(e) => onUpdateField('priority', e.target.value)}
-                                label="Priorität"
-                            >
-                                {SHIFT_PRIORITIES.map((priority) => (
-                                    <MenuItem key={priority.value} value={priority.value}>
-                                        {priority.label}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
                         <FormControl fullWidth error={!!errors.locationId}>

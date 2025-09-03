@@ -11,19 +11,11 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
   Alert,
   Tooltip,
   Switch,
   FormControlLabel,
   Divider,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Avatar,
   Stack,
 } from '@mui/material';
@@ -31,10 +23,7 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  ExpandMore as ExpandMoreIcon,
   People as PeopleIcon,
-  Security as SecurityIcon,
-  Assignment as AssignmentIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
@@ -43,15 +32,8 @@ import { CreateRoleDto, UpdateRoleDto, RoleResponseDto } from '../api/data-contr
 
 interface RoleFormData {
   name: string;
-  description: string;
-  colorCode: string;
-  priorityLevel: number;
-  permissions: string[];
-  requiredCertifications: string[];
-  requiredSkills: string[];
   isActive: boolean;
   organizationId: string;
-  type: 'specialist' | 'assistant' | 'shift_leader' | 'nurse' | 'nurse_manager' | 'helper' | 'doctor' | 'technician' | 'administrator' | 'cleaner' | 'security' | 'other';
 }
 
 /**
@@ -59,9 +41,6 @@ interface RoleFormData {
  */
 const RoleManagement: React.FC = () => {
   const [roles, setRoles] = useState<RoleResponseDto[]>([]);
-  const [availablePermissions, setAvailablePermissions] = useState<string[]>([]);
-  const [availableCertifications, setAvailableCertifications] = useState<string[]>([]);
-  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<RoleResponseDto | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -72,15 +51,8 @@ const RoleManagement: React.FC = () => {
 
   const [formData, setFormData] = useState<RoleFormData>({
     name: '',
-    description: '',
-    colorCode: '#1976d2',
-    priorityLevel: 1,
-    permissions: [],
-    requiredCertifications: [],
-    requiredSkills: [],
     isActive: true,
     organizationId: '', // TODO: Get from context or props
-    type: 'other',
   });
 
   // Load data
@@ -93,11 +65,6 @@ const RoleManagement: React.FC = () => {
       // Load roles from backend using service
       const roles = await roleService.getAllRoles({ includeRelations: true });
       setRoles(roles);
-      
-      // Extract unique permissions, certifications, and skills using service helper methods
-      setAvailablePermissions(roleService.extractAvailablePermissions(roles));
-      setAvailableCertifications(roleService.extractAvailableCertifications(roles));
-      setAvailableSkills(roleService.extractAvailableSkills(roles));
     } catch (error) {
       showAlert('error', 'Fehler beim Laden der Daten');
       console.error('Error loading role data:', error);
@@ -114,29 +81,15 @@ const RoleManagement: React.FC = () => {
       setEditingRole(role);
       setFormData({
         name: role.name,
-        description: role.description || '',
-        colorCode: role.colorCode || '#1976d2',
-        priorityLevel: role.priorityLevel,
-        permissions: role.permissions,
-        requiredCertifications: role.requiredCertifications,
-        requiredSkills: role.requiredSkills,
         isActive: role.isActive,
         organizationId: role.organizationId,
-        type: role.type,
       });
     } else {
       setEditingRole(null);
       setFormData({
         name: '',
-        description: '',
-        colorCode: '#1976d2',
-        priorityLevel: Math.max(...roles.map(r => r.priorityLevel), 0) + 1,
-        permissions: [],
-        requiredCertifications: [],
-        requiredSkills: [],
         isActive: true,
         organizationId: '', // TODO: Get from context or props
-        type: 'other',
       });
     }
     setDialogOpen(true);
@@ -153,14 +106,7 @@ const RoleManagement: React.FC = () => {
         // Update role
         const updateData: UpdateRoleDto = {
           name: formData.name,
-          description: formData.description,
-          colorCode: formData.colorCode,
-          priorityLevel: formData.priorityLevel,
-          permissions: formData.permissions,
-          requiredCertifications: formData.requiredCertifications,
-          requiredSkills: formData.requiredSkills,
           isActive: formData.isActive,
-          type: formData.type,
         };
         
         await roleService.updateRole(editingRole.id, updateData);
@@ -169,15 +115,8 @@ const RoleManagement: React.FC = () => {
         // Create new role
         const createData: CreateRoleDto = {
           name: formData.name,
-          description: formData.description,
-          colorCode: formData.colorCode,
-          priorityLevel: formData.priorityLevel,
-          permissions: formData.permissions,
-          requiredCertifications: formData.requiredCertifications,
-          requiredSkills: formData.requiredSkills,
-          isActive: formData.isActive,
           organizationId: formData.organizationId,
-          type: formData.type,
+          isActive: formData.isActive,
         };
         
         await roleService.createRole(createData);
@@ -226,7 +165,7 @@ const RoleManagement: React.FC = () => {
   };
 
   const filteredRoles = showInactive ? roles : roles.filter(role => role.isActive);
-  const sortedRoles = filteredRoles.sort((a, b) => a.priorityLevel - b.priorityLevel);
+  const sortedRoles = filteredRoles.sort((a, b) => a.name.localeCompare(b.name));
 
 
   return (
@@ -272,14 +211,14 @@ const RoleManagement: React.FC = () => {
             sx={{ 
               height: '100%',
               opacity: role.isActive ? 1 : 0.6,
-              border: `2px solid ${role.colorCode || '#1976d2'}20`,
+              border: `2px solid #1976d220`,
             }}
           >
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Avatar
                   sx={{
-                    bgcolor: role.colorCode || '#1976d2',
+                    bgcolor: '#1976d2',
                     mr: 2,
                     width: 40,
                     height: 40,
@@ -290,9 +229,6 @@ const RoleManagement: React.FC = () => {
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" component="h2">
                     {role.displayName}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Priorität: {role.priorityLevel}
                   </Typography>
                 </Box>
                 <Box>
@@ -323,101 +259,7 @@ const RoleManagement: React.FC = () => {
                   </Tooltip>
                 </Box>
               </Box>
-
-              <Typography variant="body2" sx={{ mb: 2 }}>
-                {role.description}
-              </Typography>
-
               <Divider sx={{ my: 2 }} />
-
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <SecurityIcon fontSize="small" />
-                    <Typography variant="body2">
-                      Berechtigungen ({role.permissions.length})
-                    </Typography>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {role.permissions.length > 0 ? (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {role.permissions.map((permission, index) => (
-                        <Chip
-                          key={index}
-                          label={permission}
-                          size="small"
-                          variant="outlined"
-                        />
-                      ))}
-                    </Box>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      Keine Berechtigungen zugewiesen
-                    </Typography>
-                  )}
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <AssignmentIcon fontSize="small" />
-                    <Typography variant="body2">
-                      Zertifizierungen ({role.requiredCertifications.length})
-                    </Typography>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {role.requiredCertifications.length > 0 ? (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {role.requiredCertifications.map((certification, index) => (
-                        <Chip
-                          key={index}
-                          label={certification}
-                          size="small"
-                          color="primary"
-                          variant="outlined"
-                        />
-                      ))}
-                    </Box>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      Keine Zertifizierungen erforderlich
-                    </Typography>
-                  )}
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <AssignmentIcon fontSize="small" />
-                    <Typography variant="body2">
-                      Fähigkeiten ({role.requiredSkills.length})
-                    </Typography>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {role.requiredSkills.length > 0 ? (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {role.requiredSkills.map((skill, index) => (
-                        <Chip
-                          key={index}
-                          label={skill}
-                          size="small"
-                          color="secondary"
-                          variant="outlined"
-                        />
-                      ))}
-                    </Box>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      Keine besonderen Fähigkeiten erforderlich
-                    </Typography>
-                  )}
-                </AccordionDetails>
-              </Accordion>
             </CardContent>
           </Card>
         ))}
@@ -430,129 +272,13 @@ const RoleManagement: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Stack spacing={3} sx={{ mt: 2 }}>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <TextField
-                fullWidth
-                label="Rollenname"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-              />
-              <FormControl fullWidth required>
-                <InputLabel>Rollentyp</InputLabel>
-                <Select
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-                >
-                  <MenuItem value="specialist">Spezialist</MenuItem>
-                  <MenuItem value="assistant">Assistent</MenuItem>
-                  <MenuItem value="shift_leader">Schichtleiter</MenuItem>
-                  <MenuItem value="nurse">Krankenpfleger</MenuItem>
-                  <MenuItem value="nurse_manager">Pflegeleitung</MenuItem>
-                  <MenuItem value="helper">Hilfskraft</MenuItem>
-                  <MenuItem value="doctor">Arzt</MenuItem>
-                  <MenuItem value="technician">Techniker</MenuItem>
-                  <MenuItem value="administrator">Administrator</MenuItem>
-                  <MenuItem value="cleaner">Reinigungskraft</MenuItem>
-                  <MenuItem value="security">Sicherheitsdienst</MenuItem>
-                  <MenuItem value="other">Sonstiges</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-            
             <TextField
               fullWidth
-              label="Beschreibung"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              multiline
-              rows={3}
+              label="Rollenname"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
             />
-            
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <TextField
-                fullWidth
-                label="Farbe"
-                type="color"
-                value={formData.colorCode}
-                onChange={(e) => setFormData({ ...formData, colorCode: e.target.value })}
-              />
-              <TextField
-                fullWidth
-                label="Prioritätslevel"
-                type="number"
-                value={formData.priorityLevel}
-                onChange={(e) => setFormData({ ...formData, priorityLevel: parseInt(e.target.value) || 1 })}
-                inputProps={{ min: 1, max: 10 }}
-                helperText="1-10, höher = wichtiger"
-              />
-            </Box>
-            
-            <FormControl fullWidth>
-              <InputLabel>Berechtigungen</InputLabel>
-              <Select
-                multiple
-                value={formData.permissions}
-                onChange={(e) => setFormData({ ...formData, permissions: e.target.value as string[] })}
-                renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={value} size="small" />
-                    ))}
-                  </Box>
-                )}
-              >
-                {availablePermissions.map((permission) => (
-                  <MenuItem key={permission} value={permission}>
-                    {permission}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            
-            <FormControl fullWidth>
-              <InputLabel>Erforderliche Zertifizierungen</InputLabel>
-              <Select
-                multiple
-                value={formData.requiredCertifications}
-                onChange={(e) => setFormData({ ...formData, requiredCertifications: e.target.value as string[] })}
-                renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={value} size="small" color="primary" />
-                    ))}
-                  </Box>
-                )}
-              >
-                {availableCertifications.map((certification) => (
-                  <MenuItem key={certification} value={certification}>
-                    {certification}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl fullWidth>
-              <InputLabel>Erforderliche Fähigkeiten</InputLabel>
-              <Select
-                multiple
-                value={formData.requiredSkills}
-                onChange={(e) => setFormData({ ...formData, requiredSkills: e.target.value as string[] })}
-                renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={value} size="small" color="secondary" />
-                    ))}
-                  </Box>
-                )}
-              >
-                {availableSkills.map((skill) => (
-                  <MenuItem key={skill} value={skill}>
-                    {skill}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
             
             <FormControlLabel
               control={

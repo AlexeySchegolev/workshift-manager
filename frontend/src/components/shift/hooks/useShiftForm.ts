@@ -167,8 +167,7 @@ export const useShiftForm = () => {
       name: shift.name,
       description: shift.description || '',
       type: shift.type,
-      status: shift.status,
-      priority: shift.priority,
+      priority: 2, // Default priority since shift.priority doesn't exist
       shiftDate: shift.shiftDate,
       startTime: shift.startTime,
       endTime: shift.endTime,
@@ -178,19 +177,19 @@ export const useShiftForm = () => {
       maxEmployees: shift.maxEmployees,
       locationId: shift.locationId,
       organizationId: shift.organizationId,
-      requiredSkills: shift.requiredSkills || [],
-      requiredCertifications: shift.requiredCertifications || [],
+      requiredSkills: [], // Default empty since shift.requiredSkills doesn't exist
+      requiredCertifications: [], // Default empty since shift.requiredCertifications doesn't exist
       isOvertime: shift.isOvertime,
       overtimeRate: shift.overtimeRate,
       isHoliday: shift.isHoliday,
       holidayRate: shift.holidayRate,
       isWeekend: shift.isWeekend,
       weekendRate: shift.weekendRate,
-      colorCode: shift.colorCode || '#4CAF50',
-      notes: shift.notes || '',
-      isRecurring: shift.isRecurring,
-      recurrencePattern: shift.recurrencePattern,
-      recurrenceEndDate: shift.recurrenceEndDate,
+      colorCode: '#4CAF50', // Default color since shift.colorCode doesn't exist
+      notes: '', // Default empty since shift.notes doesn't exist
+      isRecurring: false, // Default false since shift.isRecurring doesn't exist
+      recurrencePattern: undefined, // Default undefined since shift.recurrencePattern doesn't exist
+      recurrenceEndDate: undefined, // Default undefined since shift.recurrenceEndDate doesn't exist
       isActive: shift.isActive,
     });
     setEditingId(shift.id);

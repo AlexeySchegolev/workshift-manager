@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
-import {EmployeeResponseDto, MonthlyShiftPlanDto} from "@/api/data-contracts.ts";
+import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService} from '@/services';
 import MonthSelector from './MonthSelector';
 
@@ -35,7 +35,7 @@ interface ShiftTableProps {
     employees: EmployeeResponseDto[];
     selectedDate: Date;
     onDateChange: (date: Date) => void;
-    shiftPlan: MonthlyShiftPlanDto | null;
+    shiftPlan: any | null;
     shiftPlanId?: string | null; // Optional shift plan ID for Excel export
     isLoading: boolean;
     onGeneratePlan: () => void;

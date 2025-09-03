@@ -136,18 +136,6 @@ export class ExcelExportRequestDto {
 }
 export class ExcelExportMetadataDto {
   @ApiProperty({
-    description: 'Total number of shifts in export',
-    example: 456
-  })
-  totalShifts: number;
-
-  @ApiProperty({
-    description: 'Total number of employees in export',
-    example: 25
-  })
-  totalEmployees: number;
-
-  @ApiProperty({
     description: 'Total number of planning days',
     example: 31
   })

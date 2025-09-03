@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {MonthlyShiftPlanDto} from "@/modules/shift-plans/dto/monthly-shift-plan.dto";
 
 
 export class ShiftPlanResponseDto {
@@ -26,22 +25,6 @@ export class ShiftPlanResponseDto {
   })
   month: number;
 
-  @ApiPropertyOptional({
-    description: 'Shift plan data organized by date and shift',
-    type: [MonthlyShiftPlanDto],
-    additionalProperties: true,
-    example: {
-      '01.12.2024': {
-        'Morning': ['employee-id-1', 'employee-id-2'],
-        'Evening': ['employee-id-3', 'employee-id-4']
-      },
-      '02.12.2024': {
-        'Morning': ['employee-id-2', 'employee-id-3'],
-        'Evening': ['employee-id-1', 'employee-id-4']
-      }
-    },
-  })
-  planData: MonthlyShiftPlanDto;
 
 
   @ApiPropertyOptional({

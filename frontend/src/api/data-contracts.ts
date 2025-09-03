@@ -810,16 +810,6 @@ export interface ExcelExportMetadataDto {
    * @example 31
    */
   totalDays: number;
-  /**
-   * Total number of employees in export
-   * @example 25
-   */
-  totalEmployees: number;
-  /**
-   * Total number of shifts in export
-   * @example 456
-   */
-  totalShifts: number;
 }
 
 export interface ExcelExportOptionsDto {
@@ -1018,8 +1008,6 @@ export interface LoginDto {
    */
   password: string;
 }
-
-export type MonthlyShiftPlanDto = object;
 
 export interface OperatingHoursDto {
   /**
@@ -1260,11 +1248,6 @@ export interface ShiftPlanResponseDto {
    * @example 12
    */
   month: number;
-  /**
-   * Shift plan data organized by date and shift
-   * @example {"01.12.2024":{"Morning":["employee-id-1","employee-id-2"],"Evening":["employee-id-3","employee-id-4"]},"02.12.2024":{"Morning":["employee-id-2","employee-id-3"],"Evening":["employee-id-1","employee-id-4"]}}
-   */
-  planData?: MonthlyShiftPlanDto[];
   /**
    * Date when the shift plan was last updated
    * @format date-time
@@ -1887,13 +1870,6 @@ export interface UpdateShiftDto {
 
 export interface UpdateShiftPlanDto {
   /**
-   * Coverage percentage
-   * @min 0
-   * @max 100
-   * @example 95.5
-   */
-  coveragePercentage?: number;
-  /**
    * ID of user who created this shift plan
    * @example "uuid-string"
    */
@@ -1923,11 +1899,6 @@ export interface UpdateShiftPlanDto {
    */
   organizationId?: string;
   /**
-   * Monthly shift plan data structure
-   * @example {"01.12.2024":{"F":["employee-uuid-1","employee-uuid-2"],"S":["employee-uuid-3"],"FS":["employee-uuid-4"]},"02.12.2024":{"F":["employee-uuid-2","employee-uuid-5"],"S":["employee-uuid-1"]}}
-   */
-  planData?: Record<string, any>;
-  /**
    * End date of planning period
    * @example "2024-12-31"
    */
@@ -1937,23 +1908,6 @@ export interface UpdateShiftPlanDto {
    * @example "2024-12-01"
    */
   planningPeriodStart?: string;
-  /**
-   * Total number of employees in the plan
-   * @min 0
-   * @example 25
-   */
-  totalEmployees?: number;
-  /**
-   * Total hours in the shift plan
-   * @example 1200.5
-   */
-  totalHours?: number;
-  /**
-   * Total number of shifts in the plan
-   * @min 0
-   * @example 150
-   */
-  totalShifts?: number;
   /**
    * Year for the shift plan
    * @min 2020

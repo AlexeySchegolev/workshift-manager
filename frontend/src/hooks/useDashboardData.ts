@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { format, startOfWeek, addDays } from 'date-fns';
+import { useMemo } from 'react';
+import { startOfWeek, addDays } from 'date-fns';
 import { WeekDay } from '../components/dashboard/WeekOverview';
 import {
     EmployeeResponseDto,
@@ -18,16 +18,9 @@ export interface StatusItem {
 
 type Employee = EmployeeResponseDto;
 
-// Monthly shift plan type matching ShiftPlanResponseDto.planData structure
-// Structure: { "01.12.2024": { "Morning": ["employee-id-1", "employee-id-2"], "Evening": [...] } }
-type MonthlyShiftPlanData = Record<string, Record<string, string[]> | null>;
-
 // Dashboard statistics interface using data-contracts concepts
 interface DashboardStatistics {
   employeeCount: number;
-  shiftCoverage: number;
-  currentWarnings: number;
-  ruleViolations: number;
 }
 
 // Dashboard data interface
@@ -42,32 +35,16 @@ interface DashboardData {
  */
 export const useDashboardData = (
   employees: Employee[],
-  currentShiftPlan: MonthlyShiftPlanData | null,
   selectedDate: Date = new Date()
 ): DashboardData => {
   // Calculate statistics
   const statistics = useMemo((): DashboardStatistics => {
     const employeeCount = employees.length;
-    
-    // Calculate shift coverage
-    let shiftCoverage = 0;
-    if (currentShiftPlan) {
-      const totalDays = Object.keys(currentShiftPlan).length;
-      const coveredDays = Object.values(currentShiftPlan).filter(day => day !== null).length;
-      shiftCoverage = totalDays > 0 ? Math.round((coveredDays / totalDays) * 100) : 0;
-    }
-
-    // Constraint validation not available - set to 0
-    const currentWarnings = 0;
-    const ruleViolations = 0;
 
     return {
-      employeeCount,
-      shiftCoverage,
-      currentWarnings,
-      ruleViolations,
+      employeeCount
     };
-  }, [employees, currentShiftPlan]);
+  }, [employees]);
 
   // Generate current week
   const currentWeek = useMemo((): WeekDay[] => {
@@ -76,21 +53,9 @@ export const useDashboardData = (
 
     for (let i = 0; i < 7; i++) {
       const date = addDays(weekStart, i);
-      const dateKey = format(date, 'dd.MM.yyyy');
 
       // Extract shifts for this day from current plan
       const shifts: { [shiftName: string]: number } = {};
-      
-      if (currentShiftPlan && currentShiftPlan[dateKey]) {
-        const dayPlan = currentShiftPlan[dateKey];
-        if (dayPlan) {
-          Object.entries(dayPlan).forEach(([shiftName, employeeIds]) => {
-            if (employeeIds && employeeIds.length > 0) {
-              shifts[shiftName] = employeeIds.length;
-            }
-          });
-        }
-      }
 
       const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
@@ -103,7 +68,7 @@ export const useDashboardData = (
     }
 
     return weekDays;
-  }, [selectedDate, currentShiftPlan]);
+  }, [selectedDate]);
 
   // Generate status items
   const statusItems = useMemo((): StatusItem[] => {
@@ -121,45 +86,6 @@ export const useDashboardData = (
       details: statistics.employeeCount < 5 ? 
         ['Zu wenige Mitarbeiter für optimale Schichtplanung'] : undefined,
     });
-
-    // Shift coverage status
-    items.push({
-      id: 'coverage',
-      title: 'Schichtabdeckung',
-      description: 'Prozent der geplanten Schichten im aktuellen Monat',
-      status: statistics.shiftCoverage >= 95 ? 'success' : 
-              statistics.shiftCoverage >= 80 ? 'warning' : 'error',
-      value: statistics.shiftCoverage,
-      maxValue: 100,
-      details: statistics.shiftCoverage < 95 ? 
-        ['Unvollständige Schichtabdeckung'] : undefined,
-    });
-
-    // Rule violations status
-    if (statistics.ruleViolations > 0) {
-      items.push({
-        id: 'violations',
-        title: 'Regelverletzungen',
-        description: 'Kritische Regelverletzungen im aktuellen Plan',
-        status: 'error',
-        value: statistics.ruleViolations,
-        maxValue: 0,
-        details: [`${statistics.ruleViolations} kritische Regelverletzungen gefunden`],
-      });
-    }
-
-    // Warnings status
-    if (statistics.currentWarnings > 0) {
-      items.push({
-        id: 'warnings',
-        title: 'Warnungen',
-        description: 'Warnungen und Optimierungsvorschläge',
-        status: 'warning',
-        value: statistics.currentWarnings,
-        maxValue: 0,
-        details: [`${statistics.currentWarnings} Warnungen vorhanden`],
-      });
-    }
 
     return items;
   }, [statistics]);

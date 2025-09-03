@@ -6,7 +6,7 @@ import { ShiftPlanningUtilityService } from './shift-planning-utility.service';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import {Employee} from "@/database/entities/employee.entity";
-import {DayShiftPlan, MonthlyShiftPlan, ShiftPlan} from "@/database/entities/shift-plan.entity";
+import {ShiftPlan} from "@/database/entities/shift-plan.entity";
 
 export interface ExcelExportOptions {
   includeStatistics?: boolean;
@@ -27,8 +27,6 @@ export interface ExcelExportResult {
   size: number;
   generatedAt: Date;
   metadata: {
-    totalShifts: number;
-    totalEmployees: number;
     totalDays: number;
     exportOptions: ExcelExportOptions;
   };
@@ -121,9 +119,7 @@ export class ExcelExportService {
         size: buffer.length,
         generatedAt: new Date(),
         metadata: {
-          totalShifts: this.countTotalShifts(shiftPlan.planData),
-          totalEmployees: employees.length,
-          totalDays: this.countPlanningDays(shiftPlan.planData),
+          totalDays: 0, // Placeholder since planData is no longer available
           exportOptions: options
         }
       };
@@ -172,14 +168,14 @@ export class ExcelExportService {
     // Add title
     this.addWorksheetTitle(worksheet, options.customTitle || worksheetName);
 
-    // Get all days with shifts (sorted)
-    const dayKeys = this.getSortedDayKeys(shiftPlan.planData);
+    // Since planData is removed, create a basic worksheet with minimal data
+    const dayKeys: string[] = []; // No shift data available
 
-    // Create headers
+    // Create headers (simplified)
     this.createHeaders(worksheet, dayKeys, options);
 
-    // Add employee data rows
-    this.addEmployeeRows(worksheet, employees, shiftPlan.planData, dayKeys, options);
+    // Add employee data rows (simplified)
+    this.addEmployeeRows(worksheet, employees, null, dayKeys, options);
 
     // Apply styling
     this.applyWorksheetStyling(worksheet, dayKeys.length + 2, employees.length + 3);
@@ -212,14 +208,10 @@ export class ExcelExportService {
     worksheet.getCell(`A${currentRow}`).font = { bold: true, size: 14 };
     currentRow += 2;
 
-    const stats = this.calculatePlanStatistics(shiftPlan.planData, employees);
-    
+    // Since planData is removed, provide simplified statistics
     const generalStats = [
-      ['Geplante Schichten', stats.totalShifts],
-      ['Geplante Stunden', stats.totalHours],
-      ['Beteiligte Mitarbeiter', stats.totalEmployees],
-      ['Abdeckung (%)', `${stats.coveragePercentage.toFixed(1)}%`],
-      ['Durchschnittliche Stunden pro Mitarbeiter', stats.averageHoursPerEmployee.toFixed(1)]
+      ['Beteiligte Mitarbeiter', employees.length],
+      ['Planungsperiode', `${shiftPlan.month}/${shiftPlan.year}`]
     ];
 
     generalStats.forEach(([label, value]) => {
@@ -230,13 +222,13 @@ export class ExcelExportService {
 
     currentRow += 2;
 
-    // Employee statistics
+    // Employee statistics - simplified without planData
     worksheet.getCell(`A${currentRow}`).value = 'Mitarbeiterstatistiken';
     worksheet.getCell(`A${currentRow}`).font = { bold: true, size: 14 };
     currentRow += 2;
 
-    // Headers for employee stats
-    const empStatsHeaders = ['Mitarbeiter', 'Rolle', 'Schichten', 'Stunden', 'Auslastung (%)'];
+    // Headers for employee stats (simplified)
+    const empStatsHeaders = ['Mitarbeiter', 'Rolle', 'Status'];
     empStatsHeaders.forEach((header, index) => {
       const cell = worksheet.getCell(currentRow, index + 1);
       cell.value = header;
@@ -245,13 +237,11 @@ export class ExcelExportService {
     });
     currentRow++;
 
-    // Employee data
-    stats.employeeStats.forEach(empStat => {
-      worksheet.getCell(`A${currentRow}`).value = empStat.name;
-      worksheet.getCell(`B${currentRow}`).value = empStat.role;
-      worksheet.getCell(`C${currentRow}`).value = empStat.shiftsCount;
-      worksheet.getCell(`D${currentRow}`).value = empStat.totalHours;
-      worksheet.getCell(`E${currentRow}`).value = `${empStat.utilizationPercent.toFixed(1)}%`;
+    // Employee data (simplified)
+    employees.forEach(employee => {
+      worksheet.getCell(`A${currentRow}`).value = employee.fullName;
+      worksheet.getCell(`B${currentRow}`).value = employee.primaryRole?.name || 'N/A';
+      worksheet.getCell(`C${currentRow}`).value = employee.isActive ? 'Aktiv' : 'Inaktiv';
       currentRow++;
     });
 
@@ -373,17 +363,16 @@ export class ExcelExportService {
   private addEmployeeRows(
     worksheet: ExcelJS.Worksheet,
     employees: Employee[],
-    planData: MonthlyShiftPlan,
+    planData: any, // Changed to any since it's now null
     dayKeys: string[],
     options: ExcelExportOptions
   ): void {
     employees.forEach(employee => {
       const rowData = [employee.fullName, employee.primaryRole?.name || 'N/A'];
       
-      // Add shift data for each day
-      dayKeys.forEach(dayKey => {
-        const shift = this.getEmployeeShiftForDay(employee.id, dayKey, planData);
-        rowData.push(shift || '');
+      // Since planData is removed, no shift data available
+      dayKeys.forEach(() => {
+        rowData.push('');
       });
 
       // Add additional column data if specified
@@ -498,102 +487,6 @@ export class ExcelExportService {
     });
   }
 
-  private getSortedDayKeys(planData: MonthlyShiftPlan): string[] {
-    return Object.keys(planData)
-      .filter(key => planData[key] !== null)
-      .sort((a, b) => {
-        const dateA = this.shiftPlanningUtilityService.parseDayKey(a);
-        const dateB = this.shiftPlanningUtilityService.parseDayKey(b);
-        return dateA.getTime() - dateB.getTime();
-      });
-  }
-
-  private getEmployeeShiftForDay(
-    employeeId: string,
-    dayKey: string,
-    planData: MonthlyShiftPlan
-  ): string | null {
-    const dayPlan = planData[dayKey] as DayShiftPlan;
-    if (!dayPlan) return null;
-
-    for (const shiftName in dayPlan) {
-      if (dayPlan[shiftName].includes(employeeId)) {
-        return shiftName;
-      }
-    }
-    return null;
-  }
-
-  private countTotalShifts(planData: MonthlyShiftPlan): number {
-    let count = 0;
-    for (const dayKey in planData) {
-      const dayPlan = planData[dayKey] as DayShiftPlan;
-      if (dayPlan) {
-        for (const shiftName in dayPlan) {
-          count += dayPlan[shiftName].length;
-        }
-      }
-    }
-    return count;
-  }
-
-  private countPlanningDays(planData: MonthlyShiftPlan): number {
-    return Object.keys(planData).filter(key => planData[key] !== null).length;
-  }
-
-  private calculatePlanStatistics(planData: MonthlyShiftPlan, employees: Employee[]): any {
-    const stats = {
-      totalShifts: this.countTotalShifts(planData),
-      totalHours: 0,
-      totalEmployees: employees.length,
-      coveragePercentage: 0,
-      averageHoursPerEmployee: 0,
-      employeeStats: []
-    };
-
-    // Calculate employee-specific statistics
-    employees.forEach(employee => {
-      let shiftsCount = 0;
-      let totalHours = 0;
-
-      for (const dayKey in planData) {
-        const dayPlan = planData[dayKey] as DayShiftPlan;
-        if (dayPlan) {
-          for (const shiftName in dayPlan) {
-            if (dayPlan[shiftName].includes(employee.id)) {
-              shiftsCount++;
-              totalHours += this.getShiftHours(shiftName);
-            }
-          }
-        }
-      }
-
-      stats.employeeStats.push({
-        name: employee.fullName,
-        role: employee.primaryRole?.name || 'N/A',
-        shiftsCount,
-        totalHours,
-      });
-
-      stats.totalHours += totalHours;
-    });
-
-    stats.averageHoursPerEmployee = stats.totalEmployees > 0 ? stats.totalHours / stats.totalEmployees : 0;
-    stats.coveragePercentage = this.calculateCoveragePercentage(planData);
-
-    return stats;
-  }
-
-  private calculateCoveragePercentage(planData: MonthlyShiftPlan): number {
-    const totalDays = Object.keys(planData).length;
-    const coveredDays = Object.keys(planData).filter(key => planData[key] !== null).length;
-    return totalDays > 0 ? (coveredDays / totalDays) * 100 : 0;
-  }
-
-  private getShiftHours(shiftName: string): number {
-    const shiftHours = { 'F': 8, 'S': 8, 'FS': 6 };
-    return shiftHours[shiftName] || 8;
-  }
 
   private generateFilename(shiftPlan: ShiftPlan): string {
     const monthYear = format(new Date(shiftPlan.year, shiftPlan.month - 1), 'yyyy-MM');

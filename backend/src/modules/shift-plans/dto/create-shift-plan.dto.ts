@@ -1,6 +1,5 @@
-import { IsInt, IsOptional, IsString, IsObject, Min, Max, IsUUID, IsDateString, IsNumber } from 'class-validator';
+import { IsInt, IsOptional, IsString, Min, Max, IsUUID, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {MonthlyShiftPlanDto} from "@/modules/shift-plans/dto/monthly-shift-plan.dto";
 
 export class CreateShiftPlanDto {
   @ApiProperty({
@@ -63,65 +62,6 @@ export class CreateShiftPlanDto {
   @IsDateString()
   planningPeriodEnd: string;
 
-
-  @ApiPropertyOptional({ 
-    description: 'Monthly shift plan data structure',
-    type: 'object',
-    additionalProperties: true,
-    example: {
-      '01.12.2024': {
-        'F': ['employee-uuid-1', 'employee-uuid-2'],
-        'S': ['employee-uuid-3'],
-        'FS': ['employee-uuid-4']
-      },
-      '02.12.2024': {
-        'F': ['employee-uuid-2', 'employee-uuid-5'],
-        'S': ['employee-uuid-1']
-      }
-    }
-  })
-  @IsOptional()
-  @IsObject()
-  planData?: MonthlyShiftPlanDto;
-
-
-  @ApiPropertyOptional({
-    description: 'Total number of shifts in the plan',
-    example: 150,
-    minimum: 0
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  totalShifts?: number;
-
-  @ApiPropertyOptional({
-    description: 'Total hours in the shift plan',
-    example: 1200.50
-  })
-  @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  totalHours?: number;
-
-  @ApiPropertyOptional({
-    description: 'Total number of employees in the plan',
-    example: 25,
-    minimum: 0
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  totalEmployees?: number;
-
-  @ApiPropertyOptional({
-    description: 'Coverage percentage',
-    example: 95.5,
-    minimum: 0,
-    maximum: 100
-  })
-  @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  coveragePercentage?: number;
 
 
 

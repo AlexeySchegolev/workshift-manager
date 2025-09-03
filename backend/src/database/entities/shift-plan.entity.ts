@@ -3,15 +3,6 @@ import { Organization } from './organization.entity';
 import { User } from './user.entity';
 import { Shift } from './shift.entity';
 
-export interface DayShiftPlan {
-  /** Shift name mapped to array of employee IDs */
-  [shiftName: string]: string[];
-}
-
-export interface MonthlyShiftPlan {
-  /** Date key in DD.MM.YYYY format mapped to day shift plan */
-  [dateKey: string]: DayShiftPlan | null;
-}
 
 
 @Entity('shift_plans')
@@ -41,24 +32,6 @@ export class ShiftPlan {
   planningPeriodEnd: Date;
 
 
-  @Column({
-    name: 'plan_data',
-    type: 'jsonb',
-    nullable: true
-  })
-  planData: MonthlyShiftPlan;
-
-  @Column({ name: 'total_shifts', type: 'integer', default: 0 })
-  totalShifts: number;
-
-  @Column({ name: 'total_hours', type: 'decimal', precision: 10, scale: 2, default: 0 })
-  totalHours: number;
-
-  @Column({ name: 'total_employees', type: 'integer', default: 0 })
-  totalEmployees: number;
-
-  @Column({ name: 'coverage_percentage', type: 'decimal', precision: 5, scale: 2, default: 0 })
-  coveragePercentage: number;
 
   @Column({ name: 'created_by', type: 'uuid', nullable: true })
   createdBy?: string;

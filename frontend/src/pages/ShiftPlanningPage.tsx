@@ -9,8 +9,6 @@ import {
     Paper,
 } from '@mui/material';
 import {
-    Schedule as ScheduleIcon,
-    People as PeopleIcon,
     CalendarMonth as CalendarIcon
 } from '@mui/icons-material';
 import {format} from 'date-fns';
@@ -18,11 +16,8 @@ import {de} from 'date-fns/locale';
 import ShiftTable from '../components/ShiftTable';
 import {EmployeeService} from "@/services";
 import {
-    EmployeeResponseDto,
-    MonthlyShiftPlanDto
+    EmployeeResponseDto
 } from "@/api/data-contracts.ts";
-
-import {shiftPlanningService} from '@/services';
 
 /**
  * Modern Shift Planning Page in Dashboard Style
@@ -50,8 +45,8 @@ const ShiftPlanningPage: React.FC = () => {
         loadEmployees();
     }, []);
 
-    // Shift plan
-    const [shiftPlan, setShiftPlan] = useState<MonthlyShiftPlanDto | null>(null);
+    // Shift plan - using generic object type since MonthlyShiftPlanDto no longer exists
+    const [shiftPlan, setShiftPlan] = useState<Record<string, any> | null>(null);
 
 
     // Loading state
@@ -75,46 +70,6 @@ const ShiftPlanningPage: React.FC = () => {
     const initializeShiftPlan = () => {
         setShiftPlan(null);
     };
-
-    // Calculate statistics
-    const calculateStatistics = () => {
-        const totalEmployees = employees.length;
-        const currentMonthDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
-
-        let plannedShifts = 0;
-        let totalPossibleShifts = 0;
-        let violations = 0;
-        let warnings = 0;
-
-        if (shiftPlan) {
-            Object.values(shiftPlan).forEach(dayPlan => {
-                if (dayPlan) {
-                    Object.values(dayPlan as Record<string, string[]>).forEach(shiftEmployees => {
-                        plannedShifts += shiftEmployees.length;
-                    });
-                }
-            });
-            totalPossibleShifts = currentMonthDays * 6; // Assumption: 6 shifts per day
-        }
-
-        // Constraint validation not available - set to 0
-        violations = 0;
-        warnings = 0;
-
-        const coverage = totalPossibleShifts > 0 ? Math.round((plannedShifts / totalPossibleShifts) * 100) : 0;
-        const avgHoursPerEmployee = totalEmployees > 0 ? Math.round((plannedShifts * 8) / totalEmployees) : 0;
-
-        return {
-            totalEmployees,
-            coverage,
-            avgHoursPerEmployee,
-            violations,
-            warnings,
-            plannedShifts,
-        };
-    };
-
-    const stats = calculateStatistics();
 
     // Initialize shift plan when date changes or load from sessionStorage
     useEffect(() => {
@@ -156,28 +111,7 @@ const ShiftPlanningPage: React.FC = () => {
             alert('Keine Mitarbeiter vorhanden. Bitte fügen Sie zuerst Mitarbeiter hinzu.');
             return;
         }
-
-        setIsLoading(true);
-
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const generatedPlan = await shiftPlanningService.generateOptimalPlan(
-                employees
-            );
-
-            setShiftPlan(generatedPlan);
-
-            const planKey = getSessionKey(selectedDate, 'plan');
-            const availabilityKey = getSessionKey(selectedDate, 'availability');
-
-            sessionStorage.setItem(planKey, JSON.stringify(generatedPlan));
-            sessionStorage.setItem(availabilityKey, JSON.stringify([])); // Currently stores empty array - availability data will be implemented when employee availability system is added
-        } catch (error) {
-            console.error('Error generating shift plan:', error);
-            alert('Der Schichtplan konnte nicht generiert werden.');
-        } finally {
-            setIsLoading(false);
-        }
+        alert("Dieses Feature kommt noch...");
     };
 
     // Define quick actions
@@ -237,20 +171,6 @@ const ShiftPlanningPage: React.FC = () => {
                                     {format(selectedDate, 'MMMM yyyy', {locale: de})}
                                 </Typography>
                             </Box>
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <PeopleIcon sx={{color: 'success.main', fontSize: '1.2rem'}}/>
-                                <Typography variant="body2" color="text.secondary">
-                                    {stats.totalEmployees} Mitarbeiter verfügbar
-                                </Typography>
-                            </Box>
-                            {shiftPlan && (
-                                <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                    <ScheduleIcon sx={{color: 'info.main', fontSize: '1.2rem'}}/>
-                                    <Typography variant="body2" color="text.secondary">
-                                        {stats.plannedShifts} Schichten geplant
-                                    </Typography>
-                                </Box>
-                            )}
                         </Box>
                     </Box>
                 </Paper>

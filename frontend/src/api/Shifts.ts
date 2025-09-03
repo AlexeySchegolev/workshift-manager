@@ -37,7 +37,6 @@ import {
   ExcelExportResultDto,
   LocationResponseDto,
   LoginDto,
-  MonthlyShiftPlanDto,
   OperatingHoursDto,
   OrganizationResponseDto,
   RegisterDto,

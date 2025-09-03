@@ -1,23 +1,13 @@
 import {OperatingHours} from "@/database/entities/location.entity";
 
-const standardOperatingHours: OperatingHours = {
-  monday: [{ start: '06:00', end: '22:00' }],
-  tuesday: [{ start: '06:00', end: '22:00' }],
-  wednesday: [{ start: '06:00', end: '22:00' }],
-  thursday: [{ start: '06:00', end: '22:00' }],
-  friday: [{ start: '06:00', end: '22:00' }],
-  saturday: [{ start: '08:00', end: '20:00' }],
-  sunday: [{ start: '08:00', end: '18:00' }]
-};
-
 const fullTimeOperatingHours: OperatingHours = {
-  monday: [{ start: '00:00', end: '23:59' }],
-  tuesday: [{ start: '00:00', end: '23:59' }],
+  monday: [{ start: '00:00', end: '20:00' }],
+  tuesday: [{ start: '00:00', end: '20:00' }],
   wednesday: [{ start: '00:00', end: '23:59' }],
   thursday: [{ start: '00:00', end: '23:59' }],
-  friday: [{ start: '00:00', end: '23:59' }],
-  saturday: [{ start: '00:00', end: '23:59' }],
-  sunday: [{ start: '00:00', end: '23:59' }]
+  friday: [{ start: '10:00', end: '23:59' }],
+  saturday: [{ start: '00:00', end: '18:00' }],
+  sunday: [{ start: '00:00', end: '10:00' }]
 };
 
 export const locationsSeedData = [

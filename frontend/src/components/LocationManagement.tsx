@@ -201,6 +201,58 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       .join(' • ');
   };
 
+  // Better formatted operating hours component
+  const formatOperatingHoursStructured = (location: LocationResponseDto) => {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+    
+    const activeDays = days
+      .map((day, index) => ({
+        name: dayNames[index],
+        slots: location.operatingHours[day] || []
+      }))
+      .filter(day => Array.isArray(day.slots) && day.slots.length > 0);
+
+    if (activeDays.length === 0) {
+      return (
+        <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+          Geschlossen
+        </Typography>
+      );
+    }
+
+    // Group consecutive days with same hours
+    const groupedDays: Array<{ days: string[], slots: any[] }> = [];
+    
+    activeDays.forEach(day => {
+      const slotsStr = day.slots.map((slot: any) => `${slot.start}-${slot.end}`).join(', ');
+      const existingGroup = groupedDays.find(g => 
+        g.slots.map((slot: any) => `${slot.start}-${slot.end}`).join(', ') === slotsStr
+      );
+      
+      if (existingGroup) {
+        existingGroup.days.push(day.name);
+      } else {
+        groupedDays.push({ days: [day.name], slots: day.slots });
+      }
+    });
+
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+        {groupedDays.map((group, index) => (
+          <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.primary', minWidth: '50px' }}>
+              {group.days.length > 2 ? `${group.days[0]}-${group.days[group.days.length - 1]}` : group.days.join(', ')}:
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ flex: 1, textAlign: 'right' }}>
+              {group.slots.map((slot: any) => `${slot.start}-${slot.end}`).join(', ')}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+
   return (
     <Box>
       {/* Error Alert */}
@@ -523,12 +575,10 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                         <ScheduleIcon sx={{ color: 'warning.main', fontSize: '1.1rem' }} />
                       </Box>
                       <Box sx={{ flex: 1 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', mb: 1 }}>
                           Öffnungszeiten
                         </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.4 }}>
-                          {formatOperatingHours(location)}
-                        </Typography>
+                        {formatOperatingHoursStructured(location)}
                       </Box>
                     </Box>
                   </Box>
@@ -536,7 +586,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
                 <CardActions 
                   sx={{ 
-                    pt: 0, 
+                    pt: 2.5, 
                     px: 3, 
                     pb: 3,
                     background: `linear-gradient(135deg, ${alpha(theme.palette.grey[50], 0.8)} 0%, ${alpha(theme.palette.grey[100], 0.4)} 100%)`,

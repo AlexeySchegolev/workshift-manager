@@ -26,8 +26,7 @@ import {
 import { ShiftFormData, ShiftFormErrors } from './hooks/useShiftForm';
 import { useLocations } from '@/hooks/useLocations';
 import { 
-    SHIFT_TYPES, 
-    RECURRENCE_PATTERNS 
+    SHIFT_TYPES 
 } from '@/constants/shiftConstants';
 
 interface ShiftFormProps {
@@ -270,16 +269,6 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         </Typography>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                            fullWidth
-                            label="Farbcode"
-                            type="color"
-                            value={formData.colorCode}
-                            onChange={(e) => onUpdateField('colorCode', e.target.value)}
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Grid>
 
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -312,62 +301,6 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                             />
                         </Box>
                     </Grid>
-
-                    <Grid size={{ xs: 12 }}>
-                        <TextField
-                            fullWidth
-                            label="Notizen"
-                            value={formData.notes}
-                            onChange={(e) => onUpdateField('notes', e.target.value)}
-                            multiline
-                            rows={3}
-                        />
-                    </Grid>
-
-                    {/* Recurring Options */}
-                    <Grid size={{ xs: 12 }}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={formData.isRecurring}
-                                    onChange={(e) => onUpdateField('isRecurring', e.target.checked)}
-                                />
-                            }
-                            label="Wiederkehrende Schicht"
-                        />
-                    </Grid>
-
-                    {formData.isRecurring && (
-                        <>
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <FormControl fullWidth>
-                                    <InputLabel>Wiederholungsmuster</InputLabel>
-                                    <Select
-                                        value={formData.recurrencePattern || ''}
-                                        onChange={(e) => onUpdateField('recurrencePattern', e.target.value)}
-                                        label="Wiederholungsmuster"
-                                    >
-                                        {RECURRENCE_PATTERNS.map((pattern) => (
-                                            <MenuItem key={pattern.value} value={pattern.value}>
-                                                {pattern.label}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <TextField
-                                    fullWidth
-                                    label="Enddatum der Wiederholung"
-                                    type="date"
-                                    value={formData.recurrenceEndDate || ''}
-                                    onChange={(e) => onUpdateField('recurrenceEndDate', e.target.value)}
-                                    InputLabelProps={{ shrink: true }}
-                                />
-                            </Grid>
-                        </>
-                    )}
                 </Grid>
             </DialogContent>
 

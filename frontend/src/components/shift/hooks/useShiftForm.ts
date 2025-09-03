@@ -8,7 +8,6 @@ export interface ShiftFormData {
   name: string;
   description: string;
   type: string;
-  priority: number;
   shiftDate: string;
   startTime: string;
   endTime: string;
@@ -18,19 +17,12 @@ export interface ShiftFormData {
   maxEmployees: number;
   locationId: string;
   organizationId: string;
-  requiredSkills: string[];
-  requiredCertifications: string[];
   isOvertime: boolean;
   overtimeRate?: number;
   isHoliday: boolean;
   holidayRate?: number;
   isWeekend: boolean;
   weekendRate?: number;
-  colorCode: string;
-  notes: string;
-  isRecurring: boolean;
-  recurrencePattern?: string;
-  recurrenceEndDate?: string;
   isActive: boolean;
 }
 
@@ -53,7 +45,6 @@ export const useShiftForm = () => {
     name: '',
     description: '',
     type: 'morning',
-    priority: 2,
     shiftDate: getTodayDateString(),
     startTime: '08:00',
     endTime: '16:00',
@@ -63,14 +54,9 @@ export const useShiftForm = () => {
     maxEmployees: 5,
     locationId: '',
     organizationId: organizationId || '',
-    requiredSkills: [],
-    requiredCertifications: [],
     isOvertime: false,
     isHoliday: false,
     isWeekend: false,
-    colorCode: '#4CAF50',
-    notes: '',
-    isRecurring: false,
     isActive: true,
   });
 
@@ -170,7 +156,6 @@ export const useShiftForm = () => {
       name: shift.name,
       description: shift.description || '',
       type: shift.type,
-      priority: 2, // Default priority since shift.priority doesn't exist
       shiftDate: shift.shiftDate,
       startTime: shift.startTime,
       endTime: shift.endTime,
@@ -180,19 +165,12 @@ export const useShiftForm = () => {
       maxEmployees: shift.maxEmployees,
       locationId: shift.locationId,
       organizationId: shift.organizationId,
-      requiredSkills: [], // Default empty since shift.requiredSkills doesn't exist
-      requiredCertifications: [], // Default empty since shift.requiredCertifications doesn't exist
       isOvertime: shift.isOvertime,
       overtimeRate: shift.overtimeRate,
       isHoliday: shift.isHoliday,
       holidayRate: shift.holidayRate,
       isWeekend: shift.isWeekend,
       weekendRate: shift.weekendRate,
-      colorCode: '#4CAF50', // Default color since shift.colorCode doesn't exist
-      notes: '', // Default empty since shift.notes doesn't exist
-      isRecurring: false, // Default false since shift.isRecurring doesn't exist
-      recurrencePattern: undefined, // Default undefined since shift.recurrencePattern doesn't exist
-      recurrenceEndDate: undefined, // Default undefined since shift.recurrenceEndDate doesn't exist
       isActive: shift.isActive,
     });
     setEditingId(shift.id);

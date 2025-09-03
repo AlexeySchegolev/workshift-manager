@@ -151,7 +151,7 @@ const DashboardPage: React.FC = () => {
                     <StatisticsCard
                         title="Mitarbeiter"
                         value={statistics.employeeCount}
-                        subtitle="TODO: wieviele sind aktiv heute? Ist jemand krank aus Schichtbelegung?"
+                        subtitle="Aktive Mitarbeiter im System"
                         icon={<PeopleIcon/>}
                         color="primary"
                         onClick={() => navigate('/mitarbeiter')
@@ -191,8 +191,9 @@ const DashboardPage: React.FC = () => {
                         woche={currentWeek}
                         selectedDate={selectedDate}
                         onDateSelect={(date) => {
-                            // TODO: Select date and navigate to shift planning
-                            navigate('/schichtplan');
+                            // Navigate to shift planning with selected date
+                            const dateString = format(date, 'yyyy-MM-dd');
+                            navigate(`/schichtplan?date=${dateString}`);
                         }}
                         title="Aktuelle Woche"
                     />

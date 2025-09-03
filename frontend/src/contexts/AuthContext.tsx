@@ -46,15 +46,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const currentUser = await authService.getCurrentUser();
           setUser(currentUser);
           
-          // TODO: Load organization when organizations property is available in AuthUserDto
-          // For now, load first organization from organizationsService
-          try {
-            const organizations = await organizationsService.getAllOrganizations({ includeRelations: true });
-            if (organizations.length > 0) {
-              setOrganization(organizations[0]);
-            }
-          } catch (error) {
-            console.warn('Failed to load organization:', error);
+          // Load organization from user data
+          if (currentUser.organization?.id) {
+            // Convert the simplified organization from AuthUserDto to full OrganizationResponseDto format
+            const userOrganization: Organization = {
+              id: currentUser.organization.id,
+              name: currentUser.organization.name || '',
+              isActive: true, // Assume active if user has access
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              // Set optional fields to undefined since they're not available in AuthUserDto
+              primaryEmail: undefined,
+              primaryPhone: undefined,
+              headquartersAddress: undefined,
+              headquartersCity: undefined,
+              headquartersCountry: undefined,
+              headquartersPostalCode: undefined,
+            };
+            setOrganization(userOrganization);
           }
         }
       } catch (error) {
@@ -77,15 +86,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const authResponse = await authService.login(credentials);
       setUser(authResponse.user);
       
-      // TODO: Load organization when organizations property is available in AuthUserDto
-      // For now, load first organization from organizationsService
-      try {
-        const organizations = await organizationsService.getAllOrganizations({ includeRelations: true });
-        if (organizations.length > 0) {
-          setOrganization(organizations[0]);
-        }
-      } catch (error) {
-        console.warn('Failed to load organization during login:', error);
+      // Load organization from user data
+      if (authResponse.user.organization?.id) {
+        // Convert the simplified organization from AuthUserDto to full OrganizationResponseDto format
+        const userOrganization: Organization = {
+          id: authResponse.user.organization.id,
+          name: authResponse.user.organization.name || '',
+          isActive: true, // Assume active if user has access
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          // Set optional fields to undefined since they're not available in AuthUserDto
+          primaryEmail: undefined,
+          primaryPhone: undefined,
+          headquartersAddress: undefined,
+          headquartersCity: undefined,
+          headquartersCountry: undefined,
+          headquartersPostalCode: undefined,
+        };
+        setOrganization(userOrganization);
       }
     } finally {
       setIsLoading(false);

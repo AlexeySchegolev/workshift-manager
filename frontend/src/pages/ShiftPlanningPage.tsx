@@ -173,7 +173,7 @@ const ShiftPlanningPage: React.FC = () => {
             const availabilityKey = getSessionKey(selectedDate, 'availability');
 
             sessionStorage.setItem(planKey, JSON.stringify(generatedPlan));
-            sessionStorage.setItem(availabilityKey, JSON.stringify([])); // TODO: Store actual availability data
+            sessionStorage.setItem(availabilityKey, JSON.stringify([])); // Currently stores empty array - availability data will be implemented when employee availability system is added
         } catch (error) {
             console.error('Error generating shift plan:', error);
             alert('Der Schichtplan konnte nicht generiert werden.');

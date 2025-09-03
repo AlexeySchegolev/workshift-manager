@@ -112,7 +112,7 @@ export const useDashboardData = (
         datum: date,
         schichten: shifts,
         istWochenende: isWeekend,
-        istFeiertag: false, // TODO: Implement holidays
+        istFeiertag: false, // Holiday detection will be implemented when holiday management system is added
       });
     }
 

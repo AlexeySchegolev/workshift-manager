@@ -19,53 +19,6 @@ export class RoleResponseDto {
   })
   name: string;
 
-  @ApiPropertyOptional({ 
-    description: 'Hourly rate in Euro', 
-    example: 25.50 
-  })
-  hourlyRate?: number;
-
-  @ApiPropertyOptional({ 
-    description: 'Overtime rate in Euro', 
-    example: 31.88 
-  })
-  overtimeRate?: number;
-
-  @ApiProperty({ 
-    description: 'Can work night shifts', 
-    example: true 
-  })
-  canWorkNights: boolean;
-
-  @ApiProperty({ 
-    description: 'Can work weekend shifts', 
-    example: true 
-  })
-  canWorkWeekends: boolean;
-
-  @ApiProperty({ 
-    description: 'Can work on holidays', 
-    example: false 
-  })
-  canWorkHolidays: boolean;
-
-  @ApiProperty({ 
-    description: 'Maximum consecutive working days', 
-    example: 6 
-  })
-  maxConsecutiveDays: number;
-
-  @ApiProperty({ 
-    description: 'Maximum weekly working hours', 
-    example: 40.0 
-  })
-  maxWeeklyHours: number;
-
-  @ApiProperty({ 
-    description: 'Maximum monthly working hours', 
-    example: 160.0 
-  })
-  maxMonthlyHours: number;
 
   @ApiProperty({ 
     description: 'Role is active', 

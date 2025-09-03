@@ -360,50 +360,15 @@ export interface CreateOrganizationDto {
 
 export interface CreateRoleDto {
   /**
-   * Can work on holidays
-   * @example false
-   */
-  canWorkHolidays?: boolean;
-  /**
-   * Can work night shifts
-   * @example true
-   */
-  canWorkNights?: boolean;
-  /**
-   * Can work weekend shifts
-   * @example true
-   */
-  canWorkWeekends?: boolean;
-  /**
    * Created by (User ID)
    * @example "123e4567-e89b-12d3-a456-426614174001"
    */
   createdBy?: string;
   /**
-   * Hourly rate in Euro
-   * @example 25.5
-   */
-  hourlyRate?: number;
-  /**
    * Role is active
    * @example true
    */
   isActive?: boolean;
-  /**
-   * Maximum consecutive working days
-   * @example 5
-   */
-  maxConsecutiveDays?: number;
-  /**
-   * Maximum monthly working hours
-   * @example 160
-   */
-  maxMonthlyHours?: number;
-  /**
-   * Maximum weekly working hours
-   * @example 40
-   */
-  maxWeeklyHours?: number;
   /**
    * Role name
    * @example "Dialysis Specialist"
@@ -414,11 +379,6 @@ export interface CreateRoleDto {
    * @example "123e4567-e89b-12d3-a456-426614174000"
    */
   organizationId: string;
-  /**
-   * Overtime rate in Euro
-   * @example 31.88
-   */
-  overtimeRate?: number;
 }
 
 export interface CreateShiftDto {
@@ -1238,21 +1198,6 @@ export interface RegisterResponseDto {
 
 export interface RoleResponseDto {
   /**
-   * Can work on holidays
-   * @example false
-   */
-  canWorkHolidays: boolean;
-  /**
-   * Can work night shifts
-   * @example true
-   */
-  canWorkNights: boolean;
-  /**
-   * Can work weekend shifts
-   * @example true
-   */
-  canWorkWeekends: boolean;
-  /**
    * Created at
    * @format date-time
    * @example "2024-01-01T12:00:00Z"
@@ -1275,11 +1220,6 @@ export interface RoleResponseDto {
    */
   displayName: string;
   /**
-   * Hourly rate in Euro
-   * @example 25.5
-   */
-  hourlyRate?: number;
-  /**
    * Unique role ID
    * @example "123e4567-e89b-12d3-a456-426614174000"
    */
@@ -1295,21 +1235,6 @@ export interface RoleResponseDto {
    */
   isAvailable: boolean;
   /**
-   * Maximum consecutive working days
-   * @example 6
-   */
-  maxConsecutiveDays: number;
-  /**
-   * Maximum monthly working hours
-   * @example 160
-   */
-  maxMonthlyHours: number;
-  /**
-   * Maximum weekly working hours
-   * @example 40
-   */
-  maxWeeklyHours: number;
-  /**
    * Role name
    * @example "Dialysis Specialist"
    */
@@ -1319,11 +1244,6 @@ export interface RoleResponseDto {
    * @example "123e4567-e89b-12d3-a456-426614174001"
    */
   organizationId: string;
-  /**
-   * Overtime rate in Euro
-   * @example 31.88
-   */
-  overtimeRate?: number;
   /**
    * Updated at
    * @format date-time
@@ -1829,50 +1749,15 @@ export interface UpdateOrganizationDto {
 
 export interface UpdateRoleDto {
   /**
-   * Can work on holidays
-   * @example false
-   */
-  canWorkHolidays?: boolean;
-  /**
-   * Can work night shifts
-   * @example true
-   */
-  canWorkNights?: boolean;
-  /**
-   * Can work weekend shifts
-   * @example true
-   */
-  canWorkWeekends?: boolean;
-  /**
    * Created by (User ID)
    * @example "123e4567-e89b-12d3-a456-426614174001"
    */
   createdBy?: string;
   /**
-   * Hourly rate in Euro
-   * @example 25.5
-   */
-  hourlyRate?: number;
-  /**
    * Role is active
    * @example true
    */
   isActive?: boolean;
-  /**
-   * Maximum consecutive working days
-   * @example 5
-   */
-  maxConsecutiveDays?: number;
-  /**
-   * Maximum monthly working hours
-   * @example 160
-   */
-  maxMonthlyHours?: number;
-  /**
-   * Maximum weekly working hours
-   * @example 40
-   */
-  maxWeeklyHours?: number;
   /**
    * Role name
    * @example "Dialysis Specialist"
@@ -1883,11 +1768,6 @@ export interface UpdateRoleDto {
    * @example "123e4567-e89b-12d3-a456-426614174000"
    */
   organizationId?: string;
-  /**
-   * Overtime rate in Euro
-   * @example 31.88
-   */
-  overtimeRate?: number;
   /**
    * Updated by (User ID)
    * @example "123e4567-e89b-12d3-a456-426614174001"

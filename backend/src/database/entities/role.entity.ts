@@ -15,29 +15,6 @@ export class Role {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ name: 'hourly_rate', type: 'decimal', precision: 10, scale: 2, nullable: true })
-  hourlyRate?: number;
-
-  @Column({ name: 'overtime_rate', type: 'decimal', precision: 10, scale: 2, nullable: true })
-  overtimeRate?: number;
-
-  @Column({ name: 'can_work_nights', type: 'boolean', default: true })
-  canWorkNights: boolean;
-
-  @Column({ name: 'can_work_weekends', type: 'boolean', default: true })
-  canWorkWeekends: boolean;
-
-  @Column({ name: 'can_work_holidays', type: 'boolean', default: true })
-  canWorkHolidays: boolean;
-
-  @Column({ name: 'max_consecutive_days', type: 'integer', default: 6 })
-  maxConsecutiveDays: number;
-
-  @Column({ name: 'max_weekly_hours', type: 'decimal', precision: 5, scale: 2, default: 40.0 })
-  maxWeeklyHours: number;
-
-  @Column({ name: 'max_monthly_hours', type: 'decimal', precision: 5, scale: 2, default: 160.0 })
-  maxMonthlyHours: number;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;

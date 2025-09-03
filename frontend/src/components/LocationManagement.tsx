@@ -99,7 +99,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         country: 'Germany',
         phone: '',
         email: '',
-        currentCapacity: 0,
         timezone: 'Europe/Berlin',
         operatingHours: {
           monday: [],
@@ -323,15 +322,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                   <Divider sx={{ my: 2 }} />
 
                   {/* Statistics */}
-                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, mb: 2 }}>
-                    <Box sx={{ textAlign: 'center' }}>
-                      <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>
-                        {location.currentCapacity}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Aktuelle Kapazität
-                      </Typography>
-                    </Box>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 2 }}>
                       <Box sx={{ textAlign: 'center' }}>
                           <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>
                               {location.employees.length}

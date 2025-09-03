@@ -251,18 +251,6 @@ export interface CreateLocationDto {
    */
   country?: string;
   /**
-   * Current capacity usage
-   * @min 0
-   * @example 35
-   */
-  currentCapacity?: number;
-  /**
-   * Description of the location
-   * @maxLength 500
-   * @example "Hauptstandort mit vollständiger Dialyse-Ausstattung"
-   */
-  description?: string;
-  /**
    * Email address
    * @maxLength 255
    * @example "berlin@workshift.de"
@@ -942,22 +930,11 @@ export interface LocationResponseDto {
    */
   createdBy?: string;
   /**
-   * Current capacity (number of people currently)
-   * @min 0
-   * @example 25
-   */
-  currentCapacity: number;
-  /**
    * Deletion timestamp (soft delete)
    * @format date-time
    * @example "2024-01-15T10:30:00Z"
    */
   deletedAt?: string;
-  /**
-   * Description of the location
-   * @example "Hauptstandort mit vollständiger Dialyse-Ausstattung"
-   */
-  description?: string;
   /**
    * Email address
    * @maxLength 255
@@ -1639,18 +1616,6 @@ export interface UpdateLocationDto {
    * @example "Germany"
    */
   country?: string;
-  /**
-   * Current capacity usage
-   * @min 0
-   * @example 35
-   */
-  currentCapacity?: number;
-  /**
-   * Description of the location
-   * @maxLength 500
-   * @example "Hauptstandort mit vollständiger Dialyse-Ausstattung"
-   */
-  description?: string;
   /**
    * Email address
    * @maxLength 255

@@ -53,12 +53,6 @@ export class LocationResponseDto {
     })
     code?: string;
 
-    @ApiPropertyOptional({
-        description: 'Description of the location',
-        example: 'Hauptstandort mit vollständiger Dialyse-Ausstattung'
-    })
-    description?: string;
-
     @ApiProperty({
         description: 'Location address',
         example: 'Musterstraße 123',
@@ -106,15 +100,6 @@ export class LocationResponseDto {
         maxLength: 255,
     })
     email?: string;
-
-
-    @ApiProperty({
-        description: 'Current capacity (number of people currently)',
-        example: 25,
-        minimum: 0,
-    })
-    currentCapacity: number;
-
 
     @ApiProperty({
         description: 'Timezone for this location',

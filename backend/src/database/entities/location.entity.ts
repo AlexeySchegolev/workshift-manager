@@ -42,9 +42,6 @@ export class Location {
   @Column({ type: 'varchar', length: 100, nullable: true })
   code?: string; // Short identifier for the location
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  description?: string;
-
   @Column({ type: 'varchar', length: 500 })
   address: string;
 
@@ -65,9 +62,6 @@ export class Location {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   email?: string;
-
-  @Column({ name: 'current_capacity', type: 'integer', default: 0 })
-  currentCapacity: number;
 
   @Column({ 
     name: 'operating_hours',

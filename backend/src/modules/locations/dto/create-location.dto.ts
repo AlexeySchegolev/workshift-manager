@@ -126,15 +126,6 @@ export class CreateLocationDto {
   @IsString()
   code?: string;
 
-  @ApiPropertyOptional({
-    description: 'Description of the location',
-    example: 'Hauptstandort mit vollständiger Dialyse-Ausstattung',
-    maxLength: 500
-  })
-  @IsOptional()
-  @IsString()
-  description?: string;
-
   @ApiProperty({ 
     description: 'Street address',
     example: 'Musterstraße 123',
@@ -196,20 +187,6 @@ export class CreateLocationDto {
   @IsOptional()
   @IsEmail()
   email?: string;
-
-
-
-  @ApiPropertyOptional({
-    description: 'Current capacity usage',
-    example: 35,
-    minimum: 0
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  currentCapacity?: number;
-
-
 
   @ApiPropertyOptional({
     description: 'Timezone for this location',

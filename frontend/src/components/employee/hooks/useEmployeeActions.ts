@@ -3,6 +3,7 @@ import { EmployeeResponseDto, CreateEmployeeDto, UpdateEmployeeDto } from '@/api
 import { EmployeeFormData } from './useEmployeeForm';
 import { EmployeeService } from '@/services';
 import { getTodayDateString } from '@/utils/date.utils.ts';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export interface SnackbarState {
   open: boolean;
@@ -14,6 +15,7 @@ export const useEmployeeActions = (
   employees: EmployeeResponseDto[],
   onEmployeesChange: (employees: EmployeeResponseDto[]) => void
 ) => {
+  const { organizationId } = useAuth();
   // Snackbar state
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
@@ -123,9 +125,15 @@ export const useEmployeeActions = (
           'success'
         );
       } else {
+        // Create new employee - validate organizationId is available
+        if (!organizationId) {
+          showSnackbar('Mitarbeiter kann nicht erstellt werden: Keine Organisation verfügbar', 'error');
+          return;
+        }
+        
         // Create new employee via API
         const createData: CreateEmployeeDto = {
-          organizationId: "ae2dd453-4c7d-4a13-bc1f-435f3f1c44ae", // TODO: Get from context/config
+          organizationId: organizationId,
           employeeNumber: `EMP${Date.now()}`, // Generate unique employee number
           firstName: formData.firstName,
           lastName: formData.lastName,

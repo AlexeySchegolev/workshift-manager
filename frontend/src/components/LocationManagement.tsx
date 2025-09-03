@@ -37,6 +37,7 @@ import {
 import { locationService } from '@/services';
 import {CreateLocationDto, UpdateLocationDto, LocationResponseDto} from '../api/data-contracts';
 import { getCurrentTimestamp } from '../utils/date.utils';
+import { useAuth } from '../contexts/AuthContext';
 
 interface LocationManagementProps {
   locations?: LocationResponseDto[];
@@ -51,6 +52,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   onLocationsChange,
 }) => {
   const theme = useTheme();
+  const { organizationId } = useAuth();
   const [locations, setLocations] = useState<LocationResponseDto[]>(propLocations || []);
   const [selectedLocation, setSelectedLocation] = useState<LocationResponseDto | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -89,7 +91,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     } else {
       setSelectedLocation({
         id: '',
-        organizationId: '',
+        organizationId: organizationId || '',
         name: '',
         address: '',
         city: '',
@@ -142,7 +144,12 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
       } else {
-        // Create new location
+        // Create new location - validate organizationId is available
+        if (!selectedLocation?.organizationId) {
+          setError('Standort kann nicht erstellt werden: Keine Organisation verfügbar');
+          return;
+        }
+        
         const newLocation = await locationService.createLocation(selectedLocation as CreateLocationDto);
         const updatedLocations = [...locations, newLocation];
         setLocations(updatedLocations);

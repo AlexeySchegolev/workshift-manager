@@ -29,6 +29,7 @@ import {
 } from '@mui/icons-material';
 import { roleService } from '@/services';
 import { CreateRoleDto, UpdateRoleDto, RoleResponseDto } from '../api/data-contracts';
+import { useAuth } from '../contexts/AuthContext';
 
 interface RoleFormData {
   name: string;
@@ -40,6 +41,7 @@ interface RoleFormData {
  * Component for Role Management
  */
 const RoleManagement: React.FC = () => {
+  const { organizationId } = useAuth();
   const [roles, setRoles] = useState<RoleResponseDto[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<RoleResponseDto | null>(null);
@@ -52,7 +54,7 @@ const RoleManagement: React.FC = () => {
   const [formData, setFormData] = useState<RoleFormData>({
     name: '',
     isActive: true,
-    organizationId: '', // TODO: Get from context or props
+    organizationId: organizationId || '',
   });
 
   // Load data
@@ -89,7 +91,7 @@ const RoleManagement: React.FC = () => {
       setFormData({
         name: '',
         isActive: true,
-        organizationId: '', // TODO: Get from context or props
+        organizationId: organizationId || '',
       });
     }
     setDialogOpen(true);
@@ -112,7 +114,12 @@ const RoleManagement: React.FC = () => {
         await roleService.updateRole(editingRole.id, updateData);
         showAlert('success', 'Rolle erfolgreich aktualisiert');
       } else {
-        // Create new role
+        // Create new role - validate organizationId is available
+        if (!formData.organizationId) {
+          showAlert('error', 'Rolle kann nicht erstellt werden: Keine Organisation verfügbar');
+          return;
+        }
+        
         const createData: CreateRoleDto = {
           name: formData.name,
           organizationId: formData.organizationId,

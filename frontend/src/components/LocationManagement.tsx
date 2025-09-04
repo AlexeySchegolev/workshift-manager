@@ -38,6 +38,7 @@ import { locationService } from '@/services';
 import {CreateLocationDto, UpdateLocationDto, LocationResponseDto} from '../api/data-contracts';
 import { getCurrentTimestamp } from '../utils/date.utils';
 import { useAuth } from '../contexts/AuthContext';
+import DeleteConfirmationDialog from './location/DeleteConfirmationDialog';
 
 interface LocationManagementProps {
   locations?: LocationResponseDto[];
@@ -59,6 +60,8 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [locationToDelete, setLocationToDelete] = useState<LocationResponseDto | null>(null);
 
   // Load locations from API
   useEffect(() => {
@@ -183,21 +186,34 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     }
   };
 
-  // Delete location
-  const handleDeleteLocation = async (locationId: string) => {
-    if (window.confirm('Sind Sie sicher, dass Sie diesen Standort löschen möchten?')) {
-      try {
-        setLoading(true);
-        setError(null);
-        await locationService.deleteLocation(locationId);
-        const updatedLocations = locations.filter(loc => loc.id !== locationId);
-        setLocations(updatedLocations);
-        onLocationsChange?.(updatedLocations);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Fehler beim Löschen des Standorts');
-      } finally {
-        setLoading(false);
-      }
+  // Open delete confirmation dialog
+  const handleOpenDeleteDialog = (location: LocationResponseDto) => {
+    setLocationToDelete(location);
+    setDeleteDialogOpen(true);
+  };
+
+  // Close delete confirmation dialog
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setLocationToDelete(null);
+  };
+
+  // Delete location (called from confirmation dialog)
+  const handleDeleteLocation = async () => {
+    if (!locationToDelete) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      await locationService.deleteLocation(locationToDelete.id);
+      const updatedLocations = locations.filter(loc => loc.id !== locationToDelete.id);
+      setLocations(updatedLocations);
+      onLocationsChange?.(updatedLocations);
+      handleCloseDeleteDialog();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Fehler beim Löschen des Standorts');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -409,7 +425,7 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
                       </IconButton>
                       <IconButton
                         size="small"
-                        onClick={() => handleDeleteLocation(location.id.toString())}
+                        onClick={() => handleOpenDeleteDialog(location)}
                         sx={{ color: 'error.main' }}
                       >
                         <DeleteIcon />
@@ -761,6 +777,14 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        location={locationToDelete}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleDeleteLocation}
+      />
     </Box>
   );
 };

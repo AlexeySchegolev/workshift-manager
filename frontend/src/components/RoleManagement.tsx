@@ -11,7 +11,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Alert,
   Tooltip,
   Switch,
   FormControlLabel,
@@ -30,6 +29,8 @@ import {
 import { roleService } from '@/services';
 import { CreateRoleDto, UpdateRoleDto, RoleResponseDto } from '../api/data-contracts';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { extractErrorMessage, getErrorDisplayDuration } from '../utils/errorUtils';
 
 interface RoleFormData {
   name: string;
@@ -42,12 +43,12 @@ interface RoleFormData {
  */
 const RoleManagement: React.FC = () => {
   const { organizationId } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [roles, setRoles] = useState<RoleResponseDto[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<RoleResponseDto | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState<RoleResponseDto | null>(null);
-  const [alert, setAlert] = useState<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null);
   const [showInactive, setShowInactive] = useState(false);
 
 
@@ -68,14 +69,11 @@ const RoleManagement: React.FC = () => {
       const roles = await roleService.getAllRoles({ includeRelations: true });
       setRoles(roles);
     } catch (error) {
-      showAlert('error', 'Fehler beim Laden der Daten');
       console.error('Error loading role data:', error);
+      const errorMessage = extractErrorMessage(error);
+      const duration = getErrorDisplayDuration(error);
+      showError(errorMessage, duration);
     }
-  };
-
-  const showAlert = (type: 'success' | 'error' | 'warning', message: string) => {
-    setAlert({ type, message });
-    setTimeout(() => setAlert(null), 5000);
   };
 
   const handleOpenDialog = (role?: RoleResponseDto) => {
@@ -112,11 +110,11 @@ const RoleManagement: React.FC = () => {
         };
         
         await roleService.updateRole(editingRole.id, updateData);
-        showAlert('success', 'Rolle erfolgreich aktualisiert');
+        showSuccess('Rolle erfolgreich aktualisiert');
       } else {
         // Create new role - validate organizationId is available
         if (!formData.organizationId) {
-          showAlert('error', 'Rolle kann nicht erstellt werden: Keine Organisation verfügbar');
+          showError('Rolle kann nicht erstellt werden: Keine Organisation verfügbar');
           return;
         }
         
@@ -127,14 +125,16 @@ const RoleManagement: React.FC = () => {
         };
         
         await roleService.createRole(createData);
-        showAlert('success', 'Rolle erfolgreich erstellt');
+        showSuccess('Rolle erfolgreich erstellt');
       }
       
       loadData();
       handleCloseDialog();
     } catch (error) {
-      showAlert('error', 'Fehler beim Speichern der Rolle');
       console.error('Error saving role:', error);
+      const errorMessage = extractErrorMessage(error);
+      const duration = getErrorDisplayDuration(error);
+      showError(errorMessage, duration);
     }
   };
 
@@ -147,11 +147,13 @@ const RoleManagement: React.FC = () => {
     if (roleToDelete) {
       try {
         await roleService.deleteRole(roleToDelete.id);
-        showAlert('success', 'Rolle erfolgreich gelöscht');
+        showSuccess('Rolle erfolgreich gelöscht');
         loadData();
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Fehler beim Löschen der Rolle';
-        showAlert('error', errorMessage);
+        console.error('Error deleting role:', error);
+        const errorMessage = extractErrorMessage(error);
+        const duration = getErrorDisplayDuration(error);
+        showError(errorMessage, duration);
       }
     }
     setDeleteDialogOpen(false);
@@ -164,10 +166,13 @@ const RoleManagement: React.FC = () => {
         isActive: !role.isActive,
       };
       await roleService.updateRole(role.id, updateData);
-      showAlert('success', `Rolle ${role.isActive ? 'deaktiviert' : 'aktiviert'}`);
+      showSuccess(`Rolle ${role.isActive ? 'deaktiviert' : 'aktiviert'}`);
       loadData();
     } catch (error) {
-      showAlert('error', 'Fehler beim Ändern des Rollenstatus');
+      console.error('Error toggling role status:', error);
+      const errorMessage = extractErrorMessage(error);
+      const duration = getErrorDisplayDuration(error);
+      showError(errorMessage, duration);
     }
   };
 
@@ -177,12 +182,6 @@ const RoleManagement: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      {alert && (
-        <Alert severity={alert.type} sx={{ mb: 3 }} onClose={() => setAlert(null)}>
-          {alert.message}
-        </Alert>
-      )}
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1">
           Rollen

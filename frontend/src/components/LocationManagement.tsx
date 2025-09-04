@@ -20,7 +20,6 @@ import {
   useTheme,
   alpha,
   CircularProgress,
-  Alert,
 } from '@mui/material';
 import {
   LocationOn as LocationIcon,
@@ -38,6 +37,8 @@ import { locationService } from '@/services';
 import {CreateLocationDto, UpdateLocationDto, LocationResponseDto} from '../api/data-contracts';
 import { getCurrentTimestamp } from '../utils/date.utils';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { extractErrorMessage, getErrorDisplayDuration } from '../utils/errorUtils';
 import DeleteConfirmationDialog from './location/DeleteConfirmationDialog';
 
 interface LocationManagementProps {
@@ -54,12 +55,12 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 }) => {
   const theme = useTheme();
   const { organizationId } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [locations, setLocations] = useState<LocationResponseDto[]>(propLocations || []);
   const [selectedLocation, setSelectedLocation] = useState<LocationResponseDto | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [locationToDelete, setLocationToDelete] = useState<LocationResponseDto | null>(null);
 
@@ -75,12 +76,14 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
   const loadLocations = async () => {
     try {
       setLoading(true);
-      setError(null);
       const data = await locationService.getAllLocations();
       setLocations(data);
       onLocationsChange?.(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fehler beim Laden der Standorte');
+      console.error('Error loading locations:', err);
+      const errorMessage = extractErrorMessage(err);
+      const duration = getErrorDisplayDuration(err);
+      showError(errorMessage, duration);
     } finally {
       setLoading(false);
     }
@@ -154,7 +157,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
     try {
       setLoading(true);
-      setError(null);
 
       if (isEditing) {
         // Update location - only send allowed fields
@@ -165,10 +167,11 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         );
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
+        showSuccess(`Standort ${selectedLocation.name} wurde erfolgreich aktualisiert`);
       } else {
         // Create new location - validate organizationId is available
         if (!selectedLocation?.organizationId) {
-          setError('Standort kann nicht erstellt werden: Keine Organisation verfügbar');
+          showError('Standort kann nicht erstellt werden: Keine Organisation verfügbar');
           return;
         }
         
@@ -176,11 +179,15 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         const updatedLocations = [...locations, newLocation];
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);
+        showSuccess(`Standort ${selectedLocation.name} wurde erfolgreich erstellt`);
       }
 
       handleCloseDialog();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fehler beim Speichern des Standorts');
+      console.error('Error saving location:', err);
+      const errorMessage = extractErrorMessage(err);
+      const duration = getErrorDisplayDuration(err);
+      showError(errorMessage, duration);
     } finally {
       setLoading(false);
     }
@@ -204,14 +211,17 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
     try {
       setLoading(true);
-      setError(null);
       await locationService.deleteLocation(locationToDelete.id);
       const updatedLocations = locations.filter(loc => loc.id !== locationToDelete.id);
       setLocations(updatedLocations);
       onLocationsChange?.(updatedLocations);
+      showSuccess(`Standort ${locationToDelete.name} wurde erfolgreich gelöscht`);
       handleCloseDeleteDialog();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fehler beim Löschen des Standorts');
+      console.error('Error deleting location:', err);
+      const errorMessage = extractErrorMessage(err);
+      const duration = getErrorDisplayDuration(err);
+      showError(errorMessage, duration);
     } finally {
       setLoading(false);
     }
@@ -271,12 +281,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
   return (
     <Box>
-      {/* Error Alert */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
 
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>

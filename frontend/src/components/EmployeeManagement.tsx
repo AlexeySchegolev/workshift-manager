@@ -6,7 +6,6 @@ import {useEmployeeActions} from "@/components/employee/hooks/useEmployeeActions
 import EmployeeTable from "@/components/employee/EmployeeTable.tsx";
 import EmployeeForm from "@/components/employee/EmployeeForm.tsx";
 import DeleteConfirmationDialog from "@/components/employee/DeleteConfirmationDialog.tsx";
-import EmployeeSnackbar from "@/components/employee/EmployeeSnackbar.tsx";
 
 interface EmployeeManagementProps {
   employees: EmployeeResponseDto[];
@@ -34,8 +33,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
   } = useEmployeeForm();
 
   const {
-    snackbar,
-    closeSnackbar,
     deleteDialogOpen,
     employeeToDelete,
     openDeleteDialog,
@@ -96,12 +93,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
         employee={employeeToDelete}
         onClose={closeDeleteDialog}
         onConfirm={deleteEmployee}
-      />
-
-      {/* Snackbar for notifications */}
-      <EmployeeSnackbar
-        snackbar={snackbar}
-        onClose={closeSnackbar}
       />
     </Box>
   );

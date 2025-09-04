@@ -17,6 +17,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import { extendedTheme } from './theme/extendedTheme';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
 
 /**
  * Router component that handles authentication-based routing
@@ -102,9 +103,11 @@ const App: React.FC = () => {
     <ThemeProvider theme={extendedTheme}>
       <CssBaseline />
       <AuthProvider>
-        <Router>
-          <AppRouter />
-        </Router>
+        <ToastProvider>
+          <Router>
+            <AppRouter />
+          </Router>
+        </ToastProvider>
       </AuthProvider>
     </ThemeProvider>
   );

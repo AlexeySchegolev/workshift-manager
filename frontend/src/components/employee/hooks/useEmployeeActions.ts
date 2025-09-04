@@ -4,24 +4,15 @@ import { EmployeeFormData } from './useEmployeeForm';
 import { EmployeeService } from '@/services';
 import { getTodayDateString } from '@/utils/date.utils.ts';
 import { useAuth } from '@/contexts/AuthContext.tsx';
-
-export interface SnackbarState {
-  open: boolean;
-  message: string;
-  severity: 'success' | 'error' | 'info' | 'warning';
-}
+import { useToast } from '@/contexts/ToastContext';
+import { extractErrorMessage, getErrorDisplayDuration } from '@/utils/errorUtils';
 
 export const useEmployeeActions = (
   employees: EmployeeResponseDto[],
   onEmployeesChange: (employees: EmployeeResponseDto[]) => void
 ) => {
   const { organizationId } = useAuth();
-  // Snackbar state
-  const [snackbar, setSnackbar] = useState<SnackbarState>({
-    open: false,
-    message: '',
-    severity: 'info'
-  });
+  const { showSuccess, showError } = useToast();
 
   // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -29,20 +20,6 @@ export const useEmployeeActions = (
 
   // Add employee modal state
   const [addEmployeeModalOpen, setAddEmployeeModalOpen] = useState(false);
-
-  // Show snackbar message
-  const showSnackbar = (message: string, severity: SnackbarState['severity'] = 'info') => {
-    setSnackbar({
-      open: true,
-      message,
-      severity
-    });
-  };
-
-  // Close snackbar
-  const closeSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
-  };
 
   // Open delete dialog
   const openDeleteDialog = (employee: EmployeeResponseDto) => {
@@ -79,18 +56,14 @@ export const useEmployeeActions = (
         const updatedEmployees = employees.filter(emp => emp.id !== employeeToDelete.id);
         onEmployeesChange(updatedEmployees);
 
-        showSnackbar(
-          `Mitarbeiter ${employeeToDelete.lastName} wurde gelöscht`,
-          'success'
-        );
+        showSuccess(`Mitarbeiter ${employeeToDelete.lastName} wurde gelöscht`);
 
         closeDeleteDialog();
       } catch (error) {
         console.error('Error deleting employee:', error);
-        showSnackbar(
-          `Fehler beim Löschen des Mitarbeiters: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`,
-          'error'
-        );
+        const errorMessage = extractErrorMessage(error);
+        const duration = getErrorDisplayDuration(error);
+        showError(errorMessage, duration);
       }
     }
   };
@@ -117,14 +90,11 @@ export const useEmployeeActions = (
         );
         onEmployeesChange(updatedEmployees);
 
-        showSnackbar(
-          `Mitarbeiter ${formData.firstName} ${formData.lastName} wurde aktualisiert`,
-          'success'
-        );
+        showSuccess(`Mitarbeiter ${formData.firstName} ${formData.lastName} wurde aktualisiert`);
       } else {
         // Create new employee - validate organizationId is available
         if (!organizationId) {
-          showSnackbar('Mitarbeiter kann nicht erstellt werden: Keine Organisation verfügbar', 'error');
+          showError('Mitarbeiter kann nicht erstellt werden: Keine Organisation verfügbar');
           return;
         }
         
@@ -145,10 +115,7 @@ export const useEmployeeActions = (
         const updatedEmployees = [...employees, newEmployee];
         onEmployeesChange(updatedEmployees);
 
-        showSnackbar(
-          `Mitarbeiter ${formData.firstName} ${formData.lastName} wurde hinzugefügt`,
-          'success'
-        );
+        showSuccess(`Mitarbeiter ${formData.firstName} ${formData.lastName} wurde hinzugefügt`);
       }
 
       // Close modal if it was opened from modal
@@ -157,19 +124,13 @@ export const useEmployeeActions = (
       }
     } catch (error) {
       console.error('Error saving employee:', error);
-      showSnackbar(
-        `Fehler beim Speichern des Mitarbeiters: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`,
-        'error'
-      );
+      const errorMessage = extractErrorMessage(error);
+      const duration = getErrorDisplayDuration(error);
+      showError(errorMessage, duration);
     }
   };
 
   return {
-    // Snackbar
-    snackbar,
-    closeSnackbar,
-    showSnackbar,
-    
     // Delete dialog
     deleteDialogOpen,
     employeeToDelete,

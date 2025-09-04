@@ -4,7 +4,6 @@ import { ShiftResponseDto } from '@/api/data-contracts';
 import ShiftTable from './shift/ShiftTable';
 import ShiftForm from './shift/ShiftForm';
 import DeleteConfirmationDialog from './shift/DeleteConfirmationDialog';
-import ShiftSnackbar from './shift/ShiftSnackbar';
 import { useShiftForm } from './shift/hooks/useShiftForm';
 import { useShiftActions } from './shift/hooks/useShiftActions';
 
@@ -34,8 +33,6 @@ const ShiftManagement: React.FC<ShiftManagementProps> = ({
   } = useShiftForm();
 
   const {
-    snackbar,
-    closeSnackbar,
     deleteDialogOpen,
     shiftToDelete,
     openDeleteDialog,
@@ -96,12 +93,6 @@ const ShiftManagement: React.FC<ShiftManagementProps> = ({
         shift={shiftToDelete}
         onClose={closeDeleteDialog}
         onConfirm={deleteShift}
-      />
-
-      {/* Snackbar for notifications */}
-      <ShiftSnackbar
-        snackbar={snackbar}
-        onClose={closeSnackbar}
       />
     </Box>
   );

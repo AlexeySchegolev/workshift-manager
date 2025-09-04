@@ -3,35 +3,17 @@ import { ShiftResponseDto } from '@/api/data-contracts';
 import { shiftService } from '@/services/ShiftService';
 import { ShiftFormData } from './useShiftForm';
 import { toDateString } from '@/utils/date.utils.ts';
-
-export interface SnackbarState {
-  open: boolean;
-  message: string;
-  severity: 'success' | 'error' | 'warning' | 'info';
-}
-
+import { useToast } from '@/contexts/ToastContext';
+import { extractErrorMessage, getErrorDisplayDuration } from '@/utils/errorUtils';
 export const useShiftActions = (
   shifts: ShiftResponseDto[],
   onShiftsChange: (shifts: ShiftResponseDto[]) => void
 ) => {
-  const [snackbar, setSnackbar] = useState<SnackbarState>({
-    open: false,
-    message: '',
-    severity: 'success',
-  });
-
+  const { showSuccess, showError } = useToast();
+  
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shiftToDelete, setShiftToDelete] = useState<ShiftResponseDto | null>(null);
   const [addShiftModalOpen, setAddShiftModalOpen] = useState(false);
-
-  // Snackbar functions
-  const showSnackbar = (message: string, severity: SnackbarState['severity'] = 'success') => {
-    setSnackbar({ open: true, message, severity });
-  };
-
-  const closeSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
-  };
 
   // Delete dialog functions
   const openDeleteDialog = (shift: ShiftResponseDto) => {
@@ -73,7 +55,7 @@ export const useShiftActions = (
           shift.id === editingId ? updatedShift : shift
         );
         onShiftsChange(updatedShifts);
-        showSnackbar('Schicht erfolgreich aktualisiert!', 'success');
+        showSuccess('Schicht erfolgreich aktualisiert!');
       } else {
         // Create new shift
         const newShift = await shiftService.createShift({
@@ -89,16 +71,15 @@ export const useShiftActions = (
         });
 
         onShiftsChange([...shifts, newShift]);
-        showSnackbar('Schicht erfolgreich erstellt!', 'success');
+        showSuccess('Schicht erfolgreich erstellt!');
       }
 
       closeAddShiftModal();
     } catch (error) {
       console.error('Error saving shift:', error);
-      showSnackbar(
-        editingId ? 'Fehler beim Aktualisieren der Schicht' : 'Fehler beim Erstellen der Schicht',
-        'error'
-      );
+      const errorMessage = extractErrorMessage(error);
+      const duration = getErrorDisplayDuration(error);
+      showError(errorMessage, duration);
     }
   };
 
@@ -111,11 +92,13 @@ export const useShiftActions = (
       const updatedShifts = shifts.filter(shift => shift.id !== shiftToDelete.id);
       onShiftsChange(updatedShifts);
       
-      showSnackbar('Schicht erfolgreich gelöscht!', 'success');
+      showSuccess('Schicht erfolgreich gelöscht!');
       closeDeleteDialog();
     } catch (error) {
       console.error('Error deleting shift:', error);
-      showSnackbar('Fehler beim Löschen der Schicht', 'error');
+      const errorMessage = extractErrorMessage(error);
+      const duration = getErrorDisplayDuration(error);
+      showError(errorMessage, duration);
     }
   };
 
@@ -138,19 +121,16 @@ export const useShiftActions = (
       });
 
       onShiftsChange([...shifts, duplicatedShift]);
-      showSnackbar('Schicht erfolgreich dupliziert!', 'success');
+      showSuccess('Schicht erfolgreich dupliziert!');
     } catch (error) {
       console.error('Error duplicating shift:', error);
-      showSnackbar('Fehler beim Duplizieren der Schicht', 'error');
+      const errorMessage = extractErrorMessage(error);
+      const duration = getErrorDisplayDuration(error);
+      showError(errorMessage, duration);
     }
   };
 
   return {
-    // Snackbar
-    snackbar,
-    closeSnackbar,
-    showSnackbar,
-
     // Delete dialog
     deleteDialogOpen,
     shiftToDelete,

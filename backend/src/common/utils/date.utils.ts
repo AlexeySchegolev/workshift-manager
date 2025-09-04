@@ -27,3 +27,24 @@ export const toISOString = (date: Date | string): string => {
   }
   return date.toISOString();
 };
+
+/**
+ * Normalize time format to ensure HH:MM format
+ * @param time - Time string to normalize
+ * @returns Time string in HH:MM format
+ */
+export const normalizeTimeFormat = (time: string): string => {
+  if (!time) return time;
+
+  // Handle PostgreSQL time format variations
+  // PostgreSQL TIME can return formats like "8:00:00", "08:00:00", "8:00", "08:00"
+  const timeParts = time.split(':');
+
+  if (timeParts.length >= 2) {
+    const hours = timeParts[0].padStart(2, '0');
+    const minutes = timeParts[1].padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  return time;
+};

@@ -5,7 +5,7 @@ import { Shift } from '@/database/entities/shift.entity';
 import { CreateShiftDto } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
 import { ShiftResponseDto } from './dto/shift-response.dto';
-import { toDateString, toISOString } from '@/common/utils/date.utils';
+import { toDateString, toISOString, normalizeTimeFormat } from '@/common/utils/date.utils';
 
 @Injectable()
 export class ShiftsService {
@@ -18,9 +18,14 @@ export class ShiftsService {
    * Create a new shift
    */
   async create(createShiftDto: CreateShiftDto): Promise<ShiftResponseDto> {
-    // Validate that end time is after start time
+    // Validate that end time is after start time (handle overnight shifts)
     const startTime = new Date(`2000-01-01T${createShiftDto.startTime}`);
     const endTime = new Date(`2000-01-01T${createShiftDto.endTime}`);
+    
+    // Handle overnight shifts - if end time is before start time, assume it's next day
+    if (endTime < startTime) {
+      endTime.setDate(endTime.getDate() + 1);
+    }
     
     if (endTime <= startTime) {
       throw new BadRequestException('End time must be after start time');
@@ -128,6 +133,11 @@ export class ShiftsService {
       const startTime = new Date(`2000-01-01T${updateShiftDto.startTime || shift.startTime}`);
       const endTime = new Date(`2000-01-01T${updateShiftDto.endTime || shift.endTime}`);
       
+      // Handle overnight shifts - if end time is before start time, assume it's next day
+      if (endTime < startTime) {
+        endTime.setDate(endTime.getDate() + 1);
+      }
+      
       if (endTime <= startTime) {
         throw new BadRequestException('End time must be after start time');
       }
@@ -167,31 +177,32 @@ export class ShiftsService {
   }
     /**
      * Map Shift entity to ShiftResponseDto
-   */
-  private mapToResponseDto(shift: Shift): ShiftResponseDto {
-    return {
-      id: shift.id,
-      organizationId: shift.organizationId,
-      locationId: shift.locationId,
-      shiftPlanId: shift.shiftPlanId,
-      name: shift.name,
-      description: shift.description,
-      type: shift.type,
-      shiftDate: toDateString(shift.shiftDate),
-      startTime: shift.startTime,
-      endTime: shift.endTime,
-      isActive: shift.isActive,
-      organization: shift.organization,
-      location: shift.location,
-      requiredRoles: shift.requiredRoles,
-      createdBy: shift.createdBy,
-      updatedBy: shift.updatedBy,
-      createdAt: toISOString(shift.createdAt),
-      updatedAt: toISOString(shift.updatedAt),
-      deletedAt: shift.deletedAt ? toISOString(shift.deletedAt) : undefined,
-      // Virtual fields
-      duration: shift.duration,
-      isAvailable: shift.isAvailable,
-    };
-  }
+     */
+    private mapToResponseDto(shift: Shift): ShiftResponseDto {
+      return {
+        id: shift.id,
+        organizationId: shift.organizationId,
+        locationId: shift.locationId,
+        shiftPlanId: shift.shiftPlanId,
+        name: shift.name,
+        description: shift.description,
+        type: shift.type,
+        shiftDate: toDateString(shift.shiftDate),
+        startTime: normalizeTimeFormat(shift.startTime),
+        endTime: normalizeTimeFormat(shift.endTime),
+        isActive: shift.isActive,
+        organization: shift.organization,
+        location: shift.location,
+        requiredRoles: shift.requiredRoles,
+        createdBy: shift.createdBy,
+        updatedBy: shift.updatedBy,
+        createdAt: toISOString(shift.createdAt),
+        updatedAt: toISOString(shift.updatedAt),
+        deletedAt: shift.deletedAt ? toISOString(shift.deletedAt) : undefined,
+        // Virtual fields
+        duration: shift.duration,
+        isAvailable: shift.isAvailable,
+      };
+    }
+
 }

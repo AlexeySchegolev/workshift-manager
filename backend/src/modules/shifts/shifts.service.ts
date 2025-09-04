@@ -33,7 +33,14 @@ export class ShiftsService {
     });
 
     const savedShift = await this.shiftRepository.save(shift);
-    return this.mapToResponseDto(savedShift);
+    
+    // Load the shift with relations to include location data in response
+    const shiftWithRelations = await this.shiftRepository.findOne({
+      where: { id: savedShift.id },
+      relations: ['organization', 'location', 'requiredRoles'],
+    });
+    
+    return this.mapToResponseDto(shiftWithRelations);
   }
 
   /**
@@ -134,7 +141,14 @@ export class ShiftsService {
     });
 
     const savedShift = await this.shiftRepository.save(shift);
-    return this.mapToResponseDto(savedShift);
+    
+    // Load the shift with relations to include location data in response
+    const shiftWithRelations = await this.shiftRepository.findOne({
+      where: { id: savedShift.id },
+      relations: ['organization', 'location', 'requiredRoles'],
+    });
+    
+    return this.mapToResponseDto(shiftWithRelations);
   }
 
   /**

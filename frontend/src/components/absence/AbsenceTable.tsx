@@ -13,7 +13,6 @@ import {
     Chip,
     useTheme,
     alpha,
-    IconButton,
     Tooltip,
     CardHeader,
     CardContent,
@@ -21,12 +20,11 @@ import {
 import {
     Add as AddIcon,
     EventBusy as EventBusyIcon,
-    ChevronLeft as ChevronLeftIcon,
-    ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
 import { format, getDaysInMonth, startOfMonth, addDays } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { EmployeeResponseDto, EmployeeAbsenceResponseDto } from '@/api/data-contracts';
+import MonthSelector from '../MonthSelector';
 
 interface AbsenceTableProps {
     employees: EmployeeResponseDto[];
@@ -99,18 +97,7 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
         setMonthDays(days);
     }, [selectedDate]);
 
-    // Navigation zwischen Monaten
-    const handlePreviousMonth = () => {
-        const newDate = new Date(selectedDate);
-        newDate.setMonth(newDate.getMonth() - 1);
-        onDateChange(newDate);
-    };
-
-    const handleNextMonth = () => {
-        const newDate = new Date(selectedDate);
-        newDate.setMonth(newDate.getMonth() + 1);
-        onDateChange(newDate);
-    };
+    // Navigation zwischen Monaten wird jetzt von MonthSelector übernommen
 
     // Finde Abwesenheiten für einen bestimmten Mitarbeiter und Tag
     const getAbsencesForEmployeeAndDay = (employeeId: string, day: Date): EmployeeAbsenceResponseDto[] => {
@@ -132,20 +119,31 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                         <Typography variant="h6" component="div">
                             Abwesenheiten für
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Tooltip title="Vorheriger Monat">
-                                <IconButton onClick={handlePreviousMonth} size="small">
-                                    <ChevronLeftIcon />
-                                </IconButton>
-                            </Tooltip>
-                            <Typography variant="h6" sx={{ minWidth: 150, textAlign: 'center', fontWeight: 600 }}>
-                                {format(selectedDate, 'MMMM yyyy', { locale: de })}
-                            </Typography>
-                            <Tooltip title="Nächster Monat">
-                                <IconButton onClick={handleNextMonth} size="small">
-                                    <ChevronRightIcon />
-                                </IconButton>
-                            </Tooltip>
+                        <Box sx={{
+                            '& .MuiBox-root': {
+                                margin: 0,
+                                padding: 0,
+                                backgroundColor: 'transparent',
+                                borderRadius: 1,
+                            },
+                            '& .MuiButton-root': {
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                padding: '4px 8px',
+                                minHeight: 'auto',
+                                textTransform: 'capitalize',
+                            },
+                            '& .MuiIconButton-root': {
+                                padding: '4px',
+                                '& .MuiSvgIcon-root': {
+                                    fontSize: '1.2rem',
+                                },
+                            },
+                        }}>
+                            <MonthSelector
+                                selectedDate={selectedDate}
+                                onDateChange={onDateChange}
+                            />
                         </Box>
                     </Box>
                 }

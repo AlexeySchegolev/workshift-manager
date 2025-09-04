@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {
-    Box,
     Typography,
     Container,
     Fade,
@@ -11,7 +10,6 @@ import {
     AlertTitle,
 } from '@mui/material';
 import {
-    Rule as RuleIcon,
     Construction as ConstructionIcon,
 } from '@mui/icons-material';
 
@@ -31,63 +29,6 @@ const ShiftRulesPage: React.FC = () => {
 
     return (
         <Container maxWidth="xl" sx={{py: 3}}>
-            {/* Hero section */}
-            <Fade in timeout={800}>
-                <Paper
-                    elevation={0}
-                    sx={{
-                        p: {xs: 3, md: 4},
-                        mb: 4,
-                        borderRadius: 3,
-                        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.primary.light, 0.05)} 100%)`,
-                        border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: 4,
-                            background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                        },
-                    }}
-                >
-                    <Box sx={{position: 'relative', zIndex: 1}}>
-                        <Typography
-                            variant="h3"
-                            component="h1"
-                            sx={{
-                                fontWeight: 700,
-                                mb: 1,
-                                background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                            }}
-                        >
-                            Schichtregeln
-                        </Typography>
-                        <Typography
-                            variant="h6"
-                            color="text.secondary"
-                            sx={{mb: 2, maxWidth: 600}}
-                        >
-                            Verwaltung und Übersicht aller Regeln für die Schichtplanung
-                        </Typography>
-                        <Box sx={{display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap'}}>
-                            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                                <RuleIcon sx={{color: 'primary.main', fontSize: '1.2rem'}}/>
-                                <Typography variant="body2" color="text.secondary">
-                                    Automatische Regelanwendung
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-                </Paper>
-            </Fade>
-
             {/* Feature Unavailable Alert */}
             <Fade in={showCards} timeout={1000}>
                 <Alert
@@ -99,7 +40,8 @@ const ShiftRulesPage: React.FC = () => {
                     }}
                 >
                     <AlertTitle>Feature nicht verfügbar</AlertTitle>
-                    Die Schichtregeln-Funktionalität ist derzeit nicht verfügbar, da das entsprechende Backend-Modul noch nicht implementiert wurde.
+                    Die Schichtregeln-Funktionalität ist derzeit nicht verfügbar, da das entsprechende Backend-Modul
+                    noch nicht implementiert wurde.
                 </Alert>
             </Fade>
 
@@ -115,7 +57,7 @@ const ShiftRulesPage: React.FC = () => {
                         textAlign: 'center',
                     }}
                 >
-                    <ConstructionIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
+                    <ConstructionIcon sx={{fontSize: 80, color: 'text.secondary', mb: 2}}/>
                     <Typography variant="h5" color="text.secondary" gutterBottom>
                         Feature in Entwicklung
                     </Typography>

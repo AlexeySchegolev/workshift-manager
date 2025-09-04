@@ -31,8 +31,6 @@ export class ShiftPlan {
   @Column({ name: 'planning_period_end', type: 'date' })
   planningPeriodEnd: Date;
 
-
-
   @Column({ name: 'created_by', type: 'uuid', nullable: true })
   createdBy?: string;
 

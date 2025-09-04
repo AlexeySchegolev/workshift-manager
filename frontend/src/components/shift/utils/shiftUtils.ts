@@ -16,12 +16,9 @@ export const formatShiftType = (type: string): string => {
 };
 
 // Shift Status Formatting based on boolean properties
-export const formatShiftStatus = (isActive: boolean, isAvailable: boolean, isFullyStaffed: boolean): string => {
+export const formatShiftStatus = (isActive: boolean, isAvailable: boolean): string => {
   if (!isActive) {
     return 'Inaktiv';
-  }
-  if (isActive && isAvailable && isFullyStaffed) {
-    return 'Vollbesetzt';
   }
   if (isActive && isAvailable) {
     return 'Verfügbar';
@@ -48,12 +45,9 @@ export const getShiftTypeColor = (type: string): string => {
   return colorMap[type] || '#757575';
 };
 
-export const getShiftStatusColor = (isActive: boolean, isAvailable: boolean, isFullyStaffed: boolean): string => {
+export const getShiftStatusColor = (isActive: boolean, isAvailable: boolean): string => {
   if (!isActive) {
     return '#F44336'; // Red for inactive
-  }
-  if (isActive && isAvailable && isFullyStaffed) {
-    return '#4CAF50'; // Green for fully staffed
   }
   if (isActive && isAvailable) {
     return '#2196F3'; // Blue for available
@@ -106,11 +100,6 @@ export const calculateShiftStatistics = (shifts: ShiftResponseDto[]) => {
   const total = shifts.length;
   const active = shifts.filter(s => s.isActive).length;
   const available = shifts.filter(s => s.isAvailable).length;
-  const fullyStaffed = shifts.filter(s => s.isFullyStaffed).length;
-  const understaffed = shifts.filter(s => !s.isFullyStaffed).length;
-  
-  const totalStaffingPercentage = shifts.reduce((sum, shift) => sum + shift.staffingPercentage, 0);
-  const averageStaffing = total > 0 ? totalStaffingPercentage / total : 0;
   
   const byType = shifts.reduce((acc, shift) => {
     acc[shift.type] = (acc[shift.type] || 0) + 1;
@@ -127,9 +116,6 @@ export const calculateShiftStatistics = (shifts: ShiftResponseDto[]) => {
     total,
     active,
     available,
-    fullyStaffed,
-    understaffed,
-    averageStaffing: Math.round(averageStaffing * 100) / 100,
     byType,
     byLocation,
   };

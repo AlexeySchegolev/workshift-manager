@@ -371,13 +371,6 @@ export interface CreateRoleDto {
 
 export interface CreateShiftDto {
   /**
-   * Break duration in minutes
-   * @min 0
-   * @default 30
-   * @example 30
-   */
-  breakDuration: number;
-  /**
    * User ID who is creating this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440005"
@@ -396,55 +389,17 @@ export interface CreateShiftDto {
    */
   endTime: string;
   /**
-   * Holiday rate multiplier
-   * @min 1
-   * @example 2
-   */
-  holidayRate?: number;
-  /**
    * Whether this shift is active
    * @default true
    * @example true
    */
   isActive: boolean;
   /**
-   * Whether this shift is on a holiday
-   * @default false
-   * @example false
-   */
-  isHoliday: boolean;
-  /**
-   * Whether this shift counts as overtime
-   * @default false
-   * @example false
-   */
-  isOvertime: boolean;
-  /**
-   * Whether this shift is on a weekend
-   * @default false
-   * @example false
-   */
-  isWeekend: boolean;
-  /**
    * Location ID where this shift takes place
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440002"
    */
   locationId: string;
-  /**
-   * Maximum number of employees allowed
-   * @min 1
-   * @default 10
-   * @example 5
-   */
-  maxEmployees: number;
-  /**
-   * Minimum number of employees required
-   * @min 1
-   * @default 1
-   * @example 2
-   */
-  minEmployees: number;
   /**
    * Name of the shift
    * @maxLength 100
@@ -457,12 +412,6 @@ export interface CreateShiftDto {
    * @example "550e8400-e29b-41d4-a716-446655440001"
    */
   organizationId: string;
-  /**
-   * Overtime rate multiplier
-   * @min 1
-   * @example 1.5
-   */
-  overtimeRate?: number;
   /**
    * Date when the shift takes place
    * @format date
@@ -482,12 +431,6 @@ export interface CreateShiftDto {
    */
   startTime: string;
   /**
-   * Total hours for this shift
-   * @min 0
-   * @example 8
-   */
-  totalHours: number;
-  /**
    * Type of the shift
    * @example "morning"
    */
@@ -500,12 +443,6 @@ export interface CreateShiftDto {
     | "split"
     | "on_call"
     | "overtime";
-  /**
-   * Weekend rate multiplier
-   * @min 1
-   * @example 1.25
-   */
-  weekendRate?: number;
 }
 
 export interface CreateUserDto {
@@ -1265,12 +1202,6 @@ export interface ShiftPlanResponseDto {
 
 export interface ShiftResponseDto {
   /**
-   * Break duration in minutes
-   * @min 0
-   * @example 30
-   */
-  breakDuration: number;
-  /**
    * Date when the shift was created
    * @format date-time
    * @example "2024-01-15T10:30:00Z"
@@ -1282,12 +1213,6 @@ export interface ShiftResponseDto {
    * @example "550e8400-e29b-41d4-a716-446655440005"
    */
   createdBy?: string;
-  /**
-   * Current number of assigned employees
-   * @min 0
-   * @example 3
-   */
-  currentEmployees: number;
   /**
    * Date when the shift was deleted (soft delete)
    * @format date-time
@@ -1307,22 +1232,11 @@ export interface ShiftResponseDto {
    */
   duration: number;
   /**
-   * Effective working hours (excluding breaks)
-   * @min 0
-   * @example 7.5
-   */
-  effectiveHours: number;
-  /**
    * End time of the shift
    * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
    * @example "16:00"
    */
   endTime: string;
-  /**
-   * Holiday rate multiplier
-   * @example 2
-   */
-  holidayRate?: number;
   /**
    * Unique identifier for the shift
    * @format uuid
@@ -1339,31 +1253,6 @@ export interface ShiftResponseDto {
    * @example true
    */
   isAvailable: boolean;
-  /**
-   * Whether the shift is fully staffed
-   * @example true
-   */
-  isFullyStaffed: boolean;
-  /**
-   * Whether this shift is on a holiday
-   * @example false
-   */
-  isHoliday: boolean;
-  /**
-   * Whether the shift is over-staffed
-   * @example false
-   */
-  isOverStaffed: boolean;
-  /**
-   * Whether this shift counts as overtime
-   * @example false
-   */
-  isOvertime: boolean;
-  /**
-   * Whether this shift is on a weekend
-   * @example false
-   */
-  isWeekend: boolean;
   /** Location where this shift takes place */
   location?: LocationResponseDto;
   /**
@@ -1372,18 +1261,6 @@ export interface ShiftResponseDto {
    * @example "550e8400-e29b-41d4-a716-446655440002"
    */
   locationId: string;
-  /**
-   * Maximum number of employees allowed
-   * @min 1
-   * @example 5
-   */
-  maxEmployees: number;
-  /**
-   * Minimum number of employees required
-   * @min 1
-   * @example 2
-   */
-  minEmployees: number;
   /**
    * Name of the shift
    * @maxLength 100
@@ -1398,11 +1275,6 @@ export interface ShiftResponseDto {
    * @example "550e8400-e29b-41d4-a716-446655440001"
    */
   organizationId: string;
-  /**
-   * Overtime rate multiplier
-   * @example 1.5
-   */
-  overtimeRate?: number;
   /** Required roles for this shift */
   requiredRoles?: RoleResponseDto[];
   /**
@@ -1418,23 +1290,11 @@ export interface ShiftResponseDto {
    */
   shiftPlanId?: string;
   /**
-   * Staffing percentage (current/minimum * 100)
-   * @min 0
-   * @example 150
-   */
-  staffingPercentage: number;
-  /**
    * Start time of the shift
    * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
    * @example "08:00"
    */
   startTime: string;
-  /**
-   * Total hours for this shift
-   * @min 0
-   * @example 8
-   */
-  totalHours: number;
   /**
    * Type of the shift
    * @example "morning"
@@ -1460,11 +1320,6 @@ export interface ShiftResponseDto {
    * @example "550e8400-e29b-41d4-a716-446655440006"
    */
   updatedBy?: string;
-  /**
-   * Weekend rate multiplier
-   * @example 1.25
-   */
-  weekendRate?: number;
 }
 
 export interface TimeSlotDto {
@@ -1725,13 +1580,6 @@ export interface UpdateRoleDto {
 
 export interface UpdateShiftDto {
   /**
-   * Break duration in minutes
-   * @min 0
-   * @default 30
-   * @example 30
-   */
-  breakDuration?: number;
-  /**
    * User ID who is creating this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440005"
@@ -1750,55 +1598,17 @@ export interface UpdateShiftDto {
    */
   endTime?: string;
   /**
-   * Holiday rate multiplier
-   * @min 1
-   * @example 2
-   */
-  holidayRate?: number;
-  /**
    * Whether this shift is active
    * @default true
    * @example true
    */
   isActive?: boolean;
   /**
-   * Whether this shift is on a holiday
-   * @default false
-   * @example false
-   */
-  isHoliday?: boolean;
-  /**
-   * Whether this shift counts as overtime
-   * @default false
-   * @example false
-   */
-  isOvertime?: boolean;
-  /**
-   * Whether this shift is on a weekend
-   * @default false
-   * @example false
-   */
-  isWeekend?: boolean;
-  /**
    * Location ID where this shift takes place
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440002"
    */
   locationId?: string;
-  /**
-   * Maximum number of employees allowed
-   * @min 1
-   * @default 10
-   * @example 5
-   */
-  maxEmployees?: number;
-  /**
-   * Minimum number of employees required
-   * @min 1
-   * @default 1
-   * @example 2
-   */
-  minEmployees?: number;
   /**
    * Name of the shift
    * @maxLength 100
@@ -1811,12 +1621,6 @@ export interface UpdateShiftDto {
    * @example "550e8400-e29b-41d4-a716-446655440001"
    */
   organizationId?: string;
-  /**
-   * Overtime rate multiplier
-   * @min 1
-   * @example 1.5
-   */
-  overtimeRate?: number;
   /**
    * Date when the shift takes place
    * @format date
@@ -1836,12 +1640,6 @@ export interface UpdateShiftDto {
    */
   startTime?: string;
   /**
-   * Total hours for this shift
-   * @min 0
-   * @example 8
-   */
-  totalHours?: number;
-  /**
    * Type of the shift
    * @example "morning"
    */
@@ -1860,12 +1658,6 @@ export interface UpdateShiftDto {
    * @example "550e8400-e29b-41d4-a716-446655440006"
    */
   updatedBy?: string;
-  /**
-   * Weekend rate multiplier
-   * @min 1
-   * @example 1.25
-   */
-  weekendRate?: number;
 }
 
 export interface UpdateShiftPlanDto {

@@ -78,80 +78,6 @@ export class ShiftResponseDto {
   })
   endTime: string;
 
-  @ApiProperty({
-    description: 'Break duration in minutes',
-    example: 30,
-    minimum: 0
-  })
-  breakDuration: number;
-
-  @ApiProperty({
-    description: 'Total hours for this shift',
-    example: 8.0,
-    minimum: 0
-  })
-  totalHours: number;
-
-  @ApiProperty({
-    description: 'Minimum number of employees required',
-    example: 2,
-    minimum: 1
-  })
-  minEmployees: number;
-
-  @ApiProperty({
-    description: 'Maximum number of employees allowed',
-    example: 5,
-    minimum: 1
-  })
-  maxEmployees: number;
-
-  @ApiProperty({
-    description: 'Current number of assigned employees',
-    example: 3,
-    minimum: 0
-  })
-  currentEmployees: number;
-
-
-  @ApiProperty({
-    description: 'Whether this shift counts as overtime',
-    example: false
-  })
-  isOvertime: boolean;
-
-  @ApiProperty({
-    description: 'Overtime rate multiplier',
-    example: 1.5,
-    required: false
-  })
-  overtimeRate?: number;
-
-  @ApiProperty({
-    description: 'Whether this shift is on a holiday',
-    example: false
-  })
-  isHoliday: boolean;
-
-  @ApiProperty({
-    description: 'Holiday rate multiplier',
-    example: 2.0,
-    required: false
-  })
-  holidayRate?: number;
-
-  @ApiProperty({
-    description: 'Whether this shift is on a weekend',
-    example: false
-  })
-  isWeekend: boolean;
-
-  @ApiProperty({
-    description: 'Weekend rate multiplier',
-    example: 1.25,
-    required: false
-  })
-  weekendRate?: number;
 
 
   @ApiProperty({
@@ -221,37 +147,11 @@ export class ShiftResponseDto {
 
   // Virtual fields
   @ApiProperty({
-    description: 'Whether the shift is fully staffed',
-    example: true
-  })
-  isFullyStaffed: boolean;
-
-  @ApiProperty({
-    description: 'Whether the shift is over-staffed',
-    example: false
-  })
-  isOverStaffed: boolean;
-
-  @ApiProperty({
-    description: 'Staffing percentage (current/minimum * 100)',
-    example: 150.0,
-    minimum: 0
-  })
-  staffingPercentage: number;
-
-  @ApiProperty({
     description: 'Duration of the shift in hours',
     example: 8.0,
     minimum: 0
   })
   duration: number;
-
-  @ApiProperty({
-    description: 'Effective working hours (excluding breaks)',
-    example: 7.5,
-    minimum: 0
-  })
-  effectiveHours: number;
 
   @ApiProperty({
     description: 'Whether the shift is available for assignment',

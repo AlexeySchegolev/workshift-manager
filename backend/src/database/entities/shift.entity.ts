@@ -53,38 +53,6 @@ export class Shift {
   @Column({ name: 'end_time', type: 'time' })
   endTime: string;
 
-  @Column({ name: 'break_duration', type: 'integer', default: 30 })
-  breakDuration: number; // in minutes
-
-  @Column({ name: 'total_hours', type: 'decimal', precision: 5, scale: 2 })
-  totalHours: number;
-
-  @Column({ name: 'min_employees', type: 'integer', default: 1 })
-  minEmployees: number;
-
-  @Column({ name: 'max_employees', type: 'integer', default: 10 })
-  maxEmployees: number;
-
-  @Column({ name: 'current_employees', type: 'integer', default: 0 })
-  currentEmployees: number;
-
-  @Column({ name: 'is_overtime', type: 'boolean', default: false })
-  isOvertime: boolean;
-
-  @Column({ name: 'overtime_rate', type: 'decimal', precision: 5, scale: 2, nullable: true })
-  overtimeRate?: number;
-
-  @Column({ name: 'is_holiday', type: 'boolean', default: false })
-  isHoliday: boolean;
-
-  @Column({ name: 'holiday_rate', type: 'decimal', precision: 5, scale: 2, nullable: true })
-  holidayRate?: number;
-
-  @Column({ name: 'is_weekend', type: 'boolean', default: false })
-  isWeekend: boolean;
-
-  @Column({ name: 'weekend_rate', type: 'decimal', precision: 5, scale: 2, nullable: true })
-  weekendRate?: number;
 
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
@@ -129,18 +97,6 @@ export class Shift {
   deletedAt?: Date;
 
   // Virtual fields
-  get isFullyStaffed(): boolean {
-    return this.currentEmployees >= this.minEmployees;
-  }
-
-  get isOverStaffed(): boolean {
-    return this.currentEmployees > this.maxEmployees;
-  }
-
-  get staffingPercentage(): number {
-    return this.minEmployees > 0 ? (this.currentEmployees / this.minEmployees) * 100 : 0;
-  }
-
   get duration(): number {
     // Calculate duration in hours
     const start = new Date(`2000-01-01T${this.startTime}`);
@@ -152,10 +108,6 @@ export class Shift {
     }
     
     return (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-  }
-
-  get effectiveHours(): number {
-    return this.totalHours - (this.breakDuration / 60);
   }
 
   get isAvailable(): boolean {

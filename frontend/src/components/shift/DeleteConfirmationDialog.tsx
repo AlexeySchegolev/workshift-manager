@@ -85,7 +85,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
                             variant="outlined"
                         />
                         <Chip
-                            label={formatShiftStatus(shift.isActive, shift.isAvailable, shift.isFullyStaffed)}
+                            label={formatShiftStatus(shift.isActive, shift.isAvailable)}
                             size="small"
                             color="secondary"
                             variant="outlined"
@@ -103,9 +103,6 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         <strong>Zeit:</strong> {shift.startTime} - {shift.endTime}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        <strong>Personal:</strong> {shift.currentEmployees}/{shift.minEmployees}-{shift.maxEmployees}
                     </Typography>
 
                     {shift.description && (

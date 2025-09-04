@@ -114,8 +114,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                             <TableCell sx={{ fontWeight: 600 }}>Datum</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Zeit</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Station</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Personal</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Besetzung</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Aktionen</TableCell>
                         </TableRow>
                     </TableHead>
@@ -158,11 +156,11 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                 </TableCell>
                                 <TableCell>
                                     <Chip
-                                        label={formatShiftStatus(shift.isActive, shift.isAvailable, shift.isFullyStaffed)}
+                                        label={formatShiftStatus(shift.isActive, shift.isAvailable)}
                                         size="small"
                                         sx={{
-                                            backgroundColor: alpha(getShiftStatusColor(shift.isActive, shift.isAvailable, shift.isFullyStaffed), 0.1),
-                                            color: getShiftStatusColor(shift.isActive, shift.isAvailable, shift.isFullyStaffed),
+                                            backgroundColor: alpha(getShiftStatusColor(shift.isActive, shift.isAvailable), 0.1),
+                                            color: getShiftStatusColor(shift.isActive, shift.isAvailable),
                                             fontWeight: 500,
                                         }}
                                     />
@@ -177,7 +175,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                         {shift.startTime} - {shift.endTime}
                                     </Typography>
                                     <Typography variant="caption" color="text.secondary">
-                                        {shift.totalHours}h
+                                        {shift.duration}h
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -187,39 +185,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                     <Typography variant="caption" color="text.secondary">
                                         {shift.location?.code}
                                     </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant="body2">
-                                        {shift.currentEmployees}/{shift.minEmployees}-{shift.maxEmployees}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <Box
-                                            sx={{
-                                                width: 40,
-                                                height: 6,
-                                                borderRadius: 3,
-                                                backgroundColor: alpha(theme.palette.divider, 0.2),
-                                                overflow: 'hidden',
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    width: `${Math.min(shift.staffingPercentage, 100)}%`,
-                                                    height: '100%',
-                                                    backgroundColor: shift.isFullyStaffed
-                                                        ? theme.palette.success.main
-                                                        : shift.staffingPercentage >= 80
-                                                        ? theme.palette.warning.main
-                                                        : theme.palette.error.main,
-                                                }}
-                                            />
-                                        </Box>
-                                        <Typography variant="caption" color="text.secondary">
-                                            {Math.round(shift.staffingPercentage)}%
-                                        </Typography>
-                                    </Box>
                                 </TableCell>
                                 <TableCell>
                                     <Box sx={{ display: 'flex', gap: 0.5 }}>

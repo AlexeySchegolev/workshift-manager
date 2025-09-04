@@ -11,18 +11,8 @@ export interface ShiftFormData {
   shiftDate: string;
   startTime: string;
   endTime: string;
-  breakDuration: number;
-  totalHours: number;
-  minEmployees: number;
-  maxEmployees: number;
   locationId: string;
   organizationId: string;
-  isOvertime: boolean;
-  overtimeRate?: number;
-  isHoliday: boolean;
-  holidayRate?: number;
-  isWeekend: boolean;
-  weekendRate?: number;
   isActive: boolean;
 }
 
@@ -32,10 +22,7 @@ export interface ShiftFormErrors {
   shiftDate?: string;
   startTime?: string;
   endTime?: string;
-  minEmployees?: string;
-  maxEmployees?: string;
   locationId?: string;
-  totalHours?: string;
 }
 
 export const useShiftForm = () => {
@@ -48,15 +35,8 @@ export const useShiftForm = () => {
     shiftDate: getTodayDateString(),
     startTime: '08:00',
     endTime: '16:00',
-    breakDuration: 30,
-    totalHours: 8.0,
-    minEmployees: 1,
-    maxEmployees: 5,
     locationId: '',
     organizationId: organizationId || '',
-    isOvertime: false,
-    isHoliday: false,
-    isWeekend: false,
     isActive: true,
   });
 
@@ -65,28 +45,7 @@ export const useShiftForm = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const updateField = (field: keyof ShiftFormData, value: any) => {
-    setFormData(prev => {
-      const updated = { ...prev, [field]: value };
-      
-      // Auto-calculate total hours when times change
-      if (field === 'startTime' || field === 'endTime' || field === 'breakDuration') {
-        const duration = calculateShiftDuration(
-          field === 'startTime' ? value : updated.startTime,
-          field === 'endTime' ? value : updated.endTime,
-          field === 'breakDuration' ? value : updated.breakDuration
-        );
-        updated.totalHours = Math.round(duration * 100) / 100;
-      }
-      
-      // Auto-set weekend flag based on date
-      if (field === 'shiftDate') {
-        const date = new Date(value);
-        const dayOfWeek = date.getDay();
-        updated.isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      }
-      
-      return updated;
-    });
+    setFormData(prev => ({ ...prev, [field]: value }));
     
     // Clear error for this field
     if (errors[field as keyof ShiftFormErrors]) {
@@ -129,23 +88,6 @@ export const useShiftForm = () => {
       }
     }
 
-    // Employee count validation
-    if (formData.minEmployees < 1) {
-      newErrors.minEmployees = 'Mindestens 1 Mitarbeiter erforderlich';
-    }
-
-    if (formData.maxEmployees < formData.minEmployees) {
-      newErrors.maxEmployees = 'Maximum muss größer als Minimum sein';
-    }
-
-    // Total hours validation
-    if (formData.totalHours <= 0) {
-      newErrors.totalHours = 'Arbeitszeit muss größer als 0 sein';
-    }
-
-    if (formData.totalHours > 24) {
-      newErrors.totalHours = 'Arbeitszeit kann nicht mehr als 24 Stunden betragen';
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -159,18 +101,8 @@ export const useShiftForm = () => {
       shiftDate: shift.shiftDate,
       startTime: shift.startTime,
       endTime: shift.endTime,
-      breakDuration: shift.breakDuration,
-      totalHours: shift.totalHours,
-      minEmployees: shift.minEmployees,
-      maxEmployees: shift.maxEmployees,
       locationId: shift.locationId,
       organizationId: shift.organizationId,
-      isOvertime: shift.isOvertime,
-      overtimeRate: shift.overtimeRate,
-      isHoliday: shift.isHoliday,
-      holidayRate: shift.holidayRate,
-      isWeekend: shift.isWeekend,
-      weekendRate: shift.weekendRate,
       isActive: shift.isActive,
     });
     setEditingId(shift.id);

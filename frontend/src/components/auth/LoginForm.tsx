@@ -43,7 +43,6 @@ export const LoginForm: React.FC = () => {
       await login(formData);
       navigate('/');
     } catch (error: any) {
-      console.error('Login error:', error);
       setError(
         error.response?.data?.message || 
         'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Eingaben.'

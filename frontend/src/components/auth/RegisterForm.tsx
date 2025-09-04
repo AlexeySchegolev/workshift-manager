@@ -100,7 +100,6 @@ export const RegisterForm: React.FC = () => {
       await register(registerData as any); // Cast as any since the API types haven't been updated yet
       setSuccess(true);
     } catch (error: any) {
-      console.error('Registration error:', error);
       setError(
         error.response?.data?.message || 
         'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.'

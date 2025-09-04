@@ -7,11 +7,14 @@ import {
 import EmployeeManagement from '../components/EmployeeManagement';
 import {EmployeeService} from "@/services";
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
+import {useToast} from "@/contexts/ToastContext";
 
 /**
  * Modern Employee Management Page in Dashboard Style
  */
 const EmployeePage: React.FC = () => {
+    const { showError } = useToast();
+
     // Load employee list via API
     const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
 
@@ -21,7 +24,7 @@ const EmployeePage: React.FC = () => {
             const employees = await new EmployeeService().getAllEmployees();
             setEmployees(employees);
         } catch (error) {
-            console.error('Error loading employees:', error);
+            showError('Error loading employees. Please try again.');
         }
     };
 

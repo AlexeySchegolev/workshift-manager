@@ -28,7 +28,7 @@ const ShiftsPage: React.FC = () => {
                 });
                 setShifts(shifts);
             } catch (error) {
-                console.error('Error loading shifts:', error);
+                // Error handling could be added here if needed
             } finally {
                 setLoading(false);
             }

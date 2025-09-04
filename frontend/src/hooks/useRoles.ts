@@ -28,7 +28,6 @@ export const useRoles = (organizationId?: string) => {
 
       setRoles(data);
     } catch (err) {
-      console.error('Error loading roles:', err);
       setError('Error loading roles');
     } finally {
       setLoading(false);

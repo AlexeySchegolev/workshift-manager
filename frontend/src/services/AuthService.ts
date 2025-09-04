@@ -74,7 +74,6 @@ export class AuthService extends BaseService {
       }
     } catch (error) {
       // Continue with logout even if API call fails
-      console.warn('Logout API call failed:', error);
     } finally {
       // Always clear token locally
       this.clearAuthToken();
@@ -129,7 +128,6 @@ export class AuthService extends BaseService {
       const currentTime = Math.floor(Date.now() / 1000);
       return payload.exp > currentTime;
     } catch (error) {
-      console.warn('Invalid JWT token:', error);
       return false;
     }
   }
@@ -152,7 +150,6 @@ export class AuthService extends BaseService {
         organizationIds: payload.organizationIds || [],
       };
     } catch (error) {
-      console.warn('Failed to decode JWT token:', error);
       return null;
     }
   }

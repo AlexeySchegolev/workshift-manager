@@ -69,7 +69,6 @@ export class ExcelExportService extends BaseService {
 
             throw new Error('Invalid response format from Excel export API');
         } catch (error) {
-            console.error('Error exporting shift plan to Excel:', error);
             throw new Error(`Failed to export shift plan: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }

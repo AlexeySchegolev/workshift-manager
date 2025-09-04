@@ -76,7 +76,6 @@ export const useShiftActions = (
 
       closeAddShiftModal();
     } catch (error) {
-      console.error('Error saving shift:', error);
       const errorMessage = extractErrorMessage(error);
       const duration = getErrorDisplayDuration(error);
       showError(errorMessage, duration);
@@ -95,7 +94,6 @@ export const useShiftActions = (
       showSuccess('Schicht erfolgreich gelöscht!');
       closeDeleteDialog();
     } catch (error) {
-      console.error('Error deleting shift:', error);
       const errorMessage = extractErrorMessage(error);
       const duration = getErrorDisplayDuration(error);
       showError(errorMessage, duration);
@@ -123,7 +121,6 @@ export const useShiftActions = (
       onShiftsChange([...shifts, duplicatedShift]);
       showSuccess('Schicht erfolgreich dupliziert!');
     } catch (error) {
-      console.error('Error duplicating shift:', error);
       const errorMessage = extractErrorMessage(error);
       const duration = getErrorDisplayDuration(error);
       showError(errorMessage, duration);

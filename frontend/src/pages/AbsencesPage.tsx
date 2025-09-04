@@ -50,7 +50,7 @@ const AbsencesPage: React.FC = () => {
                 const employees = await new EmployeeService().getAllEmployees();
                 setEmployees(employees);
             } catch (error) {
-                console.error('Fehler beim Laden der Mitarbeiter:', error);
+                // Error handling could be added here if needed
             }
         };
 
@@ -67,7 +67,7 @@ const AbsencesPage: React.FC = () => {
                 const absences = await employeeAbsenceService.getAbsencesByMonth(year, month);
                 setAbsences(absences);
             } catch (error) {
-                console.error('Fehler beim Laden der Abwesenheiten:', error);
+                // Error handling could be added here if needed
             } finally {
                 setIsLoading(false);
             }
@@ -97,7 +97,6 @@ const AbsencesPage: React.FC = () => {
             const updatedAbsences = await employeeAbsenceService.getAbsencesByMonth(year, month);
             setAbsences(updatedAbsences);
         } catch (error) {
-            console.error('Fehler beim Erstellen der Abwesenheit:', error);
             throw error; // Re-throw to let the dialog handle error display
         }
     };

@@ -31,7 +31,7 @@ const ShiftPlanningPage: React.FC = () => {
                 const employees = await new EmployeeService().getAllEmployees();
                 setEmployees(employees);
             } catch (error) {
-                console.error('Error loading employees:', error);
+                // Error handling could be added here if needed
             }
         };
 
@@ -76,7 +76,6 @@ const ShiftPlanningPage: React.FC = () => {
                 const parsedPlan = JSON.parse(storedPlan);
                 setShiftPlan(parsedPlan);
             } catch (error) {
-                console.error('Error loading shift plan from sessionStorage:', error);
                 initializeShiftPlan();
             }
         } else {

@@ -60,7 +60,6 @@ export const useEmployeeActions = (
 
         closeDeleteDialog();
       } catch (error) {
-        console.error('Error deleting employee:', error);
         const errorMessage = extractErrorMessage(error);
         const duration = getErrorDisplayDuration(error);
         showError(errorMessage, duration);
@@ -123,7 +122,6 @@ export const useEmployeeActions = (
         closeAddEmployeeModal();
       }
     } catch (error) {
-      console.error('Error saving employee:', error);
       const errorMessage = extractErrorMessage(error);
       const duration = getErrorDisplayDuration(error);
       showError(errorMessage, duration);

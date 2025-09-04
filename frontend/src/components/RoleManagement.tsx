@@ -71,7 +71,6 @@ const RoleManagement: React.FC = () => {
       const roles = await roleService.getAllRoles({ includeRelations: true });
       setRoles(roles);
     } catch (error) {
-      console.error('Error loading role data:', error);
       const errorMessage = extractErrorMessage(error);
       const duration = getErrorDisplayDuration(error);
       showError(errorMessage, duration);
@@ -133,7 +132,6 @@ const RoleManagement: React.FC = () => {
       loadData();
       handleCloseDialog();
     } catch (error) {
-      console.error('Error saving role:', error);
       const errorMessage = extractErrorMessage(error);
       const duration = getErrorDisplayDuration(error);
       showError(errorMessage, duration);
@@ -152,7 +150,6 @@ const RoleManagement: React.FC = () => {
         showSuccess('Rolle erfolgreich gelöscht');
         loadData();
       } catch (error) {
-        console.error('Error deleting role:', error);
         const errorMessage = extractErrorMessage(error);
         const duration = getErrorDisplayDuration(error);
         showError(errorMessage, duration);
@@ -171,7 +168,6 @@ const RoleManagement: React.FC = () => {
       showSuccess(`Rolle ${role.isActive ? 'deaktiviert' : 'aktiviert'}`);
       loadData();
     } catch (error) {
-      console.error('Error toggling role status:', error);
       const errorMessage = extractErrorMessage(error);
       const duration = getErrorDisplayDuration(error);
       showError(errorMessage, duration);

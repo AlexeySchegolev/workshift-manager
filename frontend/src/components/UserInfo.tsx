@@ -49,7 +49,7 @@ const UserInfo: React.FC = () => {
     try {
       await logout();
     } catch (error) {
-      console.error('Logout failed:', error);
+      // Silent error handling
     }
   };
 

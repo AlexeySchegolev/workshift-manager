@@ -23,7 +23,6 @@ export class ShiftService extends BaseService {
       const response = await this.shiftsApi.shiftsControllerFindAll(options);
       return response.data;
     } catch (error) {
-      console.error('Error fetching shifts:', error);
       throw error;
     }
   }
@@ -35,7 +34,6 @@ export class ShiftService extends BaseService {
       const response = await this.shiftsApi.shiftsControllerCreate(shiftData);
       return response.data;
     } catch (error) {
-      console.error('Error creating shift:', error);
       throw error;
     }
   }
@@ -48,7 +46,6 @@ export class ShiftService extends BaseService {
       const response = await this.shiftsApi.shiftsControllerUpdate(id, shiftData);
       return response.data;
     } catch (error) {
-      console.error('Error updating shift:', error);
       throw error;
     }
   }
@@ -60,7 +57,6 @@ export class ShiftService extends BaseService {
     try {
       await this.shiftsApi.shiftsControllerRemove(id);
     } catch (error) {
-      console.error('Error deleting shift:', error);
       throw error;
     }
   }

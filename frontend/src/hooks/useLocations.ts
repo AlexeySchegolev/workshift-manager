@@ -20,7 +20,6 @@ export const useLocations = () => {
 
       setLocations(data);
     } catch (err) {
-      console.error('Error loading locations:', err);
       setError('Error loading locations');
     } finally {
       setLoading(false);

@@ -29,7 +29,7 @@ const DashboardPage: React.FC = () => {
                 const employees = await employeeService.getAllEmployees();
                 setEmployees(employees);
             } catch (error) {
-                console.error('Error loading employees:', error);
+                // Error handling could be added here if needed
             }
         };
 

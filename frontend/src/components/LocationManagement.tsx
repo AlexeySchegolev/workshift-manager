@@ -81,7 +81,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       setLocations(data);
       onLocationsChange?.(data);
     } catch (err) {
-      console.error('Error loading locations:', err);
       const errorMessage = extractErrorMessage(err);
       const duration = getErrorDisplayDuration(err);
       showError(errorMessage, duration);
@@ -185,7 +184,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
 
       handleCloseDialog();
     } catch (err) {
-      console.error('Error saving location:', err);
       const errorMessage = extractErrorMessage(err);
       const duration = getErrorDisplayDuration(err);
       showError(errorMessage, duration);
@@ -219,7 +217,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       showSuccess(`Standort ${locationToDelete.name} wurde erfolgreich gelöscht`);
       handleCloseDeleteDialog();
     } catch (err) {
-      console.error('Error deleting location:', err);
       const errorMessage = extractErrorMessage(err);
       const duration = getErrorDisplayDuration(err);
       showError(errorMessage, duration);

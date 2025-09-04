@@ -67,7 +67,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         }
       } catch (error) {
-        console.error('Failed to initialize authentication:', error);
         // If there's an error, clear the auth state
         await authService.logout();
         setUser(null);
@@ -120,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await authService.logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      // Continue with logout cleanup even if API call fails
     } finally {
       setUser(null);
       setOrganization(null);

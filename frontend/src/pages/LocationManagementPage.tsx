@@ -26,7 +26,7 @@ const LocationManagementPage: React.FC = () => {
                 const data = await locationService.getAllLocations();
                 setLocations(data);
             } catch (error) {
-                console.error('Error loading locations:', error);
+                // Error handling could be added here if needed
             }
         };
 

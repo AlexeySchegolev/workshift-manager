@@ -108,7 +108,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
 
             excelExportService.downloadBlob(blob, `Schichtplan_${monthName}.xlsx`);
         } catch (error) {
-            console.error('Error exporting shift plan:', error);
             alert('Der Schichtplan konnte nicht exportiert werden.');
         }
     };
@@ -311,7 +310,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
 
                                                 // Validate that the date is valid
                                                 if (isNaN(date.getTime()) || isNaN(day) || isNaN(month) || isNaN(year)) {
-                                                    console.warn(`Invalid date key: ${dayKey}`);
                                                     return null; // Skip invalid dates
                                                 }
 

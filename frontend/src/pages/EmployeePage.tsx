@@ -21,7 +21,9 @@ const EmployeePage: React.FC = () => {
     // Function to load employees
     const loadEmployees = async () => {
         try {
-            const employees = await new EmployeeService().getAllEmployees();
+            const employees = await new EmployeeService().getAllEmployees({
+                includeRelations: true
+            });
             setEmployees(employees);
         } catch (error) {
             showError('Error loading employees. Please try again.');

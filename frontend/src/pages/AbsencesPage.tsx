@@ -47,7 +47,9 @@ const AbsencesPage: React.FC = () => {
     useEffect(() => {
         const loadEmployees = async () => {
             try {
-                const employees = await new EmployeeService().getAllEmployees();
+                const employees = await new EmployeeService().getAllEmployees({
+                    includeRelations: true
+                });
                 setEmployees(employees);
             } catch (error) {
                 // Error handling could be added here if needed

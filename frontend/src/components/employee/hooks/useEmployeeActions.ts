@@ -78,16 +78,24 @@ export const useEmployeeActions = (
           firstName: formData.firstName,
           lastName: formData.lastName,
           locationId: formData.location?.id,
-          primaryRoleId: formData.primaryRole?.id
+          primaryRoleId: formData.primaryRole?.id,
+          roleIds: formData.roles.map(role => role.id)
         };
 
-        const updatedEmployee = await employeeService.updateEmployee(editingId, updateData);
+        // Update employee
+        await employeeService.updateEmployee(editingId, updateData);
         
-        // Update local state with the response from API
-        const updatedEmployees = employees.map(emp =>
-          emp.id === editingId ? updatedEmployee : emp
-        );
-        onEmployeesChange(updatedEmployees);
+        // Fetch the updated employee with relations to ensure we have the latest role data
+        const updatedEmployee = await employeeService.getAllEmployees({ includeRelations: true })
+          .then(employees => employees.find(emp => emp.id === editingId));
+        
+        // Update local state with the fresh data from API
+        if (updatedEmployee) {
+          const updatedEmployees = employees.map(emp =>
+            emp.id === editingId ? updatedEmployee : emp
+          );
+          onEmployeesChange(updatedEmployees);
+        }
 
         showSuccess(`Mitarbeiter ${formData.firstName} ${formData.lastName} wurde aktualisiert`);
       } else {

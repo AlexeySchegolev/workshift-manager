@@ -112,23 +112,6 @@ const ShiftPlanningPage: React.FC = () => {
 // Status items for the status light
     return (
         <Container maxWidth="xl" sx={{py: 3}}>
-            {/* Sidebar - above the table */}
-            <Fade in={showCards} timeout={1400}>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: {
-                            xs: '1fr',
-                            md: 'repeat(2, 1fr)',
-                        },
-                        gap: 3,
-                        mb: 4,
-                    }}
-                >
-
-                </Box>
-            </Fade>
-
             {/* Shift plan table - full width */}
             <Fade in={showCards} timeout={1600}>
                 <Paper

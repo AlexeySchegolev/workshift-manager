@@ -14,6 +14,7 @@ export interface EmployeeFormErrors {
   firstName?: string;
   lastName?: string;
   role?: string;
+  primaryRole?: string;
   location?: string;
 }
 

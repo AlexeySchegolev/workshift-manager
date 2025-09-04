@@ -52,13 +52,21 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
   const handleRolesChange = (selectedRoles: RoleResponseDto[]) => {
     onUpdateField('roles', selectedRoles);
-    // Erste ausgewählte Rolle als Hauptrolle setzen, falls noch keine gesetzt
+    
+    // Wenn keine Rollen mehr ausgewählt sind, Hauptrolle zurücksetzen
+    if (selectedRoles.length === 0) {
+      onUpdateField('primaryRole', null);
+      return;
+    }
+    
+    // Wenn die aktuell ausgewählte Hauptrolle nicht mehr in den ausgewählten Rollen ist, zurücksetzen
+    if (formData.primaryRole && !selectedRoles.some(role => role.id === formData.primaryRole?.id)) {
+      onUpdateField('primaryRole', null);
+    }
+    
+    // Wenn noch keine Hauptrolle ausgewählt ist und Rollen vorhanden sind, erste als Standard setzen
     if (!formData.primaryRole && selectedRoles.length > 0) {
       onUpdateField('primaryRole', selectedRoles[0]);
-    }
-    // Wenn die entfernte Rolle die Hauptrolle war, neue Hauptrolle setzen
-    if (formData.primaryRole && !selectedRoles.some(role => role.id === formData.primaryRole?.id)) {
-      onUpdateField('primaryRole', selectedRoles.length > 0 ? selectedRoles[0] : null);
     }
   };
 
@@ -134,6 +142,43 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
               helperText={errors.role}
             />
           </Box>
+
+          {/* Primary Role Selection */}
+          <FormControl fullWidth error={!!errors.primaryRole} sx={{ gridColumn: { md: 'span 2' } }}>
+            <InputLabel id="primary-role-label">Hauptrolle (nur eine auswählbar)</InputLabel>
+            <Select
+              labelId="primary-role-label"
+              value={formData.primaryRole?.id || ''}
+              label="Hauptrolle (nur eine auswählbar)"
+              onChange={(e) => {
+                const selectedRole = formData.roles.find(role => role.id === e.target.value);
+                onUpdateField('primaryRole', selectedRole || null);
+              }}
+              disabled={formData.roles.length === 0}
+              sx={{
+                borderRadius: 2,
+              }}
+            >
+              <MenuItem value="">
+                <em>Eine Hauptrolle auswählen</em>
+              </MenuItem>
+              {formData.roles.map((role) => (
+                <MenuItem key={role.id} value={role.id}>
+                  {role.displayName || role.name}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.primaryRole && <FormHelperText>{errors.primaryRole}</FormHelperText>}
+            {formData.roles.length === 0 ? (
+              <FormHelperText>
+                Wählen Sie zuerst eine oder mehrere Rollen aus
+              </FormHelperText>
+            ) : (
+              <FormHelperText>
+                Wählen Sie genau eine Rolle als Hauptrolle aus den oben ausgewählten Rollen
+              </FormHelperText>
+            )}
+          </FormControl>
 
           <FormControl fullWidth error={!!errors.location} sx={{ gridColumn: { md: 'span 2' } }}>
             <InputLabel id="modal-location-label">Standort</InputLabel>

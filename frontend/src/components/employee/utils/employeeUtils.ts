@@ -81,12 +81,14 @@ export const validateEmployeeForm = (data: {
   firstName: string;
   lastName: string;
   primaryRole: RoleResponseDto | null;
+  roles: RoleResponseDto[];
   location: any | null;
 }) => {
   const errors: {
     firstName?: string;
     lastName?: string;
     role?: string;
+    primaryRole?: string;
     location?: string;
   } = {};
 
@@ -98,8 +100,12 @@ export const validateEmployeeForm = (data: {
     errors.lastName = 'Nachname ist erforderlich';
   }
 
-  if (!data.primaryRole) {
-    errors.role = 'Rolle ist erforderlich';
+  if (!data.roles || data.roles.length === 0) {
+    errors.role = 'Mindestens eine Rolle ist erforderlich';
+  }
+
+  if (data.roles && data.roles.length > 0 && !data.primaryRole) {
+    errors.primaryRole = 'Hauptrolle ist erforderlich';
   }
 
   if (!data.location) {

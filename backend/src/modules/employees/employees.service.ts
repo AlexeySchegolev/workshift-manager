@@ -6,6 +6,7 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from '@/database/entities/employee.entity';
 import { Location } from '@/database/entities/location.entity';
 import {Role} from "@/database/entities/role.entity";
+import { EmployeeAbsence } from '@/database/entities/employee-absence.entity';
 
 @Injectable()
 export class EmployeesService {
@@ -18,6 +19,8 @@ export class EmployeesService {
     private readonly locationRepository: Repository<Location>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
+    @InjectRepository(EmployeeAbsence)
+    private readonly employeeAbsenceRepository: Repository<EmployeeAbsence>,
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
@@ -137,6 +140,18 @@ export class EmployeesService {
     this.logger.log(`Deleting employee with ID: ${id}`);
 
     const employee = await this.findOne(id, false);
+    
+    // First, delete all related employee absence records
+    const absences = await this.employeeAbsenceRepository.find({
+      where: { employeeId: id }
+    });
+    
+    if (absences.length > 0) {
+      this.logger.log(`Deleting ${absences.length} absence records for employee ${id}`);
+      await this.employeeAbsenceRepository.remove(absences);
+    }
+    
+    // Now delete the employee
     await this.employeeRepository.remove(employee);
     
     this.logger.log(`Employee with ID ${id} deleted successfully`);

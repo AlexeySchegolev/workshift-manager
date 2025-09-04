@@ -17,7 +17,6 @@ import {
   TextField,
   FormControlLabel,
   Switch,
-  Divider,
   useTheme,
   alpha,
   CircularProgress,
@@ -127,6 +126,25 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     setIsEditing(false);
   };
 
+  // Helper function to filter location data for updates
+  const createUpdateLocationData = (location: LocationResponseDto): UpdateLocationDto => {
+    return {
+      organizationId: location.organizationId,
+      name: location.name,
+      code: location.code,
+      address: location.address,
+      city: location.city,
+      postalCode: location.postalCode,
+      state: location.state,
+      country: location.country,
+      phone: location.phone,
+      email: location.email,
+      timezone: location.timezone,
+      operatingHours: location.operatingHours,
+      isActive: location.isActive,
+    };
+  };
+
   // Save location
   const handleSaveLocation = async () => {
     if (!selectedLocation) return;
@@ -136,8 +154,9 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       setError(null);
 
       if (isEditing) {
-        // Update location
-        const updatedLocation = await locationService.updateLocation(selectedLocation.id, selectedLocation as UpdateLocationDto);
+        // Update location - only send allowed fields
+        const updateData = createUpdateLocationData(selectedLocation);
+        const updatedLocation = await locationService.updateLocation(selectedLocation.id, updateData);
         const updatedLocations = locations.map(loc =>
           loc.id === selectedLocation.id ? updatedLocation : loc
         );
@@ -180,25 +199,6 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
         setLoading(false);
       }
     }
-  };
-
-  // Format operating hours
-  const formatOperatingHours = (location: LocationResponseDto): string => {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-    
-    const activeDays = days
-      .map((day, index) => ({
-        name: dayNames[index],
-        slots: location.operatingHours[day] || []
-      }))
-      .filter(day => Array.isArray(day.slots) && day.slots.length > 0);
-
-    if (activeDays.length === 0) return 'Geschlossen';
-    
-    return activeDays
-      .map(day => `${day.name}: ${day.slots.map((slot: any) => `${slot.start}-${slot.end}`).join(', ')}`)
-      .join(' • ');
   };
 
   // Better formatted operating hours component

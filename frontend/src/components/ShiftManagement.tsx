@@ -3,7 +3,9 @@ import { Box } from '@mui/material';
 import { ShiftResponseDto } from '@/api/data-contracts';
 import ShiftTable from './shift/ShiftTable';
 import ShiftForm from './shift/ShiftForm';
-import DeleteConfirmationDialog from './shift/DeleteConfirmationDialog';
+import DeleteConfirmationDialog from './common/DeleteConfirmationDialog';
+import { formatShiftType, formatShiftStatus } from './shift/utils/shiftUtils';
+import { Schedule as ScheduleIcon, Business as BusinessIcon } from '@mui/icons-material';
 import { useShiftForm } from './shift/hooks/useShiftForm';
 import { useShiftActions } from './shift/hooks/useShiftActions';
 
@@ -90,7 +92,36 @@ const ShiftManagement: React.FC<ShiftManagementProps> = ({
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         open={deleteDialogOpen}
-        shift={shiftToDelete}
+        config={{
+          title: 'Schicht löschen',
+          entityName: 'die folgende Schicht',
+          entityDisplayName: shiftToDelete?.name,
+          showDetailedView: true,
+          icon: <ScheduleIcon color="primary" />,
+          warningMessage: '⚠️ Diese Aktion kann rückgängig gemacht werden (Soft Delete).',
+          chips: [
+            {
+              label: formatShiftType(shiftToDelete?.type || ''),
+              color: 'primary' as const,
+              variant: 'outlined' as const,
+            },
+            {
+              label: formatShiftStatus(shiftToDelete?.isActive || false, shiftToDelete?.isAvailable || false),
+              color: 'secondary' as const,
+              variant: 'outlined' as const,
+            },
+            {
+              label: shiftToDelete?.location?.name || 'Unbekannt',
+              icon: <BusinessIcon />,
+              variant: 'outlined' as const,
+            },
+          ],
+          fields: [
+            { label: 'Datum', value: shiftToDelete?.shiftDate ? new Date(shiftToDelete.shiftDate).toLocaleDateString('de-DE') : '' },
+            { label: 'Zeit', value: `${shiftToDelete?.startTime || ''} - ${shiftToDelete?.endTime || ''}` },
+            ...(shiftToDelete?.description ? [{ label: 'Beschreibung', value: shiftToDelete.description }] : []),
+          ].filter(field => field.value),
+        }}
         onClose={closeDeleteDialog}
         onConfirm={deleteShift}
       />

@@ -39,7 +39,8 @@ import { getCurrentTimestamp } from '../utils/date.utils';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { extractErrorMessage, getErrorDisplayDuration } from '../utils/errorUtils';
-import DeleteConfirmationDialog from './location/DeleteConfirmationDialog';
+import DeleteConfirmationDialog from './common/DeleteConfirmationDialog';
+import { LocationOn as LocationIcon2, Business as BusinessIcon2 } from '@mui/icons-material';
 
 interface LocationManagementProps {
   locations?: LocationResponseDto[];
@@ -785,7 +786,36 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         open={deleteDialogOpen}
-        location={locationToDelete}
+        config={{
+          title: 'Standort löschen',
+          entityName: 'den folgenden Standort',
+          entityDisplayName: locationToDelete?.name,
+          showDetailedView: true,
+          icon: <LocationIcon2 color="primary" />,
+          chips: [
+            ...(locationToDelete?.code ? [{
+              label: locationToDelete.code,
+              color: 'primary' as const,
+              variant: 'outlined' as const,
+            }] : []),
+            {
+              label: locationToDelete?.isActive ? 'Aktiv' : 'Inaktiv',
+              color: locationToDelete?.isActive ? 'success' : 'default',
+              variant: 'outlined' as const,
+            },
+            {
+              label: `${locationToDelete?.employees?.length || 0} Mitarbeiter`,
+              icon: <BusinessIcon2 />,
+              variant: 'outlined' as const,
+            },
+          ],
+          fields: [
+            { label: 'Adresse', value: locationToDelete?.address || '' },
+            { label: 'Stadt', value: `${locationToDelete?.city || ''} ${locationToDelete?.postalCode || ''}`.trim() },
+            ...(locationToDelete?.phone ? [{ label: 'Telefon', value: locationToDelete.phone }] : []),
+            ...(locationToDelete?.email ? [{ label: 'E-Mail', value: locationToDelete.email }] : []),
+          ].filter(field => field.value),
+        }}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleDeleteLocation}
       />

@@ -31,6 +31,8 @@ import { CreateRoleDto, UpdateRoleDto, RoleResponseDto } from '../api/data-contr
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { extractErrorMessage, getErrorDisplayDuration } from '../utils/errorUtils';
+import DeleteConfirmationDialog from './common/DeleteConfirmationDialog';
+import { People as PeopleIcon2, Business as BusinessIcon } from '@mui/icons-material';
 
 interface RoleFormData {
   name: string;
@@ -305,22 +307,41 @@ const RoleManagement: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Delete confirmation */}
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>Rolle löschen</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Sind Sie sicher, dass Sie die Rolle "{roleToDelete?.displayName}" löschen möchten?
-            Diese Aktion kann nicht rückgängig gemacht werden.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Abbrechen</Button>
-          <Button onClick={confirmDeleteRole} color="error" variant="contained">
-            Löschen
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        config={{
+          title: 'Rolle löschen',
+          entityName: 'die folgende Rolle',
+          entityDisplayName: roleToDelete?.displayName || roleToDelete?.name,
+          showDetailedView: true,
+          icon: <PeopleIcon2 color="primary" />,
+          chips: [
+            {
+              label: roleToDelete?.isActive ? 'Aktiv' : 'Inaktiv',
+              color: roleToDelete?.isActive ? 'success' : 'default',
+              variant: 'outlined' as const,
+            },
+            {
+              label: roleToDelete?.isAvailable ? 'Verfügbar' : 'Nicht verfügbar',
+              color: roleToDelete?.isAvailable ? 'info' : 'warning',
+              variant: 'outlined' as const,
+            },
+            {
+              label: roleToDelete?.name || 'Rolle',
+              icon: <BusinessIcon />,
+              variant: 'outlined' as const,
+            },
+          ],
+          fields: [
+            { label: 'Rollenname', value: roleToDelete?.name || '' },
+            { label: 'Anzeigename', value: roleToDelete?.displayName || '' },
+            ...(roleToDelete?.createdAt ? [{ label: 'Erstellt am', value: new Date(roleToDelete.createdAt).toLocaleDateString('de-DE') }] : []),
+          ].filter(field => field.value),
+        }}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={confirmDeleteRole}
+      />
     </Box>
   );
 };

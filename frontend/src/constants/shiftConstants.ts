@@ -14,12 +14,3 @@ export const SHIFT_TYPES: Array<{ value: ShiftType; label: string }> = [
   { value: 'on_call', label: 'Bereitschaft' },
   { value: 'overtime', label: 'Überstunden' },
 ];
-
-
-// Recurrence Patterns with German labels
-// Note: Backend doesn't define enum for this, so using common patterns
-export const RECURRENCE_PATTERNS: Array<{ value: string; label: string }> = [
-  { value: 'daily', label: 'Täglich' },
-  { value: 'weekly', label: 'Wöchentlich' },
-  { value: 'monthly', label: 'Monatlich' },
-];

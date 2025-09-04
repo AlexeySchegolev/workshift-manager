@@ -151,6 +151,25 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
     };
   };
 
+  // Helper function to filter location data for creation
+  const createLocationData = (location: LocationResponseDto): CreateLocationDto => {
+    return {
+      organizationId: location.organizationId,
+      name: location.name,
+      code: location.code,
+      address: location.address,
+      city: location.city,
+      postalCode: location.postalCode,
+      state: location.state,
+      country: location.country,
+      phone: location.phone,
+      email: location.email,
+      timezone: location.timezone,
+      operatingHours: location.operatingHours,
+      isActive: location.isActive,
+    };
+  };
+
   // Save location
   const handleSaveLocation = async () => {
     if (!selectedLocation) return;
@@ -175,7 +194,9 @@ const LocationManagement: React.FC<LocationManagementProps> = ({
           return;
         }
         
-        const newLocation = await locationService.createLocation(selectedLocation as CreateLocationDto);
+        // Create new location - only send allowed fields
+        const createData = createLocationData(selectedLocation);
+        const newLocation = await locationService.createLocation(createData);
         const updatedLocations = [...locations, newLocation];
         setLocations(updatedLocations);
         onLocationsChange?.(updatedLocations);

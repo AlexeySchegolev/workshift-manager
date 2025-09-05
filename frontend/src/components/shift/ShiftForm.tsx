@@ -10,8 +10,6 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    FormControlLabel,
-    Switch,
     Box,
     Typography,
     Divider,
@@ -69,13 +67,13 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     pb: 1,
+                    fontWeight: 600,
+                    gap: 1,
                 }}
             >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <ScheduleIcon color="primary" />
-                    <Typography variant="h6">
-                        {isEditing ? 'Schicht bearbeiten' : 'Neue Schicht erstellen'}
-                    </Typography>
+                    {isEditing ? 'Schicht bearbeiten' : 'Neue Schicht erstellen'}
                 </Box>
                 <IconButton onClick={onClose} size="small">
                     <CloseIcon />

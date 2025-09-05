@@ -93,14 +93,13 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
                 alignItems: 'center',
                 gap: 1,
                 color: 'error.main',
+                fontWeight: 600,
               }
-            : { pb: 1 }
+            : { pb: 1, fontWeight: 600 }
         }
       >
         {showDetailedView && (icon || <WarningIcon />)}
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          {title}
-        </Typography>
+        {title}
       </DialogTitle>
 
       <DialogContent>
@@ -123,7 +122,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
                 {entityDisplayName && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                     {icon}
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                       {entityDisplayName}
                     </Typography>
                   </Box>

@@ -82,13 +82,9 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         },
       }}
     >
-      <DialogTitle sx={{ pb: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <PersonAddIcon sx={{ fontSize: '1.25rem', color: 'primary.main' }} />
-          <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-            {isEditing ? 'Mitarbeiter bearbeiten' : 'Neuen Mitarbeiter hinzufügen'}
-          </Typography>
-        </Box>
+      <DialogTitle sx={{ pb: 1, display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600 }}>
+        <PersonAddIcon sx={{ fontSize: '1.25rem', color: 'primary.main' }} />
+        {isEditing ? 'Mitarbeiter bearbeiten' : 'Neuen Mitarbeiter hinzufügen'}
       </DialogTitle>
       <DialogContent>
         <Box

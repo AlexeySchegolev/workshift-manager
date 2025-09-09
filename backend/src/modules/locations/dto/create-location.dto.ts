@@ -1,6 +1,6 @@
 import { IsString, IsInt, IsOptional, IsEmail, IsBoolean, IsArray, ValidateNested, Min, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import {OperatingHours, TimeSlot} from "@/database/entities/location.entity";
 
 class TimeSlotDto implements TimeSlot {
@@ -179,13 +179,14 @@ export class CreateLocationDto {
   @IsString()
   phone?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: 'Email address',
     example: 'berlin@workshift.de',
     maxLength: 255
   })
   @IsOptional()
   @IsEmail()
+  @Transform(({ value }) => value === '' ? undefined : value)
   email?: string;
 
   @ApiPropertyOptional({

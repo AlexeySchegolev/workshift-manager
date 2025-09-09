@@ -118,7 +118,7 @@ export const useLocationForm = () => {
       newErrors.postalCode = 'PLZ ist erforderlich';
     }
 
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (formData.email && formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Ungültige E-Mail-Adresse';
     }
 

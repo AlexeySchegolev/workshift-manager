@@ -43,7 +43,7 @@ const LocationManagementPage: React.FC = () => {
     <Container maxWidth="xl" sx={{ py: 3 }}>
       {/* Location management - full width */}
       <Fade in={showCards} timeout={1400}>
-        <Box sx={{ p: 3 }}>
+        <Box>
           <LocationManagement
             locations={locations}
             onLocationsChange={handleLocationsChange}

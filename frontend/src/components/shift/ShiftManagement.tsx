@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { ShiftResponseDto } from '@/api/data-contracts';
-import ShiftTable from './shift/ShiftTable';
-import ShiftForm from './shift/ShiftForm';
-import DeleteConfirmationDialog from './common/DeleteConfirmationDialog';
-import { formatShiftType, formatShiftStatus } from './shift/utils/shiftUtils';
+import ShiftTable from './ShiftTable';
+import ShiftForm from './ShiftForm';
+import DeleteConfirmationDialog from '../common/DeleteConfirmationDialog';
+import { formatShiftType, formatShiftStatus } from './utils/shiftUtils';
 import { Schedule as ScheduleIcon, Business as BusinessIcon } from '@mui/icons-material';
-import { useShiftForm } from './shift/hooks/useShiftForm';
-import { useShiftActions } from './shift/hooks/useShiftActions';
+import { useShiftForm } from './hooks/useShiftForm';
+import { useShiftActions } from './hooks/useShiftActions';
 
 interface ShiftManagementProps {
   shifts: ShiftResponseDto[];

@@ -4,7 +4,7 @@ import {
     Container,
     Fade
 } from '@mui/material';
-import EmployeeManagement from '../components/EmployeeManagement';
+import EmployeeManagement from '../components/employee/EmployeeManagement';
 import {EmployeeService} from "@/services";
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {useToast} from "@/contexts/ToastContext";

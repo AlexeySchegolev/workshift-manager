@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Container, Fade, useTheme, Paper } from "@mui/material";
-import LocationManagement from "../components/LocationManagement";
+import LocationManagement from "../components/location/LocationManagement";
 import { LocationResponseDto } from "../api/data-contracts";
 import { locationService } from "@/services";
 

@@ -5,7 +5,7 @@ import {
     Container,
     Fade
 } from '@mui/material';
-import ShiftManagement from '../components/ShiftManagement';
+import ShiftManagement from '../components/shift/ShiftManagement';
 import {shiftService} from "@/services/ShiftService";
 import {ShiftResponseDto} from "@/api/data-contracts.ts";
 

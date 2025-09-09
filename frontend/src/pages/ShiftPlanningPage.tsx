@@ -6,7 +6,7 @@ import {
     useTheme,
     Paper,
 } from '@mui/material';
-import ShiftTable from '../components/ShiftTable';
+import ShiftPlanTable from '../components/ShiftPlanTable';
 import {EmployeeService} from "@/services";
 import {
     EmployeeResponseDto
@@ -122,7 +122,7 @@ const ShiftPlanningPage: React.FC = () => {
                         mb: 4,
                     }}
                 >
-                    <ShiftTable
+                    <ShiftPlanTable
                         employees={employees}
                         selectedDate={selectedDate}
                         onDateChange={setSelectedDate}

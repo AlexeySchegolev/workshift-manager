@@ -27,11 +27,11 @@ import {
   VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
 import { roleService } from '@/services';
-import { CreateRoleDto, UpdateRoleDto, RoleResponseDto } from '../api/data-contracts';
-import { useAuth } from '../contexts/AuthContext';
-import { useToast } from '../contexts/ToastContext';
-import { extractErrorMessage, getErrorDisplayDuration } from '../utils/errorUtils';
-import DeleteConfirmationDialog from './common/DeleteConfirmationDialog';
+import { CreateRoleDto, UpdateRoleDto, RoleResponseDto } from '../../api/data-contracts';
+import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
+import { extractErrorMessage, getErrorDisplayDuration } from '../../utils/errorUtils';
+import DeleteConfirmationDialog from '../common/DeleteConfirmationDialog';
 import { People as PeopleIcon2, Business as BusinessIcon } from '@mui/icons-material';
 
 interface RoleFormData {

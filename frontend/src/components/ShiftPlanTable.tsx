@@ -31,7 +31,7 @@ import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService} from '@/services';
 import MonthSelector from './MonthSelector';
 
-interface ShiftTableProps {
+interface ShiftPlanTableProps {
     employees: EmployeeResponseDto[];
     selectedDate: Date;
     onDateChange: (date: Date) => void;
@@ -44,7 +44,7 @@ interface ShiftTableProps {
 /**
  * Modern Shift Plan Table in Dashboard Style
  */
-const ShiftTable: React.FC<ShiftTableProps> = ({
+const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                    employees,
                                                    selectedDate,
                                                    onDateChange,
@@ -521,4 +521,4 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
     );
 };
 
-export default ShiftTable;
+export default ShiftPlanTable;

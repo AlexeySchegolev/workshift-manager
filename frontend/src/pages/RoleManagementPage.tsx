@@ -5,7 +5,7 @@ import {
     useTheme,
     Paper,
 } from '@mui/material';
-import RoleManagement from '../components/RoleManagement';
+import RoleManagement from '../components/role/RoleManagement';
 
 /**
  * Modern Role Management Page in Dashboard Style

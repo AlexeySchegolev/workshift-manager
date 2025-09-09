@@ -16,8 +16,6 @@ export class Role {
   name: string;
 
 
-  @Column({ name: 'is_active', type: 'boolean', default: true })
-  isActive: boolean;
 
   // Relationships
   @ManyToOne(() => Organization, organization => organization.roles)
@@ -48,7 +46,7 @@ export class Role {
 
   // Virtual fields
   get isAvailable(): boolean {
-    return this.isActive && !this.deletedAt;
+    return !this.deletedAt;
   }
 
   get displayName(): string {

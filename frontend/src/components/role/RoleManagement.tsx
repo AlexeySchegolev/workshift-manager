@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, CircularProgress, FormControlLabel, Switch } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { RoleResponseDto } from '@/api/data-contracts';
 import { roleService } from '@/services';
 import { useToast } from '@/contexts/ToastContext';
@@ -10,7 +10,7 @@ import RoleTable from '@/components/role/RoleTable';
 import RoleForm from '@/components/role/RoleForm';
 import DeleteConfirmationDialog from '@/components/common/DeleteConfirmationDialog';
 import { People as PeopleIcon, Business as BusinessIcon } from '@mui/icons-material';
-import { filterRolesByStatus, sortRolesByName } from './utils/roleUtils';
+import { sortRolesByName } from './utils/roleUtils';
 
 interface RoleManagementProps {
   roles?: RoleResponseDto[];
@@ -28,7 +28,6 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
   const { showError } = useToast();
   const [roles, setRoles] = useState<RoleResponseDto[]>(propRoles || []);
   const [loading, setLoading] = useState(false);
-  const [showInactive, setShowInactive] = useState(false);
 
   // Custom hooks for form and actions
   const {
@@ -52,7 +51,6 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
     openAddRoleModal,
     closeAddRoleModal,
     saveRole,
-    toggleRoleActive,
     loading: actionLoading,
   } = useRoleActions(roles, handleRolesChange);
 
@@ -106,9 +104,8 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
     resetForm();
   };
 
-  // Filter and sort roles
-  const filteredRoles = filterRolesByStatus(roles, showInactive);
-  const sortedRoles = sortRolesByName(filteredRoles);
+  // Sort roles
+  const sortedRoles = sortRolesByName(roles);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -127,7 +124,6 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
         onEditRole={handleEditRole}
         onDeleteRole={openDeleteDialog}
         onAddRole={openAddRoleModal}
-        onToggleActive={toggleRoleActive}
       />
 
       {/* Role Form Modal */}
@@ -152,11 +148,6 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
           showDetailedView: true,
           icon: <PeopleIcon color="primary" />,
           chips: [
-            {
-              label: roleToDelete?.isActive ? 'Aktiv' : 'Inaktiv',
-              color: roleToDelete?.isActive ? 'success' : 'default',
-              variant: 'outlined' as const,
-            },
             {
               label: roleToDelete?.isAvailable ? 'Verfügbar' : 'Nicht verfügbar',
               color: roleToDelete?.isAvailable ? 'info' : 'warning',

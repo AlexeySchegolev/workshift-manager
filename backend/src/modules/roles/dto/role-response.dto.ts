@@ -20,11 +20,6 @@ export class RoleResponseDto {
   name: string;
 
 
-  @ApiProperty({ 
-    description: 'Role is active', 
-    example: true 
-  })
-  isActive: boolean;
 
   @ApiPropertyOptional({ 
     description: 'Created by (User ID)', 

@@ -18,13 +18,6 @@ export class CreateRoleDto {
   name: string;
 
 
-  @ApiPropertyOptional({
-    description: 'Role is active',
-    example: true
-  })
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
 
   @ApiPropertyOptional({
     description: 'Created by (User ID)',

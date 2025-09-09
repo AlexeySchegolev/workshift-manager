@@ -44,16 +44,6 @@ export class RolesService {
     return this.roleRepository.find(options);
   }
 
-  async findActiveByOrganization(organizationId: string): Promise<Role[]> {
-    this.logger.log(`Retrieving active roles for organization: ${organizationId}`);
-    return this.roleRepository.find({
-      where: { 
-        organizationId, 
-        isActive: true, 
-        deletedAt: null 
-      }
-    });
-  }
 
   async findOne(id: string, includeRelations: boolean = true): Promise<Role> {
     this.logger.log(`Retrieving role with ID: ${id}`);
@@ -91,10 +81,9 @@ export class RolesService {
     const role = await this.findOne(id, false);
     
     // Soft delete by setting deletedAt timestamp
-    await this.roleRepository.save({ 
-      ...role, 
-      deletedAt: new Date(), 
-      isActive: false 
+    await this.roleRepository.save({
+      ...role,
+      deletedAt: new Date()
     });
     
     this.logger.log(`Role with ID ${id} soft deleted successfully`);

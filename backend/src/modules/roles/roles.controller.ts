@@ -16,7 +16,6 @@ export class RolesController {
       id: role.id,
       organizationId: role.organizationId,
       name: role.name,
-      isActive: role.isActive,
       createdBy: role.createdBy,
       updatedBy: role.updatedBy,
       createdAt: role.createdAt,
@@ -49,20 +48,13 @@ export class RolesController {
     @ApiOperation({ summary: 'Get roles by organization' })
     @ApiParam({ name: 'organizationId', type: 'string', format: 'uuid', description: 'Organization ID' })
     @ApiQuery({ name: 'includeRelations', required: false, type: Boolean, description: 'Include related entities' })
-    @ApiQuery({ name: 'activeOnly', required: false, type: Boolean, description: 'Only active roles' })
     @ApiResponse({ status: 200, description: 'Organization roles', type: [RoleResponseDto] })
     async findByOrganization(
         @Param('organizationId') organizationId: string,
-        @Query('includeRelations') includeRelations: string = 'true',
-        @Query('activeOnly') activeOnly: string = 'false'
+        @Query('includeRelations') includeRelations: string = 'true'
     ): Promise<RoleResponseDto[]> {
         const include = includeRelations === 'true';
-        const onlyActive = activeOnly === 'true';
-
-        const roles = onlyActive
-            ? await this.rolesService.findActiveByOrganization(organizationId)
-            : await this.rolesService.findByOrganization(organizationId, include);
-
+        const roles = await this.rolesService.findByOrganization(organizationId, include);
         return roles.map(role => this.mapToResponseDto(role));
     }
 

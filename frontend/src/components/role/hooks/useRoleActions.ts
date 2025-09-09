@@ -60,7 +60,6 @@ export const useRoleActions = (
   const createUpdateRoleData = (role: RoleResponseDto): UpdateRoleDto => {
     return {
       name: role.name,
-      isActive: role.isActive,
     };
   };
 
@@ -69,7 +68,6 @@ export const useRoleActions = (
     return {
       organizationId: role.organizationId,
       name: role.name,
-      isActive: role.isActive,
     };
   };
 
@@ -111,28 +109,6 @@ export const useRoleActions = (
     }
   };
 
-  // Toggle role active status
-  const toggleRoleActive = async (role: RoleResponseDto) => {
-    try {
-      setLoading(true);
-      const updateData: UpdateRoleDto = {
-        isActive: !role.isActive,
-      };
-      const updatedRole = await roleService.updateRole(role.id, updateData);
-      const updatedRoles = roles.map(r =>
-        r.id === role.id ? updatedRole : r
-      );
-      onRolesChange(updatedRoles);
-      showSuccess(`Rolle ${role.displayName || role.name} wurde ${role.isActive ? 'deaktiviert' : 'aktiviert'}`);
-    } catch (err) {
-      const errorMessage = extractErrorMessage(err);
-      const duration = getErrorDisplayDuration(err);
-      showError(errorMessage, duration);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return {
     deleteDialogOpen,
     roleToDelete,
@@ -143,7 +119,6 @@ export const useRoleActions = (
     openAddRoleModal,
     closeAddRoleModal,
     saveRole,
-    toggleRoleActive,
     loading,
   };
 };

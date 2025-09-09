@@ -23,14 +23,10 @@ import {
     Delete as DeleteIcon,
     Add as AddIcon,
     People as PeopleIcon,
-    Visibility as VisibilityIcon,
-    VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
 import { RoleResponseDto } from '@/api/data-contracts';
 import {
     getRoleInitials,
-    getRoleStatusColor,
-    formatRoleStatus,
 } from './utils/roleUtils';
 
 interface RoleTableProps {
@@ -39,7 +35,6 @@ interface RoleTableProps {
     onEditRole: (role: RoleResponseDto) => void;
     onDeleteRole: (role: RoleResponseDto) => void;
     onAddRole: () => void;
-    onToggleActive: (role: RoleResponseDto) => void;
 }
 
 const RoleTable: React.FC<RoleTableProps> = ({
@@ -48,7 +43,6 @@ const RoleTable: React.FC<RoleTableProps> = ({
     onEditRole,
     onDeleteRole,
     onAddRole,
-    onToggleActive,
 }) => {
     const theme = useTheme();
     const [page, setPage] = useState(0);
@@ -117,7 +111,6 @@ const RoleTable: React.FC<RoleTableProps> = ({
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ fontWeight: 600 }}>Rolle</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Verfügbarkeit</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Erstellt am</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Aktionen</TableCell>
@@ -126,7 +119,7 @@ const RoleTable: React.FC<RoleTableProps> = ({
                     <TableBody>
                         {paginatedRoles.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
+                                <TableCell colSpan={4} align="center" sx={{ py: 8 }}>
                                     <Box sx={{ textAlign: 'center' }}>
                                         <PeopleIcon
                                             sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }}
@@ -152,16 +145,13 @@ const RoleTable: React.FC<RoleTableProps> = ({
                                         ...(editingId === role.id && {
                                             backgroundColor: alpha(theme.palette.primary.main, 0.05),
                                         }),
-                                        opacity: role.isActive ? 1 : 0.6,
                                     }}
                                 >
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                             <Avatar
                                                 sx={{
-                                                    bgcolor: role.isActive 
-                                                        ? theme.palette.primary.main 
-                                                        : theme.palette.grey[500],
+                                                    bgcolor: theme.palette.primary.main,
                                                     width: 40,
                                                     height: 40,
                                                     fontSize: '0.875rem',
@@ -184,17 +174,6 @@ const RoleTable: React.FC<RoleTableProps> = ({
                                     </TableCell>
                                     <TableCell>
                                         <Chip
-                                            label={formatRoleStatus(role.isActive)}
-                                            size="small"
-                                            sx={{
-                                                backgroundColor: alpha(getRoleStatusColor(role.isActive, theme), 0.1),
-                                                color: getRoleStatusColor(role.isActive, theme),
-                                                fontWeight: 500,
-                                            }}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Chip
                                             label={role.isAvailable ? 'Verfügbar' : 'Nicht verfügbar'}
                                             size="small"
                                             sx={{
@@ -214,23 +193,6 @@ const RoleTable: React.FC<RoleTableProps> = ({
                                     </TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', gap: 0.5 }}>
-                                            <Tooltip title={role.isActive ? 'Deaktivieren' : 'Aktivieren'}>
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => onToggleActive(role)}
-                                                    sx={{
-                                                        color: role.isActive ? 'warning.main' : 'success.main',
-                                                        '&:hover': {
-                                                            backgroundColor: alpha(
-                                                                role.isActive ? theme.palette.warning.main : theme.palette.success.main, 
-                                                                0.1
-                                                            ),
-                                                        },
-                                                    }}
-                                                >
-                                                    {role.isActive ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
-                                                </IconButton>
-                                            </Tooltip>
                                             <Tooltip title="Bearbeiten">
                                                 <IconButton
                                                     size="small"

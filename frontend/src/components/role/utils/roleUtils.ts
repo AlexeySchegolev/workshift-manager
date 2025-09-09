@@ -18,19 +18,6 @@ export const getRoleInitials = (name: string): string => {
         .toUpperCase();
 };
 
-/**
- * Get role status color based on active state
- */
-export const getRoleStatusColor = (isActive: boolean, theme: Theme): string => {
-    return isActive ? theme.palette.success.main : theme.palette.grey[500];
-};
-
-/**
- * Format role status text
- */
-export const formatRoleStatus = (isActive: boolean): string => {
-    return isActive ? 'Aktiv' : 'Inaktiv';
-};
 
 /**
  * Get role availability color
@@ -53,15 +40,6 @@ export const sortRolesByName = <T extends { name: string }>(roles: T[]): T[] => 
     return [...roles].sort((a, b) => a.name.localeCompare(b.name));
 };
 
-/**
- * Filter roles by active status
- */
-export const filterRolesByStatus = <T extends { isActive: boolean }>(
-    roles: T[], 
-    showInactive: boolean
-): T[] => {
-    return showInactive ? roles : roles.filter(role => role.isActive);
-};
 
 /**
  * Get display name for role

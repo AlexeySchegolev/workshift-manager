@@ -7,8 +7,6 @@ import {
     TextField,
     Button,
     Grid,
-    FormControlLabel,
-    Switch,
     Box,
     CircularProgress,
 } from '@mui/material';
@@ -55,7 +53,7 @@ const RoleForm: React.FC<RoleFormProps> = ({
             <DialogContent>
                 <Box sx={{ pt: 1 }}>
                     <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, sm: 6 }}>
+                        <Grid size={{ xs: 12 }}>
                             <TextField
                                 fullWidth
                                 label="Rollenname"
@@ -64,17 +62,6 @@ const RoleForm: React.FC<RoleFormProps> = ({
                                 error={!!errors.name}
                                 helperText={errors.name}
                                 required
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={formData.isActive}
-                                        onChange={(e) => onUpdateField('isActive', e.target.checked)}
-                                    />
-                                }
-                                label="Rolle ist aktiv"
                             />
                         </Grid>
                     </Grid>

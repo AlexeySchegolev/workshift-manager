@@ -353,11 +353,6 @@ export interface CreateRoleDto {
    */
   createdBy?: string;
   /**
-   * Role is active
-   * @example true
-   */
-  isActive?: boolean;
-  /**
    * Role name
    * @example "Dialysis Specialist"
    */
@@ -1127,11 +1122,6 @@ export interface RoleResponseDto {
    */
   id: string;
   /**
-   * Role is active
-   * @example true
-   */
-  isActive: boolean;
-  /**
    * Role is available (computed)
    * @example true
    */
@@ -1556,11 +1546,6 @@ export interface UpdateRoleDto {
    * @example "123e4567-e89b-12d3-a456-426614174001"
    */
   createdBy?: string;
-  /**
-   * Role is active
-   * @example true
-   */
-  isActive?: boolean;
   /**
    * Role name
    * @example "Dialysis Specialist"

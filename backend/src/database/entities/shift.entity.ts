@@ -44,9 +44,6 @@ export class Shift {
   type: ShiftType;
 
 
-  @Column({ name: 'shift_date', type: 'date' })
-  shiftDate: Date;
-
   @Column({ name: 'start_time', type: 'time' })
   startTime: string;
 

@@ -156,21 +156,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         </Typography>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <TextField
-                            fullWidth
-                            label="Datum"
-                            type="date"
-                            value={formData.shiftDate}
-                            onChange={(e) => onUpdateField('shiftDate', e.target.value)}
-                            error={!!errors.shiftDate}
-                            helperText={errors.shiftDate}
-                            InputLabelProps={{ shrink: true }}
-                            required
-                        />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
                             label="Startzeit"
@@ -184,7 +170,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
                             label="Endzeit"

@@ -34,7 +34,6 @@ export class ShiftsService {
     // Create shift entity
     const shift = this.shiftRepository.create({
       ...createShiftDto,
-      shiftDate: new Date(createShiftDto.shiftDate),
     });
 
     const savedShift = await this.shiftRepository.save(shift);
@@ -89,8 +88,7 @@ export class ShiftsService {
       queryBuilder.leftJoinAndSelect('shift.requiredRoles', 'requiredRoles');
     }
 
-    queryBuilder.orderBy('shift.shiftDate', 'ASC')
-              .addOrderBy('shift.startTime', 'ASC');
+    queryBuilder.orderBy('shift.startTime', 'ASC');
 
     const shifts = await queryBuilder.getMany();
     return shifts.map(shift => this.mapToResponseDto(shift));
@@ -146,7 +144,6 @@ export class ShiftsService {
     // Update shift
     Object.assign(shift, {
       ...updateShiftDto,
-      shiftDate: updateShiftDto.shiftDate ? new Date(updateShiftDto.shiftDate) : shift.shiftDate,
       updatedAt: new Date(),
     });
 
@@ -187,7 +184,6 @@ export class ShiftsService {
         name: shift.name,
         description: shift.description,
         type: shift.type,
-        shiftDate: toDateString(shift.shiftDate),
         startTime: normalizeTimeFormat(shift.startTime),
         endTime: normalizeTimeFormat(shift.endTime),
         isActive: shift.isActive,

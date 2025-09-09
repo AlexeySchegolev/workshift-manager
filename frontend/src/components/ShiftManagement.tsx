@@ -117,7 +117,6 @@ const ShiftManagement: React.FC<ShiftManagementProps> = ({
             },
           ],
           fields: [
-            { label: 'Datum', value: shiftToDelete?.shiftDate ? new Date(shiftToDelete.shiftDate).toLocaleDateString('de-DE') : '' },
             { label: 'Zeit', value: `${shiftToDelete?.startTime || ''} - ${shiftToDelete?.endTime || ''}` },
             ...(shiftToDelete?.description ? [{ label: 'Beschreibung', value: shiftToDelete.description }] : []),
           ].filter(field => field.value),

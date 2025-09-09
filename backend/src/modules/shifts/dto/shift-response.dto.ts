@@ -58,13 +58,6 @@ export class ShiftResponseDto {
 
 
   @ApiProperty({
-    description: 'Date when the shift takes place',
-    example: '2024-01-15',
-    format: 'date'
-  })
-  shiftDate: string;
-
-  @ApiProperty({
     description: 'Start time of the shift',
     example: '08:00',
     pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'

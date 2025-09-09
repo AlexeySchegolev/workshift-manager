@@ -111,7 +111,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                             <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Typ</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Datum</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Zeit</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Station</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Aktionen</TableCell>
@@ -164,11 +163,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                             fontWeight: 500,
                                         }}
                                     />
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant="body2">
-                                        {new Date(shift.shiftDate).toLocaleDateString('de-DE')}
-                                    </Typography>
                                 </TableCell>
                                 <TableCell>
                                     <Typography variant="body2">

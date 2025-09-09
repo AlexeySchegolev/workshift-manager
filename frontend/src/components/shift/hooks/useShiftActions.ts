@@ -44,7 +44,6 @@ export const useShiftActions = (
           name: formData.name,
           description: formData.description,
           type: formData.type as any,
-          shiftDate: formData.shiftDate,
           startTime: formData.startTime,
           endTime: formData.endTime,
           locationId: formData.locationId,
@@ -64,7 +63,6 @@ export const useShiftActions = (
           name: formData.name,
           description: formData.description,
           type: formData.type as any,
-          shiftDate: formData.shiftDate,
           startTime: formData.startTime,
           endTime: formData.endTime,
           isActive: formData.isActive,
@@ -102,17 +100,12 @@ export const useShiftActions = (
 
   const duplicateShift = async (shift: ShiftResponseDto) => {
     try {
-      // Create a copy with a new date (next day)
-      const nextDay = new Date(shift.shiftDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      
       const duplicatedShift = await shiftService.createShift({
         organizationId: shift.organizationId,
         locationId: shift.locationId,
         name: `${shift.name} (Kopie)`,
         description: shift.description,
         type: shift.type as any,
-        shiftDate: toDateString(nextDay),
         startTime: shift.startTime,
         endTime: shift.endTime,
         isActive: true,

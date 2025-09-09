@@ -3,7 +3,6 @@ import {
   IsString, 
   IsOptional, 
   IsEnum, 
-  IsDateString, 
   Matches, 
   IsNumber, 
   Min, 
@@ -65,14 +64,6 @@ export class CreateShiftDto {
   @IsEnum(ShiftType)
   type: ShiftType;
 
-
-  @ApiProperty({
-    description: 'Date when the shift takes place',
-    example: '2024-01-15',
-    format: 'date'
-  })
-  @IsDateString()
-  shiftDate: string;
 
   @ApiProperty({
     description: 'Start time of the shift',

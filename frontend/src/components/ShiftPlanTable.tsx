@@ -25,7 +25,7 @@ import {
     Schedule as ScheduleIcon,
     Refresh as RefreshIcon,
 } from '@mui/icons-material';
-import {format} from 'date-fns';
+import {format, isToday} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService} from '@/services';
@@ -314,6 +314,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                 }
 
                                                 const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                                                const isTodayDate = isToday(date);
 
                                                 return (
                                                     <TableCell
@@ -324,9 +325,11 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                             width: '70px',
                                                             fontWeight: 600,
                                                             fontSize: '0.8rem',
-                                                            backgroundColor: isWeekend
-                                                                ? alpha(theme.palette.error.main, 0.05)
-                                                                : theme.palette.background.paper,
+                                                            backgroundColor: isTodayDate
+                                                                ? alpha(theme.palette.primary.main, 0.04)
+                                                                : isWeekend
+                                                                    ? alpha(theme.palette.error.main, 0.05)
+                                                                    : theme.palette.background.paper,
                                                             color: isWeekend ? theme.palette.error.main : 'inherit',
                                                             position: 'sticky',
                                                             top: 0,
@@ -438,6 +441,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     const [day, month, year] = dayKey.split('.').map(Number);
                                                     const date = new Date(year, month - 1, day);
                                                     const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                                                    const isTodayDate = isToday(date);
 
                                                     return (
                                                         <TableCell
@@ -448,9 +452,11 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                     ? alpha(theme.palette.grey[500], 0.1)
                                                                     : assignedShift
                                                                         ? getShiftBackgroundColor(assignedShift)
-                                                                        : isWeekend
-                                                                            ? alpha(theme.palette.error.main, 0.02)
-                                                                            : 'inherit',
+                                                                        : isTodayDate
+                                                                            ? alpha(theme.palette.primary.main, 0.03)
+                                                                            : isWeekend
+                                                                                ? alpha(theme.palette.error.main, 0.02)
+                                                                                : 'inherit',
                                                                 border: assignedShift
                                                                     ? `1px solid ${alpha(getShiftColor(assignedShift), 0.3)}`
                                                                     : 'none',

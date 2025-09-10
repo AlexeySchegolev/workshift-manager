@@ -21,7 +21,7 @@ import {
     Add as AddIcon,
     EventBusy as EventBusyIcon,
 } from '@mui/icons-material';
-import { format, getDaysInMonth, startOfMonth, addDays } from 'date-fns';
+import { format, getDaysInMonth, startOfMonth, addDays, isToday } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { EmployeeResponseDto, EmployeeAbsenceResponseDto } from '@/api/data-contracts';
 import MonthSelector from '../MonthSelector';
@@ -202,6 +202,7 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                     </TableCell>
                                     {monthDays.map((day) => {
                                         const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+                                        const isTodayDate = isToday(day);
                                         
                                         return (
                                             <TableCell
@@ -212,9 +213,11 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                     width: '70px',
                                                     fontWeight: 600,
                                                     fontSize: '0.8rem',
-                                                    backgroundColor: isWeekend
-                                                        ? alpha(theme.palette.error.main, 0.05)
-                                                        : theme.palette.background.paper,
+                                                    backgroundColor: isTodayDate
+                                                        ? alpha(theme.palette.primary.main, 0.04)
+                                                        : isWeekend
+                                                            ? alpha(theme.palette.error.main, 0.05)
+                                                            : theme.palette.background.paper,
                                                     color: isWeekend ? theme.palette.error.main : 'inherit',
                                                     position: 'sticky',
                                                     top: 0,
@@ -312,6 +315,7 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                         {monthDays.map((day) => {
                                             const dayAbsences = getAbsencesForEmployeeAndDay(employee.id, day);
                                             const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+                                            const isTodayDate = isToday(day);
                                             
                                             return (
                                                 <TableCell
@@ -320,9 +324,11 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                     sx={{
                                                         backgroundColor: dayAbsences.length > 0
                                                             ? alpha(getAbsenceTypeColor(dayAbsences[0].absenceType), 0.1)
-                                                            : isWeekend
-                                                                ? alpha(theme.palette.error.main, 0.02)
-                                                                : 'inherit',
+                                                            : isTodayDate
+                                                                ? alpha(theme.palette.primary.main, 0.03)
+                                                                : isWeekend
+                                                                    ? alpha(theme.palette.error.main, 0.02)
+                                                                    : 'inherit',
                                                         border: dayAbsences.length > 0
                                                             ? `1px solid ${alpha(getAbsenceTypeColor(dayAbsences[0].absenceType), 0.3)}`
                                                             : 'none',

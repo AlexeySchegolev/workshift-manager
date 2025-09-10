@@ -23,15 +23,10 @@ import {
     Delete as DeleteIcon,
     Add as AddIcon,
     People as PeopleIcon,
-    Badge as BadgeIcon,
 } from '@mui/icons-material';
 import { EmployeeResponseDto } from '@/api/data-contracts';
 import {
-    getInitials,
-    getEmployeeStatusColor,
-    formatEmployeeStatus,
-    getContractTypeColor,
-    formatContractType
+    getInitials
 } from './utils/employeeUtils';
 
 interface EmployeeTableProps {
@@ -118,17 +113,14 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                         <TableRow>
                             <TableCell sx={{ fontWeight: 600 }}>Mitarbeiter</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Rolle</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Vertragsart</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Standort</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Dienstjahre</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Aktionen</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {paginatedEmployees.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
+                                <TableCell colSpan={4} align="center" sx={{ py: 8 }}>
                                     <Box sx={{ textAlign: 'center' }}>
                                         <PeopleIcon
                                             sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }}
@@ -188,28 +180,6 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <Chip
-                                            label={formatEmployeeStatus(employee.isActive, employee.isAvailable)}
-                                            size="small"
-                                            sx={{
-                                                backgroundColor: alpha(getEmployeeStatusColor(employee.isActive, employee.isAvailable, theme), 0.1),
-                                                color: getEmployeeStatusColor(employee.isActive, employee.isAvailable, theme),
-                                                fontWeight: 500,
-                                            }}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Chip
-                                            label={formatContractType(employee.contractType)}
-                                            size="small"
-                                            sx={{
-                                                backgroundColor: alpha(getContractTypeColor(employee.contractType, theme), 0.1),
-                                                color: getContractTypeColor(employee.contractType, theme),
-                                                fontWeight: 500,
-                                            }}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
                                         <Typography variant="body2">
                                             {employee.location?.name || 'Kein Standort'}
                                         </Typography>
@@ -218,14 +188,6 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                                 {employee.location.code}
                                             </Typography>
                                         )}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <BadgeIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                                            <Typography variant="body2">
-                                                {employee.yearsOfService || 0} Jahre
-                                            </Typography>
-                                        </Box>
                                     </TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', gap: 0.5 }}>

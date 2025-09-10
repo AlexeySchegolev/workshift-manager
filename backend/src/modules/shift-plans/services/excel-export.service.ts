@@ -267,7 +267,6 @@ export class ExcelExportService {
       'Rolle',
       'E-Mail',
       'Standort',
-      'Vertrag',
       'Status'
     ];
 
@@ -286,15 +285,14 @@ export class ExcelExportService {
       worksheet.getCell(`B${row}`).value = employee.primaryRole?.name || 'N/A';
       worksheet.getCell(`C${row}`).value = employee.email;
       worksheet.getCell(`D${row}`).value = employee.location?.name || 'N/A';
-      worksheet.getCell(`E${row}`).value = employee.contractType;
-      worksheet.getCell(`F${row}`).value = employee.isActive ? 'Aktiv' : 'Inaktiv';
+      worksheet.getCell(`E${row}`).value = employee.isActive ? 'Aktiv' : 'Inaktiv';
     });
 
     // Auto-fit columns
     this.autoFitColumns(worksheet);
 
     // Apply borders
-    const range = `A3:F${employees.length + 3}`;
+    const range = `A3:E${employees.length + 3}`;
     this.applyBorders(worksheet, range);
   }
 

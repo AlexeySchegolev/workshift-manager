@@ -1,5 +1,3 @@
-import {ContractType} from "@/database/entities/employee.entity";
-
 export const employeesSeedData = [
   // Kardiologie Station 3A (locationId: 1)
   {
@@ -9,7 +7,6 @@ export const employeesSeedData = [
     email: 'anna.schneider@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-001',
     hireDate: new Date('2020-01-15'),
-    contractType: ContractType.FULL_TIME,
     locationId: '1', // Will be replaced with actual location ID
     primaryRoleId: '1', // Will be replaced with Schichtleiter role ID
     isActive: true
@@ -21,7 +18,6 @@ export const employeesSeedData = [
     email: 'thomas.koenig@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-002',
     hireDate: new Date('2019-03-10'),
-    contractType: ContractType.FULL_TIME,
     locationId: '1',
     primaryRoleId: '2', // Krankenpfleger
     isActive: true
@@ -33,7 +29,6 @@ export const employeesSeedData = [
     email: 'maria.wagner@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-003',
     hireDate: new Date('2021-06-01'),
-    contractType: ContractType.PART_TIME,
     locationId: '1',
     primaryRoleId: '2', // Krankenpfleger
     isActive: true
@@ -45,7 +40,6 @@ export const employeesSeedData = [
     email: 'stefan.bauer@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-004',
     hireDate: new Date('2022-02-15'),
-    contractType: ContractType.FULL_TIME,
     locationId: '1',
     primaryRoleId: '3', // Pflegerassistent
     isActive: true
@@ -57,7 +51,6 @@ export const employeesSeedData = [
     email: 'julia.richter@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-005',
     hireDate: new Date('2023-01-10'),
-    contractType: ContractType.PART_TIME,
     locationId: '1',
     primaryRoleId: '3', // Pflegerassistent
     isActive: true
@@ -71,7 +64,6 @@ export const employeesSeedData = [
     email: 'michael.klein@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-006',
     hireDate: new Date('2018-09-01'),
-    contractType: ContractType.FULL_TIME,
     locationId: '2',
     primaryRoleId: '1', // Schichtleiter
     isActive: true
@@ -83,7 +75,6 @@ export const employeesSeedData = [
     email: 'sandra.hoffmann@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-007',
     hireDate: new Date('2020-05-15'),
-    contractType: ContractType.FULL_TIME,
     locationId: '2',
     primaryRoleId: '2', // Krankenpfleger
     isActive: true
@@ -95,7 +86,6 @@ export const employeesSeedData = [
     email: 'robert.zimmermann@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-008',
     hireDate: new Date('2019-11-20'),
-    contractType: ContractType.FULL_TIME,
     locationId: '2',
     primaryRoleId: '2', // Krankenpfleger
     isActive: true
@@ -107,7 +97,6 @@ export const employeesSeedData = [
     email: 'christina.braun@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-009',
     hireDate: new Date('2021-08-01'),
-    contractType: ContractType.PART_TIME,
     locationId: '2',
     primaryRoleId: '3', // Pflegerassistent
     isActive: true
@@ -119,7 +108,6 @@ export const employeesSeedData = [
     email: 'andreas.wolf@dialyse-praxis.de',
     phoneNumber: '+49 89 1234-010',
     hireDate: new Date('2022-04-10'),
-    contractType: ContractType.FULL_TIME,
     locationId: '2',
     primaryRoleId: '3', // Pflegerassistent
     isActive: true

@@ -1,6 +1,5 @@
 import { IsString, IsEnum, IsNumber, IsOptional, Min, Max, IsEmail, IsUUID, IsArray, IsDateString, IsBoolean } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {ContractType} from "@/database/entities/employee.entity";
 
 export class CreateEmployeeDto {
   @ApiProperty({
@@ -72,14 +71,6 @@ export class CreateEmployeeDto {
   @IsBoolean()
   isActive?: boolean;
 
-  @ApiPropertyOptional({
-    description: 'Contract type',
-    enum: ContractType,
-    example: ContractType.FULL_TIME
-  })
-  @IsOptional()
-  @IsEnum(ContractType)
-  contractType?: ContractType;
 
 
 

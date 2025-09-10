@@ -16,10 +16,6 @@ import {Role} from './role.entity';
 import {EmployeeAbsence} from './employee-absence.entity';
 
 
-export enum ContractType {
-  FULL_TIME = 'full_time',
-  PART_TIME = 'part_time',
-}
 
 @Entity('employees')
 export class Employee {
@@ -51,13 +47,6 @@ export class Employee {
   @Column({ name: 'termination_date', type: 'date', nullable: true })
   terminationDate?: Date;
 
-  @Column({
-    name: 'contract_type',
-    type: 'enum',
-    enum: ContractType,
-    default: ContractType.FULL_TIME,
-  })
-  contractType: ContractType;
 
 
 
@@ -140,10 +129,4 @@ export class Employee {
     return this.isActive;
   }
 
-  get yearsOfService(): number {
-    const now = new Date();
-    const hireDate = new Date(this.hireDate);
-    const diffTime = Math.abs(now.getTime() - hireDate.getTime());
-      return Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365.25));
-  }
 }

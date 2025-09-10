@@ -12,69 +12,6 @@ export const getInitials = (name: string | undefined | null): string => {
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 };
 
-// Status-spezifische Farben basierend auf isActive und isAvailable
-export const getEmployeeStatusColor = (isActive: boolean, isAvailable: boolean, theme: any) => {
-  if (!isActive) {
-    return theme.palette.error.main;
-  }
-  if (isActive && isAvailable) {
-    return theme.palette.success.main;
-  }
-  if (isActive && !isAvailable) {
-    return theme.palette.warning.main;
-  }
-  return theme.palette.grey[500];
-};
-
-// Status formatieren basierend auf isActive und isAvailable
-export const formatEmployeeStatus = (isActive: boolean, isAvailable: boolean) => {
-  if (!isActive) {
-    return 'Inaktiv';
-  }
-  if (isActive && isAvailable) {
-    return 'Verfügbar';
-  }
-  if (isActive && !isAvailable) {
-    return 'Nicht verfügbar';
-  }
-  return 'Unbekannt';
-};
-
-// Vertragsart-spezifische Farben
-export const getContractTypeColor = (contractType: string, theme: any) => {
-  switch (contractType) {
-    case 'full_time':
-      return theme.palette.primary.main;
-    case 'part_time':
-      return theme.palette.info.main;
-    case 'contract':
-      return theme.palette.warning.main;
-    case 'temporary':
-      return theme.palette.secondary.main;
-    case 'intern':
-      return theme.palette.success.main;
-    default:
-      return theme.palette.grey[500];
-  }
-};
-
-// Vertragsart formatieren
-export const formatContractType = (contractType: string) => {
-  switch (contractType) {
-    case 'full_time':
-      return 'Vollzeit';
-    case 'part_time':
-      return 'Teilzeit';
-    case 'contract':
-      return 'Vertrag';
-    case 'temporary':
-      return 'Befristet';
-    case 'intern':
-      return 'Praktikant';
-    default:
-      return contractType;
-  }
-};
 
 // Validiere Formular-Daten
 export const validateEmployeeForm = (data: {

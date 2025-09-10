@@ -15,7 +15,7 @@ import {
     Alert,
     Stack,
 } from '@mui/material';
-import { differenceInDays, format, parseISO } from 'date-fns';
+import { differenceInDays, format, parseISO, addDays } from 'date-fns';
 import { EmployeeResponseDto, CreateEmployeeAbsenceDto } from '@/api/data-contracts';
 
 interface AbsenceDialogProps {
@@ -65,7 +65,20 @@ const AbsenceDialog: React.FC<AbsenceDialogProps> = ({
 
     // Reset form when dialog opens/closes
     useEffect(() => {
-        if (!open) {
+        if (open) {
+            // Set default dates: today and tomorrow
+            const today = new Date();
+            const tomorrow = addDays(today, 1);
+            
+            setFormData({
+                employeeId: '',
+                absenceType: '',
+                startDate: format(today, 'yyyy-MM-dd'),
+                endDate: format(tomorrow, 'yyyy-MM-dd'),
+                hoursCount: '',
+            });
+            setErrors({});
+        } else {
             setFormData({
                 employeeId: '',
                 absenceType: '',

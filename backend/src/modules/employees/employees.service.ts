@@ -62,16 +62,21 @@ export class EmployeesService {
   async findAll(includeRelations: boolean = true): Promise<Employee[]> {
     this.logger.log('Retrieving all employees');
     
-    const options = includeRelations ? {
-      relations: [
-        'organization',
-        'location', 
-        'primaryRole',
-        'roles'
-      ]
-    } : {};
-
-    return this.employeeRepository.find(options);
+    const queryBuilder = this.employeeRepository.createQueryBuilder('employee');
+    
+    if (includeRelations) {
+      queryBuilder
+        .leftJoinAndSelect('employee.organization', 'organization')
+        .leftJoinAndSelect('employee.location', 'location')
+        .leftJoinAndSelect('employee.primaryRole', 'primaryRole')
+        .leftJoinAndSelect('employee.roles', 'roles');
+    }
+    
+    queryBuilder
+      .orderBy('COALESCE(primaryRole.name, \'ZZZZ\')', 'ASC')
+      .addOrderBy('employee.lastName', 'ASC');
+    
+    return queryBuilder.getMany();
   }
 
   async findOne(id: string, includeRelations: boolean = true): Promise<Employee> {

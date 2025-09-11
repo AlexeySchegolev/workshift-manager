@@ -10,6 +10,13 @@ export class CreateShiftPlanDto {
   organizationId: string;
 
   @ApiProperty({
+    description: 'Location ID',
+    example: 'uuid-string'
+  })
+  @IsUUID()
+  locationId: string;
+
+  @ApiProperty({
     description: 'Shift plan name',
     example: 'December 2024 Shift Plan',
     maxLength: 255

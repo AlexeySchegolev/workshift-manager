@@ -15,6 +15,8 @@ import {rolesSeedData} from "@/database/seeds/data/roles.seed";
 import {shiftsSeedData} from "@/database/seeds/data/shifts.seed";
 import {EmployeeAbsence} from "@/database/entities/employee-absence.entity";
 import {employeeAbsencesSeedData} from "@/database/seeds/data/employee-absences.seed";
+import {ShiftPlan} from "@/database/entities/shift-plan.entity";
+import {shiftPlansSeedData} from "@/database/seeds/data/shift-plans.seed";
 
 @Injectable()
 export class SeederService {
@@ -35,11 +37,12 @@ export class SeederService {
 
             // 2. Insert seed data (in correct order)
             const organization = await this.seedOrganizations();
-            await this.seedUsers(organization);
+            const user = await this.seedUsers(organization);
             const roles = await this.seedRoles(organization);
             const locations = await this.seedLocations(organization);
             const employees = await this.seedEmployees(organization, roles, locations);
             await this.seedShifts(organization, locations);
+            await this.seedShiftPlans(organization, locations, user);
             await this.seedEmployeeAbsences(employees);
 
             this.logger.log('✅ Database Seeding completed successfully!');
@@ -235,6 +238,34 @@ export class SeederService {
         }
     }
 
+    private async seedShiftPlans(organization: Organization, locations: Location[], user: User): Promise<void> {
+        this.logger.log('📅 Adding shift plans...');
+
+        try {
+            const shiftPlanRepo = this.dataSource.getRepository(ShiftPlan);
+
+            // Update shift plan data with proper references
+            const shiftPlanData = shiftPlansSeedData.map(shiftPlan => {
+                const locationIndex = parseInt(shiftPlan.locationId as string) - 1;
+
+                return {
+                    ...shiftPlan,
+                    organizationId: organization.id,
+                    locationId: locations[locationIndex]?.id || locations[0].id,
+                    createdBy: user.id,
+                    updatedBy: user.id
+                };
+            });
+
+            const shiftPlans = await shiftPlanRepo.save(shiftPlanData);
+
+            this.logger.log(`✅ ${shiftPlans.length} shift plans added successfully`);
+        } catch (error) {
+            this.logger.error('❌ Error adding shift plans:', error);
+            throw error;
+        }
+    }
+
     async getSeededDataSummary(): Promise<{
         organizations: number;
         users: number;
@@ -243,6 +274,7 @@ export class SeederService {
         employees: number;
         employeeAbsences: number;
         shifts: number;
+        shiftPlans: number;
     }> {
         const organizationRepo = this.dataSource.getRepository(Organization);
         const userRepo = this.dataSource.getRepository(User);
@@ -251,8 +283,9 @@ export class SeederService {
         const employeeRepo = this.dataSource.getRepository(Employee);
         const absenceRepo = this.dataSource.getRepository(EmployeeAbsence);
         const shiftRepo = this.dataSource.getRepository(Shift);
+        const shiftPlanRepo = this.dataSource.getRepository(ShiftPlan);
 
-        const [organizations, users, roles, locations, employees, employeeAbsences, shifts] = await Promise.all([
+        const [organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftPlans] = await Promise.all([
             organizationRepo.count(),
             userRepo.count(),
             roleRepo.count(),
@@ -260,8 +293,9 @@ export class SeederService {
             employeeRepo.count(),
             absenceRepo.count(),
             shiftRepo.count(),
+            shiftPlanRepo.count(),
         ]);
 
-        return {organizations, users, roles, locations, employees, employeeAbsences, shifts};
+        return {organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftPlans};
     }
 }

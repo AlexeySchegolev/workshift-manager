@@ -16,8 +16,14 @@ async function runSeed() {
     
     const summary = await seederService.getSeededDataSummary();
     logger.log(`📊 Seeding-Zusammenfassung:`);
+    logger.log(`   • Organisationen: ${summary.organizations}`);
+    logger.log(`   • Benutzer: ${summary.users}`);
+    logger.log(`   • Rollen: ${summary.roles}`);
     logger.log(`   • Standorte: ${summary.locations}`);
     logger.log(`   • Mitarbeiter: ${summary.employees}`);
+    logger.log(`   • Schichten: ${summary.shifts}`);
+    logger.log(`   • Schichtpläne: ${summary.shiftPlans}`);
+    logger.log(`   • Mitarbeiter-Abwesenheiten: ${summary.employeeAbsences}`);
     
     await app.close();
     logger.log('✅ Manuelles Database Seeding erfolgreich abgeschlossen!');

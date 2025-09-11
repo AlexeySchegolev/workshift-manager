@@ -21,6 +21,7 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import {ShiftPlansService} from './shift-plans.service';
+import {CreateShiftPlanDto} from './dto/create-shift-plan.dto';
 import {UpdateShiftPlanDto} from './dto/update-shift-plan.dto';
 import {ShiftPlanResponseDto} from './dto/shift-plan-response.dto';
 import {ExcelExportService} from './services/excel-export.service';
@@ -34,7 +35,22 @@ export class ShiftPlansController {
     private readonly excelExportService: ExcelExportService,
   ) {}
 
-
+  @Post()
+  @ApiOperation({
+    summary: 'Create shift plan',
+    description: 'Creates a new shift plan for a specific location'
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Shift plan created successfully',
+    type: ShiftPlanResponseDto
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid input data or shift plan already exists'
+  })
+  async create(@Body() createShiftPlanDto: CreateShiftPlanDto): Promise<ShiftPlanResponseDto> {
+    return this.shiftPlansService.create(createShiftPlanDto);
+  }
 
   @Get()
   @ApiOperation({ 
@@ -57,6 +73,75 @@ export class ShiftPlansController {
   ): Promise<ShiftPlanResponseDto[]> {
     const include = includeRelations === 'true';
     return this.shiftPlansService.findAll(include);
+  }
+
+  @Get('location/:locationId')
+  @ApiOperation({
+    summary: 'Get shift plans by location',
+    description: 'Retrieves all shift plans for a specific location'
+  })
+  @ApiParam({
+    name: 'locationId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
+  })
+  @ApiQuery({
+    name: 'includeRelations',
+    required: false,
+    type: Boolean,
+    description: 'Include additional relation data in response'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of shift plans for the location',
+    type: [ShiftPlanResponseDto]
+  })
+  async findByLocation(
+    @Param('locationId', ParseUUIDPipe) locationId: string,
+    @Query('includeRelations') includeRelations: string = 'true'
+  ): Promise<ShiftPlanResponseDto[]> {
+    const include = includeRelations === 'true';
+    return this.shiftPlansService.findByLocation(locationId, include);
+  }
+
+  @Get('location/:locationId/:year/:month')
+  @ApiOperation({
+    summary: 'Get shift plan by location, year and month',
+    description: 'Retrieves a specific shift plan for a location by year and month'
+  })
+  @ApiParam({
+    name: 'locationId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
+  })
+  @ApiParam({
+    name: 'year',
+    type: 'number',
+    description: 'Year (e.g., 2024)'
+  })
+  @ApiParam({
+    name: 'month',
+    type: 'number',
+    description: 'Month (1-12)'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Shift plan found',
+    type: ShiftPlanResponseDto
+  })
+  @ApiNotFoundResponse({
+    description: 'Shift plan not found'
+  })
+  async findByLocationMonthYear(
+    @Param('locationId', ParseUUIDPipe) locationId: string,
+    @Param('year') year: string,
+    @Param('month') month: string
+  ): Promise<ShiftPlanResponseDto> {
+    const yearNum = parseInt(year, 10);
+    const monthNum = parseInt(month, 10);
+    return this.shiftPlansService.findByLocationMonthYear(locationId, yearNum, monthNum);
   }
 
   @Get(':id')

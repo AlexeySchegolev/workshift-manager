@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { Organization } from './organization.entity';
 import { Employee } from './employee.entity';
 import { Shift } from './shift.entity';
+import { ShiftPlan } from './shift-plan.entity';
 
 export interface TimeSlot {
   /** Start time in HH:MM format */
@@ -94,6 +95,9 @@ export class Location {
 
   @OneToMany(() => Shift, shift => shift.location)
   shifts: Shift[];
+
+  @OneToMany(() => ShiftPlan, shiftPlan => shiftPlan.location)
+  shiftPlans: ShiftPlan[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

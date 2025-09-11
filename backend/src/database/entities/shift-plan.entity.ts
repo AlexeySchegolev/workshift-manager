@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Organization } from './organization.entity';
+import { Location } from './location.entity';
 import { User } from './user.entity';
 import { Shift } from './shift.entity';
 
@@ -12,6 +13,9 @@ export class ShiftPlan {
 
   @Column({ name: 'organization_id', type: 'uuid' })
   organizationId: string;
+
+  @Column({ name: 'location_id', type: 'uuid' })
+  locationId: string;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
@@ -41,6 +45,10 @@ export class ShiftPlan {
   @ManyToOne(() => Organization, organization => organization.shiftPlans)
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
+
+  @ManyToOne(() => Location, location => location.shiftPlans)
+  @JoinColumn({ name: 'location_id' })
+  location: Location;
 
   @ManyToOne(() => User, user => user.createdShiftPlans, { nullable: true })
   @JoinColumn({ name: 'created_by' })

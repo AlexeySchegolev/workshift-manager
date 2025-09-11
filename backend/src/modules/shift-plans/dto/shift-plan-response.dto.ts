@@ -10,6 +10,32 @@ export class ShiftPlanResponseDto {
   id: string;
 
   @ApiProperty({
+    description: 'Organization ID',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
+  })
+  organizationId: string;
+
+  @ApiProperty({
+    description: 'Location ID',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
+  })
+  locationId: string;
+
+  @ApiProperty({
+    description: 'Shift plan name',
+    example: 'December 2024 Shift Plan',
+  })
+  name: string;
+
+  @ApiPropertyOptional({
+    description: 'Shift plan description',
+    example: 'Christmas period shift plan with increased staffing requirements',
+  })
+  description?: string;
+
+  @ApiProperty({
     description: 'Year for the shift plan',
     example: 2024,
     minimum: 2020,
@@ -25,7 +51,17 @@ export class ShiftPlanResponseDto {
   })
   month: number;
 
+  @ApiProperty({
+    description: 'Start date of planning period',
+    example: '2024-12-01',
+  })
+  planningPeriodStart: Date;
 
+  @ApiProperty({
+    description: 'End date of planning period',
+    example: '2024-12-31',
+  })
+  planningPeriodEnd: Date;
 
   @ApiPropertyOptional({
     description: 'User ID who created this shift plan',
@@ -33,7 +69,6 @@ export class ShiftPlanResponseDto {
     format: 'uuid',
   })
   createdBy?: string;
-
 
   @ApiProperty({
     description: 'Date when the shift plan was created',

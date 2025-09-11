@@ -7,6 +7,7 @@ import { ExcelExportService } from './services/excel-export.service';
 import {ShiftPlan} from "@/database/entities/shift-plan.entity";
 import {Employee} from "@/database/entities/employee.entity";
 import {Organization} from "@/database/entities/organization.entity";
+import {Location} from "@/database/entities/location.entity";
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import {Organization} from "@/database/entities/organization.entity";
       ShiftPlan,
       Employee,
       Organization,
+      Location,
     ])
   ],
   controllers: [

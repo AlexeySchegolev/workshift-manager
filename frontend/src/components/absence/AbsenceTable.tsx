@@ -26,6 +26,25 @@ import { de } from 'date-fns/locale';
 import { EmployeeResponseDto, EmployeeAbsenceResponseDto } from '@/api/data-contracts';
 import MonthSelector from '../MonthSelector';
 
+// Hilfsfunktionen für Abwesenheitstypen basierend auf data-contracts
+const getAbsenceTypeLabel = (type: string): string => {
+    const labels: Record<string, string> = {
+        'vacation': 'Urlaub',
+        'sick_leave': 'Krankheit',
+        'other': 'Sonstiges'
+    };
+    return labels[type] || 'Unbekannt';
+};
+
+const getAbsenceTypeColor = (type: string): string => {
+    const colors: Record<string, string> = {
+        'vacation': '#4CAF50',      // Grün für Urlaub
+        'sick_leave': '#F44336',    // Rot für Krankheit
+        'other': '#757575',         // Grau für Sonstiges
+    };
+    return colors[type] || '#757575';
+};
+
 interface AbsenceTableProps {
     employees: EmployeeResponseDto[];
     absences: EmployeeAbsenceResponseDto[];
@@ -35,43 +54,6 @@ interface AbsenceTableProps {
     isLoading?: boolean;
 }
 
-// Hilfsfunktion für Abwesenheitstyp-Farben
-const getAbsenceTypeColor = (type: string): string => {
-    const colors: Record<string, string> = {
-        vacation: '#4CAF50',
-        sick_leave: '#F44336',
-        personal_leave: '#FF9800',
-        maternity_leave: '#E91E63',
-        paternity_leave: '#9C27B0',
-        unpaid_leave: '#607D8B',
-        training: '#2196F3',
-        conference: '#00BCD4',
-        bereavement: '#795548',
-        jury_duty: '#9E9E9E',
-        military_leave: '#3F51B5',
-        other: '#757575',
-    };
-    return colors[type] || '#757575';
-};
-
-// Hilfsfunktion für Abwesenheitstyp-Labels
-const getAbsenceTypeLabel = (type: string): string => {
-    const labels: Record<string, string> = {
-        vacation: 'Urlaub',
-        sick_leave: 'Krankheit',
-        personal_leave: 'Persönlich',
-        maternity_leave: 'Mutterschutz',
-        paternity_leave: 'Vaterzeit',
-        unpaid_leave: 'Unbezahlt',
-        training: 'Schulung',
-        conference: 'Konferenz',
-        bereavement: 'Trauerfall',
-        jury_duty: 'Geschworene',
-        military_leave: 'Militärdienst',
-        other: 'Sonstiges',
-    };
-    return labels[type] || type;
-};
 
 const AbsenceTable: React.FC<AbsenceTableProps> = ({
     employees,

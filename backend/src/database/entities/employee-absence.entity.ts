@@ -12,15 +12,6 @@ import {Employee} from './employee.entity';
 export enum AbsenceType {
     VACATION = 'vacation',
     SICK_LEAVE = 'sick_leave',
-    PERSONAL_LEAVE = 'personal_leave',
-    MATERNITY_LEAVE = 'maternity_leave',
-    PATERNITY_LEAVE = 'paternity_leave',
-    UNPAID_LEAVE = 'unpaid_leave',
-    TRAINING = 'training',
-    CONFERENCE = 'conference',
-    BEREAVEMENT = 'bereavement',
-    JURY_DUTY = 'jury_duty',
-    MILITARY_LEAVE = 'military_leave',
     OTHER = 'other'
 }
 

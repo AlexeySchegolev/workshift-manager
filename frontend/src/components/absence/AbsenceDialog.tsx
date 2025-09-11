@@ -18,28 +18,19 @@ import {
 import { differenceInDays, format, parseISO, addDays } from 'date-fns';
 import { EmployeeResponseDto, CreateEmployeeAbsenceDto } from '@/api/data-contracts';
 
+// Abwesenheitstypen basierend auf data-contracts
+const ABSENCE_TYPES = [
+    { value: 'vacation' as const, label: 'Urlaub' },
+    { value: 'sick_leave' as const, label: 'Krankheit' },
+    { value: 'other' as const, label: 'Sonstiges' }
+];
+
 interface AbsenceDialogProps {
     open: boolean;
     onClose: () => void;
     onSave: (absenceData: CreateEmployeeAbsenceDto) => Promise<void>;
     employees: EmployeeResponseDto[];
 }
-
-// Absence type options with German labels
-const ABSENCE_TYPES = [
-    { value: 'vacation', label: 'Urlaub' },
-    { value: 'sick_leave', label: 'Krankheit' },
-    { value: 'personal_leave', label: 'Persönlich' },
-    { value: 'maternity_leave', label: 'Mutterschutz' },
-    { value: 'paternity_leave', label: 'Vaterzeit' },
-    { value: 'unpaid_leave', label: 'Unbezahlt' },
-    { value: 'training', label: 'Schulung' },
-    { value: 'conference', label: 'Konferenz' },
-    { value: 'bereavement', label: 'Trauerfall' },
-    { value: 'jury_duty', label: 'Geschworene' },
-    { value: 'military_leave', label: 'Militärdienst' },
-    { value: 'other', label: 'Sonstiges' },
-] as const;
 
 const AbsenceDialog: React.FC<AbsenceDialogProps> = ({
     open,
@@ -196,8 +187,8 @@ const AbsenceDialog: React.FC<AbsenceDialogProps> = ({
                             <InputLabel>Abwesenheitstyp</InputLabel>
                             <Select
                                 value={formData.absenceType}
-                                onChange={(e) => setFormData(prev => ({ 
-                                    ...prev, 
+                                onChange={(e) => setFormData(prev => ({
+                                    ...prev,
                                     absenceType: e.target.value as CreateEmployeeAbsenceDto['absenceType']
                                 }))}
                                 label="Abwesenheitstyp"

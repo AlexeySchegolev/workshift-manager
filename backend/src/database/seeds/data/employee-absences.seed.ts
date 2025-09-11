@@ -22,7 +22,7 @@ export const employeeAbsencesSeedData = [
     employeeId: '3', // Maria Wagner
     startDate: new Date('2025-09-18'),
     endDate: new Date('2025-09-20'),
-    absenceType: AbsenceType.PERSONAL_LEAVE,
+    absenceType: AbsenceType.OTHER,
     daysCount: 3,
     hoursCount: 22.5 // 3 Tage à 7.5 Stunden (Teilzeit)
   },
@@ -30,7 +30,7 @@ export const employeeAbsencesSeedData = [
     employeeId: '4', // Stefan Bauer
     startDate: new Date('2025-09-25'),
     endDate: new Date('2025-09-27'),
-    absenceType: AbsenceType.TRAINING,
+    absenceType: AbsenceType.VACATION,
     daysCount: 3,
     hoursCount: 24
   },
@@ -38,7 +38,7 @@ export const employeeAbsencesSeedData = [
     employeeId: '5', // Julia Richter
     startDate: new Date('2025-09-30'),
     endDate: new Date('2025-09-30'),
-    absenceType: AbsenceType.VACATION,
+    absenceType: AbsenceType.SICK_LEAVE,
     daysCount: 1,
     hoursCount: 5 // Teilzeit 5 Stunden pro Tag
   },
@@ -48,7 +48,7 @@ export const employeeAbsencesSeedData = [
     employeeId: '6', // Dr. Michael Klein
     startDate: new Date('2025-10-03'),
     endDate: new Date('2025-10-04'),
-    absenceType: AbsenceType.CONFERENCE,
+    absenceType: AbsenceType.OTHER,
     daysCount: 2,
     hoursCount: 16
   },
@@ -72,7 +72,7 @@ export const employeeAbsencesSeedData = [
     employeeId: '9', // Christina Braun
     startDate: new Date('2025-10-21'),
     endDate: new Date('2025-10-25'),
-    absenceType: AbsenceType.MATERNITY_LEAVE,
+    absenceType: AbsenceType.VACATION,
     daysCount: 5,
     hoursCount: 35 // Teilzeit 7 Stunden pro Tag
   },
@@ -88,7 +88,7 @@ export const employeeAbsencesSeedData = [
     employeeId: '1', // Anna Schneider - zweiter Eintrag
     startDate: new Date('2025-10-15'),
     endDate: new Date('2025-10-17'),
-    absenceType: AbsenceType.TRAINING,
+    absenceType: AbsenceType.OTHER,
     daysCount: 3,
     hoursCount: 24
   },
@@ -96,7 +96,7 @@ export const employeeAbsencesSeedData = [
     employeeId: '2', // Thomas König - zweiter Eintrag
     startDate: new Date('2025-10-22'),
     endDate: new Date('2025-10-24'),
-    absenceType: AbsenceType.PERSONAL_LEAVE,
+    absenceType: AbsenceType.SICK_LEAVE,
     daysCount: 3,
     hoursCount: 24
   }

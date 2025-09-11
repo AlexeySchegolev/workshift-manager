@@ -96,15 +96,6 @@ export interface CreateEmployeeAbsenceDto {
   absenceType:
     | "vacation"
     | "sick_leave"
-    | "personal_leave"
-    | "maternity_leave"
-    | "paternity_leave"
-    | "unpaid_leave"
-    | "training"
-    | "conference"
-    | "bereavement"
-    | "jury_duty"
-    | "military_leave"
     | "other";
   /**
    * Number of days for absence
@@ -146,11 +137,6 @@ export interface CreateEmployeeDto {
    * @example "München"
    */
   city?: string;
-  /**
-   * Contract type
-   * @example "full_time"
-   */
-  contractType?: "full_time" | "part_time";
   /**
    * Country
    * @example "Deutschland"
@@ -408,12 +394,6 @@ export interface CreateShiftDto {
    */
   organizationId: string;
   /**
-   * Date when the shift takes place
-   * @format date
-   * @example "2024-01-15"
-   */
-  shiftDate: string;
-  /**
    * Shift plan ID this shift belongs to (optional)
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440003"
@@ -509,15 +489,6 @@ export interface EmployeeAbsenceResponseDto {
   absenceType:
     | "vacation"
     | "sick_leave"
-    | "personal_leave"
-    | "maternity_leave"
-    | "paternity_leave"
-    | "unpaid_leave"
-    | "training"
-    | "conference"
-    | "bereavement"
-    | "jury_duty"
-    | "military_leave"
     | "other";
   /**
    * Creation timestamp
@@ -600,11 +571,6 @@ export interface EmployeeResponseDto {
    * @example "München"
    */
   city?: string;
-  /**
-   * Contract type
-   * @example "full_time"
-   */
-  contractType: "full_time" | "part_time";
   /**
    * Country
    * @example "Deutschland"
@@ -727,11 +693,6 @@ export interface EmployeeResponseDto {
    * @example "uuid-string"
    */
   updatedBy?: string;
-  /**
-   * Years of service
-   * @example 3
-   */
-  yearsOfService: number;
 }
 
 export interface ExcelExportMetadataDto {
@@ -1268,12 +1229,6 @@ export interface ShiftResponseDto {
   /** Required roles for this shift */
   requiredRoles?: RoleResponseDto[];
   /**
-   * Date when the shift takes place
-   * @format date
-   * @example "2024-01-15"
-   */
-  shiftDate: string;
-  /**
    * Shift plan ID this shift belongs to (optional)
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440003"
@@ -1340,11 +1295,6 @@ export interface UpdateEmployeeDto {
    * @example "München"
    */
   city?: string;
-  /**
-   * Contract type
-   * @example "full_time"
-   */
-  contractType?: "full_time" | "part_time";
   /**
    * Country
    * @example "Deutschland"
@@ -1606,12 +1556,6 @@ export interface UpdateShiftDto {
    * @example "550e8400-e29b-41d4-a716-446655440001"
    */
   organizationId?: string;
-  /**
-   * Date when the shift takes place
-   * @format date
-   * @example "2024-01-15"
-   */
-  shiftDate?: string;
   /**
    * Shift plan ID this shift belongs to (optional)
    * @format uuid

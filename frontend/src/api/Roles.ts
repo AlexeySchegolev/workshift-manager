@@ -111,8 +111,6 @@ export class Roles<SecurityDataType = unknown> {
   rolesControllerFindByOrganization = (
     organizationId: string,
     query?: {
-      /** Only active roles */
-      activeOnly?: boolean;
       /** Include related entities */
       includeRelations?: boolean;
     },

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Table,
@@ -25,7 +25,7 @@ import {
     Schedule as ScheduleIcon,
     Refresh as RefreshIcon,
 } from '@mui/icons-material';
-import {format, isToday} from 'date-fns';
+import {format, isToday, getDaysInMonth, startOfMonth, addDays} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService} from '@/services';
@@ -63,35 +63,29 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                    onCreatePlan,
                                                    showNoShiftPlanOverlay = false
                                                }) => {
-    const theme = useTheme();
+   const theme = useTheme();
+   const [monthDays, setMonthDays] = useState<Date[]>([]);
 
-    // Generate all days of the selected month
-    const generateMonthDays = (date: Date): string[] => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+   // Berechne die Tage des Monats (ähnlich wie in AbsenceTable)
+   useEffect(() => {
+       const daysInMonth = getDaysInMonth(selectedDate);
+       const firstDay = startOfMonth(selectedDate);
+       const days: Date[] = [];
+       
+       for (let i = 0; i < daysInMonth; i++) {
+           days.push(addDays(firstDay, i));
+       }
+       
+       setMonthDays(days);
+   }, [selectedDate]);
 
-        const days: string[] = [];
-        for (let day = 1; day <= daysInMonth; day++) {
-            // Format as DD.MM.YYYY to match the backend format
-            const dayStr = day.toString().padStart(2, '0');
-            const monthStr = (month + 1).toString().padStart(2, '0');
-            days.push(`${dayStr}.${monthStr}.${year}`);
-        }
-        return days;
-    };
-
-    // Use generated days or shift plan days if available
-    const sortedDays = shiftPlan
-        ? Object.keys(shiftPlan as Record<string, any>)
-            .sort((a, b) => {
-                const [dayA, monthA, yearA] = a.split('.').map(Number);
-                const [dayB, monthB, yearB] = b.split('.').map(Number);
-                const dateA = new Date(yearA, monthA - 1, dayA);
-                const dateB = new Date(yearB, monthB - 1, dayB);
-                return dateA.getTime() - dateB.getTime();
-            })
-        : generateMonthDays(selectedDate);
+   // Convert Date objects to string format for shift plan compatibility
+   const sortedDays = monthDays.map(day => {
+       const dayStr = day.getDate().toString().padStart(2, '0');
+       const monthStr = (day.getMonth() + 1).toString().padStart(2, '0');
+       const yearStr = day.getFullYear().toString();
+       return `${dayStr}.${monthStr}.${yearStr}`;
+   });
 
     // Formatted month name
     const monthName = format(selectedDate, 'MMMM yyyy', {locale: de});
@@ -273,20 +267,6 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                             Schichtplan wird generiert...
                         </Typography>
                     </Box>
-                ) : sortedDays.length === 0 ? (
-                    <Alert
-                        severity="warning"
-                        sx={{
-                            borderRadius: 2,
-                            '& .MuiAlert-message': {
-                                width: '100%',
-                            },
-                        }}
-                    >
-                        <Typography variant="body2">
-                            Keine gültigen Tage für den ausgewählten Monat gefunden.
-                        </Typography>
-                    </Alert>
                 ) : (
                     <Fade in timeout={600}>
                         <Box sx={{flex: 1, display: 'flex', flexDirection: 'column'}}>
@@ -322,17 +302,10 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                             >
                                                 Mitarbeiter
                                             </TableCell>
-                                            {sortedDays.map(dayKey => {
-                                                const [day, month, year] = dayKey.split('.').map(Number);
-                                                const date = new Date(year, month - 1, day);
-
-                                                // Validate that the date is valid
-                                                if (isNaN(date.getTime()) || isNaN(day) || isNaN(month) || isNaN(year)) {
-                                                    return null; // Skip invalid dates
-                                                }
-
-                                                const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-                                                const isTodayDate = isToday(date);
+                                            {monthDays.map((day, index) => {
+                                                const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+                                                const isTodayDate = isToday(day);
+                                                const dayKey = sortedDays[index];
 
                                                 return (
                                                     <TableCell
@@ -358,11 +331,11 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                         <Box>
                                                             <Typography variant="caption"
                                                                         sx={{display: 'block', fontWeight: 700}}>
-                                                                {format(date, 'dd.MM')}
+                                                                {format(day, 'dd.MM')}
                                                             </Typography>
                                                             <Typography variant="caption"
                                                                         sx={{fontSize: '0.7rem', opacity: 0.8}}>
-                                                                {format(date, 'EEE', {locale: de})}
+                                                                {format(day, 'EEE', {locale: de})}
                                                             </Typography>
                                                         </Box>
                                                     </TableCell>
@@ -440,7 +413,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     </Box>
                                                 </TableCell>
 
-                                                {sortedDays.map(dayKey => {
+                                                {monthDays.map((day, index) => {
+                                                    const dayKey = sortedDays[index];
                                                     const dayPlan = (shiftPlan as Record<string, any>)?.[dayKey] as Record<string, string[]> | null;
                                                     let assignedShift = '';
 
@@ -456,10 +430,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                         }
                                                     }
 
-                                                    const [day, month, year] = dayKey.split('.').map(Number);
-                                                    const date = new Date(year, month - 1, day);
-                                                    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-                                                    const isTodayDate = isToday(date);
+                                                    const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+                                                    const isTodayDate = isToday(day);
 
                                                     return (
                                                         <TableCell

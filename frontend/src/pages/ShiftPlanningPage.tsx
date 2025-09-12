@@ -21,6 +21,9 @@ const ShiftPlanningPage: React.FC = () => {
     // Selected date
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
+    // Selected location
+    const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+
     // Employee list - load via API
     const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
 
@@ -126,6 +129,8 @@ const ShiftPlanningPage: React.FC = () => {
                         employees={employees}
                         selectedDate={selectedDate}
                         onDateChange={setSelectedDate}
+                        selectedLocationId={selectedLocationId}
+                        onLocationChange={setSelectedLocationId}
                         shiftPlan={shiftPlan}
                         isLoading={isLoading}
                         onGeneratePlan={generateShiftPlan}

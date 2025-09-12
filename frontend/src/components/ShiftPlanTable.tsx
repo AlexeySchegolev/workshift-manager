@@ -30,11 +30,14 @@ import {de} from 'date-fns/locale';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService} from '@/services';
 import MonthSelector from './MonthSelector';
+import LocationSelector from './LocationSelector';
 
 interface ShiftPlanTableProps {
     employees: EmployeeResponseDto[];
     selectedDate: Date;
     onDateChange: (date: Date) => void;
+    selectedLocationId: string | null;
+    onLocationChange: (locationId: string | null) => void;
     shiftPlan: any | null;
     shiftPlanId?: string | null; // Optional shift plan ID for Excel export
     isLoading: boolean;
@@ -48,6 +51,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                    employees,
                                                    selectedDate,
                                                    onDateChange,
+                                                   selectedLocationId,
+                                                   onLocationChange,
                                                    shiftPlan,
                                                    shiftPlanId,
                                                    isLoading,
@@ -158,12 +163,15 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
             {/* Header */}
             <CardHeader
                 title={
-                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap'}}>
+                    <Box sx={{display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap'}}>
                         <ScheduleIcon sx={{fontSize: '1.25rem', color: 'primary.main'}}/>
                         <Typography variant="h6" component="div">
                             Schichtplan für
                         </Typography>
                         <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
                             '& .MuiBox-root': {
                                 margin: 0,
                                 padding: 0,
@@ -187,6 +195,10 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                             <MonthSelector
                                 selectedDate={selectedDate}
                                 onDateChange={onDateChange}
+                            />
+                            <LocationSelector
+                                selectedLocationId={selectedLocationId}
+                                onLocationChange={onLocationChange}
                             />
                         </Box>
                     </Box>

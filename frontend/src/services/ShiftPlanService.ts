@@ -1,7 +1,8 @@
 import { BaseService } from './BaseService';
 import { ShiftPlans } from '../api/ShiftPlans';
-import { 
+import {
   ShiftPlanResponseDto,
+  CreateShiftPlanDto,
   UpdateShiftPlanDto,
   ExcelExportRequestDto,
   ExcelExportResultDto
@@ -17,6 +18,14 @@ export class ShiftPlanService extends BaseService {
   constructor() {
     super();
     this.shiftPlansApi = new ShiftPlans(this.getHttpClient());
+  }
+
+  /**
+   * Create a new shift plan
+   */
+  async createShiftPlan(shiftPlanData: CreateShiftPlanDto): Promise<ShiftPlanResponseDto> {
+    const response = await this.shiftPlansApi.shiftPlansControllerCreate(shiftPlanData);
+    return response.data;
   }
 
   /**

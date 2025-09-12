@@ -27,6 +27,7 @@ import {
   CreateOrganizationDto,
   CreateRoleDto,
   CreateShiftDto,
+  CreateShiftPlanDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,

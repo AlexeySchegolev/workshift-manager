@@ -93,10 +93,7 @@ export interface CreateEmployeeAbsenceDto {
    * Type of absence
    * @example "vacation"
    */
-  absenceType:
-    | "vacation"
-    | "sick_leave"
-    | "other";
+  absenceType: "vacation" | "sick_leave" | "other";
   /**
    * Number of days for absence
    * @example 3
@@ -420,6 +417,60 @@ export interface CreateShiftDto {
     | "overtime";
 }
 
+export interface CreateShiftPlanDto {
+  /**
+   * ID of user who created this shift plan
+   * @example "uuid-string"
+   */
+  createdBy?: string;
+  /**
+   * Shift plan description
+   * @maxLength 500
+   * @example "Christmas period shift plan with increased staffing requirements"
+   */
+  description?: string;
+  /**
+   * Location ID
+   * @example "uuid-string"
+   */
+  locationId: string;
+  /**
+   * Month for the shift plan (1-12)
+   * @min 1
+   * @max 12
+   * @example 12
+   */
+  month: number;
+  /**
+   * Shift plan name
+   * @maxLength 255
+   * @example "December 2024 Shift Plan"
+   */
+  name: string;
+  /**
+   * Organization ID
+   * @example "uuid-string"
+   */
+  organizationId: string;
+  /**
+   * End date of planning period
+   * @example "2024-12-31"
+   */
+  planningPeriodEnd: string;
+  /**
+   * Start date of planning period
+   * @example "2024-12-01"
+   */
+  planningPeriodStart: string;
+  /**
+   * Year for the shift plan
+   * @min 2020
+   * @max 2030
+   * @example 2024
+   */
+  year: number;
+}
+
 export interface CreateUserDto {
   /**
    * User email address
@@ -486,10 +537,7 @@ export interface DateRangeDto {
 
 export interface EmployeeAbsenceResponseDto {
   /** Type of absence */
-  absenceType:
-    | "vacation"
-    | "sick_leave"
-    | "other";
+  absenceType: "vacation" | "sick_leave" | "other";
   /**
    * Creation timestamp
    * @format date-time
@@ -1124,11 +1172,22 @@ export interface ShiftPlanResponseDto {
    */
   createdBy?: string;
   /**
+   * Shift plan description
+   * @example "Christmas period shift plan with increased staffing requirements"
+   */
+  description?: string;
+  /**
    * Unique identifier for the shift plan
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440000"
    */
   id: string;
+  /**
+   * Location ID
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440000"
+   */
+  locationId: string;
   /**
    * Month for the shift plan (1-12)
    * @min 1
@@ -1136,6 +1195,29 @@ export interface ShiftPlanResponseDto {
    * @example 12
    */
   month: number;
+  /**
+   * Shift plan name
+   * @example "December 2024 Shift Plan"
+   */
+  name: string;
+  /**
+   * Organization ID
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440000"
+   */
+  organizationId: string;
+  /**
+   * End date of planning period
+   * @format date-time
+   * @example "2024-12-31"
+   */
+  planningPeriodEnd: string;
+  /**
+   * Start date of planning period
+   * @format date-time
+   * @example "2024-12-01"
+   */
+  planningPeriodStart: string;
   /**
    * Date when the shift plan was last updated
    * @format date-time
@@ -1601,6 +1683,11 @@ export interface UpdateShiftPlanDto {
    * @example "Christmas period shift plan with increased staffing requirements"
    */
   description?: string;
+  /**
+   * Location ID
+   * @example "uuid-string"
+   */
+  locationId?: string;
   /**
    * Month for the shift plan (1-12)
    * @min 1

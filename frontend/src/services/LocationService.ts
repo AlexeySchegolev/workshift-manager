@@ -28,8 +28,19 @@ export class LocationService extends BaseService {
     const response = await this.locationsApi.locationsControllerFindAll(options);
     return response.data;
   }
-    /**
-     * Create a new location
+
+  /**
+   * Get a specific location by ID
+   */
+  async getLocationById(id: string, options?: {
+    includeEmployees?: boolean;
+  }): Promise<LocationResponseDto> {
+    const response = await this.locationsApi.locationsControllerFindOne(id, options);
+    return response.data;
+  }
+
+  /**
+   * Create a new location
    */
   async createLocation(locationData: CreateLocationDto): Promise<LocationResponseDto> {
     const response = await this.locationsApi.locationsControllerCreate(locationData);

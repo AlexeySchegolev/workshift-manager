@@ -27,6 +27,7 @@ import {
   CreateOrganizationDto,
   CreateRoleDto,
   CreateShiftDto,
+  CreateShiftPlanDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
@@ -64,6 +65,25 @@ export class ShiftPlans<SecurityDataType = unknown> {
   }
 
   /**
+   * @description Creates a new shift plan for a specific location
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerCreate
+   * @summary Create shift plan
+   * @request POST:/api/shift-plans
+   */
+  shiftPlansControllerCreate = (
+    data: CreateShiftPlanDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ShiftPlanResponseDto, void>({
+      path: `/api/shift-plans`,
+      method: "POST",
+      body: data,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    }); /**
    * @description Export a single shift plan to Excel format with customizable options
    *
    * @tags shift-plans
@@ -105,6 +125,47 @@ export class ShiftPlans<SecurityDataType = unknown> {
       format: "json",
       ...params,
     }); /**
+   * @description Retrieves all shift plans for a specific location
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerFindByLocation
+   * @summary Get shift plans by location
+   * @request GET:/api/shift-plans/location/{locationId}
+   */
+  shiftPlansControllerFindByLocation = (
+    locationId: string,
+    query?: {
+      /** Include additional relation data in response */
+      includeRelations?: boolean;
+    },
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ShiftPlanResponseDto[], any>({
+      path: `/api/shift-plans/location/${locationId}`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    }); /**
+   * @description Retrieves a specific shift plan for a location by year and month
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerFindByLocationMonthYear
+   * @summary Get shift plan by location, year and month
+   * @request GET:/api/shift-plans/location/{locationId}/{year}/{month}
+   */
+  shiftPlansControllerFindByLocationMonthYear = (
+    locationId: string,
+    year: number,
+    month: number,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ShiftPlanResponseDto, void>({
+      path: `/api/shift-plans/location/${locationId}/${year}/${month}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    }); /**
    * @description Retrieves a specific shift plan by its UUID
    *
    * @tags shift-plans
@@ -124,25 +185,6 @@ export class ShiftPlans<SecurityDataType = unknown> {
       path: `/api/shift-plans/${id}`,
       method: "GET",
       query: query,
-      format: "json",
-      ...params,
-    }); /**
-   * @description Retrieves a specific shift plan for a location by year and month
-   *
-   * @tags shift-plans
-   * @name ShiftPlansControllerFindByLocationMonthYear
-   * @summary Get shift plan by location, year and month
-   * @request GET:/api/shift-plans/location/{locationId}/{year}/{month}
-   */
-  shiftPlansControllerFindByLocationMonthYear = (
-    locationId: string,
-    year: string,
-    month: string,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<ShiftPlanResponseDto, void>({
-      path: `/api/shift-plans/location/${locationId}/${year}/${month}`,
-      method: "GET",
       format: "json",
       ...params,
     }); /**

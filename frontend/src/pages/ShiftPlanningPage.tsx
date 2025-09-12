@@ -7,10 +7,12 @@ import {
     Paper,
 } from '@mui/material';
 import ShiftPlanTable from '../components/ShiftPlanTable';
-import {EmployeeService, ShiftPlanService} from "@/services";
+import {EmployeeService, ShiftPlanService, LocationService} from "@/services";
+import {useAuth} from "@/contexts/AuthContext";
 import {
     EmployeeResponseDto,
-    ShiftPlanResponseDto
+    ShiftPlanResponseDto,
+    CreateShiftPlanDto
 } from "@/api/data-contracts.ts";
 
 /**
@@ -18,6 +20,7 @@ import {
  */
 const ShiftPlanningPage: React.FC = () => {
     const theme = useTheme();
+    const { organizationId, userId } = useAuth();
 
     // Selected date
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -142,8 +145,60 @@ const ShiftPlanningPage: React.FC = () => {
             return;
         }
         
-        // TODO: Implement shift plan creation
-        alert("Schichtplan-Erstellung wird implementiert...");
+        if (!organizationId) {
+            alert('Keine Organisation gefunden. Bitte melden Sie sich erneut an.');
+            return;
+        }
+        
+        setIsLoading(true);
+        try {
+            const year = selectedDate.getFullYear();
+            const month = selectedDate.getMonth() + 1;
+            
+            // Load location data to get the location name
+            const locationService = new LocationService();
+            const location = await locationService.getLocationById(selectedLocationId);
+            
+            // Calculate planning period start and end dates
+            const planningPeriodStart = new Date(year, month - 1, 1);
+            const planningPeriodEnd = new Date(year, month, 0); // Last day of the month
+            
+            // Generate shift plan name with location name
+            const monthNames = [
+                'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+            ];
+            const planName = `Schichtplan ${location.name} ${monthNames[month - 1]}, ${year}`;
+            
+            const createShiftPlanData: CreateShiftPlanDto = {
+                organizationId,
+                locationId: selectedLocationId,
+                name: planName,
+                description: `Schichtplan für ${monthNames[month - 1]} ${year}`,
+                year,
+                month,
+                planningPeriodStart: planningPeriodStart.toISOString().split('T')[0],
+                planningPeriodEnd: planningPeriodEnd.toISOString().split('T')[0],
+                createdBy: userId || undefined
+            };
+            
+            const shiftPlanService = new ShiftPlanService();
+            const newShiftPlan = await shiftPlanService.createShiftPlan(createShiftPlanData);
+            
+            // Set the new shift plan to display it
+            setShiftPlan(newShiftPlan);
+            
+            console.log('Schichtplan erfolgreich erstellt:', newShiftPlan);
+        } catch (error: any) {
+            console.error('Fehler beim Erstellen des Schichtplans:', error);
+            if (error?.response?.status === 400) {
+                alert('Ein Schichtplan für diesen Monat und diese Location existiert bereits.');
+            } else {
+                alert('Fehler beim Erstellen des Schichtplans. Bitte versuchen Sie es erneut.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     // Generate shift plan

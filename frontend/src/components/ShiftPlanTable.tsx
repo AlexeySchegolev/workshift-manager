@@ -31,6 +31,7 @@ import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService} from '@/services';
 import MonthSelector from './MonthSelector';
 import LocationSelector from './LocationSelector';
+import NoShiftPlanOverlay from './NoShiftPlanOverlay';
 
 interface ShiftPlanTableProps {
     employees: EmployeeResponseDto[];
@@ -42,6 +43,8 @@ interface ShiftPlanTableProps {
     shiftPlanId?: string | null; // Optional shift plan ID for Excel export
     isLoading: boolean;
     onGeneratePlan: () => void;
+    onCreatePlan?: () => void; // New prop for creating shift plan
+    showNoShiftPlanOverlay?: boolean; // New prop to show overlay
 }
 
 /**
@@ -56,7 +59,9 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                    shiftPlan,
                                                    shiftPlanId,
                                                    isLoading,
-                                                   onGeneratePlan
+                                                   onGeneratePlan,
+                                                   onCreatePlan,
+                                                   showNoShiftPlanOverlay = false
                                                }) => {
     const theme = useTheme();
 
@@ -158,6 +163,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 return theme.palette.text.secondary;
         }
     };
+
     return (
         <Box sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
             {/* Header */}
@@ -248,7 +254,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 sx={{pb: 1}}
             />
 
-            <CardContent sx={{pt: 0, px: 0, flex: 1, display: 'flex', flexDirection: 'column'}}>
+            <CardContent sx={{pt: 0, px: 0, flex: 1, display: 'flex', flexDirection: 'column', position: 'relative'}}>
                 {/* Shift plan table */}
                 {isLoading ? (
                     <Box
@@ -533,6 +539,15 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                             </TableContainer>
                         </Box>
                     </Fade>
+                )}
+                
+                {/* No Shift Plan Overlay - positioned within CardContent to not cover header */}
+                {showNoShiftPlanOverlay && onCreatePlan && (
+                    <NoShiftPlanOverlay
+                        selectedDate={selectedDate}
+                        selectedLocationId={selectedLocationId}
+                        onCreatePlan={onCreatePlan}
+                    />
                 )}
             </CardContent>
         </Box>

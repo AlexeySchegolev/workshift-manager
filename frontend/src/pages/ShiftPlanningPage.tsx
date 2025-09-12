@@ -135,6 +135,17 @@ const ShiftPlanningPage: React.FC = () => {
         };
     }, [selectedDate, employees, shiftPlan]);
 
+    // Create new shift plan
+    const createShiftPlan = async () => {
+        if (!selectedLocationId) {
+            alert('Bitte wählen Sie zuerst eine Location aus.');
+            return;
+        }
+        
+        // TODO: Implement shift plan creation
+        alert("Schichtplan-Erstellung wird implementiert...");
+    };
+
     // Generate shift plan
     const generateShiftPlan = async () => {
         if (employees.length === 0) {
@@ -167,6 +178,8 @@ const ShiftPlanningPage: React.FC = () => {
                         shiftPlan={shiftPlan}
                         isLoading={isLoading || isLoadingShiftPlan}
                         onGeneratePlan={generateShiftPlan}
+                        onCreatePlan={createShiftPlan}
+                        showNoShiftPlanOverlay={!!(selectedLocationId && !isLoadingShiftPlan && !shiftPlan)}
                     />
                 </Paper>
             </Fade>

@@ -127,6 +127,25 @@ export class ShiftPlans<SecurityDataType = unknown> {
       format: "json",
       ...params,
     }); /**
+   * @description Retrieves a specific shift plan for a location by year and month
+   *
+   * @tags shift-plans
+   * @name ShiftPlansControllerFindByLocationMonthYear
+   * @summary Get shift plan by location, year and month
+   * @request GET:/api/shift-plans/location/{locationId}/{year}/{month}
+   */
+  shiftPlansControllerFindByLocationMonthYear = (
+    locationId: string,
+    year: string,
+    month: string,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ShiftPlanResponseDto, void>({
+      path: `/api/shift-plans/location/${locationId}/${year}/${month}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    }); /**
    * @description Deletes a shift plan by its UUID. Only unpublished plans can be deleted.
    *
    * @tags shift-plans

@@ -40,6 +40,30 @@ export class ShiftPlanService extends BaseService {
   }
 
   /**
+   * Get a specific shift plan by location, year and month
+   */
+  async getShiftPlanByLocationMonthYear(
+    locationId: string,
+    year: number,
+    month: number
+  ): Promise<ShiftPlanResponseDto | null> {
+    try {
+      const response = await this.shiftPlansApi.shiftPlansControllerFindByLocationMonthYear(
+        locationId,
+        year.toString(),
+        month.toString()
+      );
+      return response.data;
+    } catch (error: any) {
+      // Return null if shift plan not found (404), otherwise rethrow
+      if (error?.response?.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Update an existing shift plan
    */
   async updateShiftPlan(id: string, shiftPlanData: UpdateShiftPlanDto): Promise<ShiftPlanResponseDto> {

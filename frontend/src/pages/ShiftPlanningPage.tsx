@@ -7,9 +7,10 @@ import {
     Paper,
 } from '@mui/material';
 import ShiftPlanTable from '../components/ShiftPlanTable';
-import {EmployeeService} from "@/services";
+import {EmployeeService, ShiftPlanService} from "@/services";
 import {
-    EmployeeResponseDto
+    EmployeeResponseDto,
+    ShiftPlanResponseDto
 } from "@/api/data-contracts.ts";
 
 /**
@@ -43,12 +44,12 @@ const ShiftPlanningPage: React.FC = () => {
         loadEmployees();
     }, []);
 
-    // Shift plan - using generic object type since MonthlyShiftPlanDto no longer exists
-    const [shiftPlan, setShiftPlan] = useState<Record<string, any> | null>(null);
-
+    // Shift plan - using proper DTO type
+    const [shiftPlan, setShiftPlan] = useState<ShiftPlanResponseDto | null>(null);
 
     // Loading state
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoadingShiftPlan, setIsLoadingShiftPlan] = useState<boolean>(false);
 
     // Animation control
     const [showCards, setShowCards] = useState(false);
@@ -64,27 +65,59 @@ const ShiftPlanningPage: React.FC = () => {
         return `schichtplan_${year}_${month}_${type}`;
     };
 
+    // Load shift plan from API
+    const loadShiftPlan = async (locationId: string, date: Date) => {
+        if (!locationId) return;
+        
+        setIsLoadingShiftPlan(true);
+        try {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1; // JavaScript months are 0-based
+            
+            const shiftPlanService = new ShiftPlanService();
+            const plan = await shiftPlanService.getShiftPlanByLocationMonthYear(
+                locationId,
+                year,
+                month
+            );
+            
+            setShiftPlan(plan);
+        } catch (error) {
+            console.error('Fehler beim Laden des Schichtplans:', error);
+            setShiftPlan(null);
+        } finally {
+            setIsLoadingShiftPlan(false);
+        }
+    };
+
     // Initialize shift plan
     const initializeShiftPlan = () => {
         setShiftPlan(null);
     };
 
-    // Initialize shift plan when date changes or load from sessionStorage
+    // Load shift plan when date or location changes
+    useEffect(() => {
+        if (selectedLocationId && selectedDate) {
+            loadShiftPlan(selectedLocationId, selectedDate);
+        } else {
+            setShiftPlan(null);
+        }
+    }, [selectedDate, selectedLocationId]);
+
+    // Initialize shift plan when date changes or load from sessionStorage (fallback)
     useEffect(() => {
         const planKey = getSessionKey(selectedDate, 'plan');
         const availabilityKey = getSessionKey(selectedDate, 'availability');
 
         const storedPlan = sessionStorage.getItem(planKey);
         sessionStorage.getItem(availabilityKey);
-        if (storedPlan) {
+        if (storedPlan && !shiftPlan) {
             try {
                 const parsedPlan = JSON.parse(storedPlan);
                 setShiftPlan(parsedPlan);
             } catch (error) {
                 initializeShiftPlan();
             }
-        } else {
-            initializeShiftPlan();
         }
 
         const handleBeforeUnload = () => {
@@ -100,7 +133,7 @@ const ShiftPlanningPage: React.FC = () => {
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, [selectedDate, employees]);
+    }, [selectedDate, employees, shiftPlan]);
 
     // Generate shift plan
     const generateShiftPlan = async () => {
@@ -132,7 +165,7 @@ const ShiftPlanningPage: React.FC = () => {
                         selectedLocationId={selectedLocationId}
                         onLocationChange={setSelectedLocationId}
                         shiftPlan={shiftPlan}
-                        isLoading={isLoading}
+                        isLoading={isLoading || isLoadingShiftPlan}
                         onGeneratePlan={generateShiftPlan}
                     />
                 </Paper>

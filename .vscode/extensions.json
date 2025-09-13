@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-json",
+    "usernamehw.errorlens",
+    "christian-kohler.path-intellisense",
+    "pmneo.tsimporter",
+    "steoates.autoimport",
+    "ms-vscode.vscode-eslint",
+    "formulahendry.auto-rename-tag",
+    "ms-vscode.vscode-typescript-tslint-plugin"
+  ]
+}

@@ -31,21 +31,27 @@ const ShiftPlanningPage: React.FC = () => {
     // Employee list - load via API
     const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
 
-    // Fetch employees when component loads
+    // Fetch employees when selectedLocationId changes
     useEffect(() => {
         const loadEmployees = async () => {
+            if (!selectedLocationId) {
+                setEmployees([]);
+                return;
+            }
+
             try {
-                const employees = await new EmployeeService().getAllEmployees({
+                const employees = await new EmployeeService().getEmployeesByLocation(selectedLocationId, {
                     includeRelations: true
                 });
                 setEmployees(employees);
             } catch (error) {
-                // Error handling could be added here if needed
+                console.error('Fehler beim Laden der Mitarbeiter:', error);
+                setEmployees([]);
             }
         };
 
         loadEmployees();
-    }, []);
+    }, [selectedLocationId]);
 
     // Shift plan - using proper DTO type
     const [shiftPlan, setShiftPlan] = useState<ShiftPlanResponseDto | null>(null);

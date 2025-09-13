@@ -27,8 +27,19 @@ export class EmployeeService extends BaseService {
     const response = await this.employeesApi.employeesControllerFindAll(options);
     return response.data;
   }
-    /**
-     * Create a new employee
+
+  /**
+   * Get employees by location ID
+   */
+  async getEmployeesByLocation(locationId: string, options?: {
+    includeRelations?: boolean;
+  }): Promise<EmployeeResponseDto[]> {
+    const response = await this.employeesApi.employeesControllerFindByLocation(locationId, options);
+    return response.data;
+  }
+
+  /**
+   * Create a new employee
    */
   async createEmployee(employeeData: CreateEmployeeDto): Promise<EmployeeResponseDto> {
     const response = await this.employeesApi.employeesControllerCreate(employeeData);

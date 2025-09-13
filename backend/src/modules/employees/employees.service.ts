@@ -126,7 +126,7 @@ export class EmployeesService {
     }
     
     queryBuilder
-      .orderBy('COALESCE(employee.primaryRole.name, \'ZZZZ\')', 'ASC')
+      .orderBy('COALESCE(primaryRole.name, \'ZZZZ\')', 'ASC')
       .addOrderBy('employee.lastName', 'ASC');
     
     return queryBuilder.getMany();

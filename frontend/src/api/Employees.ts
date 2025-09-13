@@ -108,6 +108,28 @@ export class Employees<SecurityDataType = unknown> {
       format: "json",
       ...params,
     }); /**
+   * @description Retrieves all employees for a specific location
+   *
+   * @tags employees
+   * @name EmployeesControllerFindByLocation
+   * @summary Get employees by location ID
+   * @request GET:/api/employees/location/{locationId}
+   */
+  employeesControllerFindByLocation = (
+    locationId: string,
+    query?: {
+      /** Include location and role relations */
+      includeRelations?: boolean;
+    },
+    params: RequestParams = {}
+  ) =>
+    this.http.request<EmployeeResponseDto[], void>({
+      path: `/api/employees/location/${locationId}`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    }); /**
    * @description Retrieves a specific employee by their UUID
    *
    * @tags employees

@@ -71,6 +71,39 @@ export class EmployeesController {
     return this.employeesService.findAll(include);
   }
 
+  @Get('location/:locationId')
+  @ApiOperation({
+    summary: 'Get employees by location ID',
+    description: 'Retrieves all employees for a specific location'
+  })
+  @ApiParam({
+    name: 'locationId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
+  })
+  @ApiQuery({
+    name: 'includeRelations',
+    required: false,
+    type: Boolean,
+    description: 'Include location and role relations'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of employees for the location',
+    type: [EmployeeResponseDto]
+  })
+  @ApiNotFoundResponse({
+    description: 'Location not found'
+  })
+  async findByLocation(
+    @Param('locationId', ParseUUIDPipe) locationId: string,
+    @Query('includeRelations') includeRelations: string = 'true'
+  ): Promise<EmployeeResponseDto[]> {
+    const include = includeRelations === 'true';
+    return this.employeesService.findByLocationId(locationId, include);
+  }
+
   @Get(':id')
   @ApiOperation({ 
     summary: 'Get employee by ID',

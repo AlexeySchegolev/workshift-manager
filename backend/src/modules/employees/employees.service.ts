@@ -103,6 +103,35 @@ export class EmployeesService {
     return employee;
   }
 
+  async findByLocationId(locationId: string, includeRelations: boolean = true): Promise<Employee[]> {
+    this.logger.log(`Retrieving employees for location ID: ${locationId}`);
+
+    // Validate location exists
+    const location = await this.locationRepository.findOne({
+      where: { id: locationId }
+    });
+    if (!location) {
+      throw new NotFoundException(`Location with ID ${locationId} not found`);
+    }
+
+    const queryBuilder = this.employeeRepository.createQueryBuilder('employee')
+      .where('employee.locationId = :locationId', { locationId });
+    
+    if (includeRelations) {
+      queryBuilder
+        .leftJoinAndSelect('employee.organization', 'organization')
+        .leftJoinAndSelect('employee.location', 'location')
+        .leftJoinAndSelect('employee.primaryRole', 'primaryRole')
+        .leftJoinAndSelect('employee.roles', 'roles');
+    }
+    
+    queryBuilder
+      .orderBy('COALESCE(employee.primaryRole.name, \'ZZZZ\')', 'ASC')
+      .addOrderBy('employee.lastName', 'ASC');
+    
+    return queryBuilder.getMany();
+  }
+
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto): Promise<Employee> {
     this.logger.log(`Updating employee with ID: ${id}`);
 

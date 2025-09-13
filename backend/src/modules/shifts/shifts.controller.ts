@@ -24,6 +24,7 @@ import { ShiftsService } from './shifts.service';
 import { CreateShiftDto } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
 import { ShiftResponseDto } from './dto/shift-response.dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('shifts')
 @Controller('api/shifts')
@@ -111,6 +112,49 @@ export class ShiftsController {
     );
 
     return this.shiftsService.findAll(Object.keys(options).length > 0 ? options : undefined);
+  }
+
+  @Get('location/:locationId')
+  @Public()
+  @ApiOperation({
+    summary: 'Get shifts by location ID',
+    description: 'Retrieves all shifts for a specific location with optional filtering'
+  })
+  @ApiParam({
+    name: 'locationId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Location UUID'
+  })
+  @ApiQuery({
+    name: 'activeOnly',
+    required: false,
+    type: Boolean,
+    description: 'Only return active shifts'
+  })
+  @ApiQuery({
+    name: 'includeRelations',
+    required: false,
+    type: Boolean,
+    description: 'Include related entities (organization, location, roles)'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of shifts for the location',
+    type: [ShiftResponseDto]
+  })
+  @ApiNotFoundResponse({
+    description: 'Location not found or no shifts available'
+  })
+  async findByLocationId(
+    @Param('locationId', ParseUUIDPipe) locationId: string,
+    @Query('activeOnly') activeOnly?: string,
+    @Query('includeRelations') includeRelations?: string
+  ): Promise<ShiftResponseDto[]> {
+    return this.shiftsService.findByLocationId(locationId, {
+      activeOnly: activeOnly === 'true',
+      includeRelations: includeRelations === 'true',
+    });
   }
 
   @Get(':id')

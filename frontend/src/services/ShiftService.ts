@@ -26,6 +26,27 @@ export class ShiftService extends BaseService {
       throw error;
     }
   }
+
+  /**
+   * Get shifts by location ID
+   */
+  async getShiftsByLocationId(locationId: string, options?: {
+    activeOnly?: boolean;
+    includeRelations?: boolean;
+  }): Promise<ShiftResponseDto[]> {
+    try {
+      // Note: This will use the new dedicated endpoint once the frontend API is regenerated
+      // For now, we use the existing findAll method with locationId filter
+      const response = await this.shiftsApi.shiftsControllerFindAll({
+        locationId,
+        ...options
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
     /**
      * Create a new shift
    */

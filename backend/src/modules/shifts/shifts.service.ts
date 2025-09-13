@@ -172,6 +172,34 @@ export class ShiftsService {
     shift.isActive = false;
     await this.shiftRepository.save(shift);
   }
+
+  /**
+   * Get shifts by location ID
+   */
+  async findByLocationId(locationId: string, options?: {
+    activeOnly?: boolean;
+    includeRelations?: boolean;
+  }): Promise<ShiftResponseDto[]> {
+    const queryBuilder = this.shiftRepository.createQueryBuilder('shift')
+      .where('shift.locationId = :locationId', { locationId });
+
+    if (options?.activeOnly) {
+      queryBuilder.andWhere('shift.isActive = true');
+      queryBuilder.andWhere('shift.deletedAt IS NULL');
+    }
+
+    if (options?.includeRelations) {
+      queryBuilder.leftJoinAndSelect('shift.organization', 'organization');
+      queryBuilder.leftJoinAndSelect('shift.location', 'location');
+      queryBuilder.leftJoinAndSelect('shift.requiredRoles', 'requiredRoles');
+    }
+
+    queryBuilder.orderBy('shift.startTime', 'ASC');
+
+    const shifts = await queryBuilder.getMany();
+    return shifts.map(shift => this.mapToResponseDto(shift));
+  }
+
     /**
      * Map Shift entity to ShiftResponseDto
      */

@@ -122,6 +122,30 @@ export class Shifts<SecurityDataType = unknown> {
       format: "json",
       ...params,
     }); /**
+   * @description Retrieves all shifts for a specific location with optional filtering
+   *
+   * @tags shifts
+   * @name ShiftsControllerFindByLocationId
+   * @summary Get shifts by location ID
+   * @request GET:/api/shifts/location/{locationId}
+   */
+  shiftsControllerFindByLocationId = (
+    locationId: string,
+    query?: {
+      /** Only return active shifts */
+      activeOnly?: boolean;
+      /** Include related entities (organization, location, roles) */
+      includeRelations?: boolean;
+    },
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ShiftResponseDto[], void>({
+      path: `/api/shifts/location/${locationId}`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    }); /**
    * @description Retrieves a specific shift by its UUID
    *
    * @tags shifts

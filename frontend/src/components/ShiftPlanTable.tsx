@@ -28,10 +28,11 @@ import {
 import {format, isToday, getDaysInMonth, startOfMonth, addDays} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
-import {excelExportService} from '@/services';
+import {excelExportService, shiftPlanDetailService} from '@/services';
 import MonthSelector from './MonthSelector';
 import LocationSelector from './LocationSelector';
 import NoShiftPlanOverlay from './NoShiftPlanOverlay';
+import ShiftAssignmentDialog from './shift/ShiftAssignmentDialog';
 
 interface ShiftPlanTableProps {
     employees: EmployeeResponseDto[];
@@ -63,8 +64,14 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                    onCreatePlan,
                                                    showNoShiftPlanOverlay = false
                                                }) => {
-   const theme = useTheme();
-   const [monthDays, setMonthDays] = useState<Date[]>([]);
+  const theme = useTheme();
+  const [monthDays, setMonthDays] = useState<Date[]>([]);
+  
+  // Modal state
+  const [isAssignmentDialogOpen, setIsAssignmentDialogOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeResponseDto | null>(null);
+  const [selectedDateForAssignment, setSelectedDateForAssignment] = useState<string>('');
+  const [currentShiftId, setCurrentShiftId] = useState<string | null>(null);
 
    // Berechne die Tage des Monats (ähnlich wie in AbsenceTable)
    useEffect(() => {
@@ -156,6 +163,58 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
             default:
                 return theme.palette.text.secondary;
         }
+    };
+
+    // Handle cell click to open assignment dialog
+    const handleCellClick = (employee: EmployeeResponseDto, dayKey: string, currentShift?: string) => {
+        setSelectedEmployee(employee);
+        setSelectedDateForAssignment(dayKey);
+        setCurrentShiftId(currentShift || null);
+        setIsAssignmentDialogOpen(true);
+    };
+
+    // Handle shift assignment
+    const handleShiftAssignment = async (employeeId: string, shiftId: string | null, date: string) => {
+        if (!shiftPlan || !shiftPlanId) {
+            throw new Error('Kein Schichtplan verfügbar');
+        }
+
+        // Parse date from DD.MM.YYYY format
+        const [day, month, year] = date.split('.');
+        const dayNumber = parseInt(day, 10);
+
+        try {
+            if (shiftId) {
+                // Assign shift
+                await shiftPlanDetailService.assignEmployeeToShift(
+                    shiftPlanId,
+                    employeeId,
+                    shiftId,
+                    dayNumber
+                );
+            } else {
+                // Remove assignment
+                await shiftPlanDetailService.removeEmployeeAssignment(
+                    shiftPlanId,
+                    employeeId,
+                    dayNumber
+                );
+            }
+
+            // Refresh the shift plan data
+            onGeneratePlan();
+        } catch (error) {
+            console.error('Error assigning shift:', error);
+            throw error;
+        }
+    };
+
+    // Close assignment dialog
+    const handleCloseAssignmentDialog = () => {
+        setIsAssignmentDialogOpen(false);
+        setSelectedEmployee(null);
+        setSelectedDateForAssignment('');
+        setCurrentShiftId(null);
     };
 
     return (
@@ -437,6 +496,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                         <TableCell
                                                             key={`${emp.id}-${dayKey}`}
                                                             align="center"
+                                                            onClick={() => handleCellClick(emp, dayKey, assignedShift)}
                                                             sx={{
                                                                 backgroundColor: (shiftPlan as Record<string, any>)?.[dayKey] === null
                                                                     ? alpha(theme.palette.grey[500], 0.1)
@@ -451,6 +511,10 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                     ? `1px solid ${alpha(getShiftColor(assignedShift), 0.3)}`
                                                                     : 'none',
                                                                 position: 'relative',
+                                                                cursor: 'pointer',
+                                                                '&:hover': {
+                                                                    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                                                                },
                                                             }}
                                                         >
                                                             {(shiftPlan as Record<string, any>)?.[dayKey] === null ? (
@@ -522,6 +586,17 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                     />
                 )}
             </CardContent>
+
+            {/* Shift Assignment Dialog */}
+            <ShiftAssignmentDialog
+                open={isAssignmentDialogOpen}
+                onClose={handleCloseAssignmentDialog}
+                onAssign={handleShiftAssignment}
+                employee={selectedEmployee}
+                selectedDate={selectedDateForAssignment}
+                currentShiftId={currentShiftId}
+                locationId={selectedLocationId}
+            />
         </Box>
     );
 };

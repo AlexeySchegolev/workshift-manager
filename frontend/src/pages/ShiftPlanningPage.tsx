@@ -207,13 +207,34 @@ const ShiftPlanningPage: React.FC = () => {
         }
     };
 
-    // Generate shift plan
+    // Generate/Refresh shift plan
     const generateShiftPlan = async () => {
+        if (!selectedLocationId) {
+            alert('Bitte wählen Sie zuerst eine Location aus.');
+            return;
+        }
+
         if (employees.length === 0) {
             alert('Keine Mitarbeiter vorhanden. Bitte fügen Sie zuerst Mitarbeiter hinzu.');
             return;
         }
-        alert("Dieses Feature kommt noch...");
+
+        // If no shift plan exists, create one first
+        if (!shiftPlan) {
+            await createShiftPlan();
+            return;
+        }
+
+        // Refresh the existing shift plan data
+        setIsLoading(true);
+        try {
+            await loadShiftPlan(selectedLocationId, selectedDate);
+        } catch (error) {
+            console.error('Fehler beim Aktualisieren des Schichtplans:', error);
+            alert('Fehler beim Aktualisieren des Schichtplans. Bitte versuchen Sie es erneut.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     // Define quick actions

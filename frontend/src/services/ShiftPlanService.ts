@@ -59,8 +59,8 @@ export class ShiftPlanService extends BaseService {
     try {
       const response = await this.shiftPlansApi.shiftPlansControllerFindByLocationMonthYear(
         locationId,
-        year.toString(),
-        month.toString()
+        year,
+        month
       );
       return response.data;
     } catch (error: any) {

@@ -99,11 +99,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
           icon: <PersonIcon color="primary" />,
           chips: [
             {
-              label: employeeToDelete?.contractType === 'full_time' ? 'Vollzeit' : 'Teilzeit',
-              color: 'primary' as const,
-              variant: 'outlined' as const,
-            },
-            {
               label: employeeToDelete?.isActive ? 'Aktiv' : 'Inaktiv',
               color: employeeToDelete?.isActive ? 'success' : 'default',
               variant: 'outlined' as const,
@@ -124,7 +119,6 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
             ...(employeeToDelete?.phoneNumber ? [{ label: 'Telefon', value: employeeToDelete.phoneNumber }] : []),
             ...(employeeToDelete?.address ? [{ label: 'Adresse', value: `${employeeToDelete.address}${employeeToDelete.city ? `, ${employeeToDelete.city}` : ''}${employeeToDelete.postalCode ? ` ${employeeToDelete.postalCode}` : ''}` }] : []),
             ...(employeeToDelete?.hireDate ? [{ label: 'Einstellungsdatum', value: new Date(employeeToDelete.hireDate).toLocaleDateString('de-DE') }] : []),
-            ...(employeeToDelete?.yearsOfService ? [{ label: 'Dienstjahre', value: `${employeeToDelete.yearsOfService} Jahre` }] : []),
           ].filter(field => field.value),
         }}
         onClose={closeDeleteDialog}

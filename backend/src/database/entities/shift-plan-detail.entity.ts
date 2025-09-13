@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { ShiftPlan } from './shift-plan.entity';
-import { User } from './user.entity';
+import { Employee } from './employee.entity';
 import { Shift } from './shift.entity';
 
 @Entity('shift_plan_details')
@@ -11,8 +11,8 @@ export class ShiftPlanDetail {
   @Column({ name: 'shift_plan_id', type: 'uuid' })
   shiftPlanId: string;
 
-  @Column({ name: 'user_id', type: 'uuid' })
-  userId: string;
+  @Column({ name: 'employee_id', type: 'uuid' })
+  employeeId: string;
 
   @Column({ name: 'shift_id', type: 'uuid' })
   shiftId: string;
@@ -25,9 +25,9 @@ export class ShiftPlanDetail {
   @JoinColumn({ name: 'shift_plan_id' })
   shiftPlan: ShiftPlan;
 
-  @ManyToOne(() => User, user => user.shiftPlanDetails)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @ManyToOne(() => Employee)
+  @JoinColumn({ name: 'employee_id' })
+  employee: Employee;
 
   @ManyToOne(() => Shift, shift => shift.shiftPlanDetails)
   @JoinColumn({ name: 'shift_id' })

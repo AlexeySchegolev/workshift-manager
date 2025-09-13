@@ -7,8 +7,8 @@ export class ShiftPlanDetailResponseDto {
   @ApiProperty({ description: 'Shift plan UUID', format: 'uuid' })
   shiftPlanId: string;
 
-  @ApiProperty({ description: 'User UUID', format: 'uuid' })
-  userId: string;
+  @ApiProperty({ description: 'Employee UUID', format: 'uuid' })
+  employeeId: string;
 
   @ApiProperty({ description: 'Shift UUID', format: 'uuid' })
   shiftId: string;
@@ -43,8 +43,8 @@ export class ShiftPlanDetailResponseDto {
     month: number;
   };
 
-  @ApiPropertyOptional({ description: 'User information' })
-  user?: {
+  @ApiPropertyOptional({ description: 'Employee information' })
+  employee?: {
     id: string;
     firstName: string;
     lastName: string;

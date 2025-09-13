@@ -98,14 +98,14 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
     query?: {
       /** Filter by day (1-31) */
       day?: string;
+      /** Filter by employee ID */
+      employeeId?: string;
       /** Filter by month (1-12) */
       month?: string;
       /** Filter by shift ID */
       shiftId?: string;
       /** Filter by shift plan ID */
       shiftPlanId?: string;
-      /** Filter by user ID */
-      userId?: string;
       /** Filter by year */
       year?: string;
     },
@@ -115,6 +115,23 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
       path: `/shift-plan-details`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    }); /**
+   * No description
+   *
+   * @tags shift-plan-details
+   * @name ShiftPlanDetailsControllerFindByEmployee
+   * @summary Get all shift assignments for a specific employee
+   * @request GET:/shift-plan-details/employee/{employeeId}
+   */
+  shiftPlanDetailsControllerFindByEmployee = (
+    employeeId: string,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ShiftPlanDetailResponseDto[], void>({
+      path: `/shift-plan-details/employee/${employeeId}`,
+      method: "GET",
       format: "json",
       ...params,
     }); /**
@@ -166,23 +183,6 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
   ) =>
     this.http.request<ShiftPlanDetailResponseDto[], void>({
       path: `/shift-plan-details/shift-plan/${shiftPlanId}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags shift-plan-details
-   * @name ShiftPlanDetailsControllerFindByUser
-   * @summary Get all shift assignments for a specific user
-   * @request GET:/shift-plan-details/user/{userId}
-   */
-  shiftPlanDetailsControllerFindByUser = (
-    userId: string,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<ShiftPlanDetailResponseDto[], void>({
-      path: `/shift-plan-details/user/${userId}`,
       method: "GET",
       format: "json",
       ...params,

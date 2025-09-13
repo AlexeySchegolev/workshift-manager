@@ -426,6 +426,11 @@ export interface CreateShiftPlanDetailDto {
    */
   day: number;
   /**
+   * Employee UUID
+   * @format uuid
+   */
+  employeeId: string;
+  /**
    * Shift UUID
    * @format uuid
    */
@@ -435,11 +440,6 @@ export interface CreateShiftPlanDetailDto {
    * @format uuid
    */
   shiftPlanId: string;
-  /**
-   * User UUID
-   * @format uuid
-   */
-  userId: string;
 }
 
 export interface CreateShiftPlanDto {
@@ -1205,6 +1205,13 @@ export interface ShiftPlanDetailResponseDto {
    * @format date-time
    */
   deletedAt?: string;
+  /** Employee information */
+  employee?: object;
+  /**
+   * Employee UUID
+   * @format uuid
+   */
+  employeeId: string;
   /**
    * Shift plan detail UUID
    * @format uuid
@@ -1236,13 +1243,6 @@ export interface ShiftPlanDetailResponseDto {
    * @format uuid
    */
   updatedBy?: string;
-  /** User information */
-  user?: object;
-  /**
-   * User UUID
-   * @format uuid
-   */
-  userId: string;
 }
 
 export interface ShiftPlanResponseDto {
@@ -1767,6 +1767,11 @@ export interface UpdateShiftPlanDetailDto {
    */
   day?: number;
   /**
+   * Employee UUID
+   * @format uuid
+   */
+  employeeId?: string;
+  /**
    * Shift UUID
    * @format uuid
    */
@@ -1776,11 +1781,6 @@ export interface UpdateShiftPlanDetailDto {
    * @format uuid
    */
   shiftPlanId?: string;
-  /**
-   * User UUID
-   * @format uuid
-   */
-  userId?: string;
 }
 
 export interface UpdateShiftPlanDto {

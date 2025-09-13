@@ -4,7 +4,7 @@ import { ShiftPlanDetailsService } from './shift-plan-details.service';
 import { ShiftPlanDetailsController } from './shift-plan-details.controller';
 import { ShiftPlanDetail } from '@/database/entities/shift-plan-detail.entity';
 import { ShiftPlan } from '@/database/entities/shift-plan.entity';
-import { User } from '@/database/entities/user.entity';
+import { Employee } from '@/database/entities/employee.entity';
 import { Shift } from '@/database/entities/shift.entity';
 
 @Module({
@@ -12,7 +12,7 @@ import { Shift } from '@/database/entities/shift.entity';
     TypeOrmModule.forFeature([
       ShiftPlanDetail,
       ShiftPlan,
-      User,
+      Employee,
       Shift,
     ]),
   ],

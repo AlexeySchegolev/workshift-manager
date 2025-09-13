@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere } from 'typeorm';
 import { ShiftPlanDetail } from '@/database/entities/shift-plan-detail.entity';
 import { ShiftPlan } from '@/database/entities/shift-plan.entity';
-import { User } from '@/database/entities/user.entity';
+import { Employee } from '@/database/entities/employee.entity';
 import { Shift } from '@/database/entities/shift.entity';
 import { CreateShiftPlanDetailDto } from './dto/create-shift-plan-detail.dto';
 import { UpdateShiftPlanDetailDto } from './dto/update-shift-plan-detail.dto';
@@ -16,8 +16,8 @@ export class ShiftPlanDetailsService {
     private readonly shiftPlanDetailRepository: Repository<ShiftPlanDetail>,
     @InjectRepository(ShiftPlan)
     private readonly shiftPlanRepository: Repository<ShiftPlan>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(Employee)
+    private readonly employeeRepository: Repository<Employee>,
     @InjectRepository(Shift)
     private readonly shiftRepository: Repository<Shift>,
   ) {}
@@ -32,13 +32,13 @@ export class ShiftPlanDetailsService {
       throw new NotFoundException(`Shift plan with ID ${createDto.shiftPlanId} not found`);
     }
 
-    // Validate user exists
-    const user = await this.userRepository.findOne({
-      where: { id: createDto.userId }
+    // Validate employee exists
+    const employee = await this.employeeRepository.findOne({
+      where: { id: createDto.employeeId }
     });
 
-    if (!user) {
-      throw new NotFoundException(`User with ID ${createDto.userId} not found`);
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID ${createDto.employeeId} not found`);
     }
 
     // Validate shift exists
@@ -56,18 +56,18 @@ export class ShiftPlanDetailsService {
       throw new BadRequestException(`Day ${createDto.day} is invalid for ${shiftPlan.year}-${shiftPlan.month.toString().padStart(2, '0')}`);
     }
 
-    // Check for existing assignment on the same day for the same user
+    // Check for existing assignment on the same day for the same employee
     const existingAssignment = await this.shiftPlanDetailRepository.findOne({
       where: {
         shiftPlanId: createDto.shiftPlanId,
-        userId: createDto.userId,
+        employeeId: createDto.employeeId,
         day: createDto.day,
         deletedAt: null
       }
     });
 
     if (existingAssignment) {
-      throw new BadRequestException(`User is already assigned to a shift on day ${createDto.day} in this shift plan`);
+      throw new BadRequestException(`Employee is already assigned to a shift on day ${createDto.day} in this shift plan`);
     }
 
     const shiftPlanDetail = this.shiftPlanDetailRepository.create(createDto);
@@ -78,7 +78,7 @@ export class ShiftPlanDetailsService {
 
   async findAll(filters?: {
     shiftPlanId?: string;
-    userId?: string;
+    employeeId?: string;
     shiftId?: string;
     day?: number;
     month?: number;
@@ -90,8 +90,8 @@ export class ShiftPlanDetailsService {
       where.shiftPlanId = filters.shiftPlanId;
     }
 
-    if (filters?.userId) {
-      where.userId = filters.userId;
+    if (filters?.employeeId) {
+      where.employeeId = filters.employeeId;
     }
 
     if (filters?.shiftId) {
@@ -104,7 +104,7 @@ export class ShiftPlanDetailsService {
 
     const queryBuilder = this.shiftPlanDetailRepository.createQueryBuilder('spd')
       .leftJoinAndSelect('spd.shiftPlan', 'sp')
-      .leftJoinAndSelect('spd.user', 'u')
+      .leftJoinAndSelect('spd.employee', 'e')
       .leftJoinAndSelect('spd.shift', 's')
       .where('spd.deletedAt IS NULL');
 
@@ -112,8 +112,8 @@ export class ShiftPlanDetailsService {
       queryBuilder.andWhere('spd.shiftPlanId = :shiftPlanId', { shiftPlanId: filters.shiftPlanId });
     }
 
-    if (filters?.userId) {
-      queryBuilder.andWhere('spd.userId = :userId', { userId: filters.userId });
+    if (filters?.employeeId) {
+      queryBuilder.andWhere('spd.employeeId = :employeeId', { employeeId: filters.employeeId });
     }
 
     if (filters?.shiftId) {
@@ -141,7 +141,7 @@ export class ShiftPlanDetailsService {
   async findOne(id: string): Promise<ShiftPlanDetailResponseDto> {
     const detail = await this.shiftPlanDetailRepository.findOne({
       where: { id, deletedAt: null },
-      relations: ['shiftPlan', 'user', 'shift']
+      relations: ['shiftPlan', 'employee', 'shift']
     });
 
     if (!detail) {
@@ -170,12 +170,12 @@ export class ShiftPlanDetailsService {
       }
     }
 
-    if (updateDto.userId && updateDto.userId !== detail.userId) {
-      const user = await this.userRepository.findOne({
-        where: { id: updateDto.userId }
+    if (updateDto.employeeId && updateDto.employeeId !== detail.employeeId) {
+      const employee = await this.employeeRepository.findOne({
+        where: { id: updateDto.employeeId }
       });
-      if (!user) {
-        throw new NotFoundException(`User with ID ${updateDto.userId} not found`);
+      if (!employee) {
+        throw new NotFoundException(`Employee with ID ${updateDto.employeeId} not found`);
       }
     }
 
@@ -210,8 +210,8 @@ export class ShiftPlanDetailsService {
     return this.findAll({ shiftPlanId });
   }
 
-  async getByUser(userId: string): Promise<ShiftPlanDetailResponseDto[]> {
-    return this.findAll({ userId });
+  async getByEmployee(employeeId: string): Promise<ShiftPlanDetailResponseDto[]> {
+    return this.findAll({ employeeId });
   }
 
   async getByShift(shiftId: string): Promise<ShiftPlanDetailResponseDto[]> {
@@ -227,7 +227,7 @@ export class ShiftPlanDetailsService {
     
     dto.id = detail.id;
     dto.shiftPlanId = detail.shiftPlanId;
-    dto.userId = detail.userId;
+    dto.employeeId = detail.employeeId;
     dto.shiftId = detail.shiftId;
     dto.day = detail.day;
     dto.createdBy = detail.createdBy;
@@ -247,13 +247,13 @@ export class ShiftPlanDetailsService {
       };
     }
 
-    if (detail.user) {
-      dto.user = {
-        id: detail.user.id,
-        firstName: detail.user.firstName,
-        lastName: detail.user.lastName,
-        email: detail.user.email,
-        fullName: detail.user.fullName,
+    if (detail.employee) {
+      dto.employee = {
+        id: detail.employee.id,
+        firstName: detail.employee.firstName,
+        lastName: detail.employee.lastName,
+        email: detail.employee.email,
+        fullName: detail.employee.fullName,
       };
     }
 

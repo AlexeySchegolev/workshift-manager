@@ -31,7 +31,7 @@ export class ShiftPlanDetailService extends BaseService {
    */
   async getAllShiftPlanDetails(filters?: {
     shiftPlanId?: string;
-    userId?: string;
+    employeeId?: string;
     shiftId?: string;
     day?: number;
     month?: number;
@@ -39,7 +39,7 @@ export class ShiftPlanDetailService extends BaseService {
   }): Promise<ShiftPlanDetailResponseDto[]> {
     const query = filters ? {
       shiftPlanId: filters.shiftPlanId,
-      userId: filters.userId,
+      employeeId: filters.employeeId,
       shiftId: filters.shiftId,
       day: filters.day?.toString(),
       month: filters.month?.toString(),
@@ -67,10 +67,10 @@ export class ShiftPlanDetailService extends BaseService {
   }
 
   /**
-   * Get all assignments for a specific user
+   * Get all assignments for a specific employee
    */
-  async getDetailsByUser(userId: string): Promise<ShiftPlanDetailResponseDto[]> {
-    const response = await this.shiftPlanDetailsApi.shiftPlanDetailsControllerFindByUser(userId);
+  async getDetailsByEmployee(employeeId: string): Promise<ShiftPlanDetailResponseDto[]> {
+    const response = await this.shiftPlanDetailsApi.shiftPlanDetailsControllerFindByEmployee(employeeId);
     return response.data;
   }
 
@@ -114,14 +114,14 @@ export class ShiftPlanDetailService extends BaseService {
    */
   async assignEmployeeToShift(
     shiftPlanId: string,
-    userId: string,
+    employeeId: string,
     shiftId: string,
     day: number
   ): Promise<ShiftPlanDetailResponseDto> {
-    // Check if there's already an assignment for this user on this day
+    // Check if there's already an assignment for this employee on this day
     const existingAssignments = await this.getAllShiftPlanDetails({
       shiftPlanId,
-      userId,
+      employeeId,
       day,
     });
 
@@ -135,7 +135,7 @@ export class ShiftPlanDetailService extends BaseService {
       // Create new assignment
       return this.createShiftPlanDetail({
         shiftPlanId,
-        userId,
+        employeeId,
         shiftId,
         day,
       });
@@ -147,12 +147,12 @@ export class ShiftPlanDetailService extends BaseService {
    */
   async removeEmployeeAssignment(
     shiftPlanId: string,
-    userId: string,
+    employeeId: string,
     day: number
   ): Promise<void> {
     const existingAssignments = await this.getAllShiftPlanDetails({
       shiftPlanId,
-      userId,
+      employeeId,
       day,
     });
 

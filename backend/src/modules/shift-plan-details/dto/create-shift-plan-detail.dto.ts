@@ -6,9 +6,9 @@ export class CreateShiftPlanDetailDto {
   @IsUUID()
   shiftPlanId: string;
 
-  @ApiProperty({ description: 'User UUID', format: 'uuid' })
+  @ApiProperty({ description: 'Employee UUID', format: 'uuid' })
   @IsUUID()
-  userId: string;
+  employeeId: string;
 
   @ApiProperty({ description: 'Shift UUID', format: 'uuid' })
   @IsUUID()

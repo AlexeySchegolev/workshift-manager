@@ -14,6 +14,7 @@ import {Organization} from './organization.entity';
 import {Location} from './location.entity';
 import {Role} from './role.entity';
 import {EmployeeAbsence} from './employee-absence.entity';
+import {ShiftPlanDetail} from './shift-plan-detail.entity';
 
 
 
@@ -99,6 +100,9 @@ export class Employee {
 
   @OneToMany(() => EmployeeAbsence, absence => absence.employee)
   absences: EmployeeAbsence[];
+
+  @OneToMany(() => ShiftPlanDetail, shiftPlanDetail => shiftPlanDetail.employee)
+  shiftPlanDetails: ShiftPlanDetail[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

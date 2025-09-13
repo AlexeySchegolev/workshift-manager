@@ -27,7 +27,7 @@ export class ShiftPlanDetailsController {
   @ApiBody({ type: CreateShiftPlanDetailDto })
   @ApiResponse({ status: 201, description: 'Shift plan detail created successfully', type: ShiftPlanDetailResponseDto })
   @ApiResponse({ status: 400, description: 'Bad request - validation failed or duplicate assignment' })
-  @ApiResponse({ status: 404, description: 'Shift plan, user, or shift not found' })
+  @ApiResponse({ status: 404, description: 'Shift plan, employee, or shift not found' })
   async create(@Body() createDto: CreateShiftPlanDetailDto): Promise<ShiftPlanDetailResponseDto> {
     return this.shiftPlanDetailsService.create(createDto);
   }
@@ -35,7 +35,7 @@ export class ShiftPlanDetailsController {
   @Get()
   @ApiOperation({ summary: 'Get all shift plan details with optional filters' })
   @ApiQuery({ name: 'shiftPlanId', required: false, description: 'Filter by shift plan ID' })
-  @ApiQuery({ name: 'userId', required: false, description: 'Filter by user ID' })
+  @ApiQuery({ name: 'employeeId', required: false, description: 'Filter by employee ID' })
   @ApiQuery({ name: 'shiftId', required: false, description: 'Filter by shift ID' })
   @ApiQuery({ name: 'day', required: false, description: 'Filter by day (1-31)' })
   @ApiQuery({ name: 'month', required: false, description: 'Filter by month (1-12)' })
@@ -43,7 +43,7 @@ export class ShiftPlanDetailsController {
   @ApiResponse({ status: 200, description: 'List of shift plan details', type: [ShiftPlanDetailResponseDto] })
   async findAll(
     @Query('shiftPlanId') shiftPlanId?: string,
-    @Query('userId') userId?: string,
+    @Query('employeeId') employeeId?: string,
     @Query('shiftId') shiftId?: string,
     @Query('day') day?: string,
     @Query('month') month?: string,
@@ -52,7 +52,7 @@ export class ShiftPlanDetailsController {
     const filters: any = {};
 
     if (shiftPlanId) filters.shiftPlanId = shiftPlanId;
-    if (userId) filters.userId = userId;
+    if (employeeId) filters.employeeId = employeeId;
     if (shiftId) filters.shiftId = shiftId;
     if (day) filters.day = parseInt(day);
     if (month) filters.month = parseInt(month);
@@ -72,15 +72,15 @@ export class ShiftPlanDetailsController {
     return this.shiftPlanDetailsService.getByShiftPlan(shiftPlanId);
   }
 
-  @Get('user/:userId')
-  @ApiOperation({ summary: 'Get all shift assignments for a specific user' })
-  @ApiParam({ name: 'userId', description: 'User UUID' })
-  @ApiResponse({ status: 200, description: 'List of user shift assignments', type: [ShiftPlanDetailResponseDto] })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  async findByUser(
-    @Param('userId', ParseUUIDPipe) userId: string
+  @Get('employee/:employeeId')
+  @ApiOperation({ summary: 'Get all shift assignments for a specific employee' })
+  @ApiParam({ name: 'employeeId', description: 'Employee UUID' })
+  @ApiResponse({ status: 200, description: 'List of employee shift assignments', type: [ShiftPlanDetailResponseDto] })
+  @ApiResponse({ status: 404, description: 'Employee not found' })
+  async findByEmployee(
+    @Param('employeeId', ParseUUIDPipe) employeeId: string
   ): Promise<ShiftPlanDetailResponseDto[]> {
-    return this.shiftPlanDetailsService.getByUser(userId);
+    return this.shiftPlanDetailsService.getByEmployee(employeeId);
   }
 
   @Get('shift/:shiftId')

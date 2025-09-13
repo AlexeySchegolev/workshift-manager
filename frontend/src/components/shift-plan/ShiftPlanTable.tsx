@@ -29,10 +29,10 @@ import {format, isToday, getDaysInMonth, startOfMonth, addDays} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService, shiftPlanDetailService} from '@/services';
-import MonthSelector from './MonthSelector';
-import LocationSelector from './LocationSelector';
-import NoShiftPlanOverlay from './NoShiftPlanOverlay';
-import ShiftAssignmentDialog from './shift/ShiftAssignmentDialog';
+import MonthSelector from '../MonthSelector';
+import LocationSelector from '../LocationSelector';
+import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
+import ShiftAssignmentDialog from '../shift/ShiftAssignmentDialog';
 
 interface ShiftPlanTableProps {
     employees: EmployeeResponseDto[];

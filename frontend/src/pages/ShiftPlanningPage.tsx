@@ -6,7 +6,7 @@ import {
     useTheme,
     Paper,
 } from '@mui/material';
-import ShiftPlanTable from '../components/ShiftPlanTable';
+import ShiftPlanTable from '../components/shift-plan/ShiftPlanTable';
 import {EmployeeService, ShiftPlanService, LocationService} from "@/services";
 import {useAuth} from "@/contexts/AuthContext";
 import {
@@ -237,6 +237,7 @@ const ShiftPlanningPage: React.FC = () => {
                         selectedLocationId={selectedLocationId}
                         onLocationChange={setSelectedLocationId}
                         shiftPlan={shiftPlan}
+                        shiftPlanId={shiftPlan?.id}
                         isLoading={isLoading || isLoadingShiftPlan}
                         onGeneratePlan={generateShiftPlan}
                         onCreatePlan={createShiftPlan}

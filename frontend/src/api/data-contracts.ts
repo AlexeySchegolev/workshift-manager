@@ -349,6 +349,12 @@ export interface CreateRoleDto {
 
 export interface CreateShiftDto {
   /**
+   * Abbreviation of the shift
+   * @maxLength 3
+   * @example "MS"
+   */
+  abbreviation: string;
+  /**
    * User ID who is creating this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440005"
@@ -1322,6 +1328,12 @@ export interface ShiftPlanResponseDto {
 
 export interface ShiftResponseDto {
   /**
+   * Abbreviation of the shift
+   * @maxLength 3
+   * @example "MS"
+   */
+  abbreviation: string;
+  /**
    * Date when the shift was created
    * @format date-time
    * @example "2024-01-15T10:30:00Z"
@@ -1683,6 +1695,12 @@ export interface UpdateRoleDto {
 }
 
 export interface UpdateShiftDto {
+  /**
+   * Abbreviation of the shift
+   * @maxLength 3
+   * @example "MS"
+   */
+  abbreviation?: string;
   /**
    * User ID who is creating this shift
    * @format uuid

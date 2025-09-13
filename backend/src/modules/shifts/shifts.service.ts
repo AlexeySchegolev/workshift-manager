@@ -210,6 +210,7 @@ export class ShiftsService {
         locationId: shift.locationId,
         shiftPlanId: shift.shiftPlanId,
         name: shift.name,
+        abbreviation: shift.abbreviation,
         description: shift.description,
         type: shift.type,
         startTime: normalizeTimeFormat(shift.startTime),

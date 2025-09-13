@@ -47,6 +47,14 @@ export class CreateShiftDto {
   name: string;
 
   @ApiProperty({
+    description: 'Abbreviation of the shift',
+    example: 'MS',
+    maxLength: 3
+  })
+  @IsString()
+  abbreviation: string;
+
+  @ApiProperty({
     description: 'Description of the shift',
     example: 'Regular morning shift covering basic operations',
     maxLength: 500,

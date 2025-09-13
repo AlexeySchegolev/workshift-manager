@@ -41,8 +41,8 @@ export class SeederService {
             const roles = await this.seedRoles(organization);
             const locations = await this.seedLocations(organization);
             const employees = await this.seedEmployees(organization, roles, locations);
-            await this.seedShifts(organization, locations);
-            await this.seedShiftPlans(organization, locations, user);
+            const shifts = await this.seedShifts(organization, locations);
+            const shiftPlans = await this.seedShiftPlans(organization, locations, user);
             await this.seedEmployeeAbsences(employees);
 
             this.logger.log('✅ Database Seeding completed successfully!');
@@ -57,6 +57,7 @@ export class SeederService {
 
         try {
             // Order is important due to Foreign Key Constraints
+            await this.dataSource.query('TRUNCATE TABLE shift_plan_details CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shift_plans CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shift_required_roles CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shifts CASCADE');
@@ -187,7 +188,7 @@ export class SeederService {
     }
 
 
-    private async seedShifts(organization: Organization, locations: Location[]): Promise<void> {
+    private async seedShifts(organization: Organization, locations: Location[]): Promise<Shift[]> {
         this.logger.log('⏰ Adding shifts...');
 
         try {
@@ -207,6 +208,7 @@ export class SeederService {
             const shifts = await shiftRepo.save(shiftData);
 
             this.logger.log(`✅ ${shifts.length} shifts added successfully`);
+            return shifts;
         } catch (error) {
             this.logger.error('❌ Error adding shifts:', error);
             throw error;
@@ -238,7 +240,7 @@ export class SeederService {
         }
     }
 
-    private async seedShiftPlans(organization: Organization, locations: Location[], user: User): Promise<void> {
+    private async seedShiftPlans(organization: Organization, locations: Location[], user: User): Promise<ShiftPlan[]> {
         this.logger.log('📅 Adding shift plans...');
 
         try {
@@ -260,11 +262,13 @@ export class SeederService {
             const shiftPlans = await shiftPlanRepo.save(shiftPlanData);
 
             this.logger.log(`✅ ${shiftPlans.length} shift plans added successfully`);
+            return shiftPlans;
         } catch (error) {
             this.logger.error('❌ Error adding shift plans:', error);
             throw error;
         }
     }
+
 
     async getSeededDataSummary(): Promise<{
         organizations: number;

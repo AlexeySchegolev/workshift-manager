@@ -417,6 +417,31 @@ export interface CreateShiftDto {
     | "overtime";
 }
 
+export interface CreateShiftPlanDetailDto {
+  /**
+   * Day of the month
+   * @min 1
+   * @max 31
+   * @example 15
+   */
+  day: number;
+  /**
+   * Shift UUID
+   * @format uuid
+   */
+  shiftId: string;
+  /**
+   * Shift plan UUID
+   * @format uuid
+   */
+  shiftPlanId: string;
+  /**
+   * User UUID
+   * @format uuid
+   */
+  userId: string;
+}
+
 export interface CreateShiftPlanDto {
   /**
    * ID of user who created this shift plan
@@ -1158,6 +1183,68 @@ export interface RoleResponseDto {
   updatedBy?: string;
 }
 
+export interface ShiftPlanDetailResponseDto {
+  /**
+   * Creation timestamp
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * Created by user UUID
+   * @format uuid
+   */
+  createdBy?: string;
+  /**
+   * Day of the month
+   * @min 1
+   * @max 31
+   */
+  day: number;
+  /**
+   * Deletion timestamp
+   * @format date-time
+   */
+  deletedAt?: string;
+  /**
+   * Shift plan detail UUID
+   * @format uuid
+   */
+  id: string;
+  /** Whether the shift plan detail is active */
+  isActive: boolean;
+  /** Shift information */
+  shift?: object;
+  /**
+   * Shift UUID
+   * @format uuid
+   */
+  shiftId: string;
+  /** Shift plan information */
+  shiftPlan?: object;
+  /**
+   * Shift plan UUID
+   * @format uuid
+   */
+  shiftPlanId: string;
+  /**
+   * Last update timestamp
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * Updated by user UUID
+   * @format uuid
+   */
+  updatedBy?: string;
+  /** User information */
+  user?: object;
+  /**
+   * User UUID
+   * @format uuid
+   */
+  userId: string;
+}
+
 export interface ShiftPlanResponseDto {
   /**
    * Date when the shift plan was created
@@ -1669,6 +1756,31 @@ export interface UpdateShiftDto {
    * @example "550e8400-e29b-41d4-a716-446655440006"
    */
   updatedBy?: string;
+}
+
+export interface UpdateShiftPlanDetailDto {
+  /**
+   * Day of the month
+   * @min 1
+   * @max 31
+   * @example 15
+   */
+  day?: number;
+  /**
+   * Shift UUID
+   * @format uuid
+   */
+  shiftId?: string;
+  /**
+   * Shift plan UUID
+   * @format uuid
+   */
+  shiftPlanId?: string;
+  /**
+   * User UUID
+   * @format uuid
+   */
+  userId?: string;
 }
 
 export interface UpdateShiftPlanDto {

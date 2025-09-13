@@ -12,6 +12,7 @@ import { ShiftPlansModule } from './modules/shift-plans/shift-plans.module';
 import { UsersModule } from './modules/users/users.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { EmployeeAbsencesModule } from './modules/employee-absences/employee-absences.module';
+import { ShiftPlanDetailsModule } from './modules/shift-plan-details/shift-plan-details.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
@@ -34,6 +35,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     EmployeeAbsencesModule,
     LocationsModule,
     ShiftPlansModule,
+    ShiftPlanDetailsModule,
     UsersModule,
     OrganizationsModule,
     RolesModule,

@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Organization } from './organization.entity';
 import { ShiftPlan } from './shift-plan.entity';
+import { ShiftPlanDetail } from './shift-plan-detail.entity';
 
 export enum UserRole {
   SUPER_ADMIN = 'super_admin',
@@ -54,6 +55,9 @@ export class User {
 
   @OneToMany(() => ShiftPlan, shiftPlan => shiftPlan.createdByUser)
   createdShiftPlans: ShiftPlan[];
+
+  @OneToMany(() => ShiftPlanDetail, shiftPlanDetail => shiftPlanDetail.user)
+  shiftPlanDetails: ShiftPlanDetail[];
 
 
   // Audit fields

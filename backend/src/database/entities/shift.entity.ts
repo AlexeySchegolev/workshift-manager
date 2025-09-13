@@ -3,6 +3,7 @@ import { Organization } from './organization.entity';
 import { Location } from './location.entity';
 import { Role } from './role.entity';
 import { ShiftPlan } from './shift-plan.entity';
+import { ShiftPlanDetail } from './shift-plan-detail.entity';
 
 export enum ShiftType {
   MORNING = 'morning',
@@ -76,6 +77,8 @@ export class Shift {
   })
   requiredRoles: Role[];
 
+  @OneToMany(() => ShiftPlanDetail, shiftPlanDetail => shiftPlanDetail.shift)
+  shiftPlanDetails: ShiftPlanDetail[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

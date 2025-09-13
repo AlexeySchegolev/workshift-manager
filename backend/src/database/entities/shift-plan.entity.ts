@@ -3,6 +3,7 @@ import { Organization } from './organization.entity';
 import { Location } from './location.entity';
 import { User } from './user.entity';
 import { Shift } from './shift.entity';
+import { ShiftPlanDetail } from './shift-plan-detail.entity';
 
 
 
@@ -57,6 +58,9 @@ export class ShiftPlan {
 
   @OneToMany(() => Shift, shift => shift.shiftPlan)
   shifts: Shift[];
+
+  @OneToMany(() => ShiftPlanDetail, shiftPlanDetail => shiftPlanDetail.shiftPlan)
+  shiftPlanDetails: ShiftPlanDetail[];
 
 
   @CreateDateColumn({ name: 'created_at' })

@@ -56,8 +56,6 @@ export class ShiftPlan {
   createdByUser?: User;
 
 
-  @OneToMany(() => Shift, shift => shift.shiftPlan)
-  shifts: Shift[];
 
   @OneToMany(() => ShiftPlanDetail, shiftPlanDetail => shiftPlanDetail.shiftPlan)
   shiftPlanDetails: ShiftPlanDetail[];

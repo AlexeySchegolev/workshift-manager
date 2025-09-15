@@ -71,11 +71,6 @@ export class ShiftsService {
       });
     }
 
-    if (options?.shiftPlanId) {
-      queryBuilder.andWhere('shift.shiftPlanId = :shiftPlanId', {
-        shiftPlanId: options.shiftPlanId
-      });
-    }
 
     if (options?.activeOnly) {
       queryBuilder.andWhere('shift.isActive = true');
@@ -208,7 +203,6 @@ export class ShiftsService {
         id: shift.id,
         organizationId: shift.organizationId,
         locationId: shift.locationId,
-        shiftPlanId: shift.shiftPlanId,
         name: shift.name,
         shortName: shift.shortName,
         description: shift.description,

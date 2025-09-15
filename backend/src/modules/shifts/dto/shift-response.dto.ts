@@ -25,13 +25,6 @@ export class ShiftResponseDto {
   })
   locationId: string;
 
-  @ApiProperty({
-    description: 'Shift plan ID this shift belongs to (optional)',
-    example: '550e8400-e29b-41d4-a716-446655440003',
-    format: 'uuid',
-    required: false
-  })
-  shiftPlanId?: string;
 
   @ApiProperty({
     description: 'Name of the shift',

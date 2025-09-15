@@ -17,8 +17,6 @@ export class Shift {
   @Column({ name: 'location_id', type: 'uuid' })
   locationId: string;
 
-  @Column({ name: 'shift_plan_id', type: 'uuid', nullable: true })
-  shiftPlanId?: string;
 
   @Column({ type: 'varchar', length: 100 })
   name: string;
@@ -51,9 +49,6 @@ export class Shift {
   @JoinColumn({ name: 'location_id' })
   location: Location;
 
-  @ManyToOne(() => ShiftPlan, shiftPlan => shiftPlan.shifts, { nullable: true })
-  @JoinColumn({ name: 'shift_plan_id' })
-  shiftPlan?: ShiftPlan;
 
   @ManyToMany(() => Role, role => role.shifts)
   @JoinTable({

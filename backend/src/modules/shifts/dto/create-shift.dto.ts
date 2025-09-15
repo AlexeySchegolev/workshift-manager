@@ -27,15 +27,6 @@ export class CreateShiftDto {
   @IsUUID()
   locationId: string;
 
-  @ApiProperty({
-    description: 'Shift plan ID this shift belongs to (optional)',
-    example: '550e8400-e29b-41d4-a716-446655440003',
-    format: 'uuid',
-    required: false
-  })
-  @IsOptional()
-  @IsUUID()
-  shiftPlanId?: string;
 
   @ApiProperty({
     description: 'Name of the shift',

@@ -537,7 +537,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                             margin: 'auto',
                                                                         }}
                                                                     >
-                                                                        {getShiftShortname(assignedShift)}
+                                                                        {assignedShift}
                                                                     </Box>
                                                                 </Tooltip>
                                                             ) : absenceReason ? (

@@ -396,12 +396,6 @@ export interface CreateShiftDto {
    */
   organizationId: string;
   /**
-   * Shift plan ID this shift belongs to (optional)
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440003"
-   */
-  shiftPlanId?: string;
-  /**
    * Short name of the shift
    * @maxLength 10
    * @example "MS"
@@ -1432,12 +1426,6 @@ export interface ShiftResponseDto {
   /** Required roles for this shift */
   requiredRoles?: RoleResponseDto[];
   /**
-   * Shift plan ID this shift belongs to (optional)
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440003"
-   */
-  shiftPlanId?: string;
-  /**
    * Short name of the shift
    * @maxLength 10
    * @example "MS"
@@ -1817,12 +1805,6 @@ export interface UpdateShiftDto {
    * @example "550e8400-e29b-41d4-a716-446655440001"
    */
   organizationId?: string;
-  /**
-   * Shift plan ID this shift belongs to (optional)
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440003"
-   */
-  shiftPlanId?: string;
   /**
    * Short name of the shift
    * @maxLength 10

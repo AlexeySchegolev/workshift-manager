@@ -56,6 +56,7 @@ export class ShiftPlanDetailResponseDto {
   shift?: {
     id: string;
     name: string;
+    shortName: string;
     startTime: string;
     endTime: string;
     duration: number;

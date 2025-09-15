@@ -1,21 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Query,
-  ParseUUIDPipe,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBody } from '@nestjs/swagger';
-import { ShiftPlanDetailsService } from './shift-plan-details.service';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateShiftPlanDetailDto } from './dto/create-shift-plan-detail.dto';
-import { UpdateShiftPlanDetailDto } from './dto/update-shift-plan-detail.dto';
 import { ShiftPlanDetailResponseDto } from './dto/shift-plan-detail-response.dto';
+import { UpdateShiftPlanDetailDto } from './dto/update-shift-plan-detail.dto';
+import { ShiftPlanDetailsService } from './shift-plan-details.service';
 
 @ApiTags('shift-plan-details')
 @Controller('shift-plan-details')

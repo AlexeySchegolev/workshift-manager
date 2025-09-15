@@ -204,7 +204,7 @@ export class ShiftPlanCalculationService {
         
         return {
           employee,
-          assignedShift: (shiftAssignment?.shift as any)?.name || null,
+          assignedShift: shiftAssignment?.shift?.shortName || null,
           shiftId: shiftAssignment?.shiftId || null,
           absenceType: absence?.absenceType || null,
           absenceReason: absence ? this.getAbsenceReasonText(absence.absenceType) : null,

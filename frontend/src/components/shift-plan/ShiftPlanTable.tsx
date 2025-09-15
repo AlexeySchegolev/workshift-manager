@@ -25,49 +25,43 @@ import {
     Schedule as ScheduleIcon,
     Refresh as RefreshIcon,
 } from '@mui/icons-material';
-import {format, isToday, getDaysInMonth, startOfMonth, addDays} from 'date-fns';
+import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService, shiftPlanDetailService} from '@/services';
+import {CalculatedShiftPlan, ShiftPlanDay, EmployeeDayStatus} from '@/services/ShiftPlanCalculationService';
 import MonthSelector from '../MonthSelector';
 import LocationSelector from '../LocationSelector';
 import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
 import ShiftAssignmentDialog from '../shift/ShiftAssignmentDialog';
 
 interface ShiftPlanTableProps {
-    employees: EmployeeResponseDto[];
+    calculatedShiftPlan: CalculatedShiftPlan;
     selectedDate: Date;
     onDateChange: (date: Date) => void;
     selectedLocationId: string | null;
     onLocationChange: (locationId: string | null) => void;
-    shiftPlan: any | null;
-    shiftPlanDetails?: any[]; // Details for shift assignments
-    shiftPlanId?: string | null; // Optional shift plan ID for Excel export
     isLoading: boolean;
     onGeneratePlan: () => void;
-    onCreatePlan?: () => void; // New prop for creating shift plan
-    showNoShiftPlanOverlay?: boolean; // New prop to show overlay
+    onCreatePlan?: () => void;
+    showNoShiftPlanOverlay?: boolean;
 }
 
 /**
  * Modern Shift Plan Table in Dashboard Style
  */
 const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
-                                                   employees,
+                                                   calculatedShiftPlan,
                                                    selectedDate,
                                                    onDateChange,
                                                    selectedLocationId,
                                                    onLocationChange,
-                                                   shiftPlan,
-                                                   shiftPlanDetails = [],
-                                                   shiftPlanId,
                                                    isLoading,
                                                    onGeneratePlan,
                                                    onCreatePlan,
                                                    showNoShiftPlanOverlay = false
                                                }) => {
   const theme = useTheme();
-  const [monthDays, setMonthDays] = useState<Date[]>([]);
   
   // Modal state
   const [isAssignmentDialogOpen, setIsAssignmentDialogOpen] = useState(false);
@@ -75,40 +69,22 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
   const [selectedDateForAssignment, setSelectedDateForAssignment] = useState<string>('');
   const [currentShiftId, setCurrentShiftId] = useState<string | null>(null);
 
-   // Berechne die Tage des Monats (ähnlich wie in AbsenceTable)
-   useEffect(() => {
-       const daysInMonth = getDaysInMonth(selectedDate);
-       const firstDay = startOfMonth(selectedDate);
-       const days: Date[] = [];
-       
-       for (let i = 0; i < daysInMonth; i++) {
-           days.push(addDays(firstDay, i));
-       }
-       
-       setMonthDays(days);
-   }, [selectedDate]);
-
-   // Convert Date objects to string format for shift plan compatibility
-   const sortedDays = monthDays.map(day => {
-       const dayStr = day.getDate().toString().padStart(2, '0');
-       const monthStr = (day.getMonth() + 1).toString().padStart(2, '0');
-       const yearStr = day.getFullYear().toString();
-       return `${dayStr}.${monthStr}.${yearStr}`;
-   });
+  // Destructure calculated data
+  const { employees, days, shiftPlan, shiftPlanDetails } = calculatedShiftPlan;
 
     // Formatted month name
     const monthName = format(selectedDate, 'MMMM yyyy', {locale: de});
 
     // Function to export the shift plan
     const handleExportToExcel = async () => {
-        if (!shiftPlan || !shiftPlanId) {
+        if (!shiftPlan || !shiftPlan.id) {
             alert('Kein Schichtplan zum Exportieren verfügbar.');
             return;
         }
 
         try {
             const blob = await excelExportService.exportShiftPlan(
-                shiftPlanId,
+                shiftPlan.id,
                 {
                     includeStatistics: true,
                     includePlanning: true,
@@ -210,7 +186,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
 
     // Handle shift assignment
     const handleShiftAssignment = async (employeeId: string, shiftId: string | null, date: string) => {
-        if (!shiftPlan || !shiftPlanId) {
+        if (!shiftPlan || !shiftPlan.id) {
             throw new Error('Kein Schichtplan verfügbar');
         }
 
@@ -222,7 +198,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
             if (shiftId) {
                 // Assign shift
                 await shiftPlanDetailService.assignEmployeeToShift(
-                    shiftPlanId,
+                    shiftPlan.id,
                     employeeId,
                     shiftId,
                     dayNumber
@@ -230,7 +206,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
             } else {
                 // Remove assignment
                 await shiftPlanDetailService.removeEmployeeAssignment(
-                    shiftPlanId,
+                    shiftPlan.id,
                     employeeId,
                     dayNumber
                 );
@@ -396,14 +372,11 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                             >
                                                 Mitarbeiter
                                             </TableCell>
-                                            {monthDays.map((day, index) => {
-                                                const isWeekend = day.getDay() === 0 || day.getDay() === 6;
-                                                const isTodayDate = isToday(day);
-                                                const dayKey = sortedDays[index];
+                                            {days.map((dayInfo) => {
 
                                                 return (
                                                     <TableCell
-                                                        key={dayKey}
+                                                        key={dayInfo.dayKey}
                                                         align="center"
                                                         sx={{
                                                             minWidth: 50,
@@ -411,12 +384,12 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                             height: '50px',
                                                             fontWeight: 600,
                                                             fontSize: '0.8rem',
-                                                            backgroundColor: isTodayDate
+                                                            backgroundColor: dayInfo.isToday
                                                                 ? alpha(theme.palette.primary.main, 0.04)
-                                                                : isWeekend
+                                                                : dayInfo.isWeekend
                                                                     ? alpha(theme.palette.error.main, 0.05)
                                                                     : theme.palette.background.paper,
-                                                            color: isWeekend ? theme.palette.error.main : 'inherit',
+                                                            color: dayInfo.isWeekend ? theme.palette.error.main : 'inherit',
                                                             position: 'sticky',
                                                             top: 0,
                                                             zIndex: 2,
@@ -426,11 +399,11 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                         <Box>
                                                             <Typography variant="caption"
                                                                         sx={{display: 'block', fontWeight: 700}}>
-                                                                {format(day, 'dd.MM')}
+                                                                {format(dayInfo.date, 'dd.MM')}
                                                             </Typography>
                                                             <Typography variant="caption"
                                                                         sx={{fontSize: '0.7rem', opacity: 0.8}}>
-                                                                {format(day, 'EEE', {locale: de})}
+                                                                {format(dayInfo.date, 'EEE', {locale: de})}
                                                             </Typography>
                                                         </Box>
                                                     </TableCell>
@@ -508,52 +481,36 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     </Box>
                                                 </TableCell>
 
-                                                {monthDays.map((day, index) => {
-                                                    const dayKey = sortedDays[index];
-                                                    const dayNumber = day.getDate();
+                                                {days.map((dayInfo) => {
+                                                    // Finde den Mitarbeiter-Status für diesen Tag
+                                                    const employeeStatus = dayInfo.employees.find(empStatus =>
+                                                        empStatus.employee.id === emp.id
+                                                    );
                                                     
-                                                    // Try to get shift from original shiftPlan structure first (for backward compatibility)
-                                                    const dayPlan = (shiftPlan as Record<string, any>)?.[dayKey] as Record<string, string[]> | null;
-                                                    let assignedShift = '';
-
-                                                    if (dayPlan) {
-                                                        // Original logic: check shiftPlan structure
-                                                        for (const shiftName in dayPlan) {
-                                                            const employeeList = Array.isArray(dayPlan[shiftName]) ? dayPlan[shiftName] : [];
-                                                            if (employeeList.includes(emp.id)) {
-                                                                assignedShift = shiftName;
-                                                                break;
-                                                            }
-                                                        }
-                                                    } else if (shiftPlanDetails.length > 0) {
-                                                        // New logic: use details if available
-                                                        const assignment = shiftPlanDetails.find(detail =>
-                                                            detail.employeeId === emp.id && detail.day === dayNumber
-                                                        );
-                                                        assignedShift = assignment?.shift?.name || '';
-                                                    }
-
-                                                    const isWeekend = day.getDay() === 0 || day.getDay() === 6;
-                                                    const isTodayDate = isToday(day);
+                                                    const assignedShift = employeeStatus?.assignedShift || '';
+                                                    const absenceReason = employeeStatus?.absenceReason || null;
+                                                    const isEmpty = employeeStatus?.isEmpty || false;
 
                                                     return (
                                                         <TableCell
-                                                            key={`${emp.id}-${dayKey}`}
+                                                            key={`${emp.id}-${dayInfo.dayKey}`}
                                                             align="center"
-                                                            onClick={() => handleCellClick(emp, dayKey, assignedShift)}
+                                                            onClick={() => handleCellClick(emp, dayInfo.dayKey, assignedShift)}
                                                             sx={{
-                                                                backgroundColor: (shiftPlan as Record<string, any>)?.[dayKey] === null
-                                                                    ? alpha(theme.palette.grey[500], 0.1)
-                                                                    : assignedShift
-                                                                        ? getShiftBackgroundColor(assignedShift)
-                                                                        : isTodayDate
+                                                                backgroundColor: assignedShift
+                                                                    ? getShiftBackgroundColor(assignedShift)
+                                                                    : absenceReason
+                                                                        ? alpha(theme.palette.warning.main, 0.1)
+                                                                        : dayInfo.isToday
                                                                             ? alpha(theme.palette.primary.main, 0.03)
-                                                                            : isWeekend
+                                                                            : dayInfo.isWeekend
                                                                                 ? alpha(theme.palette.error.main, 0.02)
                                                                                 : 'inherit',
                                                                 border: assignedShift
                                                                     ? `1px solid ${alpha(getShiftColor(assignedShift), 0.3)}`
-                                                                    : 'none',
+                                                                    : absenceReason
+                                                                        ? `1px solid ${alpha(theme.palette.warning.main, 0.3)}`
+                                                                        : 'none',
                                                                 position: 'relative',
                                                                 cursor: 'pointer',
                                                                 '&:hover': {
@@ -561,18 +518,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                 },
                                                             }}
                                                         >
-                                                            {(shiftPlan as Record<string, any>)?.[dayKey] === null ? (
-                                                                <Typography
-                                                                    variant="caption"
-                                                                    sx={{
-                                                                        color: 'text.disabled',
-                                                                        fontStyle: 'italic',
-                                                                        fontSize: '0.75rem',
-                                                                    }}
-                                                                >
-                                                                    —
-                                                                </Typography>
-                                                            ) : assignedShift ? (
+                                                            {assignedShift ? (
                                                                 <Tooltip title={assignedShift} arrow>
                                                                     <Box
                                                                         sx={{
@@ -592,6 +538,28 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                         }}
                                                                     >
                                                                         {getShiftShortname(assignedShift)}
+                                                                    </Box>
+                                                                </Tooltip>
+                                                            ) : absenceReason ? (
+                                                                <Tooltip title={absenceReason} arrow>
+                                                                    <Box
+                                                                        sx={{
+                                                                            width: 28,
+                                                                            height: 28,
+                                                                            borderRadius: '50%',
+                                                                            backgroundColor: alpha(theme.palette.warning.main, 0.15),
+                                                                            color: theme.palette.warning.main,
+                                                                            border: `1px solid ${alpha(theme.palette.warning.main, 0.3)}`,
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'center',
+                                                                            fontSize: '0.6rem',
+                                                                            fontWeight: '600',
+                                                                            cursor: 'pointer',
+                                                                            margin: 'auto',
+                                                                        }}
+                                                                    >
+                                                                        A
                                                                     </Box>
                                                                 </Tooltip>
                                                             ) : (

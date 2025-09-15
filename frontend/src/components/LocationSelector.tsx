@@ -37,18 +37,15 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
         setLoading(true);
         setError(null);
         
-        console.log('Loading locations...');
         const locationsData = await locationService.getAllLocations({
           activeOnly: true,
           includeEmployees: false
         });
         
-        console.log('Locations loaded:', locationsData);
         setLocations(locationsData);
         
         // Auto-select first location if none selected and locations available
         if (!selectedLocationId && locationsData.length > 0) {
-          console.log('Auto-selecting first location:', locationsData[0].id);
           onLocationChange(locationsData[0].id);
         }
       } catch (error) {

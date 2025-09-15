@@ -7,11 +7,10 @@ import {
     Paper,
 } from '@mui/material';
 import ShiftPlanTable from '../components/shift-plan/ShiftPlanTable';
-import {EmployeeService, ShiftPlanService, LocationService} from "@/services";
+import {ShiftPlanService, LocationService} from "@/services";
+import {shiftPlanCalculationService, CalculatedShiftPlan} from "@/services/ShiftPlanCalculationService";
 import {useAuth} from "@/contexts/AuthContext";
 import {
-    EmployeeResponseDto,
-    ShiftPlanResponseDto,
     CreateShiftPlanDto
 } from "@/api/data-contracts.ts";
 
@@ -28,38 +27,22 @@ const ShiftPlanningPage: React.FC = () => {
     // Selected location
     const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
 
-    // Employee list - load via API
-    const [employees, setEmployees] = useState<EmployeeResponseDto[]>([]);
-
-    // Fetch employees when selectedLocationId changes
-    useEffect(() => {
-        const loadEmployees = async () => {
-            if (!selectedLocationId) {
-                setEmployees([]);
-                return;
-            }
-
-            try {
-                const employees = await new EmployeeService().getEmployeesByLocation(selectedLocationId, {
-                    includeRelations: true
-                });
-                setEmployees(employees);
-            } catch (error) {
-                console.error('Fehler beim Laden der Mitarbeiter:', error);
-                setEmployees([]);
-            }
-        };
-
-        loadEmployees();
-    }, [selectedLocationId]);
-
-    // Shift plan - using proper DTO type
-    const [shiftPlan, setShiftPlan] = useState<ShiftPlanResponseDto | null>(null);
-    const [shiftPlanDetails, setShiftPlanDetails] = useState<any[]>([]);
+    // Calculated shift plan data from service
+    const [calculatedShiftPlan, setCalculatedShiftPlan] = useState<CalculatedShiftPlan>({
+        shiftPlan: null,
+        shiftPlanDetails: [],
+        employees: [],
+        days: [],
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+        locationId: '',
+        locationName: null,
+        isLoading: false,
+        hasData: false
+    });
 
     // Loading state
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isLoadingShiftPlan, setIsLoadingShiftPlan] = useState<boolean>(false);
 
     // Animation control
     const [showCards, setShowCards] = useState(false);
@@ -75,42 +58,38 @@ const ShiftPlanningPage: React.FC = () => {
         return `schichtplan_${year}_${month}_${type}`;
     };
 
-    // Load shift plan from API
+    // Load shift plan using calculation service
     const loadShiftPlan = async (locationId: string, date: Date) => {
         if (!locationId) return;
         
-        setIsLoadingShiftPlan(true);
+        setCalculatedShiftPlan(prev => ({ ...prev, isLoading: true }));
+        
         try {
             const year = date.getFullYear();
             const month = date.getMonth() + 1; // JavaScript months are 0-based
             
-            const shiftPlanService = new ShiftPlanService();
-            const result = await shiftPlanService.getShiftPlanWithDetailsByLocationMonthYear(
-                locationId,
+            const result = await shiftPlanCalculationService.calculateShiftPlan(
                 year,
-                month
+                month,
+                locationId
             );
             
-            if (result) {
-                setShiftPlan(result.shiftPlan);
-                setShiftPlanDetails(result.details);
-            } else {
-                setShiftPlan(null);
-                setShiftPlanDetails([]);
-            }
+            setCalculatedShiftPlan(result);
         } catch (error) {
             console.error('Fehler beim Laden des Schichtplans:', error);
-            setShiftPlan(null);
-            setShiftPlanDetails([]);
-        } finally {
-            setIsLoadingShiftPlan(false);
+            setCalculatedShiftPlan({
+                shiftPlan: null,
+                shiftPlanDetails: [],
+                employees: [],
+                days: [],
+                year: selectedDate.getFullYear(),
+                month: selectedDate.getMonth() + 1,
+                locationId: '',
+                locationName: null,
+                isLoading: false,
+                hasData: false
+            });
         }
-    };
-
-    // Initialize shift plan
-    const initializeShiftPlan = () => {
-        setShiftPlan(null);
-        setShiftPlanDetails([]);
     };
 
     // Load shift plan when date or location changes
@@ -118,41 +97,20 @@ const ShiftPlanningPage: React.FC = () => {
         if (selectedLocationId && selectedDate) {
             loadShiftPlan(selectedLocationId, selectedDate);
         } else {
-            setShiftPlan(null);
-            setShiftPlanDetails([]);
+            setCalculatedShiftPlan({
+                shiftPlan: null,
+                shiftPlanDetails: [],
+                employees: [],
+                days: [],
+                year: selectedDate.getFullYear(),
+                month: selectedDate.getMonth() + 1,
+                locationId: selectedLocationId || '',
+                locationName: null,
+                isLoading: false,
+                hasData: false
+            });
         }
     }, [selectedDate, selectedLocationId]);
-
-    // Initialize shift plan when date changes or load from sessionStorage (fallback)
-    useEffect(() => {
-        const planKey = getSessionKey(selectedDate, 'plan');
-        const availabilityKey = getSessionKey(selectedDate, 'availability');
-
-        const storedPlan = sessionStorage.getItem(planKey);
-        sessionStorage.getItem(availabilityKey);
-        if (storedPlan && !shiftPlan) {
-            try {
-                const parsedPlan = JSON.parse(storedPlan);
-                setShiftPlan(parsedPlan);
-            } catch (error) {
-                initializeShiftPlan();
-            }
-        }
-
-        const handleBeforeUnload = () => {
-            Object.keys(sessionStorage).forEach(key => {
-                if (key.startsWith('schichtplan_')) {
-                    sessionStorage.removeItem(key);
-                }
-            });
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
-    }, [selectedDate, employees, shiftPlan]);
 
     // Create new shift plan
     const createShiftPlan = async () => {
@@ -201,8 +159,8 @@ const ShiftPlanningPage: React.FC = () => {
             const shiftPlanService = new ShiftPlanService();
             const newShiftPlan = await shiftPlanService.createShiftPlan(createShiftPlanData);
             
-            // Set the new shift plan to display it
-            setShiftPlan(newShiftPlan);
+            // Refresh the calculated shift plan after creation
+            await loadShiftPlan(selectedLocationId, selectedDate);
             
             console.log('Schichtplan erfolgreich erstellt:', newShiftPlan);
         } catch (error: any) {
@@ -224,13 +182,13 @@ const ShiftPlanningPage: React.FC = () => {
             return;
         }
 
-        if (employees.length === 0) {
+        if (calculatedShiftPlan.employees.length === 0) {
             alert('Keine Mitarbeiter vorhanden. Bitte fügen Sie zuerst Mitarbeiter hinzu.');
             return;
         }
 
         // If no shift plan exists, create one first
-        if (!shiftPlan) {
+        if (!calculatedShiftPlan.shiftPlan) {
             await createShiftPlan();
             return;
         }
@@ -262,18 +220,15 @@ const ShiftPlanningPage: React.FC = () => {
                     }}
                 >
                     <ShiftPlanTable
-                        employees={employees}
+                        calculatedShiftPlan={calculatedShiftPlan}
                         selectedDate={selectedDate}
                         onDateChange={setSelectedDate}
                         selectedLocationId={selectedLocationId}
                         onLocationChange={setSelectedLocationId}
-                        shiftPlan={shiftPlan}
-                        shiftPlanDetails={shiftPlanDetails}
-                        shiftPlanId={shiftPlan?.id}
-                        isLoading={isLoading || isLoadingShiftPlan}
+                        isLoading={isLoading || calculatedShiftPlan.isLoading}
                         onGeneratePlan={generateShiftPlan}
                         onCreatePlan={createShiftPlan}
-                        showNoShiftPlanOverlay={!!(selectedLocationId && !isLoadingShiftPlan && !shiftPlan)}
+                        showNoShiftPlanOverlay={!!(selectedLocationId && !calculatedShiftPlan.isLoading && !calculatedShiftPlan.shiftPlan)}
                     />
                 </Paper>
             </Fade>

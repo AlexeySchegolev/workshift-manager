@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 import { EmployeeResponseDto, ShiftResponseDto } from '@/api/data-contracts';
 import { shiftService } from '@/services/ShiftService';
+import { format, parse } from 'date-fns';
+import { de } from 'date-fns/locale';
 
 interface ShiftAssignmentDialogProps {
     open: boolean;
@@ -160,7 +162,14 @@ const ShiftAssignmentDialog: React.FC<ShiftAssignmentDialogProps> = ({
                             )}
                         </Box>
                         <Typography variant="body2" color="text.secondary">
-                            Datum: {selectedDate}
+                            Datum: {selectedDate} ({(() => {
+                                try {
+                                    const parsedDate = parse(selectedDate, 'dd.MM.yyyy', new Date());
+                                    return format(parsedDate, 'EEE', { locale: de });
+                                } catch {
+                                    return '';
+                                }
+                            })()})
                         </Typography>
                     </Box>
 

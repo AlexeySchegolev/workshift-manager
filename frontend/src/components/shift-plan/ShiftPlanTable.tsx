@@ -24,10 +24,6 @@ import {
     FileDownload as FileDownloadIcon,
     Schedule as ScheduleIcon,
     Refresh as RefreshIcon,
-    WbSunny as MorningIcon,
-    Brightness3 as EveningIcon,
-    NightsStay as NightIcon,
-    AccessTime as DefaultShiftIcon,
 } from '@mui/icons-material';
 import {format, isToday, getDaysInMonth, startOfMonth, addDays} from 'date-fns';
 import {de} from 'date-fns/locale';
@@ -171,13 +167,13 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
         }
     };
 
-    // Function to get icon for shift
-    const getShiftIcon = (shift: string) => {
+    // Function to get shortname for shift display in circle
+    const getShiftShortname = (shift: string): string => {
         switch (shift) {
             case 'F':
             case 'Frühschicht':
             case 'morning':
-                return <MorningIcon sx={{ fontSize: '0.9rem' }} />;
+                return 'F';
             case 'S':
             case 'S0':
             case 'S1':
@@ -185,16 +181,22 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
             case 'Spätschicht':
             case 'afternoon':
             case 'evening':
-                return <EveningIcon sx={{ fontSize: '0.9rem' }} />;
+                return 'S';
             case 'N':
             case 'Nachtschicht':
             case 'night':
-                return <NightIcon sx={{ fontSize: '0.9rem' }} />;
+                return 'N';
             case 'FS':
             case 'special':
-                return <DefaultShiftIcon sx={{ fontSize: '0.9rem' }} />;
+                return 'FS';
+            case '4':
+                return '4';
+            case '5':
+                return '5';
+            case '6':
+                return '6';
             default:
-                return <DefaultShiftIcon sx={{ fontSize: '0.9rem' }} />;
+                return shift.substring(0, 2).toUpperCase();
         }
     };
 
@@ -574,16 +576,22 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                 <Tooltip title={assignedShift} arrow>
                                                                     <Box
                                                                         sx={{
-                                                                            width: '100%',
-                                                                            height: '100%',
+                                                                            width: 28,
+                                                                            height: 28,
+                                                                            borderRadius: '50%',
+                                                                            backgroundColor: alpha(getShiftColor(assignedShift), 0.15),
+                                                                            color: getShiftColor(assignedShift),
+                                                                            border: `1px solid ${alpha(getShiftColor(assignedShift), 0.3)}`,
                                                                             display: 'flex',
                                                                             alignItems: 'center',
                                                                             justifyContent: 'center',
-                                                                            color: getShiftColor(assignedShift),
+                                                                            fontSize: '0.7rem',
+                                                                            fontWeight: '600',
                                                                             cursor: 'pointer',
+                                                                            margin: 'auto',
                                                                         }}
                                                                     >
-                                                                        {getShiftIcon(assignedShift)}
+                                                                        {getShiftShortname(assignedShift)}
                                                                     </Box>
                                                                 </Tooltip>
                                                             ) : (

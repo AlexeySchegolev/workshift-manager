@@ -17,7 +17,13 @@ export class CreateRoleDto {
   @Length(1, 100)
   name: string;
 
-
+  @ApiProperty({
+    description: 'Role short name',
+    example: 'SL'
+  })
+  @IsString()
+  @Length(1, 10)
+  shortName: string;
 
   @ApiPropertyOptional({
     description: 'Created by (User ID)',

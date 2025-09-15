@@ -16,6 +16,7 @@ export class RolesController {
       id: role.id,
       organizationId: role.organizationId,
       name: role.name,
+      shortName: role.shortName,
       createdBy: role.createdBy,
       updatedBy: role.updatedBy,
       createdAt: role.createdAt,

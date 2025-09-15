@@ -15,6 +15,8 @@ export class Role {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
+  @Column({ name: 'short_name', type: 'varchar', length: 10 })
+  shortName: string;
 
 
   // Relationships

@@ -345,6 +345,11 @@ export interface CreateRoleDto {
    * @example "123e4567-e89b-12d3-a456-426614174000"
    */
   organizationId: string;
+  /**
+   * Role short name
+   * @example "SL"
+   */
+  shortName: string;
 }
 
 export interface CreateShiftDto {
@@ -1177,6 +1182,11 @@ export interface RoleResponseDto {
    */
   organizationId: string;
   /**
+   * Role short name
+   * @example "SL"
+   */
+  shortName: string;
+  /**
    * Updated at
    * @format date-time
    * @example "2024-02-01T12:00:00Z"
@@ -1687,6 +1697,11 @@ export interface UpdateRoleDto {
    * @example "123e4567-e89b-12d3-a456-426614174000"
    */
   organizationId?: string;
+  /**
+   * Role short name
+   * @example "SL"
+   */
+  shortName?: string;
   /**
    * Updated by (User ID)
    * @example "123e4567-e89b-12d3-a456-426614174001"

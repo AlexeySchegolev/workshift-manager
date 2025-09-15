@@ -13,13 +13,17 @@ export class RoleResponseDto {
   })
   organizationId: string;
 
-  @ApiProperty({ 
-    description: 'Role name', 
-    example: 'Dialysis Specialist' 
+  @ApiProperty({
+    description: 'Role name',
+    example: 'Dialysis Specialist'
   })
   name: string;
 
-
+  @ApiProperty({
+    description: 'Role short name',
+    example: 'SL'
+  })
+  shortName: string;
 
   @ApiPropertyOptional({ 
     description: 'Created by (User ID)', 

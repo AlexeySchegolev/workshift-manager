@@ -109,7 +109,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Typ</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Zeit</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Station</TableCell>
@@ -141,17 +140,6 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                             </Typography>
                                         )}
                                     </Box>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip
-                                        label={formatShiftType(shift.type)}
-                                        size="small"
-                                        sx={{
-                                            backgroundColor: alpha(getShiftTypeColor(shift.type), 0.1),
-                                            color: getShiftTypeColor(shift.type),
-                                            fontWeight: 500,
-                                        }}
-                                    />
                                 </TableCell>
                                 <TableCell>
                                     <Chip

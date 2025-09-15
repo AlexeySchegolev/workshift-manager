@@ -55,6 +55,7 @@ const ShiftPlanningPage: React.FC = () => {
 
     // Shift plan - using proper DTO type
     const [shiftPlan, setShiftPlan] = useState<ShiftPlanResponseDto | null>(null);
+    const [shiftPlanDetails, setShiftPlanDetails] = useState<any[]>([]);
 
     // Loading state
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -84,16 +85,23 @@ const ShiftPlanningPage: React.FC = () => {
             const month = date.getMonth() + 1; // JavaScript months are 0-based
             
             const shiftPlanService = new ShiftPlanService();
-            const plan = await shiftPlanService.getShiftPlanByLocationMonthYear(
+            const result = await shiftPlanService.getShiftPlanWithDetailsByLocationMonthYear(
                 locationId,
                 year,
                 month
             );
             
-            setShiftPlan(plan);
+            if (result) {
+                setShiftPlan(result.shiftPlan);
+                setShiftPlanDetails(result.details);
+            } else {
+                setShiftPlan(null);
+                setShiftPlanDetails([]);
+            }
         } catch (error) {
             console.error('Fehler beim Laden des Schichtplans:', error);
             setShiftPlan(null);
+            setShiftPlanDetails([]);
         } finally {
             setIsLoadingShiftPlan(false);
         }
@@ -102,6 +110,7 @@ const ShiftPlanningPage: React.FC = () => {
     // Initialize shift plan
     const initializeShiftPlan = () => {
         setShiftPlan(null);
+        setShiftPlanDetails([]);
     };
 
     // Load shift plan when date or location changes
@@ -110,6 +119,7 @@ const ShiftPlanningPage: React.FC = () => {
             loadShiftPlan(selectedLocationId, selectedDate);
         } else {
             setShiftPlan(null);
+            setShiftPlanDetails([]);
         }
     }, [selectedDate, selectedLocationId]);
 
@@ -258,6 +268,7 @@ const ShiftPlanningPage: React.FC = () => {
                         selectedLocationId={selectedLocationId}
                         onLocationChange={setSelectedLocationId}
                         shiftPlan={shiftPlan}
+                        shiftPlanDetails={shiftPlanDetails}
                         shiftPlanId={shiftPlan?.id}
                         isLoading={isLoading || isLoadingShiftPlan}
                         onGeneratePlan={generateShiftPlan}

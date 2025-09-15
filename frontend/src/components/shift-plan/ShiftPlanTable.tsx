@@ -24,6 +24,10 @@ import {
     FileDownload as FileDownloadIcon,
     Schedule as ScheduleIcon,
     Refresh as RefreshIcon,
+    WbSunny as MorningIcon,
+    Brightness3 as EveningIcon,
+    NightsStay as NightIcon,
+    AccessTime as DefaultShiftIcon,
 } from '@mui/icons-material';
 import {format, isToday, getDaysInMonth, startOfMonth, addDays} from 'date-fns';
 import {de} from 'date-fns/locale';
@@ -41,6 +45,7 @@ interface ShiftPlanTableProps {
     selectedLocationId: string | null;
     onLocationChange: (locationId: string | null) => void;
     shiftPlan: any | null;
+    shiftPlanDetails?: any[]; // Details for shift assignments
     shiftPlanId?: string | null; // Optional shift plan ID for Excel export
     isLoading: boolean;
     onGeneratePlan: () => void;
@@ -58,6 +63,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                    selectedLocationId,
                                                    onLocationChange,
                                                    shiftPlan,
+                                                   shiftPlanDetails = [],
                                                    shiftPlanId,
                                                    isLoading,
                                                    onGeneratePlan,
@@ -162,6 +168,33 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 return theme.palette.shifts?.uetersen || theme.palette.info.main;
             default:
                 return theme.palette.text.secondary;
+        }
+    };
+
+    // Function to get icon for shift
+    const getShiftIcon = (shift: string) => {
+        switch (shift) {
+            case 'F':
+            case 'Frühschicht':
+            case 'morning':
+                return <MorningIcon sx={{ fontSize: '0.9rem' }} />;
+            case 'S':
+            case 'S0':
+            case 'S1':
+            case 'S00':
+            case 'Spätschicht':
+            case 'afternoon':
+            case 'evening':
+                return <EveningIcon sx={{ fontSize: '0.9rem' }} />;
+            case 'N':
+            case 'Nachtschicht':
+            case 'night':
+                return <NightIcon sx={{ fontSize: '0.9rem' }} />;
+            case 'FS':
+            case 'special':
+                return <DefaultShiftIcon sx={{ fontSize: '0.9rem' }} />;
+            default:
+                return <DefaultShiftIcon sx={{ fontSize: '0.9rem' }} />;
         }
     };
 
@@ -371,8 +404,9 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                         key={dayKey}
                                                         align="center"
                                                         sx={{
-                                                            minWidth: 70,
-                                                            width: '70px',
+                                                            minWidth: 50,
+                                                            width: '50px',
+                                                            height: '50px',
                                                             fontWeight: 600,
                                                             fontSize: '0.8rem',
                                                             backgroundColor: isTodayDate
@@ -474,19 +508,27 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
 
                                                 {monthDays.map((day, index) => {
                                                     const dayKey = sortedDays[index];
+                                                    const dayNumber = day.getDate();
+                                                    
+                                                    // Try to get shift from original shiftPlan structure first (for backward compatibility)
                                                     const dayPlan = (shiftPlan as Record<string, any>)?.[dayKey] as Record<string, string[]> | null;
                                                     let assignedShift = '';
 
                                                     if (dayPlan) {
+                                                        // Original logic: check shiftPlan structure
                                                         for (const shiftName in dayPlan) {
-                                                            // Defensive programming: ensure dayPlan[shiftName] is an array before calling .includes()
-                                                            // This matches the same pattern used in the backend service
                                                             const employeeList = Array.isArray(dayPlan[shiftName]) ? dayPlan[shiftName] : [];
                                                             if (employeeList.includes(emp.id)) {
                                                                 assignedShift = shiftName;
                                                                 break;
                                                             }
                                                         }
+                                                    } else if (shiftPlanDetails.length > 0) {
+                                                        // New logic: use details if available
+                                                        const assignment = shiftPlanDetails.find(detail =>
+                                                            detail.employeeId === emp.id && detail.day === dayNumber
+                                                        );
+                                                        assignedShift = assignment?.shift?.name || '';
                                                     }
 
                                                     const isWeekend = day.getDay() === 0 || day.getDay() === 6;
@@ -529,26 +571,26 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                     —
                                                                 </Typography>
                                                             ) : assignedShift ? (
-                                                                <Chip
-                                                                    label={assignedShift}
-                                                                    size="small"
-                                                                    sx={{
-                                                                        height: 24,
-                                                                        fontSize: '0.75rem',
-                                                                        fontWeight: 700,
-                                                                        backgroundColor: getShiftBackgroundColor(assignedShift),
-                                                                        color: getShiftColor(assignedShift),
-                                                                        border: `1px solid ${alpha(getShiftColor(assignedShift), 0.5)}`,
-                                                                        '& .MuiChip-label': {
-                                                                            px: 1,
-                                                                        },
-                                                                    }}
-                                                                />
+                                                                <Tooltip title={assignedShift} arrow>
+                                                                    <Box
+                                                                        sx={{
+                                                                            width: '100%',
+                                                                            height: '100%',
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'center',
+                                                                            color: getShiftColor(assignedShift),
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                    >
+                                                                        {getShiftIcon(assignedShift)}
+                                                                    </Box>
+                                                                </Tooltip>
                                                             ) : (
                                                                 <Box
                                                                     sx={{
-                                                                        width: 24,
-                                                                        height: 24,
+                                                                        width: '100%',
+                                                                        height: '100%',
                                                                         display: 'flex',
                                                                         alignItems: 'center',
                                                                         justifyContent: 'center',

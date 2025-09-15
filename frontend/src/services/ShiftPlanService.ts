@@ -73,6 +73,34 @@ export class ShiftPlanService extends BaseService {
   }
 
   /**
+   * Get shift plan with details by location, year and month
+   */
+  async getShiftPlanWithDetailsByLocationMonthYear(
+    locationId: string,
+    year: number,
+    month: number
+  ): Promise<{ shiftPlan: ShiftPlanResponseDto; details: any } | null> {
+    try {
+      const shiftPlan = await this.getShiftPlanByLocationMonthYear(locationId, year, month);
+      if (!shiftPlan) {
+        return null;
+      }
+
+      // Load details using ShiftPlanDetailService
+      const { ShiftPlanDetailService } = await import('./ShiftPlanDetailService');
+      const detailService = new ShiftPlanDetailService();
+      const details = await detailService.getDetailsByShiftPlan(shiftPlan.id);
+
+      return { shiftPlan, details };
+    } catch (error: any) {
+      if (error?.response?.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Update an existing shift plan
    */
   async updateShiftPlan(id: string, shiftPlanData: UpdateShiftPlanDto): Promise<ShiftPlanResponseDto> {

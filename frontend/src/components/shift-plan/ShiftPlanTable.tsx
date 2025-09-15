@@ -488,6 +488,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     );
                                                     
                                                     const assignedShift = employeeStatus?.assignedShift || '';
+                                                    const shiftName = employeeStatus?.shiftName || assignedShift || '';
                                                     const absenceReason = employeeStatus?.absenceReason || null;
                                                     const isEmpty = employeeStatus?.isEmpty || false;
 
@@ -519,7 +520,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                             }}
                                                         >
                                                             {assignedShift ? (
-                                                                <Tooltip title={assignedShift} arrow>
+                                                                <Tooltip title={shiftName} arrow>
                                                                     <Box
                                                                         sx={{
                                                                             width: 28,

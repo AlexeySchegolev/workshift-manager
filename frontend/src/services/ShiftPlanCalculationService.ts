@@ -11,10 +11,11 @@ import { getDaysInMonth, startOfMonth, addDays } from 'date-fns';
  */
 export interface EmployeeDayStatus {
   employee: EmployeeResponseDto;
-  assignedShift: string | null;
-  shiftId: string | null;
-  absenceType: string | null; // 'vacation', 'sick_leave', 'other' oder null
-  absenceReason: string | null;
+  assignedShift: string;
+  shiftId: string;
+  shiftName: string; // Vollständiger Name der Schicht für Tooltip
+  absenceType: string; // 'vacation', 'sick_leave', 'other'
+  absenceReason: string;
   isEmpty: boolean; // true wenn keine Schicht und keine Abwesenheit
 }
 
@@ -202,13 +203,38 @@ export class ShiftPlanCalculationService {
           this.isDateInAbsenceRange(day, abs.startDate, abs.endDate)
         );
         
+        if (absence) {
+          return {
+            employee,
+            assignedShift: '',
+            shiftId: '',
+            shiftName: '',
+            absenceType: absence.absenceType,
+            absenceReason: this.getAbsenceReasonText(absence.absenceType),
+            isEmpty: false
+          };
+        }
+        
+        if (shiftAssignment) {
+          return {
+            employee,
+            assignedShift: (shiftAssignment.shift as any).shortName,
+            shiftId: shiftAssignment.shiftId,
+            shiftName: (shiftAssignment.shift as any).name,
+            absenceType: '',
+            absenceReason: '',
+            isEmpty: false
+          };
+        }
+        
         return {
           employee,
-          assignedShift: shiftAssignment?.shift?.shortName || null,
-          shiftId: shiftAssignment?.shiftId || null,
-          absenceType: absence?.absenceType || null,
-          absenceReason: absence ? this.getAbsenceReasonText(absence.absenceType) : null,
-          isEmpty: !shiftAssignment && !absence
+          assignedShift: '',
+          shiftId: '',
+          shiftName: '',
+          absenceType: '',
+          absenceReason: '',
+          isEmpty: true
         };
       });
       

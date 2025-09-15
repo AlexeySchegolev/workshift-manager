@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, OneToMany, JoinColumn } from 'typeorm';
 import { Organization } from './organization.entity';
 import { Employee } from './employee.entity';
 import { Shift } from './shift.entity';
+import { ShiftRole } from './shift-role.entity';
 
 
 @Entity('roles')
@@ -29,6 +30,9 @@ export class Role {
 
   @ManyToMany(() => Shift, shift => shift.requiredRoles)
   shifts: Shift[];
+
+  @OneToMany(() => ShiftRole, shiftRole => shiftRole.role)
+  shiftRoles: ShiftRole[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

@@ -13,6 +13,7 @@ import { UsersModule } from './modules/users/users.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { EmployeeAbsencesModule } from './modules/employee-absences/employee-absences.module';
 import { ShiftPlanDetailsModule } from './modules/shift-plan-details/shift-plan-details.module';
+import { ShiftRolesModule } from './modules/shift-roles/shift-roles.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
@@ -40,6 +41,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     OrganizationsModule,
     RolesModule,
     ShiftsModule,
+    ShiftRolesModule,
   ],
   controllers: [],
   providers: [

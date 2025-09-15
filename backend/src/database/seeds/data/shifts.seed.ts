@@ -1,4 +1,3 @@
-import { ShiftType } from '../../entities/shift.entity';
 
 export const shiftsSeedData = [
   // Frühschicht Station A
@@ -8,7 +7,6 @@ export const shiftsSeedData = [
     name: 'Frühschicht Station A',
     shortName: 'FSA',
     description: 'Morgendliche Dialyse-Behandlungen und Patientenbetreuung',
-    type: ShiftType.MORNING,
     startTime: '06:00',
     endTime: '14:00',
     isActive: true
@@ -21,7 +19,6 @@ export const shiftsSeedData = [
     name: 'Spätschicht Station A',
     shortName: 'SSA',
     description: 'Nachmittägliche und abendliche Dialyse-Behandlungen',
-    type: ShiftType.AFTERNOON,
     startTime: '14:00',
     endTime: '22:00',
     isActive: true
@@ -34,7 +31,6 @@ export const shiftsSeedData = [
     name: 'Nachtschicht Station A',
     shortName: 'NSA',
     description: 'Nächtliche Überwachung und Notfall-Dialyse',
-    type: ShiftType.NIGHT,
     startTime: '22:00',
     endTime: '06:00',
     isActive: true
@@ -47,7 +43,6 @@ export const shiftsSeedData = [
     name: 'Frühschicht Station B',
     shortName: 'FSB',
     description: 'Morgendliche Dialyse-Behandlungen Station B',
-    type: ShiftType.MORNING,
     startTime: '07:00',
     endTime: '15:00',
     isActive: true
@@ -60,7 +55,6 @@ export const shiftsSeedData = [
     name: 'Spätschicht Station B',
     shortName: 'SSB',
     description: 'Nachmittägliche Dialyse-Behandlungen Station B',
-    type: ShiftType.AFTERNOON,
     startTime: '15:00',
     endTime: '23:00',
     isActive: true

@@ -261,7 +261,6 @@ export class ShiftPlanDetailsService {
       dto.shift = {
         id: detail.shift.id,
         name: detail.shift.name,
-        type: detail.shift.type,
         startTime: detail.shift.startTime,
         endTime: detail.shift.endTime,
         duration: detail.shift.duration,

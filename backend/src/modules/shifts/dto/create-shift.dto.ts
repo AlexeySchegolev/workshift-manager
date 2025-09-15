@@ -9,7 +9,6 @@ import {
   IsBoolean, 
   IsUUID
 } from 'class-validator';
-import { ShiftType } from '@/database/entities/shift.entity';
 
 export class CreateShiftDto {
   @ApiProperty({
@@ -64,13 +63,6 @@ export class CreateShiftDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({
-    description: 'Type of the shift',
-    enum: ShiftType,
-    example: ShiftType.MORNING
-  })
-  @IsEnum(ShiftType)
-  type: ShiftType;
 
 
   @ApiProperty({

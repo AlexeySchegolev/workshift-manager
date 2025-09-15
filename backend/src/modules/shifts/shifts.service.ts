@@ -212,7 +212,6 @@ export class ShiftsService {
         name: shift.name,
         shortName: shift.shortName,
         description: shift.description,
-        type: shift.type,
         startTime: normalizeTimeFormat(shift.startTime),
         endTime: normalizeTimeFormat(shift.endTime),
         isActive: shift.isActive,

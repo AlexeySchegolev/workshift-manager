@@ -413,19 +413,6 @@ export interface CreateShiftDto {
    * @example "08:00"
    */
   startTime: string;
-  /**
-   * Type of the shift
-   * @example "morning"
-   */
-  type:
-    | "morning"
-    | "afternoon"
-    | "evening"
-    | "night"
-    | "full_day"
-    | "split"
-    | "on_call"
-    | "overtime";
 }
 
 export interface CreateShiftPlanDetailDto {
@@ -505,6 +492,33 @@ export interface CreateShiftPlanDto {
    * @example 2024
    */
   year: number;
+}
+
+export interface CreateShiftRoleDto {
+  /**
+   * Number of employees needed for this role
+   * @min 1
+   * @example 2
+   */
+  count: number;
+  /**
+   * User ID who created this record
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440002"
+   */
+  createdBy?: string;
+  /**
+   * Role ID
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440001"
+   */
+  roleId: string;
+  /**
+   * Shift ID
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440000"
+   */
+  shiftId: string;
 }
 
 export interface CreateUserDto {
@@ -1138,6 +1152,8 @@ export interface RegisterResponseDto {
   user: AuthUserDto;
 }
 
+export type Role = object;
+
 export interface RoleResponseDto {
   /**
    * Created at
@@ -1198,6 +1214,8 @@ export interface RoleResponseDto {
    */
   updatedBy?: string;
 }
+
+export type Shift = object;
 
 export interface ShiftPlanDetailResponseDto {
   /**
@@ -1432,19 +1450,6 @@ export interface ShiftResponseDto {
    */
   startTime: string;
   /**
-   * Type of the shift
-   * @example "morning"
-   */
-  type:
-    | "morning"
-    | "afternoon"
-    | "evening"
-    | "night"
-    | "full_day"
-    | "split"
-    | "on_call"
-    | "overtime";
-  /**
    * Date when the shift was last updated
    * @format date-time
    * @example "2024-01-15T14:45:00Z"
@@ -1454,6 +1459,66 @@ export interface ShiftResponseDto {
    * User ID who last updated this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440006"
+   */
+  updatedBy?: string;
+}
+
+export interface ShiftRoleResponseDto {
+  /**
+   * Number of employees needed for this role
+   * @example 2
+   */
+  count: number;
+  /**
+   * Creation timestamp
+   * @format date-time
+   * @example "2023-01-01T00:00:00.000Z"
+   */
+  createdAt: string;
+  /**
+   * User ID who created this record
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440003"
+   */
+  createdBy?: string;
+  /**
+   * Deletion timestamp (soft delete)
+   * @format date-time
+   * @example "2023-01-01T00:00:00.000Z"
+   */
+  deletedAt?: string;
+  /**
+   * Unique identifier for the shift role
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440000"
+   */
+  id: string;
+  /** Associated role details */
+  role?: Role;
+  /**
+   * Role ID
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440002"
+   */
+  roleId: string;
+  /** Associated shift details */
+  shift?: Shift;
+  /**
+   * Shift ID
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440001"
+   */
+  shiftId: string;
+  /**
+   * Last update timestamp
+   * @format date-time
+   * @example "2023-01-01T00:00:00.000Z"
+   */
+  updatedAt: string;
+  /**
+   * User ID who last updated this record
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440004"
    */
   updatedBy?: string;
 }
@@ -1771,19 +1836,6 @@ export interface UpdateShiftDto {
    */
   startTime?: string;
   /**
-   * Type of the shift
-   * @example "morning"
-   */
-  type?:
-    | "morning"
-    | "afternoon"
-    | "evening"
-    | "night"
-    | "full_day"
-    | "split"
-    | "on_call"
-    | "overtime";
-  /**
    * User ID who is updating this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440006"
@@ -1868,6 +1920,39 @@ export interface UpdateShiftPlanDto {
    * @example 2024
    */
   year?: number;
+}
+
+export interface UpdateShiftRoleDto {
+  /**
+   * Number of employees needed for this role
+   * @min 1
+   * @example 2
+   */
+  count?: number;
+  /**
+   * User ID who created this record
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440002"
+   */
+  createdBy?: string;
+  /**
+   * Role ID
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440001"
+   */
+  roleId?: string;
+  /**
+   * Shift ID
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440000"
+   */
+  shiftId?: string;
+  /**
+   * User ID who updated this record
+   * @format uuid
+   * @example "550e8400-e29b-41d4-a716-446655440002"
+   */
+  updatedBy?: string;
 }
 
 export interface UpdateUserDto {

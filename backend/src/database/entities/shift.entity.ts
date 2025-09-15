@@ -4,18 +4,7 @@ import { Location } from './location.entity';
 import { Role } from './role.entity';
 import { ShiftPlan } from './shift-plan.entity';
 import { ShiftPlanDetail } from './shift-plan-detail.entity';
-
-export enum ShiftType {
-  MORNING = 'morning',
-  AFTERNOON = 'afternoon',
-  EVENING = 'evening',
-  NIGHT = 'night',
-  FULL_DAY = 'full_day',
-  SPLIT = 'split',
-  ON_CALL = 'on_call',
-  OVERTIME = 'overtime'
-}
-
+import { ShiftRole } from './shift-role.entity';
 
 @Entity('shifts')
 export class Shift {
@@ -40,12 +29,6 @@ export class Shift {
   @Column({ type: 'varchar', length: 500, nullable: true })
   description?: string;
 
-  @Column({
-    type: 'enum',
-    enum: ShiftType,
-    default: ShiftType.MORNING,
-  })
-  type: ShiftType;
 
 
   @Column({ name: 'start_time', type: 'time' })
@@ -79,6 +62,9 @@ export class Shift {
     inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' }
   })
   requiredRoles: Role[];
+
+  @OneToMany(() => ShiftRole, shiftRole => shiftRole.shift)
+  shiftRoles: ShiftRole[];
 
   @OneToMany(() => ShiftPlanDetail, shiftPlanDetail => shiftPlanDetail.shift)
   shiftPlanDetails: ShiftPlanDetail[];

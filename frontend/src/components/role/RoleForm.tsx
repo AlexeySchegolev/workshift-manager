@@ -14,6 +14,7 @@ import { RoleResponseDto } from '@/api/data-contracts';
 
 interface RoleFormErrors {
     name?: string;
+    shortName?: string;
 }
 
 interface RoleFormProps {
@@ -53,7 +54,7 @@ const RoleForm: React.FC<RoleFormProps> = ({
             <DialogContent>
                 <Box sx={{ pt: 1 }}>
                     <Grid container spacing={2}>
-                        <Grid size={{ xs: 12 }}>
+                        <Grid size={{ xs: 12, md: 8 }}>
                             <TextField
                                 fullWidth
                                 label="Rollenname"
@@ -62,6 +63,18 @@ const RoleForm: React.FC<RoleFormProps> = ({
                                 error={!!errors.name}
                                 helperText={errors.name}
                                 required
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <TextField
+                                fullWidth
+                                label="Kurzname"
+                                value={formData.shortName || ''}
+                                onChange={(e) => onUpdateField('shortName', e.target.value)}
+                                error={!!errors.shortName}
+                                helperText={errors.shortName}
+                                required
+                                inputProps={{ maxLength: 10 }}
                             />
                         </Grid>
                     </Grid>

@@ -5,6 +5,7 @@ import { getCurrentTimestamp } from '@/utils/date.utils';
 
 interface RoleFormErrors {
   name?: string;
+  shortName?: string;
 }
 
 export const useRoleForm = () => {
@@ -14,6 +15,7 @@ export const useRoleForm = () => {
     id: '',
     organizationId: organizationId || '',
     name: '',
+    shortName: '',
     displayName: '',
     isAvailable: true,
     createdAt: getCurrentTimestamp(),
@@ -29,6 +31,7 @@ export const useRoleForm = () => {
       id: '',
       organizationId: organizationId || '',
       name: '',
+      shortName: '',
       displayName: '',
       isAvailable: true,
       createdAt: getCurrentTimestamp(),
@@ -67,6 +70,10 @@ export const useRoleForm = () => {
 
     if (!formData.name.trim()) {
       newErrors.name = 'Rollenname ist erforderlich';
+    }
+
+    if (!formData.shortName?.trim()) {
+      newErrors.shortName = 'Kurzname ist erforderlich';
     }
 
     setErrors(newErrors);

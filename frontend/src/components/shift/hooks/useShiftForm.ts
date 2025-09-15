@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext.tsx';
 
 export interface ShiftFormData {
   name: string;
+  shortName: string;
   description: string;
   type: string;
   startTime: string;
@@ -17,6 +18,7 @@ export interface ShiftFormData {
 
 export interface ShiftFormErrors {
   name?: string;
+  shortName?: string;
   type?: string;
   startTime?: string;
   endTime?: string;
@@ -28,6 +30,7 @@ export const useShiftForm = () => {
   
   const getInitialFormData = (): ShiftFormData => ({
     name: '',
+    shortName: '',
     description: '',
     type: 'morning',
     startTime: '08:00',
@@ -56,6 +59,10 @@ export const useShiftForm = () => {
     // Required fields
     if (!formData.name.trim()) {
       newErrors.name = 'Name ist erforderlich';
+    }
+
+    if (!formData.shortName.trim()) {
+      newErrors.shortName = 'Kurzname ist erforderlich';
     }
 
     if (!formData.type) {
@@ -89,6 +96,7 @@ export const useShiftForm = () => {
   const loadShiftForEdit = (shift: ShiftResponseDto) => {
     setFormData({
       name: shift.name,
+      shortName: shift.shortName || '',
       description: shift.description || '',
       type: shift.type,
       startTime: shift.startTime,

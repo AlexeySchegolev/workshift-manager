@@ -60,6 +60,7 @@ export const useRoleActions = (
   const createUpdateRoleData = (role: RoleResponseDto): UpdateRoleDto => {
     return {
       name: role.name,
+      shortName: role.shortName,
     };
   };
 
@@ -68,6 +69,7 @@ export const useRoleActions = (
     return {
       organizationId: role.organizationId,
       name: role.name,
+      shortName: role.shortName,
     };
   };
 

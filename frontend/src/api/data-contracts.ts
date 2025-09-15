@@ -354,12 +354,6 @@ export interface CreateRoleDto {
 
 export interface CreateShiftDto {
   /**
-   * Abbreviation of the shift
-   * @maxLength 3
-   * @example "MS"
-   */
-  abbreviation: string;
-  /**
    * User ID who is creating this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440005"
@@ -407,6 +401,12 @@ export interface CreateShiftDto {
    * @example "550e8400-e29b-41d4-a716-446655440003"
    */
   shiftPlanId?: string;
+  /**
+   * Short name of the shift
+   * @maxLength 10
+   * @example "MS"
+   */
+  shortName: string;
   /**
    * Start time of the shift
    * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
@@ -1338,12 +1338,6 @@ export interface ShiftPlanResponseDto {
 
 export interface ShiftResponseDto {
   /**
-   * Abbreviation of the shift
-   * @maxLength 3
-   * @example "MS"
-   */
-  abbreviation: string;
-  /**
    * Date when the shift was created
    * @format date-time
    * @example "2024-01-15T10:30:00Z"
@@ -1425,6 +1419,12 @@ export interface ShiftResponseDto {
    * @example "550e8400-e29b-41d4-a716-446655440003"
    */
   shiftPlanId?: string;
+  /**
+   * Short name of the shift
+   * @maxLength 10
+   * @example "MS"
+   */
+  shortName: string;
   /**
    * Start time of the shift
    * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$
@@ -1711,12 +1711,6 @@ export interface UpdateRoleDto {
 
 export interface UpdateShiftDto {
   /**
-   * Abbreviation of the shift
-   * @maxLength 3
-   * @example "MS"
-   */
-  abbreviation?: string;
-  /**
    * User ID who is creating this shift
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440005"
@@ -1764,6 +1758,12 @@ export interface UpdateShiftDto {
    * @example "550e8400-e29b-41d4-a716-446655440003"
    */
   shiftPlanId?: string;
+  /**
+   * Short name of the shift
+   * @maxLength 10
+   * @example "MS"
+   */
+  shortName?: string;
   /**
    * Start time of the shift
    * @pattern ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$

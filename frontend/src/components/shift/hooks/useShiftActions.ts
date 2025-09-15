@@ -42,6 +42,7 @@ export const useShiftActions = (
         // Update existing shift
         const updatedShift = await shiftService.updateShift(editingId, {
           name: formData.name,
+          shortName: formData.shortName,
           description: formData.description,
           type: formData.type as any,
           startTime: formData.startTime,
@@ -61,6 +62,7 @@ export const useShiftActions = (
           organizationId: formData.organizationId,
           locationId: formData.locationId,
           name: formData.name,
+          shortName: formData.shortName,
           description: formData.description,
           type: formData.type as any,
           startTime: formData.startTime,
@@ -104,6 +106,7 @@ export const useShiftActions = (
         organizationId: shift.organizationId,
         locationId: shift.locationId,
         name: `${shift.name} (Kopie)`,
+        shortName: `${shift.shortName}K`,
         description: shift.description,
         type: shift.type as any,
         startTime: shift.startTime,

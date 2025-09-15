@@ -89,7 +89,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         </Typography>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 8 }}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <TextField
                             fullWidth
                             label="Schichtname"
@@ -101,7 +101,20 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid size={{ xs: 12, md: 3 }}>
+                        <TextField
+                            fullWidth
+                            label="Kurzname"
+                            value={formData.shortName || ''}
+                            onChange={(e) => onUpdateField('shortName', e.target.value)}
+                            error={!!errors.shortName}
+                            helperText={errors.shortName}
+                            required
+                            inputProps={{ maxLength: 10 }}
+                        />
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 3 }}>
                         <FormControl fullWidth error={!!errors.type}>
                             <InputLabel>Schichttyp</InputLabel>
                             <Select

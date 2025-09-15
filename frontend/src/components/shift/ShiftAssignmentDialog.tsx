@@ -15,6 +15,7 @@ import {
     Stack,
     Chip,
     CircularProgress,
+    alpha,
 } from '@mui/material';
 import { EmployeeResponseDto, ShiftResponseDto } from '@/api/data-contracts';
 import { shiftService } from '@/services/ShiftService';
@@ -150,10 +151,10 @@ const ShiftAssignmentDialog: React.FC<ShiftAssignmentDialogProps> = ({
                                     label={employee.location.name}
                                     size="small"
                                     sx={{
-                                        height: 20,
-                                        fontSize: '0.75rem',
-                                        backgroundColor: 'info.light',
-                                        color: 'info.contrastText',
+                                        height: 18,
+                                        fontSize: '0.7rem',
+                                        backgroundColor: (theme) => alpha(theme.palette.info.main, 0.1),
+                                        color: (theme) => theme.palette.info.main,
                                     }}
                                 />
                             )}

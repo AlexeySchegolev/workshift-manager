@@ -23,9 +23,6 @@ import {
 } from '@mui/icons-material';
 import { ShiftFormData, ShiftFormErrors } from './hooks/useShiftForm';
 import { useLocations } from '@/hooks/useLocations';
-import { 
-    SHIFT_TYPES 
-} from '@/constants/shiftConstants';
 
 interface ShiftFormProps {
     open: boolean;
@@ -114,22 +111,6 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 3 }}>
-                        <FormControl fullWidth error={!!errors.type}>
-                            <InputLabel>Schichttyp</InputLabel>
-                            <Select
-                                value={formData.type}
-                                onChange={(e) => onUpdateField('type', e.target.value)}
-                                label="Schichttyp"
-                            >
-                                {SHIFT_TYPES.map((type) => (
-                                    <MenuItem key={type.value} value={type.value}>
-                                        {type.label}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
 
                     <Grid size={{ xs: 12 }}>
                         <TextField

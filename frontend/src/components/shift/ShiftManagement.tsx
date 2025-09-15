@@ -101,11 +101,6 @@ const ShiftManagement: React.FC<ShiftManagementProps> = ({
           warningMessage: '⚠️ Diese Aktion kann rückgängig gemacht werden (Soft Delete).',
           chips: [
             {
-              label: formatShiftType(shiftToDelete?.type || ''),
-              color: 'primary' as const,
-              variant: 'outlined' as const,
-            },
-            {
               label: formatShiftStatus(shiftToDelete?.isActive || false, shiftToDelete?.isAvailable || false),
               color: 'secondary' as const,
               variant: 'outlined' as const,

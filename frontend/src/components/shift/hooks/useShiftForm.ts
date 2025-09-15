@@ -8,7 +8,6 @@ export interface ShiftFormData {
   name: string;
   shortName: string;
   description: string;
-  type: string;
   startTime: string;
   endTime: string;
   locationId: string;
@@ -19,7 +18,6 @@ export interface ShiftFormData {
 export interface ShiftFormErrors {
   name?: string;
   shortName?: string;
-  type?: string;
   startTime?: string;
   endTime?: string;
   locationId?: string;
@@ -32,7 +30,6 @@ export const useShiftForm = () => {
     name: '',
     shortName: '',
     description: '',
-    type: 'morning',
     startTime: '08:00',
     endTime: '16:00',
     locationId: '',
@@ -65,9 +62,6 @@ export const useShiftForm = () => {
       newErrors.shortName = 'Kurzname ist erforderlich';
     }
 
-    if (!formData.type) {
-      newErrors.type = 'Schichttyp ist erforderlich';
-    }
 
     if (!formData.startTime) {
       newErrors.startTime = 'Startzeit ist erforderlich';
@@ -98,7 +92,6 @@ export const useShiftForm = () => {
       name: shift.name,
       shortName: shift.shortName || '',
       description: shift.description || '',
-      type: shift.type,
       startTime: shift.startTime,
       endTime: shift.endTime,
       locationId: shift.locationId,

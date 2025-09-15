@@ -101,11 +101,6 @@ export const calculateShiftStatistics = (shifts: ShiftResponseDto[]) => {
   const active = shifts.filter(s => s.isActive).length;
   const available = shifts.filter(s => s.isAvailable).length;
   
-  const byType = shifts.reduce((acc, shift) => {
-    acc[shift.type] = (acc[shift.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  
   const byLocation = shifts.reduce((acc, shift) => {
     const locationName = shift.location?.name || 'Unbekannt';
     acc[locationName] = (acc[locationName] || 0) + 1;
@@ -116,7 +111,6 @@ export const calculateShiftStatistics = (shifts: ShiftResponseDto[]) => {
     total,
     active,
     available,
-    byType,
     byLocation,
   };
 };

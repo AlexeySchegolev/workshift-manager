@@ -34,8 +34,8 @@ export class Shift {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ type: 'varchar', length: 3 })
-  abbreviation: string;
+  @Column({ name: 'short_name', type: 'varchar', length: 10 })
+  shortName: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   description?: string;

@@ -6,7 +6,7 @@ export const shiftsSeedData = [
     organizationId: '1', // Will be replaced with actual organization ID during seeding
     locationId: '1', // Dialyse Station A
     name: 'Frühschicht Station A',
-    abbreviation: 'FSA',
+    shortName: 'FSA',
     description: 'Morgendliche Dialyse-Behandlungen und Patientenbetreuung',
     type: ShiftType.MORNING,
     startTime: '06:00',
@@ -19,7 +19,7 @@ export const shiftsSeedData = [
     organizationId: '1',
     locationId: '1', // Dialyse Station A
     name: 'Spätschicht Station A',
-    abbreviation: 'SSA',
+    shortName: 'SSA',
     description: 'Nachmittägliche und abendliche Dialyse-Behandlungen',
     type: ShiftType.AFTERNOON,
     startTime: '14:00',
@@ -32,7 +32,7 @@ export const shiftsSeedData = [
     organizationId: '1',
     locationId: '1', // Dialyse Station A
     name: 'Nachtschicht Station A',
-    abbreviation: 'NSA',
+    shortName: 'NSA',
     description: 'Nächtliche Überwachung und Notfall-Dialyse',
     type: ShiftType.NIGHT,
     startTime: '22:00',
@@ -45,7 +45,7 @@ export const shiftsSeedData = [
     organizationId: '1',
     locationId: '2', // Dialyse Station B
     name: 'Frühschicht Station B',
-    abbreviation: 'FSB',
+    shortName: 'FSB',
     description: 'Morgendliche Dialyse-Behandlungen Station B',
     type: ShiftType.MORNING,
     startTime: '07:00',
@@ -58,7 +58,7 @@ export const shiftsSeedData = [
     organizationId: '1',
     locationId: '2', // Dialyse Station B
     name: 'Spätschicht Station B',
-    abbreviation: 'SSB',
+    shortName: 'SSB',
     description: 'Nachmittägliche Dialyse-Behandlungen Station B',
     type: ShiftType.AFTERNOON,
     startTime: '15:00',

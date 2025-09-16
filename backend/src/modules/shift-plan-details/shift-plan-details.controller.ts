@@ -18,7 +18,7 @@ import { UpdateShiftPlanDetailDto } from './dto/update-shift-plan-detail.dto';
 import { ShiftPlanDetailsService } from './shift-plan-details.service';
 
 @ApiTags('shift-plan-details')
-@Controller('shift-plan-details')
+@Controller('api/shift-plan-details')
 export class ShiftPlanDetailsController {
   constructor(private readonly shiftPlanDetailsService: ShiftPlanDetailsService) {}
 

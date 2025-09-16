@@ -1,24 +1,24 @@
 import {
-    Controller,
-    Get,
-    Post,
     Body,
-    Patch,
-    Param,
+    Controller,
     Delete,
-    Query,
-    ParseUUIDPipe,
+    Get,
     HttpCode,
     HttpStatus,
+    Param,
+    ParseUUIDPipe,
+    Patch,
+    Post,
+    Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBody } from '@nestjs/swagger';
-import { EmployeeAbsencesService } from './employee-absences.service';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateEmployeeAbsenceDto } from './dto/create-employee-absence.dto';
-import { UpdateEmployeeAbsenceDto } from './dto/update-employee-absence.dto';
 import { EmployeeAbsenceResponseDto } from './dto/employee-absence-response.dto';
+import { UpdateEmployeeAbsenceDto } from './dto/update-employee-absence.dto';
+import { EmployeeAbsencesService } from './employee-absences.service';
 
 @ApiTags('employee-absences')
-@Controller('employee-absences')
+@Controller('api/employee-absences')
 export class EmployeeAbsencesController {
     constructor(private readonly employeeAbsencesService: EmployeeAbsencesService) {}
 

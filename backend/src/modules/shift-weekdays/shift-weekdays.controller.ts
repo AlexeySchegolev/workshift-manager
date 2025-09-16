@@ -1,10 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ShiftWeekdaysService } from './shift-weekdays.service';
 import { CreateShiftWeekdayDto } from './dto/create-shift-weekday.dto';
 import { UpdateShiftWeekdayDto } from './dto/update-shift-weekday.dto';
 import { ShiftWeekdayResponseDto } from './dto/shift-weekday-response.dto';
 
-@Controller('shift-weekdays')
+@ApiTags('shift-weekdays')
+@Controller('api/shift-weekdays')
 export class ShiftWeekdaysController {
   constructor(private readonly shiftWeekdaysService: ShiftWeekdaysService) {}
 

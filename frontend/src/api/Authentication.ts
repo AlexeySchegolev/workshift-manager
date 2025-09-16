@@ -77,7 +77,7 @@ export class Authentication<SecurityDataType = unknown> {
   /**
    * No description
    *
-   * @tags Authentication
+   * @tags authentication
    * @name AuthControllerGetProfile
    * @summary Get current user profile
    * @request GET:/auth/profile
@@ -93,7 +93,7 @@ export class Authentication<SecurityDataType = unknown> {
     }); /**
    * No description
    *
-   * @tags Authentication
+   * @tags authentication
    * @name AuthControllerLogin
    * @summary User login
    * @request POST:/auth/login
@@ -109,7 +109,7 @@ export class Authentication<SecurityDataType = unknown> {
     }); /**
    * No description
    *
-   * @tags Authentication
+   * @tags authentication
    * @name AuthControllerLogout
    * @summary User logout
    * @request POST:/auth/logout
@@ -124,7 +124,7 @@ export class Authentication<SecurityDataType = unknown> {
     }); /**
    * No description
    *
-   * @tags Authentication
+   * @tags authentication
    * @name AuthControllerRegister
    * @summary User registration
    * @request POST:/auth/register

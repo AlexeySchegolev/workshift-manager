@@ -77,16 +77,16 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
   /**
    * No description
    *
-   * @tags ShiftWeekdays
+   * @tags shift-weekdays
    * @name ShiftWeekdaysControllerCreate
-   * @request POST:/shift-weekdays
+   * @request POST:/api/shift-weekdays
    */
   shiftWeekdaysControllerCreate = (
     data: CreateShiftWeekdayDto,
     params: RequestParams = {}
   ) =>
     this.http.request<void, any>({
-      path: `/shift-weekdays`,
+      path: `/api/shift-weekdays`,
       method: "POST",
       body: data,
       type: ContentType.Json,
@@ -94,9 +94,9 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
     }); /**
    * No description
    *
-   * @tags ShiftWeekdays
+   * @tags shift-weekdays
    * @name ShiftWeekdaysControllerFindAll
-   * @request GET:/shift-weekdays
+   * @request GET:/api/shift-weekdays
    */
   shiftWeekdaysControllerFindAll = (
     query: {
@@ -105,55 +105,55 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
     params: RequestParams = {}
   ) =>
     this.http.request<void, any>({
-      path: `/shift-weekdays`,
+      path: `/api/shift-weekdays`,
       method: "GET",
       query: query,
       ...params,
     }); /**
    * No description
    *
-   * @tags ShiftWeekdays
+   * @tags shift-weekdays
    * @name ShiftWeekdaysControllerFindOne
-   * @request GET:/shift-weekdays/{id}
+   * @request GET:/api/shift-weekdays/{id}
    */
   shiftWeekdaysControllerFindOne = (id: string, params: RequestParams = {}) =>
     this.http.request<void, any>({
-      path: `/shift-weekdays/${id}`,
+      path: `/api/shift-weekdays/${id}`,
       method: "GET",
       ...params,
     }); /**
    * No description
    *
-   * @tags ShiftWeekdays
+   * @tags shift-weekdays
    * @name ShiftWeekdaysControllerRemove
-   * @request DELETE:/shift-weekdays/{id}
+   * @request DELETE:/api/shift-weekdays/{id}
    */
   shiftWeekdaysControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, any>({
-      path: `/shift-weekdays/${id}`,
+      path: `/api/shift-weekdays/${id}`,
       method: "DELETE",
       ...params,
     }); /**
    * No description
    *
-   * @tags ShiftWeekdays
+   * @tags shift-weekdays
    * @name ShiftWeekdaysControllerRemoveByShiftId
-   * @request DELETE:/shift-weekdays/shift/{shiftId}
+   * @request DELETE:/api/shift-weekdays/shift/{shiftId}
    */
   shiftWeekdaysControllerRemoveByShiftId = (
     shiftId: string,
     params: RequestParams = {}
   ) =>
     this.http.request<void, any>({
-      path: `/shift-weekdays/shift/${shiftId}`,
+      path: `/api/shift-weekdays/shift/${shiftId}`,
       method: "DELETE",
       ...params,
     }); /**
    * No description
    *
-   * @tags ShiftWeekdays
+   * @tags shift-weekdays
    * @name ShiftWeekdaysControllerUpdate
-   * @request PATCH:/shift-weekdays/{id}
+   * @request PATCH:/api/shift-weekdays/{id}
    */
   shiftWeekdaysControllerUpdate = (
     id: string,
@@ -161,7 +161,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
     params: RequestParams = {}
   ) =>
     this.http.request<void, any>({
-      path: `/shift-weekdays/${id}`,
+      path: `/api/shift-weekdays/${id}`,
       method: "PATCH",
       body: data,
       type: ContentType.Json,

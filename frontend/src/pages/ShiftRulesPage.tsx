@@ -193,6 +193,11 @@ const ShiftRulesPage: React.FC = () => {
         return days[weekday] || '';
     };
 
+    const getWeekdayShort = (weekday: number): string => {
+        const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+        return days[weekday] || '';
+    };
+
     return (
         <Container maxWidth="xl" sx={{ py: 3 }}>
             {/* Header */}
@@ -271,52 +276,43 @@ const ShiftRulesPage: React.FC = () => {
                                                 sx={{ pb: 1 }}
                                             />
                                             <CardContent>
-                                                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                                    Aktive Wochentage:
-                                                </Typography>
-                                                
-                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                                                    {shiftWeekdaysForShift.map((sw) => (
-                                                        <Chip
-                                                            key={sw.id}
-                                                            label={getWeekdayName(sw.weekday)}
-                                                            size="small"
-                                                            onDelete={() => removeShiftFromDay(shift.id, sw.weekday)}
-                                                            deleteIcon={<DeleteIcon />}
-                                                            sx={{
-                                                                backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                                                                color: 'primary.main',
-                                                            }}
-                                                        />
-                                                    ))}
-                                                </Box>
-
                                                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                                    Zu Wochentag hinzufügen:
+                                                    Wochentage:
                                                 </Typography>
                                                 
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                     {[0, 1, 2, 3, 4, 5, 6].map((weekday) => {
                                                         const isActive = shiftWeekdaysForShift.some(sw => sw.weekday === weekday);
-                                                        if (isActive) return null;
                                                         
                                                         return (
-                                                            <Tooltip key={weekday} title={`Zu ${getWeekdayName(weekday)} hinzufügen`}>
-                                                                <IconButton
+                                                            <Tooltip key={weekday} title={isActive ? `Von ${getWeekdayName(weekday)} entfernen` : `Zu ${getWeekdayName(weekday)} hinzufügen`}>
+                                                                <Button
                                                                     size="small"
-                                                                    onClick={() => addShiftToDay(shift.id, weekday)}
+                                                                    variant={isActive ? "outlined" : "contained"}
+                                                                    onClick={() => isActive ? removeShiftFromDay(shift.id, weekday) : addShiftToDay(shift.id, weekday)}
                                                                     sx={{
                                                                         fontSize: '0.7rem',
                                                                         minWidth: 32,
                                                                         height: 24,
-                                                                        backgroundColor: alpha(theme.palette.grey[500], 0.1),
+                                                                        color: isActive ? 'text.primary' : 'white',
+                                                                        backgroundColor: isActive
+                                                                            ? 'white'
+                                                                            : theme.palette.primary.main,
+                                                                        borderColor: isActive
+                                                                            ? alpha(theme.palette.grey[500], 0.3)
+                                                                            : theme.palette.primary.main,
                                                                         '&:hover': {
-                                                                            backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                                                                            backgroundColor: isActive
+                                                                                ? alpha(theme.palette.grey[500], 0.1)
+                                                                                : theme.palette.primary.dark,
+                                                                            borderColor: isActive
+                                                                                ? alpha(theme.palette.grey[500], 0.5)
+                                                                                : theme.palette.primary.main,
                                                                         }
                                                                     }}
                                                                 >
-                                                                    <AddIcon sx={{ fontSize: '0.8rem' }} />
-                                                                </IconButton>
+                                                                    {getWeekdayShort(weekday)}
+                                                                </Button>
                                                             </Tooltip>
                                                         );
                                                     })}

@@ -45,22 +45,6 @@ export class ShiftRoleResponseDto {
   role?: Role;
 
   @ApiProperty({
-    description: 'User ID who created this record',
-    example: '550e8400-e29b-41d4-a716-446655440003',
-    format: 'uuid',
-    required: false
-  })
-  createdBy?: string;
-
-  @ApiProperty({
-    description: 'User ID who last updated this record',
-    example: '550e8400-e29b-41d4-a716-446655440004',
-    format: 'uuid',
-    required: false
-  })
-  updatedBy?: string;
-
-  @ApiProperty({
     description: 'Creation timestamp',
     example: '2023-01-01T00:00:00.000Z',
     format: 'date-time'
@@ -73,12 +57,4 @@ export class ShiftRoleResponseDto {
     format: 'date-time'
   })
   updatedAt: string;
-
-  @ApiProperty({
-    description: 'Deletion timestamp (soft delete)',
-    example: '2023-01-01T00:00:00.000Z',
-    format: 'date-time',
-    required: false
-  })
-  deletedAt?: string;
 }

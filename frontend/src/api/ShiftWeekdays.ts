@@ -100,6 +100,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
    */
   shiftWeekdaysControllerFindAll = (
     query: {
+      locationId: string;
       shiftId: string;
     },
     params: RequestParams = {}

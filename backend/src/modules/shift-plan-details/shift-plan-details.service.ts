@@ -61,8 +61,7 @@ export class ShiftPlanDetailsService {
       where: {
         shiftPlanId: createDto.shiftPlanId,
         employeeId: createDto.employeeId,
-        day: createDto.day,
-        deletedAt: null
+        day: createDto.day
       }
     });
 
@@ -105,8 +104,7 @@ export class ShiftPlanDetailsService {
     const queryBuilder = this.shiftPlanDetailRepository.createQueryBuilder('spd')
       .leftJoinAndSelect('spd.shiftPlan', 'sp')
       .leftJoinAndSelect('spd.employee', 'e')
-      .leftJoinAndSelect('spd.shift', 's')
-      .where('spd.deletedAt IS NULL');
+      .leftJoinAndSelect('spd.shift', 's');
 
     if (filters?.shiftPlanId) {
       queryBuilder.andWhere('spd.shiftPlanId = :shiftPlanId', { shiftPlanId: filters.shiftPlanId });
@@ -140,7 +138,7 @@ export class ShiftPlanDetailsService {
 
   async findOne(id: string): Promise<ShiftPlanDetailResponseDto> {
     const detail = await this.shiftPlanDetailRepository.findOne({
-      where: { id, deletedAt: null },
+      where: { id },
       relations: ['shiftPlan', 'employee', 'shift']
     });
 
@@ -153,7 +151,7 @@ export class ShiftPlanDetailsService {
 
   async update(id: string, updateDto: UpdateShiftPlanDetailDto): Promise<ShiftPlanDetailResponseDto> {
     const detail = await this.shiftPlanDetailRepository.findOne({
-      where: { id, deletedAt: null }
+      where: { id }
     });
 
     if (!detail) {
@@ -195,15 +193,11 @@ export class ShiftPlanDetailsService {
   }
 
   async remove(id: string): Promise<void> {
-    const detail = await this.shiftPlanDetailRepository.findOne({
-      where: { id, deletedAt: null }
-    });
+    const result = await this.shiftPlanDetailRepository.delete(id);
 
-    if (!detail) {
+    if (result.affected === 0) {
       throw new NotFoundException(`Shift plan detail with ID ${id} not found`);
     }
-
-    await this.shiftPlanDetailRepository.remove(detail);
   }
 
   async getByShiftPlan(shiftPlanId: string): Promise<ShiftPlanDetailResponseDto[]> {
@@ -230,12 +224,8 @@ export class ShiftPlanDetailsService {
     dto.employeeId = detail.employeeId;
     dto.shiftId = detail.shiftId;
     dto.day = detail.day;
-    dto.createdBy = detail.createdBy;
-    dto.updatedBy = detail.updatedBy;
     dto.createdAt = detail.createdAt;
     dto.updatedAt = detail.updatedAt;
-    dto.deletedAt = detail.deletedAt;
-    dto.isActive = detail.isActive;
 
     // Related data
     if (detail.shiftPlan) {

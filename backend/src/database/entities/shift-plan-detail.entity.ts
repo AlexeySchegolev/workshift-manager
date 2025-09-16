@@ -33,23 +33,9 @@ export class ShiftPlanDetail {
   @JoinColumn({ name: 'shift_id' })
   shift: Shift;
 
-  // Audit fields
-  @Column({ name: 'created_by', type: 'uuid', nullable: true })
-  createdBy?: string;
-
-  @Column({ name: 'updated_by', type: 'uuid', nullable: true })
-  updatedBy?: string;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
-  deletedAt?: Date;
-
-  get isActive(): boolean {
-    return !this.deletedAt;
-  }
 }

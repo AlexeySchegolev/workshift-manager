@@ -22,8 +22,7 @@ export class ShiftRolesService {
     const existingShiftRole = await this.shiftRoleRepository.findOne({
       where: {
         shiftId: createShiftRoleDto.shiftId,
-        roleId: createShiftRoleDto.roleId,
-        deletedAt: null
+        roleId: createShiftRoleDto.roleId
       }
     });
 
@@ -51,8 +50,7 @@ export class ShiftRolesService {
     roleId?: string;
     includeRelations?: boolean;
   }): Promise<ShiftRoleResponseDto[]> {
-    const queryBuilder = this.shiftRoleRepository.createQueryBuilder('shiftRole')
-      .where('shiftRole.deletedAt IS NULL');
+    const queryBuilder = this.shiftRoleRepository.createQueryBuilder('shiftRole');
 
     if (options?.shiftId) {
       queryBuilder.andWhere('shiftRole.shiftId = :shiftId', {
@@ -82,8 +80,7 @@ export class ShiftRolesService {
    */
   async findOne(id: string, includeRelations = false): Promise<ShiftRoleResponseDto> {
     const queryBuilder = this.shiftRoleRepository.createQueryBuilder('shiftRole')
-      .where('shiftRole.id = :id', { id })
-      .andWhere('shiftRole.deletedAt IS NULL');
+      .where('shiftRole.id = :id', { id });
 
     if (includeRelations) {
       queryBuilder.leftJoinAndSelect('shiftRole.shift', 'shift');
@@ -103,8 +100,8 @@ export class ShiftRolesService {
    * Update an existing shift role
    */
   async update(id: string, updateShiftRoleDto: UpdateShiftRoleDto): Promise<ShiftRoleResponseDto> {
-    const shiftRole = await this.shiftRoleRepository.findOne({ 
-      where: { id, deletedAt: null } 
+    const shiftRole = await this.shiftRoleRepository.findOne({
+      where: { id }
     });
 
     if (!shiftRole) {
@@ -116,8 +113,7 @@ export class ShiftRolesService {
       const existingShiftRole = await this.shiftRoleRepository.findOne({
         where: {
           shiftId: updateShiftRoleDto.shiftId || shiftRole.shiftId,
-          roleId: updateShiftRoleDto.roleId || shiftRole.roleId,
-          deletedAt: null
+          roleId: updateShiftRoleDto.roleId || shiftRole.roleId
         }
       });
 
@@ -146,16 +142,11 @@ export class ShiftRolesService {
    * Soft delete a shift role
    */
   async remove(id: string): Promise<void> {
-    const shiftRole = await this.shiftRoleRepository.findOne({ 
-      where: { id, deletedAt: null } 
-    });
+    const result = await this.shiftRoleRepository.delete(id);
 
-    if (!shiftRole) {
+    if (result.affected === 0) {
       throw new NotFoundException(`Shift role with ID ${id} not found`);
     }
-
-    shiftRole.deletedAt = new Date();
-    await this.shiftRoleRepository.save(shiftRole);
   }
 
   /**
@@ -163,8 +154,7 @@ export class ShiftRolesService {
    */
   async findByShiftId(shiftId: string, includeRelations = false): Promise<ShiftRoleResponseDto[]> {
     const queryBuilder = this.shiftRoleRepository.createQueryBuilder('shiftRole')
-      .where('shiftRole.shiftId = :shiftId', { shiftId })
-      .andWhere('shiftRole.deletedAt IS NULL');
+      .where('shiftRole.shiftId = :shiftId', { shiftId });
 
     if (includeRelations) {
       queryBuilder.leftJoinAndSelect('shiftRole.shift', 'shift');
@@ -182,8 +172,7 @@ export class ShiftRolesService {
    */
   async findByRoleId(roleId: string, includeRelations = false): Promise<ShiftRoleResponseDto[]> {
     const queryBuilder = this.shiftRoleRepository.createQueryBuilder('shiftRole')
-      .where('shiftRole.roleId = :roleId', { roleId })
-      .andWhere('shiftRole.deletedAt IS NULL');
+      .where('shiftRole.roleId = :roleId', { roleId });
 
     if (includeRelations) {
       queryBuilder.leftJoinAndSelect('shiftRole.shift', 'shift');
@@ -207,11 +196,8 @@ export class ShiftRolesService {
       count: shiftRole.count,
       shift: shiftRole.shift,
       role: shiftRole.role,
-      createdBy: shiftRole.createdBy,
-      updatedBy: shiftRole.updatedBy,
       createdAt: toISOString(shiftRole.createdAt),
       updatedAt: toISOString(shiftRole.updatedAt),
-      deletedAt: shiftRole.deletedAt ? toISOString(shiftRole.deletedAt) : undefined,
     };
   }
 }

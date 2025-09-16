@@ -1220,21 +1220,11 @@ export interface ShiftPlanDetailResponseDto {
    */
   createdAt: string;
   /**
-   * Created by user UUID
-   * @format uuid
-   */
-  createdBy?: string;
-  /**
    * Day of the month
    * @min 1
    * @max 31
    */
   day: number;
-  /**
-   * Deletion timestamp
-   * @format date-time
-   */
-  deletedAt?: string;
   /** Employee information */
   employee?: object;
   /**
@@ -1247,8 +1237,6 @@ export interface ShiftPlanDetailResponseDto {
    * @format uuid
    */
   id: string;
-  /** Whether the shift plan detail is active */
-  isActive: boolean;
   /** Shift information */
   shift?: object;
   /**
@@ -1268,11 +1256,6 @@ export interface ShiftPlanDetailResponseDto {
    * @format date-time
    */
   updatedAt: string;
-  /**
-   * Updated by user UUID
-   * @format uuid
-   */
-  updatedBy?: string;
 }
 
 export interface ShiftPlanResponseDto {
@@ -1466,18 +1449,6 @@ export interface ShiftRoleResponseDto {
    */
   createdAt: string;
   /**
-   * User ID who created this record
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440003"
-   */
-  createdBy?: string;
-  /**
-   * Deletion timestamp (soft delete)
-   * @format date-time
-   * @example "2023-01-01T00:00:00.000Z"
-   */
-  deletedAt?: string;
-  /**
    * Unique identifier for the shift role
    * @format uuid
    * @example "550e8400-e29b-41d4-a716-446655440000"
@@ -1505,12 +1476,6 @@ export interface ShiftRoleResponseDto {
    * @example "2023-01-01T00:00:00.000Z"
    */
   updatedAt: string;
-  /**
-   * User ID who last updated this record
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440004"
-   */
-  updatedBy?: string;
 }
 
 export interface TimeSlotDto {

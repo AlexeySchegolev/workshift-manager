@@ -21,7 +21,6 @@ export class ShiftWeekdaysService {
 
   async findAll(): Promise<ShiftWeekdayResponseDto[]> {
     const shiftWeekdays = await this.shiftWeekdayRepository.find({
-      where: { deletedAt: null },
       relations: ['shift'],
     });
     return shiftWeekdays.map(sw => new ShiftWeekdayResponseDto(sw));
@@ -29,7 +28,7 @@ export class ShiftWeekdaysService {
 
   async findByShiftId(shiftId: string): Promise<ShiftWeekdayResponseDto[]> {
     const shiftWeekdays = await this.shiftWeekdayRepository.find({
-      where: { shiftId, deletedAt: null },
+      where: { shiftId },
       relations: ['shift'],
     });
     return shiftWeekdays.map(sw => new ShiftWeekdayResponseDto(sw));
@@ -38,8 +37,7 @@ export class ShiftWeekdaysService {
   async findByLocationId(locationId: string): Promise<ShiftWeekdayResponseDto[]> {
     const shiftWeekdays = await this.shiftWeekdayRepository.find({
       where: {
-        deletedAt: null,
-        shift: { locationId, deletedAt: null }
+        shift: { locationId }
       },
       relations: ['shift'],
     });
@@ -48,7 +46,7 @@ export class ShiftWeekdaysService {
 
   async findOne(id: string): Promise<ShiftWeekdayResponseDto> {
     const shiftWeekday = await this.shiftWeekdayRepository.findOne({
-      where: { id, deletedAt: null },
+      where: { id },
       relations: ['shift'],
     });
 
@@ -61,7 +59,7 @@ export class ShiftWeekdaysService {
 
   async update(id: string, updateShiftWeekdayDto: UpdateShiftWeekdayDto): Promise<ShiftWeekdayResponseDto> {
     const shiftWeekday = await this.shiftWeekdayRepository.findOne({
-      where: { id, deletedAt: null },
+      where: { id },
     });
 
     if (!shiftWeekday) {
@@ -74,22 +72,14 @@ export class ShiftWeekdaysService {
   }
 
   async remove(id: string): Promise<void> {
-    const shiftWeekday = await this.shiftWeekdayRepository.findOne({
-      where: { id, deletedAt: null },
-    });
+    const result = await this.shiftWeekdayRepository.delete(id);
 
-    if (!shiftWeekday) {
+    if (result.affected === 0) {
       throw new NotFoundException(`ShiftWeekday with ID ${id} not found`);
     }
-
-    shiftWeekday.deletedAt = new Date();
-    await this.shiftWeekdayRepository.save(shiftWeekday);
   }
 
   async removeByShiftId(shiftId: string): Promise<void> {
-    await this.shiftWeekdayRepository.update(
-      { shiftId, deletedAt: null },
-      { deletedAt: new Date() }
-    );
+    await this.shiftWeekdayRepository.delete({ shiftId });
   }
 }

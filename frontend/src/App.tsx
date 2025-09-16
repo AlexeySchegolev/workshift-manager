@@ -1,23 +1,22 @@
+import { CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
-import Layout from './components/Layout';
-import PublicHomePage from './pages/PublicHomePage';
-import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
-import ShiftPlanningPage from './pages/ShiftPlanningPage';
-import ShiftsPage from './pages/ShiftsPage';
-import EmployeePage from './pages/EmployeePage';
-import ShiftRulesPage from './pages/ShiftRulesPage';
-import LocationManagementPage from './pages/LocationManagementPage';
-import RoleManagementPage from './pages/RoleManagementPage';
-import AbsencesPage from './pages/AbsencesPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import { extendedTheme } from './theme/extendedTheme';
-import { AuthProvider } from './contexts/AuthContext';
-import { useAuth } from './contexts/AuthContext';
+import Layout from './components/Layout';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
+import AbsencesPage from './pages/AbsencesPage';
+import DashboardPage from './pages/DashboardPage';
+import EmployeePage from './pages/EmployeePage';
+import LocationManagementPage from './pages/LocationManagementPage';
+import LoginPage from './pages/LoginPage';
+import PublicHomePage from './pages/PublicHomePage';
+import RoleManagementPage from './pages/RoleManagementPage';
+import ShiftPlanningPage from './pages/ShiftPlanningPage';
+import ShiftRulesPage from './pages/ShiftRulesPage';
+import ShiftsPage from './pages/ShiftsPage';
+import { extendedTheme } from './theme/extendedTheme';
 
 /**
  * Router component that handles authentication-based routing

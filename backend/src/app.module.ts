@@ -14,6 +14,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
 import { EmployeeAbsencesModule } from './modules/employee-absences/employee-absences.module';
 import { ShiftPlanDetailsModule } from './modules/shift-plan-details/shift-plan-details.module';
 import { ShiftRolesModule } from './modules/shift-roles/shift-roles.module';
+import { ShiftWeekdaysModule } from './modules/shift-weekdays/shift-weekdays.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
@@ -42,6 +43,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     RolesModule,
     ShiftsModule,
     ShiftRolesModule,
+    ShiftWeekdaysModule,
   ],
   controllers: [],
   providers: [

@@ -515,6 +515,8 @@ export interface CreateShiftRoleDto {
   shiftId: string;
 }
 
+export type CreateShiftWeekdayDto = object;
+
 export interface CreateUserDto {
   /**
    * User email address
@@ -1936,6 +1938,8 @@ export interface UpdateShiftRoleDto {
    */
   updatedBy?: string;
 }
+
+export type UpdateShiftWeekdayDto = object;
 
 export interface UpdateUserDto {
   /**

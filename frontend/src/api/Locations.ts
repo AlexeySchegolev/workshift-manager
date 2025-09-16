@@ -30,6 +30,7 @@ import {
   CreateShiftPlanDetailDto,
   CreateShiftPlanDto,
   CreateShiftRoleDto,
+  CreateShiftWeekdayDto,
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
@@ -61,6 +62,7 @@ import {
   UpdateShiftPlanDetailDto,
   UpdateShiftPlanDto,
   UpdateShiftRoleDto,
+  UpdateShiftWeekdayDto,
   UpdateUserDto,
   UserResponseDto,
 } from "./data-contracts";

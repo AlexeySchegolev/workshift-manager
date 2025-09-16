@@ -5,6 +5,7 @@ import { Role } from './role.entity';
 import { ShiftPlan } from './shift-plan.entity';
 import { ShiftPlanDetail } from './shift-plan-detail.entity';
 import { ShiftRole } from './shift-role.entity';
+import { ShiftWeekday } from './shift-weekday.entity';
 
 @Entity('shifts')
 export class Shift {
@@ -63,6 +64,9 @@ export class Shift {
 
   @OneToMany(() => ShiftPlanDetail, shiftPlanDetail => shiftPlanDetail.shift)
   shiftPlanDetails: ShiftPlanDetail[];
+
+  @OneToMany(() => ShiftWeekday, shiftWeekday => shiftWeekday.shift)
+  shiftWeekdays: ShiftWeekday[];
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

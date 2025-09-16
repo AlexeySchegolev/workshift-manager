@@ -67,7 +67,7 @@ import {
   UserResponseDto,
 } from "./data-contracts";
 
-export class Users<SecurityDataType = unknown> {
+export class ShiftWeekdays<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -77,93 +77,94 @@ export class Users<SecurityDataType = unknown> {
   /**
    * No description
    *
-   * @tags users
-   * @name UsersControllerCreate
-   * @summary Create a new user
-   * @request POST:/api/users
+   * @tags ShiftWeekdays
+   * @name ShiftWeekdaysControllerCreate
+   * @request POST:/shift-weekdays
    */
-  usersControllerCreate = (data: CreateUserDto, params: RequestParams = {}) =>
-    this.http.request<UserResponseDto, void>({
-      path: `/api/users`,
+  shiftWeekdaysControllerCreate = (
+    data: CreateShiftWeekdayDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<void, any>({
+      path: `/shift-weekdays`,
       method: "POST",
       body: data,
       type: ContentType.Json,
-      format: "json",
       ...params,
     }); /**
    * No description
    *
-   * @tags users
-   * @name UsersControllerFindAll
-   * @summary Get all users
-   * @request GET:/api/users
+   * @tags ShiftWeekdays
+   * @name ShiftWeekdaysControllerFindAll
+   * @request GET:/shift-weekdays
    */
-  usersControllerFindAll = (
-    query?: {
-      /** Include organizations */
-      includeRelations?: boolean;
+  shiftWeekdaysControllerFindAll = (
+    query: {
+      shiftId: string;
     },
     params: RequestParams = {}
   ) =>
-    this.http.request<UserResponseDto[], any>({
-      path: `/api/users`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags users
-   * @name UsersControllerFindOne
-   * @summary Get user by ID
-   * @request GET:/api/users/{id}
-   */
-  usersControllerFindOne = (
-    id: string,
-    query?: {
-      includeRelations?: boolean;
-    },
-    params: RequestParams = {}
-  ) =>
-    this.http.request<UserResponseDto, void>({
-      path: `/api/users/${id}`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags users
-   * @name UsersControllerRemove
-   * @summary Delete user by ID
-   * @request DELETE:/api/users/{id}
-   */
-  usersControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, any>({
-      path: `/api/users/${id}`,
+      path: `/shift-weekdays`,
+      method: "GET",
+      query: query,
+      ...params,
+    }); /**
+   * No description
+   *
+   * @tags ShiftWeekdays
+   * @name ShiftWeekdaysControllerFindOne
+   * @request GET:/shift-weekdays/{id}
+   */
+  shiftWeekdaysControllerFindOne = (id: string, params: RequestParams = {}) =>
+    this.http.request<void, any>({
+      path: `/shift-weekdays/${id}`,
+      method: "GET",
+      ...params,
+    }); /**
+   * No description
+   *
+   * @tags ShiftWeekdays
+   * @name ShiftWeekdaysControllerRemove
+   * @request DELETE:/shift-weekdays/{id}
+   */
+  shiftWeekdaysControllerRemove = (id: string, params: RequestParams = {}) =>
+    this.http.request<void, any>({
+      path: `/shift-weekdays/${id}`,
       method: "DELETE",
       ...params,
     }); /**
    * No description
    *
-   * @tags users
-   * @name UsersControllerUpdate
-   * @summary Update user by ID
-   * @request PATCH:/api/users/{id}
+   * @tags ShiftWeekdays
+   * @name ShiftWeekdaysControllerRemoveByShiftId
+   * @request DELETE:/shift-weekdays/shift/{shiftId}
    */
-  usersControllerUpdate = (
-    id: string,
-    data: UpdateUserDto,
+  shiftWeekdaysControllerRemoveByShiftId = (
+    shiftId: string,
     params: RequestParams = {}
   ) =>
-    this.http.request<UserResponseDto, void>({
-      path: `/api/users/${id}`,
+    this.http.request<void, any>({
+      path: `/shift-weekdays/shift/${shiftId}`,
+      method: "DELETE",
+      ...params,
+    }); /**
+   * No description
+   *
+   * @tags ShiftWeekdays
+   * @name ShiftWeekdaysControllerUpdate
+   * @request PATCH:/shift-weekdays/{id}
+   */
+  shiftWeekdaysControllerUpdate = (
+    id: string,
+    data: UpdateShiftWeekdayDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<void, any>({
+      path: `/shift-weekdays/${id}`,
       method: "PATCH",
       body: data,
       type: ContentType.Json,
-      format: "json",
       ...params,
     });
 }

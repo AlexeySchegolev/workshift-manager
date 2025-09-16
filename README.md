@@ -218,7 +218,7 @@ PostgreSQL is configured via `docker-compose.yml`:
 - `GET /api/employees` - List employees with filtering and pagination
 - `GET /api/locations` - List practice locations
 - `GET /api/shift-plans` - Monthly shift plans
-- `GET /api/shift-rules` - Shift planning constraints
+- `GET /api/shift-configuration` - Shift planning constraints
 - `GET /health` - Health check endpoint
 
 ### API Features

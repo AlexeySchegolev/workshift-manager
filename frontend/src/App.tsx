@@ -80,7 +80,7 @@ const AppRouter: React.FC = () => {
             <RoleManagementPage />
           </ProtectedRoute>
         } />
-        <Route path="/shift-rules" element={
+        <Route path="/shift-configuration" element={
           <ProtectedRoute fallbackPath="/">
             <ShiftRulesPage />
           </ProtectedRoute>

@@ -102,7 +102,7 @@ export class ShiftsController {
       organizationId,
       locationId,
       shiftPlanId,
-      activeOnly: activeOnly === 'true',
+      activeOnly: activeOnly !== 'false', // Default to true, only false if explicitly set to 'false'
       includeRelations: includeRelations === 'true',
     };
 
@@ -152,7 +152,7 @@ export class ShiftsController {
     @Query('includeRelations') includeRelations?: string
   ): Promise<ShiftResponseDto[]> {
     return this.shiftsService.findByLocationId(locationId, {
-      activeOnly: activeOnly === 'true',
+      activeOnly: activeOnly !== 'false', // Default to true, only false if explicitly set to 'false'
       includeRelations: includeRelations === 'true',
     });
   }

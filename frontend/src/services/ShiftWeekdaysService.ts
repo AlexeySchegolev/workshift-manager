@@ -24,13 +24,42 @@ export class ShiftWeekdaysService extends BaseService {
   }
 
   async getShiftWeekdaysByShiftId(shiftId: string): Promise<ShiftWeekdayResponseDto[]> {
-    // Mock implementation - return empty array for now
-    return [];
+    try {
+      const response = await this.getHttpClient().request({
+        path: `/api/shift-weekdays?shiftId=${shiftId}`,
+        method: 'GET'
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching shift weekdays by shift ID:', error);
+      return [];
+    }
+  }
+
+  async getShiftWeekdaysByLocationId(locationId: string): Promise<ShiftWeekdayResponseDto[]> {
+    try {
+      const response = await this.getHttpClient().request({
+        path: `/api/shift-weekdays?locationId=${locationId}`,
+        method: 'GET'
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching shift weekdays by location ID:', error);
+      return [];
+    }
   }
 
   async getAllShiftWeekdays(): Promise<ShiftWeekdayResponseDto[]> {
-    // Mock implementation - return empty array for now
-    return [];
+    try {
+      const response = await this.getHttpClient().request({
+        path: '/api/shift-weekdays',
+        method: 'GET'
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all shift weekdays:', error);
+      return [];
+    }
   }
 
   async updateShiftWeekday(id: string, data: Partial<CreateShiftWeekdayDto>): Promise<void> {

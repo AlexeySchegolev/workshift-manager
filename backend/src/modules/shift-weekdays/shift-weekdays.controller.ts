@@ -16,9 +16,15 @@ export class ShiftWeekdaysController {
   }
 
   @Get()
-  findAll(@Query('shiftId') shiftId?: string): Promise<ShiftWeekdayResponseDto[]> {
+  findAll(
+    @Query('shiftId') shiftId?: string,
+    @Query('locationId') locationId?: string
+  ): Promise<ShiftWeekdayResponseDto[]> {
     if (shiftId) {
       return this.shiftWeekdaysService.findByShiftId(shiftId);
+    }
+    if (locationId) {
+      return this.shiftWeekdaysService.findByLocationId(locationId);
     }
     return this.shiftWeekdaysService.findAll();
   }

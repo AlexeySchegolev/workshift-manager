@@ -9,6 +9,7 @@ import {
 import ShiftPlanTable from '../components/shift-plan/ShiftPlanTable';
 import {ShiftPlanService, LocationService} from "@/services";
 import {shiftPlanCalculationService, CalculatedShiftPlan} from "@/services/ShiftPlanCalculationService";
+import {shiftWeekdaysService, ShiftWeekdayResponseDto} from "@/services/ShiftWeekdaysService";
 import {useAuth} from "@/contexts/AuthContext";
 import {
     CreateShiftPlanDto
@@ -40,6 +41,9 @@ const ShiftPlanningPage: React.FC = () => {
         isLoading: false,
         hasData: false
     });
+
+    // Shift weekdays data for selected location
+    const [shiftWeekdays, setShiftWeekdays] = useState<ShiftWeekdayResponseDto[]>([]);
 
     // Loading state
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -92,10 +96,22 @@ const ShiftPlanningPage: React.FC = () => {
         }
     };
 
+    // Load shift weekdays for selected location
+    const loadShiftWeekdays = async (locationId: string) => {
+        try {
+            const weekdays = await shiftWeekdaysService.getShiftWeekdaysByLocationId(locationId);
+            setShiftWeekdays(weekdays);
+        } catch (error) {
+            console.error('Fehler beim Laden der Schicht-Wochentage:', error);
+            setShiftWeekdays([]);
+        }
+    };
+
     // Load shift plan when date or location changes
     useEffect(() => {
         if (selectedLocationId && selectedDate) {
             loadShiftPlan(selectedLocationId, selectedDate);
+            loadShiftWeekdays(selectedLocationId);
         } else {
             setCalculatedShiftPlan({
                 shiftPlan: null,
@@ -109,6 +125,7 @@ const ShiftPlanningPage: React.FC = () => {
                 isLoading: false,
                 hasData: false
             });
+            setShiftWeekdays([]);
         }
     }, [selectedDate, selectedLocationId]);
 

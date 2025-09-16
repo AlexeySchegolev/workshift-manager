@@ -35,6 +35,17 @@ export class ShiftWeekdaysService {
     return shiftWeekdays.map(sw => new ShiftWeekdayResponseDto(sw));
   }
 
+  async findByLocationId(locationId: string): Promise<ShiftWeekdayResponseDto[]> {
+    const shiftWeekdays = await this.shiftWeekdayRepository.find({
+      where: {
+        deletedAt: null,
+        shift: { locationId, deletedAt: null }
+      },
+      relations: ['shift'],
+    });
+    return shiftWeekdays.map(sw => new ShiftWeekdayResponseDto(sw));
+  }
+
   async findOne(id: string): Promise<ShiftWeekdayResponseDto> {
     const shiftWeekday = await this.shiftWeekdayRepository.findOne({
       where: { id, deletedAt: null },

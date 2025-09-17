@@ -112,6 +112,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                             <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Zeit</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Station</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Rollen</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Aktionen</TableCell>
                         </TableRow>
                     </TableHead>
@@ -167,6 +168,33 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                     <Typography variant="caption" color="text.secondary">
                                         {shift.location?.code}
                                     </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {shift.shiftRoles && shift.shiftRoles.length > 0 ? (
+                                            shift.shiftRoles.map((shiftRole) => (
+                                                <Tooltip
+                                                    key={shiftRole.id}
+                                                    title={shiftRole.role?.name || 'Unbekannte Rolle'}
+                                                    arrow
+                                                >
+                                                    <Chip
+                                                        label={`${shiftRole.role?.shortName || shiftRole.role?.name || 'Unbekannt'} (${shiftRole.count})`}
+                                                        size="small"
+                                                        variant="outlined"
+                                                        sx={{
+                                                            fontSize: '0.75rem',
+                                                            height: '24px',
+                                                        }}
+                                                    />
+                                                </Tooltip>
+                                            ))
+                                        ) : (
+                                            <Typography variant="caption" color="text.secondary">
+                                                Keine Rollen
+                                            </Typography>
+                                        )}
+                                    </Box>
                                 </TableCell>
                                 <TableCell>
                                     <Box sx={{ display: 'flex', gap: 0.5 }}>

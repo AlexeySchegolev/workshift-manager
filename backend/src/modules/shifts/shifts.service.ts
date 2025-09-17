@@ -41,7 +41,7 @@ export class ShiftsService {
     // Load the shift with relations to include location data in response
     const shiftWithRelations = await this.shiftRepository.findOne({
       where: { id: savedShift.id },
-      relations: ['organization', 'location', 'requiredRoles'],
+      relations: ['organization', 'location', 'requiredRoles', 'shiftRoles', 'shiftRoles.role'],
     });
     
     return this.mapToResponseDto(shiftWithRelations);
@@ -81,6 +81,8 @@ export class ShiftsService {
       queryBuilder.leftJoinAndSelect('shift.organization', 'organization');
       queryBuilder.leftJoinAndSelect('shift.location', 'location');
       queryBuilder.leftJoinAndSelect('shift.requiredRoles', 'requiredRoles');
+      queryBuilder.leftJoinAndSelect('shift.shiftRoles', 'shiftRoles');
+      queryBuilder.leftJoinAndSelect('shiftRoles.role', 'shiftRole');
     }
 
     queryBuilder.orderBy('shift.startTime', 'ASC');
@@ -100,6 +102,8 @@ export class ShiftsService {
       queryBuilder.leftJoinAndSelect('shift.organization', 'organization');
       queryBuilder.leftJoinAndSelect('shift.location', 'location');
       queryBuilder.leftJoinAndSelect('shift.requiredRoles', 'requiredRoles');
+      queryBuilder.leftJoinAndSelect('shift.shiftRoles', 'shiftRoles');
+      queryBuilder.leftJoinAndSelect('shiftRoles.role', 'shiftRole');
     }
 
     const shift = await queryBuilder.getOne();
@@ -147,7 +151,7 @@ export class ShiftsService {
     // Load the shift with relations to include location data in response
     const shiftWithRelations = await this.shiftRepository.findOne({
       where: { id: savedShift.id },
-      relations: ['organization', 'location', 'requiredRoles'],
+      relations: ['organization', 'location', 'requiredRoles', 'shiftRoles', 'shiftRoles.role'],
     });
     
     return this.mapToResponseDto(shiftWithRelations);
@@ -187,6 +191,8 @@ export class ShiftsService {
       queryBuilder.leftJoinAndSelect('shift.organization', 'organization');
       queryBuilder.leftJoinAndSelect('shift.location', 'location');
       queryBuilder.leftJoinAndSelect('shift.requiredRoles', 'requiredRoles');
+      queryBuilder.leftJoinAndSelect('shift.shiftRoles', 'shiftRoles');
+      queryBuilder.leftJoinAndSelect('shiftRoles.role', 'shiftRole');
     }
 
     queryBuilder.orderBy('shift.startTime', 'ASC');
@@ -212,6 +218,16 @@ export class ShiftsService {
         organization: shift.organization,
         location: shift.location,
         requiredRoles: shift.requiredRoles,
+        shiftRoles: shift.shiftRoles?.map(shiftRole => ({
+          id: shiftRole.id,
+          shiftId: shiftRole.shiftId,
+          roleId: shiftRole.roleId,
+          count: shiftRole.count,
+          role: shiftRole.role,
+          shift: undefined, // Avoid circular reference
+          createdAt: toISOString(shiftRole.createdAt),
+          updatedAt: toISOString(shiftRole.updatedAt),
+        })),
         createdBy: shift.createdBy,
         updatedBy: shift.updatedBy,
         createdAt: toISOString(shift.createdAt),

@@ -17,6 +17,8 @@ import {EmployeeAbsence} from "@/database/entities/employee-absence.entity";
 import {employeeAbsencesSeedData} from "@/database/seeds/data/employee-absences.seed";
 import {ShiftPlan} from "@/database/entities/shift-plan.entity";
 import {shiftPlansSeedData} from "@/database/seeds/data/shift-plans.seed";
+import {ShiftRole} from "@/database/entities/shift-role.entity";
+import {shiftRolesSeedData} from "@/database/seeds/data/shift-roles.seed";
 
 @Injectable()
 export class SeederService {
@@ -42,6 +44,7 @@ export class SeederService {
             const locations = await this.seedLocations(organization);
             const employees = await this.seedEmployees(organization, roles, locations);
             const shifts = await this.seedShifts(organization, locations);
+            await this.seedShiftRoles(shifts, roles);
             const shiftPlans = await this.seedShiftPlans(organization, locations, user);
             await this.seedEmployeeAbsences(employees);
 
@@ -59,6 +62,7 @@ export class SeederService {
             // Order is important due to Foreign Key Constraints
             await this.dataSource.query('TRUNCATE TABLE shift_plan_details CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shift_plans CASCADE');
+            await this.dataSource.query('TRUNCATE TABLE shift_roles CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shift_required_roles CASCADE');
             await this.dataSource.query('TRUNCATE TABLE shifts CASCADE');
             await this.dataSource.query('TRUNCATE TABLE employee_absences CASCADE');
@@ -215,6 +219,33 @@ export class SeederService {
         }
     }
 
+    private async seedShiftRoles(shifts: Shift[], roles: Role[]): Promise<void> {
+        this.logger.log('👔 Adding shift roles...');
+
+        try {
+            const shiftRoleRepo = this.dataSource.getRepository(ShiftRole);
+
+            // Update shift role data with proper references
+            const shiftRoleData = shiftRolesSeedData.map(shiftRole => {
+                const shiftIndex = parseInt(shiftRole.shiftId as string) - 1;
+                const roleIndex = parseInt(shiftRole.roleId as string) - 1;
+
+                return {
+                    ...shiftRole,
+                    shiftId: shifts[shiftIndex]?.id || shifts[0].id,
+                    roleId: roles[roleIndex]?.id || roles[0].id,
+                };
+            });
+
+            const shiftRoles = await shiftRoleRepo.save(shiftRoleData);
+
+            this.logger.log(`✅ ${shiftRoles.length} shift roles added successfully`);
+        } catch (error) {
+            this.logger.error('❌ Error adding shift roles:', error);
+            throw error;
+        }
+    }
+
     private async seedEmployeeAbsences(employees: Employee[]): Promise<void> {
         this.logger.log('🏖️ Adding employee absences...');
 
@@ -278,6 +309,7 @@ export class SeederService {
         employees: number;
         employeeAbsences: number;
         shifts: number;
+        shiftRoles: number;
         shiftPlans: number;
     }> {
         const organizationRepo = this.dataSource.getRepository(Organization);
@@ -287,9 +319,10 @@ export class SeederService {
         const employeeRepo = this.dataSource.getRepository(Employee);
         const absenceRepo = this.dataSource.getRepository(EmployeeAbsence);
         const shiftRepo = this.dataSource.getRepository(Shift);
+        const shiftRoleRepo = this.dataSource.getRepository(ShiftRole);
         const shiftPlanRepo = this.dataSource.getRepository(ShiftPlan);
 
-        const [organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftPlans] = await Promise.all([
+        const [organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftRoles, shiftPlans] = await Promise.all([
             organizationRepo.count(),
             userRepo.count(),
             roleRepo.count(),
@@ -297,9 +330,10 @@ export class SeederService {
             employeeRepo.count(),
             absenceRepo.count(),
             shiftRepo.count(),
+            shiftRoleRepo.count(),
             shiftPlanRepo.count(),
         ]);
 
-        return {organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftPlans};
+        return {organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftRoles, shiftPlans};
     }
 }

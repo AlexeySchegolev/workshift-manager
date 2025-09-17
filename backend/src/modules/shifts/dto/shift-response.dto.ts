@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { RoleResponseDto } from '@/modules/roles/dto/role-response.dto';
 import { LocationResponseDto } from '@/modules/locations/dto/location-response.dto';
 import { OrganizationResponseDto } from '@/modules/organizations/dto/organization-response.dto';
+import { ShiftRoleResponseDto } from '@/modules/shift-roles/dto/shift-role-response.dto';
 
 export class ShiftResponseDto {
   @ApiProperty({
@@ -92,6 +93,13 @@ export class ShiftResponseDto {
     required: false
   })
   requiredRoles?: RoleResponseDto[];
+
+  @ApiProperty({
+    description: 'Shift role assignments with counts',
+    type: [ShiftRoleResponseDto],
+    required: false
+  })
+  shiftRoles?: ShiftRoleResponseDto[];
 
   @ApiProperty({
     description: 'User ID who created this shift',

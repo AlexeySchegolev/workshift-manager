@@ -5,6 +5,7 @@ import { getTodayDateString } from '@/utils/date.utils.ts';
 import { useAuth } from '@/contexts/AuthContext.tsx';
 
 export interface ShiftFormData {
+  id?: string;
   name: string;
   shortName: string;
   description: string;
@@ -27,6 +28,7 @@ export const useShiftForm = () => {
   const { organizationId } = useAuth();
   
   const getInitialFormData = (): ShiftFormData => ({
+    id: undefined,
     name: '',
     shortName: '',
     description: '',
@@ -89,6 +91,7 @@ export const useShiftForm = () => {
 
   const loadShiftForEdit = (shift: ShiftResponseDto) => {
     setFormData({
+      id: shift.id,
       name: shift.name,
       shortName: shift.shortName || '',
       description: shift.description || '',

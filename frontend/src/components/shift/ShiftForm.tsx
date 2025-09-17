@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -23,6 +23,10 @@ import {
 } from '@mui/icons-material';
 import { ShiftFormData, ShiftFormErrors } from './hooks/useShiftForm';
 import { useLocations } from '@/hooks/useLocations';
+import { useShiftRoles } from './hooks/useShiftRoles';
+import ShiftRolesTable from './ShiftRolesTable';
+import ShiftRoleDialog from './ShiftRoleDialog';
+import { ShiftRoleResponseDto } from '@/api/data-contracts';
 
 interface ShiftFormProps {
     open: boolean;
@@ -45,6 +49,48 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
 }) => {
     // Fetch locations from API
     const { locations, loading: locationsLoading} = useLocations();
+    
+    // Shift roles management
+    const {
+        shiftRoles,
+        loading: rolesLoading,
+        addShiftRole,
+        updateShiftRole,
+        deleteShiftRole,
+    } = useShiftRoles(formData.id);
+
+    // Role dialog state
+    const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+    const [editingRole, setEditingRole] = useState<ShiftRoleResponseDto | null>(null);
+
+    const handleAddRole = () => {
+        setEditingRole(null);
+        setRoleDialogOpen(true);
+    };
+
+    const handleEditRole = (shiftRole: ShiftRoleResponseDto) => {
+        setEditingRole(shiftRole);
+        setRoleDialogOpen(true);
+    };
+
+    const handleRoleDialogClose = () => {
+        setRoleDialogOpen(false);
+        setEditingRole(null);
+    };
+
+    const handleRoleSave = async (data: { roleId: string; count: number }) => {
+        if (editingRole) {
+            await updateShiftRole(editingRole.id, { count: data.count });
+        } else {
+            await addShiftRole({
+                shiftId: formData.id!,
+                roleId: data.roleId,
+                count: data.count,
+            });
+        }
+    };
+
+    const existingRoleIds = shiftRoles.map(sr => sr.roleId);
     return (
         <Dialog
             open={open}
@@ -178,8 +224,24 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
-
-
+                    {/* Shift Roles Section - Only show for existing shifts */}
+                    {isEditing && formData.id && (
+                        <>
+                            <Grid size={{ xs: 12 }}>
+                                <Divider sx={{ my: 2 }} />
+                            </Grid>
+                            
+                            <Grid size={{ xs: 12 }}>
+                                <ShiftRolesTable
+                                    shiftRoles={shiftRoles}
+                                    loading={rolesLoading}
+                                    onAdd={handleAddRole}
+                                    onEdit={handleEditRole}
+                                    onDelete={deleteShiftRole}
+                                />
+                            </Grid>
+                        </>
+                    )}
 
                 </Grid>
             </DialogContent>
@@ -192,6 +254,15 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                     {isEditing ? 'Aktualisieren' : 'Erstellen'}
                 </Button>
             </DialogActions>
+
+            {/* Role Dialog */}
+            <ShiftRoleDialog
+                open={roleDialogOpen}
+                onClose={handleRoleDialogClose}
+                onSave={handleRoleSave}
+                shiftRole={editingRole}
+                existingRoleIds={existingRoleIds}
+            />
         </Dialog>
     );
 };

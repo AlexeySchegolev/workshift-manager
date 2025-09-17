@@ -120,13 +120,12 @@ const ShiftRulesPage: React.FC = () => {
 
             for (let i = 0; i < 7; i++) {
                 const currentDay = addDays(weekStart, i);
-                const dayOfWeek = currentDay.getDay();
-                const adjustedDayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Convert to 0=Monday, 6=Sunday
+                const dayOfWeek = currentDay.getDay(); // JavaScript: 0=Sunday, 1=Monday, ..., 6=Saturday
 
                 const dayShifts: { [schichtName: string]: number } = {};
                 
-                // Find shifts for this weekday
-                const dayWeekdays = shiftWeekdays.filter(sw => sw.weekday === adjustedDayOfWeek);
+                // Find shifts for this weekday (using JavaScript convention)
+                const dayWeekdays = shiftWeekdays.filter(sw => sw.weekday === dayOfWeek);
                 for (const weekday of dayWeekdays) {
                     const shift = shifts.find(s => s.id === weekday.shiftId);
                     if (shift) {
@@ -193,12 +192,12 @@ const ShiftRulesPage: React.FC = () => {
     };
 
     const getWeekdayName = (weekday: number): string => {
-        const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+        const days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
         return days[weekday] || '';
     };
 
     const getWeekdayShort = (weekday: number): string => {
-        const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+        const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
         return days[weekday] || '';
     };
 
@@ -285,7 +284,7 @@ const ShiftRulesPage: React.FC = () => {
                                                 </Typography>
                                                 
                                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                    {[0, 1, 2, 3, 4, 5, 6].map((weekday) => {
+                                                    {[1, 2, 3, 4, 5, 6, 0].map((weekday) => {
                                                         const isActive = shiftWeekdaysForShift.some(sw => sw.weekday === weekday);
                                                         
                                                         return (

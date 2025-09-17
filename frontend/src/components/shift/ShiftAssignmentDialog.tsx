@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { EmployeeResponseDto, ShiftResponseDto } from '@/api/data-contracts';
 import { shiftService } from '@/services/ShiftService';
+import { shiftWeekdaysService } from '@/services/ShiftWeekdaysService';
 import { format, parse } from 'date-fns';
 import { de } from 'date-fns/locale';
 
@@ -47,12 +48,12 @@ const ShiftAssignmentDialog: React.FC<ShiftAssignmentDialogProps> = ({
     const [isLoadingShifts, setIsLoadingShifts] = useState(false);
     const [error, setError] = useState<string>('');
 
-    // Load available shifts when dialog opens
+    // Load available shifts when dialog opens or date changes
     useEffect(() => {
         if (open && locationId) {
             loadAvailableShifts();
         }
-    }, [open, locationId]);
+    }, [open, locationId, selectedDate]);
 
     // Set current shift when dialog opens
     useEffect(() => {
@@ -67,11 +68,25 @@ const ShiftAssignmentDialog: React.FC<ShiftAssignmentDialogProps> = ({
 
         setIsLoadingShifts(true);
         try {
-            const shifts = await shiftService.getShiftsByLocationId(locationId, {
+            // Get all shifts for location
+            const allShifts = await shiftService.getShiftsByLocationId(locationId, {
                 activeOnly: true,
                 includeRelations: true,
             });
-            setAvailableShifts(shifts);
+
+            // Get weekday from selected date (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+            const parsedDate = parse(selectedDate, 'dd.MM.yyyy', new Date());
+            const weekday = parsedDate.getDay();
+
+            // Get shift weekdays for location
+            const shiftWeekdays = await shiftWeekdaysService.getShiftWeekdaysByLocationId(locationId);
+
+            // Filter shifts that are available for this weekday
+            const availableShiftsForWeekday = allShifts.filter(shift => {
+                return shiftWeekdays.some(sw => sw.shiftId === shift.id && sw.weekday === weekday);
+            });
+
+            setAvailableShifts(availableShiftsForWeekday);
         } catch (error) {
             setError('Fehler beim Laden der verfügbaren Schichten');
             console.error('Error loading shifts:', error);

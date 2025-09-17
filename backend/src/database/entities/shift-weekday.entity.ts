@@ -10,7 +10,7 @@ export class ShiftWeekday {
   shiftId: string;
 
   @Column({ type: 'int' })
-  weekday: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  weekday: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday (JavaScript convention)
 
   // Relationships
   @ManyToOne(() => Shift, shift => shift.shiftWeekdays)

@@ -7,7 +7,7 @@ export class CreateShiftWeekdayDto {
   @IsInt()
   @Min(0)
   @Max(6)
-  weekday: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  weekday: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday (JavaScript convention)
 
   @IsOptional()
   @IsUUID()

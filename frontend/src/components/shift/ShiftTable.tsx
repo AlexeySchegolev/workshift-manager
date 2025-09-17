@@ -172,23 +172,26 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                 <TableCell>
                                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                         {shift.shiftRoles && shift.shiftRoles.length > 0 ? (
-                                            shift.shiftRoles.map((shiftRole) => (
-                                                <Tooltip
-                                                    key={shiftRole.id}
-                                                    title={shiftRole.role?.name || 'Unbekannte Rolle'}
-                                                    arrow
-                                                >
-                                                    <Chip
-                                                        label={`${shiftRole.role?.shortName || shiftRole.role?.name || 'Unbekannt'} (${shiftRole.count})`}
-                                                        size="small"
-                                                        variant="outlined"
-                                                        sx={{
-                                                            fontSize: '0.75rem',
-                                                            height: '24px',
-                                                        }}
-                                                    />
-                                                </Tooltip>
-                                            ))
+                                            shift.shiftRoles.map((shiftRole) => {
+                                                const role = shiftRole.role as any;
+                                                return (
+                                                    <Tooltip
+                                                        key={shiftRole.id}
+                                                        title={role?.name || 'Unbekannte Rolle'}
+                                                        arrow
+                                                    >
+                                                        <Chip
+                                                            label={`${role?.shortName || role?.name || 'Unbekannt'} (${shiftRole.count})`}
+                                                            size="small"
+                                                            variant="outlined"
+                                                            sx={{
+                                                                fontSize: '0.75rem',
+                                                                height: '24px',
+                                                            }}
+                                                        />
+                                                    </Tooltip>
+                                                );
+                                            })
                                         ) : (
                                             <Typography variant="caption" color="text.secondary">
                                                 Keine Rollen

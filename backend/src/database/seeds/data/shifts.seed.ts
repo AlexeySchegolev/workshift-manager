@@ -58,5 +58,17 @@ export const shiftsSeedData = [
     startTime: '15:00',
     endTime: '23:00',
     isActive: true
+  },
+
+  // Nachtschicht Station B
+  {
+    organizationId: '1',
+    locationId: '2', // Dialyse Station B
+    name: 'Nachtschicht Station B',
+    shortName: 'NSB',
+    description: 'Nächtliche Überwachung und Notfall-Dialyse Station B',
+    startTime: '23:00',
+    endTime: '07:00',
+    isActive: true
   }
 ];

@@ -82,5 +82,22 @@ export const shiftRolesSeedData = [
     shiftId: '5',
     roleId: '3', // Pflegerassistent
     count: 1
+  },
+
+  // Nachtschicht Station B - NSB
+  {
+    shiftId: '6',
+    roleId: '1', // Schichtleiter
+    count: 1
+  },
+  {
+    shiftId: '6',
+    roleId: '2', // Krankenpfleger
+    count: 1
+  },
+  {
+    shiftId: '6',
+    roleId: '3', // Pflegerassistent
+    count: 1
   }
 ];

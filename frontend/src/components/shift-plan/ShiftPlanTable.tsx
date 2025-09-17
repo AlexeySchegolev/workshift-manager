@@ -394,9 +394,51 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     fontWeight: 600,
                                                     fontSize: '0.8rem',
                                                     color: theme.palette.text.primary,
+                                                    padding: 0,
+                                                    '&::before': {
+                                                        content: '""',
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        background: `linear-gradient(to top right, transparent 49%, ${theme.palette.divider} 49%, ${theme.palette.divider} 51%, transparent 51%)`,
+                                                        zIndex: 1,
+                                                    }
                                                 }}
                                             >
-                                                Mitarbeiter/Schichten
+                                                <Box sx={{
+                                                    position: 'relative',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    minHeight: 50,
+                                                    zIndex: 2
+                                                }}>
+                                                    <Typography
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 6,
+                                                            right: 8,
+                                                            fontSize: '0.75rem',
+                                                            fontWeight: 600,
+                                                            color: theme.palette.text.primary,
+                                                        }}
+                                                    >
+                                                        Schichten
+                                                    </Typography>
+                                                    <Typography
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            bottom: 6,
+                                                            left: 8,
+                                                            fontSize: '0.75rem',
+                                                            fontWeight: 600,
+                                                            color: theme.palette.text.primary,
+                                                        }}
+                                                    >
+                                                        Mitarbeiter
+                                                    </Typography>
+                                                </Box>
                                             </TableCell>
                                             {days.map((dayInfo) => (
                                                 <TableCell

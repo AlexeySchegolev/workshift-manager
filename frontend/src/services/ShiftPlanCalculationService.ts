@@ -353,7 +353,9 @@ export class ShiftPlanCalculationService {
       name: employee.fullName || `${employee.firstName} ${employee.lastName}`,
       role: employee.primaryRole?.name || 'Keine Rolle',
       location: employee.location?.name || 'Keine Location',
-      monthlyWorkHours: employee.monthlyWorkHours
+      monthlyWorkHours: typeof employee.monthlyWorkHours === 'string'
+        ? parseFloat(employee.monthlyWorkHours)
+        : employee.monthlyWorkHours
     };
   }
 

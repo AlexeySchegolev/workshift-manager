@@ -37,7 +37,7 @@ export interface ShiftPlanDay {
 export interface CalculatedShiftPlan {
   shiftPlan: ShiftPlanResponseDto | null;
   shiftPlanDetails: ShiftPlanDetailResponseDto[];
-  employees: EmployeeResponseDto[];
+  employees: (EmployeeResponseDto & { calculatedMonthlyHours: number })[];
   days: ShiftPlanDay[]; // Array von Tagen mit allen Mitarbeitern
   year: number;
   month: number;
@@ -92,10 +92,16 @@ export class ShiftPlanCalculationService {
         month
       );
 
+      // Berechne Monatszeit für jeden Mitarbeiter
+      const employeesWithHours = employees.map(employee => ({
+        ...employee,
+        calculatedMonthlyHours: this.calculateEmployeeMonthlyHours(employee, days, shiftPlanResult?.details || [])
+      }));
+
       const result = {
         shiftPlan: shiftPlanResult?.shiftPlan || null,
         shiftPlanDetails: shiftPlanResult?.details || [],
-        employees,
+        employees: employeesWithHours,
         days,
         year,
         month,
@@ -105,32 +111,8 @@ export class ShiftPlanCalculationService {
         hasData: !!(shiftPlanResult?.shiftPlan && employees.length > 0)
       };
 
-      // Console-Ausgabe für Debugging - kompletter Monat
-      console.log('🔍 Berechneter Schichtplan:', {
-        year: result.year,
-        month: result.month,
-        locationId: result.locationId,
-        locationName: result.locationName,
-        shiftPlan: result.shiftPlan?.name,
-        employeeCount: result.employees.length,
-        dayCount: result.days.length,
-        hasData: result.hasData,
-        completeMonth: result.days.map(day => ({
-          date: day.dayKey,
-          isWeekend: day.isWeekend,
-          isToday: day.isToday,
-          employeeCount: day.employees.length,
-          employeesWithShifts: day.employees.filter(emp => emp.assignedShift).length,
-          employeesWithAbsences: day.employees.filter(emp => emp.absenceType).length,
-          employeesEmpty: day.employees.filter(emp => emp.isEmpty).length,
-          employees: day.employees.map(emp => ({
-            name: `${emp.employee.firstName} ${emp.employee.lastName}`,
-            shift: emp.assignedShift,
-            absence: emp.absenceReason,
-            isEmpty: emp.isEmpty
-          }))
-        }))
-      });
+      // Console-Ausgabe für Debugging - komplettes fertiges Objekt
+      console.log('🔍 Berechneter Schichtplan (komplettes Objekt):', result);
 
       return result;
     } catch (error) {
@@ -407,10 +389,16 @@ export class ShiftPlanCalculationService {
       const selectedDate = new Date(year, month - 1, 1);
       const days = await this.calculateMonthDaysWithEmployees(selectedDate, employees, [], year, month);
       
+      // Berechne Monatszeit für jeden Mitarbeiter (wird 0 sein da keine Schichten)
+      const employeesWithHours = employees.map(employee => ({
+        ...employee,
+        calculatedMonthlyHours: 0
+      }));
+      
       return {
         shiftPlan: null,
         shiftPlanDetails: [],
-        employees,
+        employees: employeesWithHours,
         days,
         year,
         month,
@@ -434,6 +422,50 @@ export class ShiftPlanCalculationService {
         hasData: false
       };
     }
+  }
+
+  /**
+   * Berechnet die Monatszeit für einen Mitarbeiter
+   * @private
+   */
+  private calculateEmployeeMonthlyHours(
+    employee: EmployeeResponseDto,
+    days: ShiftPlanDay[],
+    shiftPlanDetails: ShiftPlanDetailResponseDto[]
+  ): number {
+    let totalHours = 0;
+    
+    days.forEach(day => {
+      const employeeStatus = day.employees.find(empStatus =>
+        empStatus.employee.id === employee.id
+      );
+      
+      if (employeeStatus?.assignedShift && employeeStatus.shiftId) {
+        // Find shift details from shiftPlanDetails
+        const shiftDetail = shiftPlanDetails.find(detail =>
+          detail.shiftId === employeeStatus.shiftId
+        );
+        
+        if (shiftDetail?.shift) {
+          // Calculate duration from start and end time
+          const shift = shiftDetail.shift as any;
+          if (shift.startTime && shift.endTime) {
+            const start = new Date(`2000-01-01T${shift.startTime}`);
+            const end = new Date(`2000-01-01T${shift.endTime}`);
+            
+            // Handle overnight shifts
+            if (end < start) {
+              end.setDate(end.getDate() + 1);
+            }
+            
+            const duration = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+            totalHours += duration;
+          }
+        }
+      }
+    });
+    
+    return totalHours;
   }
 }
 

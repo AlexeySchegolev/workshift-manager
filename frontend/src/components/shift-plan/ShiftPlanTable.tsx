@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Table,
@@ -9,7 +9,6 @@ import {
     TableRow,
     Paper,
     Typography,
-    Alert,
     CircularProgress,
     Chip,
     CardContent,
@@ -29,7 +28,7 @@ import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService, shiftPlanDetailService} from '@/services';
-import {CalculatedShiftPlan, ShiftPlanDay, EmployeeDayStatus} from '@/services/ShiftPlanCalculationService';
+import {CalculatedShiftPlan} from '@/services/ShiftPlanCalculationService';
 import MonthSelector from '../MonthSelector';
 import LocationSelector from '../LocationSelector';
 import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
@@ -143,38 +142,6 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
         }
     };
 
-    // Function to get shortname for shift display in circle
-    const getShiftShortname = (shift: string): string => {
-        switch (shift) {
-            case 'F':
-            case 'Frühschicht':
-            case 'morning':
-                return 'F';
-            case 'S':
-            case 'S0':
-            case 'S1':
-            case 'S00':
-            case 'Spätschicht':
-            case 'afternoon':
-            case 'evening':
-                return 'S';
-            case 'N':
-            case 'Nachtschicht':
-            case 'night':
-                return 'N';
-            case 'FS':
-            case 'special':
-                return 'FS';
-            case '4':
-                return '4';
-            case '5':
-                return '5';
-            case '6':
-                return '6';
-            default:
-                return shift.substring(0, 2).toUpperCase();
-        }
-    };
 
     // Handle cell click to open assignment dialog
     const handleCellClick = (employee: EmployeeResponseDto, dayKey: string, currentShift?: string) => {
@@ -455,7 +422,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                             display: 'flex',
                                                             alignItems: 'center',
                                                             gap: 1,
-                                                            mt: 0.5
+                                                            mt: 0.5,
+                                                            flexWrap: 'wrap'
                                                         }}>
                                                             <Chip
                                                                 label={emp.primaryRole?.name}
@@ -478,6 +446,18 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                 }}
                                                             />
                                                         </Box>
+                                                        <Typography
+                                                            variant="caption"
+                                                            sx={{
+                                                                display: 'block',
+                                                                fontSize: '0.7rem',
+                                                                color: 'text.secondary',
+                                                                mt: 0.5,
+                                                                fontWeight: 500,
+                                                            }}
+                                                        >
+                                                            {emp.calculatedMonthlyHours.toFixed(1)}h / {emp.monthlyWorkHours || 0}h
+                                                        </Typography>
                                                     </Box>
                                                 </TableCell>
 
@@ -490,7 +470,6 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     const assignedShift = employeeStatus?.assignedShift || '';
                                                     const shiftName = employeeStatus?.shiftName || assignedShift || '';
                                                     const absenceReason = employeeStatus?.absenceReason || null;
-                                                    const isEmpty = employeeStatus?.isEmpty || false;
 
                                                     return (
                                                         <TableCell

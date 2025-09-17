@@ -79,7 +79,8 @@ export const useEmployeeActions = (
           lastName: formData.lastName,
           locationId: formData.location?.id,
           primaryRoleId: formData.primaryRole?.id,
-          roleIds: formData.roles.map(role => role.id)
+          roleIds: formData.roles.map(role => role.id),
+          monthlyWorkHours: formData.monthlyWorkHours
         };
 
         // Update employee
@@ -113,7 +114,8 @@ export const useEmployeeActions = (
           email: `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@dialyse-praxis.de`,
           hireDate: getTodayDateString(), // Today's date in YYYY-MM-DD format
           locationId: formData.location?.id,
-          primaryRoleId: formData.primaryRole?.id
+          primaryRoleId: formData.primaryRole?.id,
+          monthlyWorkHours: formData.monthlyWorkHours
         };
 
         const newEmployee = await employeeService.createEmployee(createData);

@@ -8,6 +8,7 @@ export interface EmployeeFormData {
   primaryRole: RoleResponseDto | null;
   roles: RoleResponseDto[];
   location: LocationResponseDto | null;
+  monthlyWorkHours?: number;
 }
 
 export interface EmployeeFormErrors {
@@ -16,6 +17,7 @@ export interface EmployeeFormErrors {
   role?: string;
   primaryRole?: string;
   location?: string;
+  monthlyWorkHours?: string;
 }
 
 export const useEmployeeForm = () => {
@@ -25,6 +27,7 @@ export const useEmployeeForm = () => {
     primaryRole: null,
     roles: [],
     location: null,
+    monthlyWorkHours: undefined,
   });
 
   const [errors, setErrors] = useState<EmployeeFormErrors>({});
@@ -38,6 +41,7 @@ export const useEmployeeForm = () => {
       primaryRole: null,
       roles: [],
       location: null,
+      monthlyWorkHours: undefined,
     });
     setEditingId(null);
     setErrors({});
@@ -51,6 +55,7 @@ export const useEmployeeForm = () => {
       primaryRole: employee.primaryRole ?? null,
       roles: employee.roles ?? [],
       location: employee.location ?? null,
+      monthlyWorkHours: employee.monthlyWorkHours,
     });
     setEditingId(employee.id);
     setErrors({});

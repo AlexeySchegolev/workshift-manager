@@ -77,6 +77,9 @@ export class Employee {
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
+  @Column({ name: 'monthly_work_hours', type: 'decimal', precision: 5, scale: 2, nullable: true })
+  monthlyWorkHours?: number;
+
   // Relationships
   @ManyToOne(() => Organization, organization => organization.employees)
   @JoinColumn({ name: 'organization_id' })

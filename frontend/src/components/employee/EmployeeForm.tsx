@@ -218,6 +218,28 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             </Select>
             {errors.location && <FormHelperText>{errors.location}</FormHelperText>}
           </FormControl>
+
+          <TextField
+            label="Arbeitsstunden pro Monat"
+            variant="outlined"
+            type="number"
+            value={formData.monthlyWorkHours || ''}
+            onChange={(e) => onUpdateField('monthlyWorkHours', e.target.value ? parseFloat(e.target.value) : undefined)}
+            error={!!errors.monthlyWorkHours}
+            helperText={errors.monthlyWorkHours}
+            fullWidth
+            inputProps={{
+              min: 0,
+              max: 744,
+              step: 0.5
+            }}
+            sx={{
+              gridColumn: { md: 'span 2' },
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+              },
+            }}
+          />
         </Box>
       </DialogContent>
       <DialogActions sx={{ p: 3, pt: 1 }}>

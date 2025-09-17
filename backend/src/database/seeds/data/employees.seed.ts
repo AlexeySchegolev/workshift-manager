@@ -9,6 +9,7 @@ export const employeesSeedData = [
     hireDate: new Date('2020-01-15'),
     locationId: '1', // Will be replaced with actual location ID
     primaryRoleId: '1', // Will be replaced with Schichtleiter role ID
+    monthlyWorkHours: 173, // Vollzeit (40h/Woche)
     isActive: true
   },
   {
@@ -20,6 +21,7 @@ export const employeesSeedData = [
     hireDate: new Date('2019-03-10'),
     locationId: '1',
     primaryRoleId: '2', // Krankenpfleger
+    monthlyWorkHours: 173, // Vollzeit (40h/Woche)
     isActive: true
   },
   {
@@ -31,6 +33,7 @@ export const employeesSeedData = [
     hireDate: new Date('2021-06-01'),
     locationId: '1',
     primaryRoleId: '2', // Krankenpfleger
+    monthlyWorkHours: 130, // Teilzeit (30h/Woche)
     isActive: true
   },
   {
@@ -42,6 +45,7 @@ export const employeesSeedData = [
     hireDate: new Date('2022-02-15'),
     locationId: '1',
     primaryRoleId: '3', // Pflegerassistent
+    monthlyWorkHours: 87, // Teilzeit (20h/Woche)
     isActive: true
   },
   {
@@ -53,6 +57,7 @@ export const employeesSeedData = [
     hireDate: new Date('2023-01-10'),
     locationId: '1',
     primaryRoleId: '3', // Pflegerassistent
+    monthlyWorkHours: 108, // Teilzeit (25h/Woche)
     isActive: true
   },
 
@@ -66,6 +71,7 @@ export const employeesSeedData = [
     hireDate: new Date('2018-09-01'),
     locationId: '2',
     primaryRoleId: '1', // Schichtleiter
+    monthlyWorkHours: 173, // Vollzeit (40h/Woche)
     isActive: true
   },
   {
@@ -77,6 +83,7 @@ export const employeesSeedData = [
     hireDate: new Date('2020-05-15'),
     locationId: '2',
     primaryRoleId: '2', // Krankenpfleger
+    monthlyWorkHours: 173, // Vollzeit (40h/Woche)
     isActive: true
   },
   {
@@ -88,6 +95,7 @@ export const employeesSeedData = [
     hireDate: new Date('2019-11-20'),
     locationId: '2',
     primaryRoleId: '2', // Krankenpfleger
+    monthlyWorkHours: 152, // Teilzeit (35h/Woche)
     isActive: true
   },
   {
@@ -99,6 +107,7 @@ export const employeesSeedData = [
     hireDate: new Date('2021-08-01'),
     locationId: '2',
     primaryRoleId: '3', // Pflegerassistent
+    monthlyWorkHours: 130, // Teilzeit (30h/Woche)
     isActive: true
   },
   {
@@ -110,6 +119,7 @@ export const employeesSeedData = [
     hireDate: new Date('2022-04-10'),
     locationId: '2',
     primaryRoleId: '3', // Pflegerassistent
+    monthlyWorkHours: 87, // Teilzeit (20h/Woche)
     isActive: true
   }
 ];

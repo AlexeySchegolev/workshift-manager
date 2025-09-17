@@ -135,4 +135,12 @@ export class CreateEmployeeDto {
   @IsString()
   country?: string;
 
+  @ApiPropertyOptional({
+    description: 'Monthly work hours',
+    example: 160.5
+  })
+  @IsOptional()
+  @IsNumber()
+  monthlyWorkHours?: number;
+
 }

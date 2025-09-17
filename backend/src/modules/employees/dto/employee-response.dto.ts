@@ -120,6 +120,12 @@ export class EmployeeResponseDto {
   })
   isActive: boolean;
 
+  @ApiPropertyOptional({
+    description: 'Monthly work hours',
+    example: 160.5
+  })
+  monthlyWorkHours?: number;
+
   @ApiProperty({
     description: 'Is the employee available',
     example: true

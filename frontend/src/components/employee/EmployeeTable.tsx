@@ -114,13 +114,14 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                             <TableCell sx={{ fontWeight: 600 }}>Mitarbeiter</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Rolle</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Standort</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Arbeitsstunden/Monat</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Aktionen</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {paginatedEmployees.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={4} align="center" sx={{ py: 8 }}>
+                                <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
                                     <Box sx={{ textAlign: 'center' }}>
                                         <PeopleIcon
                                             sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }}
@@ -188,6 +189,11 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                                 {employee.location.code}
                                             </Typography>
                                         )}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="body2">
+                                            {employee.monthlyWorkHours ? `${employee.monthlyWorkHours} h` : 'Nicht angegeben'}
+                                        </Typography>
                                     </TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', gap: 0.5 }}>

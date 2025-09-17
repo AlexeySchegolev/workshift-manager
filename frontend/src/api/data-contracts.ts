@@ -176,6 +176,11 @@ export interface CreateEmployeeDto {
    */
   locationId?: string;
   /**
+   * Monthly work hours
+   * @example 160.5
+   */
+  monthlyWorkHours?: number;
+  /**
    * Organization ID
    * @example "uuid-string"
    */
@@ -746,6 +751,11 @@ export interface EmployeeResponseDto {
    * @example "uuid-string"
    */
   locationId?: string;
+  /**
+   * Monthly work hours
+   * @example 160.5
+   */
+  monthlyWorkHours?: number;
   /**
    * Organization ID
    * @example "uuid-string"
@@ -1410,6 +1420,8 @@ export interface ShiftResponseDto {
   organizationId: string;
   /** Required roles for this shift */
   requiredRoles?: RoleResponseDto[];
+  /** Shift role assignments with counts */
+  shiftRoles?: ShiftRoleResponseDto[];
   /**
    * Short name of the shift
    * @maxLength 10
@@ -1547,6 +1559,11 @@ export interface UpdateEmployeeDto {
    * @example "uuid-string"
    */
   locationId?: string;
+  /**
+   * Monthly work hours
+   * @example 160.5
+   */
+  monthlyWorkHours?: number;
   /**
    * Organization ID
    * @example "uuid-string"

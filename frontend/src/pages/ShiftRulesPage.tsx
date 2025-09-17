@@ -53,12 +53,16 @@ const ShiftRulesPage: React.FC = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    // Load locations
+    // Load locations and auto-select first one
     useEffect(() => {
         const loadLocations = async () => {
             try {
                 const locationData = await locationService.getAllLocations();
                 setLocations(locationData);
+                // Auto-select first location if available
+                if (locationData.length > 0 && !selectedLocationId) {
+                    setSelectedLocationId(locationData[0].id);
+                }
             } catch (error) {
                 console.error('Error loading locations:', error);
             }

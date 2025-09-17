@@ -244,7 +244,7 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                 width: '200px',
                                                 position: 'sticky',
                                                 left: 0,
-                                                backgroundColor: 'inherit',
+                                                backgroundColor: theme.palette.background.paper,
                                                 borderRight: `2px solid ${theme.palette.divider}`,
                                                 zIndex: 1,
                                             }}

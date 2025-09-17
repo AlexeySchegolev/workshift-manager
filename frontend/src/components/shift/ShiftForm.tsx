@@ -132,7 +132,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         </Typography>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <TextField
                             fullWidth
                             label="Schichtname"
@@ -157,6 +157,33 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                         />
                     </Grid>
 
+                    <Grid size={{ xs: 12, md: 5 }}>
+                        <FormControl fullWidth error={!!errors.locationId}>
+                            <InputLabel>Standort</InputLabel>
+                            <Select
+                                value={formData.locationId}
+                                onChange={(e) => onUpdateField('locationId', e.target.value)}
+                                label="Standort"
+                                disabled={locationsLoading}
+                                required
+                            >
+                                {locations.map((location) => (
+                                    <MenuItem key={location.id} value={location.id}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                                {location.name}
+                                            </Typography>
+                                            {location.code && (
+                                                <Typography variant="body2" color="text.secondary">
+                                                    ({location.code})
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
 
                     <Grid size={{ xs: 12 }}>
                         <TextField
@@ -164,28 +191,7 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                             label="Beschreibung"
                             value={formData.description}
                             onChange={(e) => onUpdateField('description', e.target.value)}
-                            multiline
-                            rows={2}
                         />
-                    </Grid>
-
-
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth error={!!errors.locationId}>
-                            <InputLabel>Station</InputLabel>
-                            <Select
-                                value={formData.locationId}
-                                onChange={(e) => onUpdateField('locationId', e.target.value)}
-                                label="Station"
-                                disabled={locationsLoading}
-                            >
-                                {locations.map((location) => (
-                                    <MenuItem key={location.id} value={location.id}>
-                                        {location.name}{location.code ? ` (${location.code})` : ''}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
                     </Grid>
 
                     {/* Time and Duration */}

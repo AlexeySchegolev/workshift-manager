@@ -388,7 +388,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     left: 0,
                                                     top: 50,
                                                     zIndex: 3,
-                                                    backgroundColor: alpha(theme.palette.info.main, 0.05),
+                                                    backgroundColor: theme.palette.background.paper,
                                                     borderRight: `2px solid ${theme.palette.divider}`,
                                                     borderBottom: `1px solid ${theme.palette.divider}`,
                                                     fontWeight: 600,
@@ -502,7 +502,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                         width: '250px',
                                                         position: 'sticky',
                                                         left: 0,
-                                                        backgroundColor: 'inherit',
+                                                        backgroundColor: theme.palette.background.paper,
                                                         borderRight: `2px solid ${theme.palette.divider}`,
                                                         zIndex: 1,
                                                     }}

@@ -28,7 +28,7 @@ import {format} from 'date-fns';
 import {de} from 'date-fns/locale';
 import {EmployeeResponseDto} from "@/api/data-contracts.ts";
 import {excelExportService, shiftPlanDetailService} from '@/services';
-import {CalculatedShiftPlan} from '@/services/ShiftPlanCalculationService';
+import {CalculatedShiftPlan, ReducedEmployee} from '@/services/ShiftPlanCalculationService';
 import MonthSelector from '../MonthSelector';
 import LocationSelector from '../LocationSelector';
 import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
@@ -64,7 +64,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
   
   // Modal state
   const [isAssignmentDialogOpen, setIsAssignmentDialogOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeResponseDto | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<ReducedEmployee | null>(null);
   const [selectedDateForAssignment, setSelectedDateForAssignment] = useState<string>('');
   const [currentShiftId, setCurrentShiftId] = useState<string | null>(null);
 
@@ -144,7 +144,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
 
 
     // Handle cell click to open assignment dialog
-    const handleCellClick = (employee: EmployeeResponseDto, dayKey: string, currentShift?: string) => {
+    const handleCellClick = (employee: ReducedEmployee, dayKey: string, currentShift?: string) => {
         setSelectedEmployee(employee);
         setSelectedDateForAssignment(dayKey);
         setCurrentShiftId(currentShift || null);
@@ -324,8 +324,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                         <TableRow>
                                             <TableCell
                                                 sx={{
-                                                    minWidth: 200,
-                                                    width: '200px',
+                                                    minWidth: 250,
+                                                    width: '250px',
                                                     position: 'sticky',
                                                     left: 0,
                                                     top: 0,
@@ -398,8 +398,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     component="th"
                                                     scope="row"
                                                     sx={{
-                                                        minWidth: 200,
-                                                        width: '200px',
+                                                        minWidth: 250,
+                                                        width: '250px',
                                                         position: 'sticky',
                                                         left: 0,
                                                         backgroundColor: 'inherit',
@@ -416,7 +416,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                 color: 'text.primary',
                                                             }}
                                                         >
-                                                            {emp.lastName}, {emp.firstName}
+                                                            {emp.name}
                                                         </Typography>
                                                         <Box sx={{
                                                             display: 'flex',
@@ -426,7 +426,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                             flexWrap: 'wrap'
                                                         }}>
                                                             <Chip
-                                                                label={emp.primaryRole?.name}
+                                                                label={emp.role}
                                                                 size="small"
                                                                 color={"primary"}
                                                                 sx={{
@@ -436,7 +436,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                 }}
                                                             />
                                                             <Chip
-                                                                label={emp.location?.name}
+                                                                label={emp.location}
                                                                 size="small"
                                                                 sx={{
                                                                     height: 18,
@@ -456,7 +456,41 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                 fontWeight: 500,
                                                             }}
                                                         >
-                                                            {emp.calculatedMonthlyHours.toFixed(1)}h / {emp.monthlyWorkHours || 0}h
+                                                            <Box component="span"
+                                                                 sx={{
+                                                                     color: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
+                                                                         ? theme.palette.error.main
+                                                                         : 'inherit',
+                                                                     fontWeight: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
+                                                                         ? 700
+                                                                         : 'inherit',
+                                                                     backgroundColor: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
+                                                                         ? alpha(theme.palette.error.main, 0.1)
+                                                                         : 'transparent',
+                                                                     px: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0) ? 0.3 : 0,
+                                                                     borderRadius: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0) ? 0.3 : 0,
+                                                                 }}
+                                                            >
+                                                                {emp.calculatedMonthlyHours.toFixed(1)}h
+                                                            </Box>
+                                                            {' / '}
+                                                            <Box component="span"
+                                                                 sx={{
+                                                                     color: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
+                                                                         ? theme.palette.error.main
+                                                                         : 'inherit',
+                                                                     fontWeight: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
+                                                                         ? 700
+                                                                         : 'inherit',
+                                                                     backgroundColor: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
+                                                                         ? alpha(theme.palette.error.main, 0.1)
+                                                                         : 'transparent',
+                                                                     px: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0) ? 0.3 : 0,
+                                                                     borderRadius: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0) ? 0.3 : 0,
+                                                                 }}
+                                                            >
+                                                                {emp.monthlyWorkHours || 0}h
+                                                            </Box>
                                                         </Typography>
                                                     </Box>
                                                 </TableCell>

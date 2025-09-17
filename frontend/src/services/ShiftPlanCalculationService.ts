@@ -7,10 +7,21 @@ import { EmployeeAbsenceService } from './EmployeeAbsenceService';
 import { getDaysInMonth, startOfMonth, addDays } from 'date-fns';
 
 /**
+ * Reduziertes Mitarbeiter-Interface für Schichtplan-Berechnungen
+ */
+export interface ReducedEmployee {
+  id: string;
+  name: string;
+  role: string;
+  location: string;
+  monthlyWorkHours?: number;
+}
+
+/**
  * Interface für Mitarbeiter-Status an einem Tag
  */
 export interface EmployeeDayStatus {
-  employee: EmployeeResponseDto;
+  employee: ReducedEmployee;
   assignedShift: string;
   shiftId: string;
   shiftName: string; // Vollständiger Name der Schicht für Tooltip
@@ -37,7 +48,7 @@ export interface ShiftPlanDay {
 export interface CalculatedShiftPlan {
   shiftPlan: ShiftPlanResponseDto | null;
   shiftPlanDetails: ShiftPlanDetailResponseDto[];
-  employees: (EmployeeResponseDto & { calculatedMonthlyHours: number })[];
+  employees: (ReducedEmployee & { calculatedMonthlyHours: number })[];
   days: ShiftPlanDay[]; // Array von Tagen mit allen Mitarbeitern
   year: number;
   month: number;
@@ -152,7 +163,7 @@ export class ShiftPlanCalculationService {
    */
   private async calculateMonthDaysWithEmployees(
     selectedDate: Date,
-    employees: EmployeeResponseDto[],
+    employees: ReducedEmployee[],
     shiftPlanDetails: ShiftPlanDetailResponseDto[],
     year: number,
     month: number
@@ -318,16 +329,32 @@ export class ShiftPlanCalculationService {
    * Lädt Mitarbeiter für eine Lokation
    * @private
    */
-  private async loadEmployeesByLocation(locationId: string): Promise<EmployeeResponseDto[]> {
+  private async loadEmployeesByLocation(locationId: string): Promise<ReducedEmployee[]> {
     try {
       const employees = await this.employeeService.getEmployeesByLocation(locationId, {
         includeRelations: true
       });
-      return employees;
+      
+      // Reduziere Mitarbeiterdaten auf benötigte Felder
+      return employees.map(emp => this.reduceEmployeeData(emp));
     } catch (error) {
       console.error('Fehler beim Laden der Mitarbeiter:', error);
       return [];
     }
+  }
+
+  /**
+   * Reduziert EmployeeResponseDto auf benötigte Felder
+   * @private
+   */
+  private reduceEmployeeData(employee: EmployeeResponseDto): ReducedEmployee {
+    return {
+      id: employee.id,
+      name: employee.fullName || `${employee.firstName} ${employee.lastName}`,
+      role: employee.primaryRole?.name || 'Keine Rolle',
+      location: employee.location?.name || 'Keine Location',
+      monthlyWorkHours: employee.monthlyWorkHours
+    };
   }
 
   /**
@@ -429,7 +456,7 @@ export class ShiftPlanCalculationService {
    * @private
    */
   private calculateEmployeeMonthlyHours(
-    employee: EmployeeResponseDto,
+    employee: ReducedEmployee,
     days: ShiftPlanDay[],
     shiftPlanDetails: ShiftPlanDetailResponseDto[]
   ): number {

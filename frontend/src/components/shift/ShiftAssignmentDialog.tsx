@@ -18,6 +18,7 @@ import {
     alpha,
 } from '@mui/material';
 import { EmployeeResponseDto, ShiftResponseDto } from '@/api/data-contracts';
+import { ReducedEmployee } from '@/services/ShiftPlanCalculationService';
 import { shiftService } from '@/services/ShiftService';
 import { shiftWeekdaysService } from '@/services/ShiftWeekdaysService';
 import { format, parse } from 'date-fns';
@@ -27,7 +28,7 @@ interface ShiftAssignmentDialogProps {
     open: boolean;
     onClose: () => void;
     onAssign: (employeeId: string, shiftId: string | null, date: string) => Promise<void>;
-    employee: EmployeeResponseDto | null;
+    employee: ReducedEmployee | null;
     selectedDate: string; // Format: "DD.MM.YYYY"
     currentShiftId?: string | null; // Currently assigned shift ID
     locationId: string | null;
@@ -150,11 +151,11 @@ const ShiftAssignmentDialog: React.FC<ShiftAssignmentDialogProps> = ({
                         borderColor: 'primary.200'
                     }}>
                         <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                            {employee.firstName} {employee.lastName}
+                            {employee.name}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                             <Chip
-                                label={employee.primaryRole?.name || 'Keine Rolle'}
+                                label={employee.role}
                                 size="small"
                                 color="primary"
                                 sx={{
@@ -163,18 +164,16 @@ const ShiftAssignmentDialog: React.FC<ShiftAssignmentDialogProps> = ({
                                     fontWeight: 500,
                                 }}
                             />
-                            {employee.location && (
-                                <Chip
-                                    label={employee.location.name}
-                                    size="small"
-                                    sx={{
-                                        height: 18,
-                                        fontSize: '0.7rem',
-                                        backgroundColor: (theme) => alpha(theme.palette.info.main, 0.1),
-                                        color: (theme) => theme.palette.info.main,
-                                    }}
-                                />
-                            )}
+                            <Chip
+                                label={employee.location}
+                                size="small"
+                                sx={{
+                                    height: 18,
+                                    fontSize: '0.7rem',
+                                    backgroundColor: (theme) => alpha(theme.palette.info.main, 0.1),
+                                    color: (theme) => theme.palette.info.main,
+                                }}
+                            />
                         </Box>
                         <Typography variant="body2" color="text.secondary">
                             Datum: {selectedDate} ({(() => {

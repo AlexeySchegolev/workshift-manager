@@ -4,6 +4,7 @@ import { ShiftPlanDetailService } from './ShiftPlanDetailService';
 import { EmployeeService } from './EmployeeService';
 import { LocationService } from './LocationService';
 import { EmployeeAbsenceService } from './EmployeeAbsenceService';
+import { ShiftWeekdaysService } from './ShiftWeekdaysService';
 import { getDaysInMonth, startOfMonth, addDays } from 'date-fns';
 
 /**
@@ -31,6 +32,33 @@ export interface EmployeeDayStatus {
 }
 
 /**
+ * Interface für Rollen-Belegung in einer Schicht
+ */
+export interface RoleOccupancy {
+  roleName: string;
+  required: number;
+  assigned: number;
+  assignedEmployees: string[];
+}
+
+/**
+ * Interface für Schicht-Belegung an einem Tag
+ */
+export interface ShiftOccupancy {
+  shiftId: string;
+  shiftName: string;
+  shortName: string;
+  startTime: string;
+  endTime: string;
+  requiredCount: number;
+  assignedCount: number;
+  assignedEmployees: string[]; // Employee names
+  roleOccupancy: RoleOccupancy[]; // Belegung nach Rollen
+  isUnderStaffed: boolean;
+  isCorrectlyStaffed: boolean;
+}
+
+/**
  * Interface für einen Tag im Schichtplan
  */
 export interface ShiftPlanDay {
@@ -40,6 +68,7 @@ export interface ShiftPlanDay {
   isWeekend: boolean;
   isToday: boolean;
   employees: EmployeeDayStatus[]; // Alle Mitarbeiter für diesen Tag
+  shiftOccupancy: ShiftOccupancy[]; // Schicht-Belegung für diesen Tag
 }
 
 /**
@@ -50,6 +79,8 @@ export interface CalculatedShiftPlan {
   shiftPlanDetails: ShiftPlanDetailResponseDto[];
   employees: (ReducedEmployee & { calculatedMonthlyHours: number })[];
   days: ShiftPlanDay[]; // Array von Tagen mit allen Mitarbeitern
+  availableShifts: any[]; // Alle verfügbaren Schichten für diese Location
+  shiftWeekdays: any[]; // Schicht-Wochentag Zuordnungen
   year: number;
   month: number;
   locationId: string;
@@ -66,11 +97,13 @@ export class ShiftPlanCalculationService {
   private shiftPlanService: ShiftPlanService;
   private shiftPlanDetailService: ShiftPlanDetailService;
   private employeeService: EmployeeService;
+  private shiftWeekdaysService: ShiftWeekdaysService;
 
   constructor() {
     this.shiftPlanService = new ShiftPlanService();
     this.shiftPlanDetailService = new ShiftPlanDetailService();
     this.employeeService = new EmployeeService();
+    this.shiftWeekdaysService = new ShiftWeekdaysService();
   }
 
   /**
@@ -86,11 +119,12 @@ export class ShiftPlanCalculationService {
     locationId: string
   ): Promise<CalculatedShiftPlan> {
     try {
-      // Parallel laden von Schichtplan, Mitarbeitern und Location-Info
-      const [shiftPlanResult, employees, locationInfo] = await Promise.all([
+      // Parallel laden von Schichtplan, Mitarbeitern, Location-Info und Schicht-Wochentage
+      const [shiftPlanResult, employees, locationInfo, shiftWeekdays] = await Promise.all([
         this.loadShiftPlanWithDetails(locationId, year, month),
         this.loadEmployeesByLocation(locationId),
-        this.loadLocationInfo(locationId)
+        this.loadLocationInfo(locationId),
+        this.loadShiftWeekdaysByLocation(locationId)
       ]);
 
       // Berechne Tage des Monats mit allen Mitarbeitern
@@ -99,6 +133,7 @@ export class ShiftPlanCalculationService {
         selectedDate,
         employees,
         shiftPlanResult?.details || [],
+        shiftWeekdays,
         year,
         month
       );
@@ -109,11 +144,16 @@ export class ShiftPlanCalculationService {
         calculatedMonthlyHours: this.calculateEmployeeMonthlyHours(employee, days, shiftPlanResult?.details || [])
       }));
 
+      // Sammle alle verfügbaren Schichten
+      const availableShifts = this.extractAvailableShifts(shiftWeekdays, shiftPlanResult?.details || []);
+
       const result = {
         shiftPlan: shiftPlanResult?.shiftPlan || null,
         shiftPlanDetails: shiftPlanResult?.details || [],
         employees: employeesWithHours,
         days,
+        availableShifts,
+        shiftWeekdays,
         year,
         month,
         locationId,
@@ -133,6 +173,8 @@ export class ShiftPlanCalculationService {
         shiftPlanDetails: [],
         employees: [],
         days: [],
+        availableShifts: [],
+        shiftWeekdays: [],
         year,
         month,
         locationId,
@@ -158,6 +200,20 @@ export class ShiftPlanCalculationService {
   }
 
   /**
+   * Lädt Schicht-Wochentage für eine Location
+   * @private
+   */
+  private async loadShiftWeekdaysByLocation(locationId: string): Promise<any[]> {
+    try {
+      const shiftWeekdays = await this.shiftWeekdaysService.getShiftWeekdaysByLocationId(locationId);
+      return shiftWeekdays;
+    } catch (error) {
+      console.error('Fehler beim Laden der Schicht-Wochentage:', error);
+      return [];
+    }
+  }
+
+  /**
    * Berechnet die Tage des Monats mit allen Mitarbeitern und ihren Zuordnungen
    * @private
    */
@@ -165,6 +221,7 @@ export class ShiftPlanCalculationService {
     selectedDate: Date,
     employees: ReducedEmployee[],
     shiftPlanDetails: ShiftPlanDetailResponseDto[],
+    shiftWeekdays: any[],
     year: number,
     month: number
   ): Promise<ShiftPlanDay[]> {
@@ -231,13 +288,24 @@ export class ShiftPlanCalculationService {
         };
       });
       
+      // Berechne Schicht-Belegung für diesen Tag basierend auf Wochentag
+      const dayOfWeek = day.getDay(); // 0 = Sonntag, 1 = Montag, etc.
+      const shiftOccupancy = this.calculateShiftOccupancyForDay(
+        dayNumber,
+        dayOfWeek,
+        shiftPlanDetails,
+        shiftWeekdays,
+        employeeStatuses
+      );
+
       days.push({
         date: day,
         dayKey,
         dayNumber,
         isWeekend: day.getDay() === 0 || day.getDay() === 6,
         isToday: this.isToday(day),
-        employees: employeeStatuses
+        employees: employeeStatuses,
+        shiftOccupancy
       });
     }
     
@@ -416,7 +484,7 @@ export class ShiftPlanCalculationService {
         this.loadLocationInfo(locationId)
       ]);
       const selectedDate = new Date(year, month - 1, 1);
-      const days = await this.calculateMonthDaysWithEmployees(selectedDate, employees, [], year, month);
+      const days = await this.calculateMonthDaysWithEmployees(selectedDate, employees, [], [], year, month);
       
       // Berechne Monatszeit für jeden Mitarbeiter (wird 0 sein da keine Schichten)
       const employeesWithHours = employees.map(employee => ({
@@ -429,6 +497,8 @@ export class ShiftPlanCalculationService {
         shiftPlanDetails: [],
         employees: employeesWithHours,
         days,
+        availableShifts: [],
+        shiftWeekdays: [],
         year,
         month,
         locationId,
@@ -443,6 +513,8 @@ export class ShiftPlanCalculationService {
         shiftPlanDetails: [],
         employees: [],
         days: [],
+        availableShifts: [],
+        shiftWeekdays: [],
         year,
         month,
         locationId,
@@ -495,6 +567,169 @@ export class ShiftPlanCalculationService {
     });
     
     return totalHours;
+  }
+
+  /**
+   * Berechnet die Schicht-Belegung für einen bestimmten Tag
+   * @private
+   */
+  private calculateShiftOccupancyForDay(
+    dayNumber: number,
+    dayOfWeek: number,
+    shiftPlanDetails: ShiftPlanDetailResponseDto[],
+    shiftWeekdays: any[],
+    employeeStatuses: EmployeeDayStatus[]
+  ): ShiftOccupancy[] {
+    // Sammle alle verfügbaren Schichten für diesen Wochentag
+    const allShifts = new Map<string, any>();
+    
+    // Lade alle Schichten die für diesen Wochentag konfiguriert sind
+    shiftWeekdays.forEach(shiftWeekday => {
+      if (shiftWeekday.weekday === dayOfWeek && shiftWeekday.shift) {
+        allShifts.set(shiftWeekday.shift.id, shiftWeekday.shift);
+      }
+    });
+    
+    // Zusätzlich sammle alle Schichten aus den Details (falls welche fehlen)
+    shiftPlanDetails.forEach(detail => {
+      if (detail.shift && !allShifts.has(detail.shiftId)) {
+        allShifts.set(detail.shiftId, detail.shift);
+      }
+    });
+
+    // Sammle Zuweisungen für diesen Tag
+    const shiftsForDay = shiftPlanDetails.filter(detail => detail.day === dayNumber);
+    
+    // Gruppiere Zuweisungen nach Schicht-ID
+    const assignmentGroups = new Map<string, ShiftPlanDetailResponseDto[]>();
+    shiftsForDay.forEach(detail => {
+      if (!assignmentGroups.has(detail.shiftId)) {
+        assignmentGroups.set(detail.shiftId, []);
+      }
+      assignmentGroups.get(detail.shiftId)!.push(detail);
+    });
+
+    // Erstelle ShiftOccupancy Array für alle Schichten
+    const occupancy: ShiftOccupancy[] = [];
+
+    allShifts.forEach((shift, shiftId) => {
+      const assignments = assignmentGroups.get(shiftId) || [];
+      
+      // Finde zugewiesene Mitarbeiter für diese Schicht
+      const assignedEmployeesWithRoles = assignments
+        .map(assignment => {
+          const empStatus = employeeStatuses.find(emp =>
+            emp.employee.id === assignment.employeeId
+          );
+          return {
+            name: empStatus?.employee.name || 'Unbekannt',
+            role: empStatus?.employee.role || 'Keine Rolle'
+          };
+        })
+        .filter(emp => emp.name !== 'Unbekannt');
+
+      const assignedEmployees = assignedEmployeesWithRoles.map(emp => emp.name);
+      
+      // Berechne Rollen-Belegung
+      const roleOccupancy = this.calculateRoleOccupancyForShift(shift, assignedEmployeesWithRoles);
+      
+      const requiredCount = this.getRequiredStaffForShift(shift);
+      const assignedCount = assignedEmployees.length;
+
+      occupancy.push({
+        shiftId,
+        shiftName: shift?.name || 'Unbekannte Schicht',
+        shortName: shift?.shortName || 'N/A',
+        startTime: shift?.startTime || '00:00',
+        endTime: shift?.endTime || '00:00',
+        requiredCount,
+        assignedCount,
+        assignedEmployees,
+        roleOccupancy,
+        isUnderStaffed: assignedCount < requiredCount,
+        isCorrectlyStaffed: assignedCount === requiredCount
+      });
+    });
+
+    // Sortiere nach Startzeit
+    return occupancy.sort((a, b) => {
+      const timeA = a.startTime.replace(':', '');
+      const timeB = b.startTime.replace(':', '');
+      return timeA.localeCompare(timeB);
+    });
+  }
+
+  /**
+   * Ermittelt die benötigte Personalstärke für eine Schicht
+   * @private
+   */
+  private getRequiredStaffForShift(shift: any): number {
+    // TODO: Implementiere Logik basierend auf Schicht-Rollen oder Konfiguration
+    // Für jetzt nehmen wir 1 als Standard
+    return shift?.requiredStaff || 1;
+  }
+
+  /**
+   * Berechnet die Rollen-Belegung für eine Schicht
+   * @private
+   */
+  private calculateRoleOccupancyForShift(
+    shift: any,
+    assignedEmployees: { name: string; role: string }[]
+  ): RoleOccupancy[] {
+    // Gruppiere zugewiesene Mitarbeiter nach Rollen
+    const roleGroups = new Map<string, string[]>();
+    
+    assignedEmployees.forEach(emp => {
+      if (!roleGroups.has(emp.role)) {
+        roleGroups.set(emp.role, []);
+      }
+      roleGroups.get(emp.role)!.push(emp.name);
+    });
+
+    // Erstelle RoleOccupancy Array
+    const roleOccupancy: RoleOccupancy[] = [];
+    
+    // TODO: Hier sollten die tatsächlichen Rollen-Anforderungen aus der Schicht-Konfiguration geladen werden
+    // Für jetzt nehmen wir die vorhandenen Rollen und setzen required = 1
+    roleGroups.forEach((employees, roleName) => {
+      roleOccupancy.push({
+        roleName,
+        required: 1, // TODO: Aus Schicht-Rollen-Konfiguration laden
+        assigned: employees.length,
+        assignedEmployees: employees
+      });
+    });
+
+    return roleOccupancy.sort((a, b) => a.roleName.localeCompare(b.roleName));
+  }
+
+  /**
+   * Extrahiert alle verfügbaren Schichten aus ShiftWeekdays und ShiftPlanDetails
+   * @private
+   */
+  private extractAvailableShifts(shiftWeekdays: any[], shiftPlanDetails: ShiftPlanDetailResponseDto[]): any[] {
+    const shiftsMap = new Map<string, any>();
+    
+    // Sammle Schichten aus ShiftWeekdays
+    shiftWeekdays.forEach(shiftWeekday => {
+      if (shiftWeekday.shift && !shiftsMap.has(shiftWeekday.shift.id)) {
+        shiftsMap.set(shiftWeekday.shift.id, shiftWeekday.shift);
+      }
+    });
+    
+    // Sammle zusätzliche Schichten aus ShiftPlanDetails
+    shiftPlanDetails.forEach(detail => {
+      if (detail.shift && !shiftsMap.has(detail.shiftId)) {
+        shiftsMap.set(detail.shiftId, detail.shift);
+      }
+    });
+    
+    return Array.from(shiftsMap.values()).sort((a, b) => {
+      const timeA = a.startTime?.replace(':', '') || '0000';
+      const timeB = b.startTime?.replace(':', '') || '0000';
+      return timeA.localeCompare(timeB);
+    });
   }
 }
 

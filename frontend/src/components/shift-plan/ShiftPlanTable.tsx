@@ -1,38 +1,38 @@
-import React, { useState } from 'react';
+import { excelExportService, shiftPlanDetailService } from '@/services';
+import { CalculatedShiftPlan, ReducedEmployee } from '@/services/ShiftPlanCalculationService';
 import {
+    FileDownload as FileDownloadIcon,
+    Refresh as RefreshIcon,
+    Schedule as ScheduleIcon,
+} from '@mui/icons-material';
+import {
+    alpha,
     Box,
+    CardContent,
+    CardHeader,
+    Chip,
+    CircularProgress,
+    Fade,
+    IconButton,
+    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
-    Typography,
-    CircularProgress,
-    Chip,
-    CardContent,
-    CardHeader,
-    useTheme,
-    alpha,
-    Fade,
     Tooltip,
-    IconButton,
+    Typography,
+    useTheme,
 } from '@mui/material';
-import {
-    FileDownload as FileDownloadIcon,
-    Schedule as ScheduleIcon,
-    Refresh as RefreshIcon,
-} from '@mui/icons-material';
-import {format} from 'date-fns';
-import {de} from 'date-fns/locale';
-import {EmployeeResponseDto} from "@/api/data-contracts.ts";
-import {excelExportService, shiftPlanDetailService} from '@/services';
-import {CalculatedShiftPlan, ReducedEmployee} from '@/services/ShiftPlanCalculationService';
-import MonthSelector from '../MonthSelector';
+import { format } from 'date-fns';
+import { de } from 'date-fns/locale';
+import React, { useState } from 'react';
 import LocationSelector from '../LocationSelector';
+import MonthSelector from '../MonthSelector';
 import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
 import ShiftAssignmentDialog from '../shift/ShiftAssignmentDialog';
+import ShiftChip from './ShiftChip';
 
 interface ShiftPlanTableProps {
     calculatedShiftPlan: CalculatedShiftPlan;
@@ -337,7 +337,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     fontSize: '0.875rem',
                                                 }}
                                             >
-                                                Mitarbeiter
+                                                
                                             </TableCell>
                                             {days.map((dayInfo) => {
 
@@ -376,6 +376,64 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                     </TableCell>
                                                 );
                                             })}
+                                        </TableRow>
+                                        
+                                        {/* Schicht-Übersicht Zeile */}
+                                        <TableRow>
+                                            <TableCell
+                                                sx={{
+                                                    minWidth: 250,
+                                                    width: '250px',
+                                                    position: 'sticky',
+                                                    left: 0,
+                                                    top: 50,
+                                                    zIndex: 3,
+                                                    backgroundColor: alpha(theme.palette.info.main, 0.05),
+                                                    borderRight: `2px solid ${theme.palette.divider}`,
+                                                    borderBottom: `1px solid ${theme.palette.divider}`,
+                                                    fontWeight: 600,
+                                                    fontSize: '0.8rem',
+                                                    color: theme.palette.text.primary,
+                                                }}
+                                            >
+                                                Mitarbeiter/Schichten
+                                            </TableCell>
+                                            {days.map((dayInfo) => (
+                                                <TableCell
+                                                    key={`shifts-${dayInfo.dayKey}`}
+                                                    align="center"
+                                                    sx={{
+                                                        minWidth: 50,
+                                                        width: '50px',
+                                                        backgroundColor: alpha(theme.palette.info.main, 0.05),
+                                                        position: 'sticky',
+                                                        top: 50,
+                                                        zIndex: 2,
+                                                        borderBottom: `1px solid ${theme.palette.divider}`,
+                                                        padding: '4px',
+                                                    }}
+                                                >
+                                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                        {dayInfo.shiftOccupancy.map((shift) => (
+                                                            <ShiftChip
+                                                                key={shift.shiftId}
+                                                                shift={shift}
+                                                            />
+                                                        ))}
+                                                        {dayInfo.shiftOccupancy.length === 0 && (
+                                                            <Typography
+                                                                variant="caption"
+                                                                sx={{
+                                                                    color: 'text.disabled',
+                                                                    fontSize: '0.6rem',
+                                                                }}
+                                                            >
+                                                                —
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
+                                                </TableCell>
+                                            ))}
                                         </TableRow>
                                     </TableHead>
 

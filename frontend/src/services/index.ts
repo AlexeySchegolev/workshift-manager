@@ -1,41 +1,40 @@
 // Service layer exports
 // Centralized API services with environment-based configuration
 
+export { AuthService } from './AuthService';
 export { BaseService } from './BaseService';
-export { LocationService } from './LocationService';
-export { EmployeeService } from './EmployeeService';
 export { EmployeeAbsenceService } from './EmployeeAbsenceService';
+export { EmployeeService } from './EmployeeService';
+export { LocationService } from './LocationService';
+export { OrganizationsService } from './OrganizationsService';
 export { RoleService } from './RoleService';
-export { ShiftService } from './ShiftService';
-export { ShiftPlanService } from './ShiftPlanService';
-export { ShiftPlanDetailService } from './ShiftPlanDetailService';
+export { ShiftPlanAbsenceManager } from './shift-plan/ShiftPlanAbsenceManager';
 export { ShiftPlanCalculationService, shiftPlanCalculationService } from './shift-plan/ShiftPlanCalculationService';
 export { ShiftPlanDataLoader } from './shift-plan/ShiftPlanDataLoader';
-export { ShiftPlanAbsenceManager } from './shift-plan/ShiftPlanAbsenceManager';
+export { ShiftPlanDetailService } from './shift-plan/ShiftPlanDetailService';
+export { ExcelExportService } from './shift-plan/ShiftPlanExcelExportService';
 export { ShiftPlanOccupancyCalculator } from './shift-plan/ShiftPlanOccupancyCalculator';
+export { ShiftPlanService } from './shift-plan/ShiftPlanService';
 export { ShiftPlanTimeUtils } from './shift-plan/ShiftPlanTimeUtils';
 export * from './shift-plan/ShiftPlanTypes';
-export { ExcelExportService } from './ExcelExportService';
-export { OrganizationsService } from './OrganizationsService';
-export { UserService } from './UserService';
-export { AuthService } from './AuthService';
+export { ShiftService } from './ShiftService';
 export { ShiftWeekdaysService } from './ShiftWeekdaysService';
+export { UserService } from './UserService';
 
 // Service instances for direct use
 // These instances use the centralized base URL configuration from env.local
-import { LocationService } from './LocationService';
-import { EmployeeService } from './EmployeeService';
-import { EmployeeAbsenceService } from './EmployeeAbsenceService';
-import { RoleService } from './RoleService';
-import { ShiftService } from './ShiftService';
-import { ShiftPlanService } from './ShiftPlanService';
-import { ShiftPlanDetailService } from './ShiftPlanDetailService';
-import { shiftPlanCalculationService } from './shift-plan/ShiftPlanCalculationService';
-import { ExcelExportService } from './ExcelExportService';
-import { OrganizationsService } from './OrganizationsService';
-import { UserService } from './UserService';
 import { AuthService } from './AuthService';
+import { EmployeeAbsenceService } from './EmployeeAbsenceService';
+import { EmployeeService } from './EmployeeService';
+import { LocationService } from './LocationService';
+import { OrganizationsService } from './OrganizationsService';
+import { RoleService } from './RoleService';
+import { ShiftPlanDetailService } from './shift-plan/ShiftPlanDetailService';
+import { ExcelExportService } from './shift-plan/ShiftPlanExcelExportService';
+import { ShiftPlanService } from './shift-plan/ShiftPlanService';
+import { ShiftService } from './ShiftService';
 import { ShiftWeekdaysService } from './ShiftWeekdaysService';
+import { UserService } from './UserService';
 
 export const locationService = new LocationService();
 export const employeeService = new EmployeeService();

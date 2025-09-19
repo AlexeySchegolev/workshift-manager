@@ -1,9 +1,9 @@
-import { EmployeeResponseDto, ShiftPlanResponseDto, ShiftPlanDetailResponseDto } from '../../api/data-contracts';
-import { ReducedEmployee } from './ShiftPlanTypes';
-import { ShiftPlanService } from '../ShiftPlanService';
+import { EmployeeResponseDto, ShiftPlanDetailResponseDto, ShiftPlanResponseDto } from '../../api/data-contracts';
 import { EmployeeService } from '../EmployeeService';
 import { LocationService } from '../LocationService';
 import { ShiftWeekdaysService } from '../ShiftWeekdaysService';
+import { ShiftPlanService } from './ShiftPlanService';
+import { ReducedEmployee } from './ShiftPlanTypes';
 
 /**
  * Service für das Laden von Schichtplan-relevanten Daten

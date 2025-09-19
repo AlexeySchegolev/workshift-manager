@@ -1,10 +1,10 @@
-import { BaseService } from './BaseService';
-import { ShiftPlanDetails } from '../api/ShiftPlanDetails';
+import { ShiftPlanDetails } from '../../api/ShiftPlanDetails';
 import {
-  ShiftPlanDetailResponseDto,
-  CreateShiftPlanDetailDto,
-  UpdateShiftPlanDetailDto,
-} from '../api/data-contracts';
+    CreateShiftPlanDetailDto,
+    ShiftPlanDetailResponseDto,
+    UpdateShiftPlanDetailDto,
+} from '../../api/data-contracts';
+import { BaseService } from '../BaseService';
 
 /**
  * Service class for shift plan detail operations

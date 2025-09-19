@@ -64,10 +64,11 @@ export class ShiftPlanOccupancyCalculator {
 
       const assignedEmployees = assignedEmployeesWithRoles.map(emp => emp.name);
       
-      // Berechne Rollen-Belegung
-      const roleOccupancy = this.calculateRoleOccupancyForShift(shift, assignedEmployeesWithRoles);
+      // Berechne Rollen-Belegung für Tooltip (zeigt alle Rollen an)
+      const roleOccupancy = this.calculateTooltipRoleOccupancy(shift, assignedEmployeesWithRoles);
       
-      const requiredCount = this.getRequiredStaffForShift(shift);
+      // Berechne requiredCount aus der Summe aller Rollen-Anforderungen
+      const requiredCount = roleOccupancy.reduce((sum, role) => sum + role.required, 0) || 1;
       const assignedCount = assignedEmployees.length;
 
       occupancy.push({
@@ -130,6 +131,60 @@ export class ShiftPlanOccupancyCalculator {
         required: 1, // TODO: Aus Schicht-Rollen-Konfiguration laden
         assigned: employees.length,
         assignedEmployees: employees
+      });
+    });
+
+    return roleOccupancy.sort((a, b) => a.roleName.localeCompare(b.roleName));
+  }
+
+  /**
+   * Berechnet die vollständige Rollen-Belegung für Tooltip-Anzeige
+   * Zeigt alle konfigurierten Rollen an, auch nicht belegte (0 aus X)
+   */
+  calculateTooltipRoleOccupancy(
+    shift: any,
+    assignedEmployees: { name: string; role: string }[]
+  ): RoleOccupancy[] {
+    // Gruppiere zugewiesene Mitarbeiter nach Rollen
+    const assignedRoleGroups = new Map<string, string[]>();
+    
+    assignedEmployees.forEach(emp => {
+      if (!assignedRoleGroups.has(emp.role)) {
+        assignedRoleGroups.set(emp.role, []);
+      }
+      assignedRoleGroups.get(emp.role)!.push(emp.name);
+    });
+
+    // Sammle alle konfigurierten Rollen für diese Schicht
+    const allRequiredRoles = new Map<string, number>();
+    
+    // Lade Schicht-Rollen aus der Konfiguration
+    if (shift?.shiftRoles && Array.isArray(shift.shiftRoles)) {
+      shift.shiftRoles.forEach((shiftRole: any) => {
+        const roleName = shiftRole.role?.name || 'Unbekannte Rolle';
+        const requiredCount = shiftRole.count || 1;
+        allRequiredRoles.set(roleName, requiredCount);
+      });
+    }
+    
+    // Falls keine Schicht-Rollen konfiguriert sind, verwende zugewiesene Rollen
+    if (allRequiredRoles.size === 0) {
+      assignedRoleGroups.forEach((employees, roleName) => {
+        allRequiredRoles.set(roleName, 1);
+      });
+    }
+
+    // Erstelle RoleOccupancy Array für alle Rollen
+    const roleOccupancy: RoleOccupancy[] = [];
+    
+    allRequiredRoles.forEach((required, roleName) => {
+      const assignedEmployeesForRole = assignedRoleGroups.get(roleName) || [];
+      
+      roleOccupancy.push({
+        roleName,
+        required,
+        assigned: assignedEmployeesForRole.length,
+        assignedEmployees: assignedEmployeesForRole
       });
     });
 

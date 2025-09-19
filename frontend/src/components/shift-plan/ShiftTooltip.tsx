@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Typography } from '@mui/material';
 import { ShiftOccupancy } from '@/services';
 
 interface ShiftTooltipProps {
@@ -7,50 +8,58 @@ interface ShiftTooltipProps {
 
 const ShiftTooltip: React.FC<ShiftTooltipProps> = ({ shift }) => {
   return (
-    <div style={{ padding: '8px', maxWidth: '300px' }}>
-      <div style={{ fontWeight: 600, marginBottom: '4px' }}>
+    <Box sx={{ p: 1.5, maxWidth: 300 }}>
+      {/* Schicht-Name */}
+      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
         {shift.shiftName}
-      </div>
+      </Typography>
       
-      <div style={{ marginBottom: '4px' }}>
+      {/* Zeit */}
+      <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
         Zeit: {shift.startTime} - {shift.endTime}
-      </div>
+      </Typography>
       
-      <div style={{ marginBottom: '8px' }}>
+      {/* Gesamt-Belegung */}
+      <Typography variant="body2" sx={{ mb: 1.5, fontWeight: 500 }}>
         Gesamt: {shift.assignedCount} / {shift.requiredCount}
-      </div>
+      </Typography>
       
-      {shift.roleOccupancy && shift.roleOccupancy.length > 0 && (
-        <div style={{ marginBottom: '8px' }}>
-          <div style={{ fontWeight: 600, marginBottom: '4px' }}>
-            Belegung nach Rollen:
-          </div>
-          {shift.roleOccupancy.map((role, index) => (
-            <div key={index} style={{ marginLeft: '8px', marginBottom: '4px' }}>
-              <div>
+      {/* Rollen-Belegung */}
+      <Box>
+        <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
+          Belegung nach Rollen:
+        </Typography>
+        
+        <Box sx={{ pl: 1 }}>
+          {shift.roleOccupancy && shift.roleOccupancy.length > 0 ? (
+            shift.roleOccupancy.map((role, index) => (
+              <Typography
+                key={index}
+                variant="body2"
+                sx={{
+                  mb: 0.5,
+                  color: 'text.secondary',
+                  fontSize: '0.875rem'
+                }}
+              >
                 {role.roleName}: {role.assigned} / {role.required}
-              </div>
-              {role.assignedEmployees && role.assignedEmployees.length > 0 && (
-                <div style={{
-                  marginLeft: '8px',
-                  fontSize: '0.8em',
-                  opacity: 0.8,
-                  marginTop: '2px'
-                }}>
-                  {role.assignedEmployees.join(', ')}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {(!shift.assignedEmployees || shift.assignedEmployees.length === 0) && (
-        <div style={{ fontStyle: 'italic', opacity: 0.7 }}>
-          Keine Zuweisungen
-        </div>
-      )}
-    </div>
+              </Typography>
+            ))
+          ) : (
+            <Typography
+              variant="body2"
+              sx={{
+                fontStyle: 'italic',
+                opacity: 0.7,
+                color: 'text.disabled'
+              }}
+            >
+              Keine Rollen konfiguriert
+            </Typography>
+          )}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

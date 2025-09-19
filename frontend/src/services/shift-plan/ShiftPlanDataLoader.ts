@@ -102,7 +102,9 @@ export class ShiftPlanDataLoader {
    */
   private async loadShiftsByLocation(locationId: string): Promise<any[]> {
     try {
-      return await this.shiftService.getShiftsByLocationId(locationId);
+      return await this.shiftService.getShiftsByLocationId(locationId, {
+        includeRelations: true
+      });
     } catch (error) {
       console.error('Fehler beim Laden der Schichten:', error);
       return [];

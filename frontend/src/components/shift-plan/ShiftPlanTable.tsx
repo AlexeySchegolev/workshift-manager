@@ -1,5 +1,5 @@
 import { excelExportService, shiftPlanDetailService } from '@/services';
-import { CalculatedShiftPlan, ReducedEmployee } from '@/services/shift-plan';
+import { CalculatedShiftPlan, ReducedEmployee } from '@/services';
 import {
     FileDownload as FileDownloadIcon,
     Refresh as RefreshIcon,

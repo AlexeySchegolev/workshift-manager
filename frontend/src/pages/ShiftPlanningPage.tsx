@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import ShiftPlanTable from '../components/shift-plan/ShiftPlanTable';
 import {ShiftPlanService, LocationService} from "@/services";
-import {shiftPlanCalculationService, CalculatedShiftPlan} from "@/services/shift-plan";
+import {shiftPlanCalculationService, CalculatedShiftPlan} from "@/services";
 import {shiftWeekdaysService, ShiftWeekdayResponseDto} from "@/services/ShiftWeekdaysService";
 import {useAuth} from "@/contexts/AuthContext";
 import {

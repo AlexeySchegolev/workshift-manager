@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chip, Tooltip, alpha, useTheme } from '@mui/material';
-import { ShiftOccupancy } from '@/services/shift-plan';
+import { ShiftOccupancy } from '@/services';
 import ShiftTooltip from './ShiftTooltip';
 
 interface ShiftChipProps {

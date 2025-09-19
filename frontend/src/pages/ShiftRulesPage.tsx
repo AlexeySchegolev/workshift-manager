@@ -223,12 +223,13 @@ const ShiftRulesPage: React.FC = () => {
                         <Typography variant="h6">Standort auswählen</Typography>
                     </Box>
                     
-                    <FormControl fullWidth>
+                    <FormControl sx={{ minWidth: 250, maxWidth: 400 }}>
                         <InputLabel>Standort</InputLabel>
                         <Select
                             value={selectedLocationId}
                             label="Standort"
                             onChange={handleLocationChange}
+                            size="small"
                         >
                             <MenuItem value="">
                                 <em>Bitte wählen Sie einen Standort</em>

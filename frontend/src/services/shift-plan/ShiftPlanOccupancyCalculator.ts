@@ -16,26 +16,24 @@ export class ShiftPlanOccupancyCalculator {
     shiftWeekdays: any[],
     employeeStatuses: EmployeeDayStatus[]
   ): ShiftOccupancy[] {
-    // Sammle alle verfügbaren Schichten für diesen Wochentag
+    // Sammle alle relevanten Schichten für diesen Tag
     const allShifts = new Map<string, any>();
     
-    // Lade alle Schichten die für diesen Wochentag konfiguriert sind
+    // 1. Lade alle Schichten die für diesen Wochentag konfiguriert sind
     shiftWeekdays.forEach(shiftWeekday => {
       if (shiftWeekday.weekday === dayOfWeek && shiftWeekday.shift) {
         allShifts.set(shiftWeekday.shift.id, shiftWeekday.shift);
       }
     });
     
-    // Zusätzlich sammle alle Schichten aus den Details (falls welche fehlen)
-    shiftPlanDetails.forEach(detail => {
+    // 2. Zusätzlich sammle Schichten die bereits für diesen Tag zugewiesen sind
+    const shiftsForDay = shiftPlanDetails.filter(detail => detail.day === dayNumber);
+    shiftsForDay.forEach(detail => {
       if (detail.shift && !allShifts.has(detail.shiftId)) {
         allShifts.set(detail.shiftId, detail.shift);
       }
     });
 
-    // Sammle Zuweisungen für diesen Tag
-    const shiftsForDay = shiftPlanDetails.filter(detail => detail.day === dayNumber);
-    
     // Gruppiere Zuweisungen nach Schicht-ID
     const assignmentGroups = new Map<string, ShiftPlanDetailResponseDto[]>();
     shiftsForDay.forEach(detail => {

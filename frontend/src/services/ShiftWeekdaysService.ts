@@ -36,10 +36,10 @@ export class ShiftWeekdaysService extends BaseService {
     }
   }
 
-  async getShiftWeekdaysByLocationId(locationId: string): Promise<ShiftWeekdayResponseDto[]> {
+  async getShiftWeekdaysByLocationId(locationId: string): Promise<any[]> {
     try {
       const response = await this.getHttpClient().request({
-        path: `/api/shift-weekdays?locationId=${locationId}`,
+        path: `/api/shift-weekdays?locationId=${locationId}&includeRelations=true`,
         method: 'GET'
       });
       return response.data;

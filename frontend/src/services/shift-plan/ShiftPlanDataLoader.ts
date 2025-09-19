@@ -2,6 +2,7 @@ import { EmployeeResponseDto, ShiftPlanDetailResponseDto, ShiftPlanResponseDto }
 import { EmployeeService } from '../EmployeeService';
 import { LocationService } from '../LocationService';
 import { ShiftWeekdaysService } from '../ShiftWeekdaysService';
+import { ShiftService } from '../ShiftService';
 import { ShiftPlanService } from './ShiftPlanService';
 import { ReducedEmployee } from './ShiftPlanTypes';
 
@@ -13,12 +14,14 @@ export class ShiftPlanDataLoader {
   private employeeService: EmployeeService;
   private locationService: LocationService;
   private shiftWeekdaysService: ShiftWeekdaysService;
+  private shiftService: ShiftService;
 
   constructor() {
     this.shiftPlanService = new ShiftPlanService();
     this.employeeService = new EmployeeService();
     this.locationService = new LocationService();
     this.shiftWeekdaysService = new ShiftWeekdaysService();
+    this.shiftService = new ShiftService();
   }
 
   /**
@@ -72,14 +75,36 @@ export class ShiftPlanDataLoader {
   }
 
   /**
-   * Lädt Schicht-Wochentage für eine Location
+   * Lädt Schicht-Wochentage für eine Location mit Schicht-Daten
    */
   async loadShiftWeekdaysByLocation(locationId: string): Promise<any[]> {
     try {
-      const shiftWeekdays = await this.shiftWeekdaysService.getShiftWeekdaysByLocationId(locationId);
-      return shiftWeekdays;
+      const [shiftWeekdays, shifts] = await Promise.all([
+        this.shiftWeekdaysService.getShiftWeekdaysByLocationId(locationId),
+        this.loadShiftsByLocation(locationId)
+      ]);
+      
+      // Verknüpfe ShiftWeekdays mit Shift-Daten
+      const shiftsMap = new Map(shifts.map(shift => [shift.id, shift]));
+      
+      return shiftWeekdays.map(shiftWeekday => ({
+        ...shiftWeekday,
+        shift: shiftsMap.get(shiftWeekday.shiftId) || null
+      }));
     } catch (error) {
       console.error('Fehler beim Laden der Schicht-Wochentage:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Lädt alle Schichten für eine Location
+   */
+  private async loadShiftsByLocation(locationId: string): Promise<any[]> {
+    try {
+      return await this.shiftService.getShiftsByLocationId(locationId);
+    } catch (error) {
+      console.error('Fehler beim Laden der Schichten:', error);
       return [];
     }
   }

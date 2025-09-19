@@ -270,7 +270,7 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                         <Chip
                                                             label={employee.primaryRole.displayName || employee.primaryRole.name}
                                                             size="small"
-                                                            color={employee.primaryRole.name === 'shift_leader' ? 'primary' : 'default'}
+                                                            color="primary"
                                                             sx={{
                                                                 height: 18,
                                                                 fontSize: '0.7rem',

@@ -40,6 +40,22 @@ const ShiftChip: React.FC<ShiftChipProps> = ({ shift }) => {
     <Tooltip
       title={<ShiftTooltip shift={shift} />}
       arrow
+      componentsProps={{
+        tooltip: {
+          sx: {
+            backgroundColor: 'transparent',
+            boxShadow: 'none',
+            border: 'none',
+            padding: 0,
+            maxWidth: 'none'
+          }
+        },
+        arrow: {
+          sx: {
+            color: '#ffffff'
+          }
+        }
+      }}
     >
       <Chip
         label={shift.shortName}

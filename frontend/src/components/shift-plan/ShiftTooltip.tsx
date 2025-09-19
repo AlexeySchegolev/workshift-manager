@@ -8,29 +8,67 @@ interface ShiftTooltipProps {
 
 const ShiftTooltip: React.FC<ShiftTooltipProps> = ({ shift }) => {
   return (
-    <Box sx={{ p: 1.5, maxWidth: 300 }}>
+    <Box sx={{
+      p: 2,
+      maxWidth: 300,
+      backgroundColor: '#ffffff',
+      borderRadius: 2,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+    }}>
       {/* Schicht-Name */}
-      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+      <Typography variant="subtitle2" sx={{
+        fontWeight: 600,
+        mb: 1.5,
+        color: '#1976d2',
+        fontSize: '1rem'
+      }}>
         {shift.shiftName}
       </Typography>
       
       {/* Zeit */}
-      <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
-        Zeit: {shift.startTime} - {shift.endTime}
+      <Typography variant="body2" sx={{
+        mb: 1.5,
+        color: '#666666',
+        backgroundColor: '#f5f5f5',
+        px: 1,
+        py: 0.5,
+        borderRadius: 1,
+        fontSize: '0.875rem'
+      }}>
+        🕐 {shift.startTime} - {shift.endTime}
       </Typography>
       
       {/* Gesamt-Belegung */}
-      <Typography variant="body2" sx={{ mb: 1.5, fontWeight: 500 }}>
-        Gesamt: {shift.assignedCount} / {shift.requiredCount}
+      <Typography variant="body2" sx={{
+        mb: 2,
+        fontWeight: 600,
+        color: '#2e7d32',
+        backgroundColor: '#e8f5e8',
+        px: 1,
+        py: 0.5,
+        borderRadius: 1,
+        fontSize: '0.875rem'
+      }}>
+        👥 Gesamt: {shift.assignedCount} / {shift.requiredCount}
       </Typography>
       
       {/* Rollen-Belegung */}
       <Box>
-        <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-          Belegung nach Rollen:
+        <Typography variant="body2" sx={{
+          fontWeight: 600,
+          mb: 1.5,
+          color: '#424242',
+          fontSize: '0.875rem'
+        }}>
+          📋 Belegung nach Rollen:
         </Typography>
         
-        <Box sx={{ pl: 1 }}>
+        <Box sx={{
+          pl: 1,
+          backgroundColor: '#fafafa',
+          borderRadius: 1,
+          p: 1
+        }}>
           {shift.roleOccupancy && shift.roleOccupancy.length > 0 ? (
             shift.roleOccupancy.map((role, index) => (
               <Typography
@@ -38,11 +76,14 @@ const ShiftTooltip: React.FC<ShiftTooltipProps> = ({ shift }) => {
                 variant="body2"
                 sx={{
                   mb: 0.5,
-                  color: 'text.secondary',
-                  fontSize: '0.875rem'
+                  color: '#555555',
+                  fontSize: '0.8125rem',
+                  display: 'flex',
+                  justifyContent: 'space-between'
                 }}
               >
-                {role.roleName}: {role.assigned} / {role.required}
+                <span>{role.roleName}</span>
+                <span style={{ fontWeight: 500 }}>{role.assigned} / {role.required}</span>
               </Typography>
             ))
           ) : (
@@ -50,8 +91,9 @@ const ShiftTooltip: React.FC<ShiftTooltipProps> = ({ shift }) => {
               variant="body2"
               sx={{
                 fontStyle: 'italic',
-                opacity: 0.7,
-                color: 'text.disabled'
+                color: '#999999',
+                fontSize: '0.8125rem',
+                textAlign: 'center'
               }}
             >
               Keine Rollen konfiguriert

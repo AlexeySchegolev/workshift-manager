@@ -257,6 +257,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                         zIndex: 2,
                                                         borderBottom: `1px solid ${theme.palette.divider}`,
                                                         padding: '4px',
+                                                        verticalAlign: 'top',
                                                     }}
                                                 >
                                                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>

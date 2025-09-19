@@ -11,7 +11,7 @@ export { RoleService } from './RoleService';
 export { ShiftPlanAbsenceManager } from './shift-plan/ShiftPlanAbsenceManager';
 export { ShiftPlanCalculationService, shiftPlanCalculationService } from './shift-plan/ShiftPlanCalculationService';
 export { ShiftPlanDataLoader } from './shift-plan/ShiftPlanDataLoader';
-export { ShiftPlanDetailService } from './shift-plan/ShiftPlanDetailService';
+// ShiftPlanDetailService wird dynamisch importiert - kein statischer Export nötig
 export { ExcelExportService } from './shift-plan/ShiftPlanExcelExportService';
 export { ShiftPlanOccupancyCalculator } from './shift-plan/ShiftPlanOccupancyCalculator';
 export { ShiftPlanService } from './shift-plan/ShiftPlanService';
@@ -29,7 +29,7 @@ import { EmployeeService } from './EmployeeService';
 import { LocationService } from './LocationService';
 import { OrganizationsService } from './OrganizationsService';
 import { RoleService } from './RoleService';
-import { ShiftPlanDetailService } from './shift-plan/ShiftPlanDetailService';
+// ShiftPlanDetailService wird dynamisch importiert
 import { ExcelExportService } from './shift-plan/ShiftPlanExcelExportService';
 import { ShiftPlanService } from './shift-plan/ShiftPlanService';
 import { ShiftService } from './ShiftService';
@@ -42,7 +42,7 @@ export const employeeAbsenceService = new EmployeeAbsenceService();
 export const roleService = new RoleService();
 export const shiftService = new ShiftService();
 export const shiftPlanService = new ShiftPlanService();
-export const shiftPlanDetailService = new ShiftPlanDetailService();
+// shiftPlanDetailService wird bei Bedarf dynamisch erstellt
 export const excelExportService = new ExcelExportService();
 export const organizationsService = new OrganizationsService();
 export const userService = new UserService();

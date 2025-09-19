@@ -1,5 +1,5 @@
-import { shiftPlanDetailService } from '@/services';
 import { ReducedEmployee } from '@/services';
+import { ShiftPlanDetailService } from '@/services/shift-plan/ShiftPlanDetailService';
 
 /**
  * Event handlers and assignment logic for ShiftPlanTable
@@ -24,9 +24,11 @@ export class ShiftPlanTableHandlers {
         const dayNumber = parseInt(day, 10);
 
         try {
+            const detailService = new ShiftPlanDetailService();
+            
             if (shiftId) {
                 // Assign shift
-                await shiftPlanDetailService.assignEmployeeToShift(
+                await detailService.assignEmployeeToShift(
                     shiftPlan.id,
                     employeeId,
                     shiftId,
@@ -34,7 +36,7 @@ export class ShiftPlanTableHandlers {
                 );
             } else {
                 // Remove assignment
-                await shiftPlanDetailService.removeEmployeeAssignment(
+                await detailService.removeEmployeeAssignment(
                     shiftPlan.id,
                     employeeId,
                     dayNumber

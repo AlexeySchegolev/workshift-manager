@@ -148,7 +148,7 @@ export interface CreateEmployeeDto {
    * Employee email address
    * @example "anna.schneider@dialyse-praxis.de"
    */
-  email: string;
+  email?: string;
   /**
    * Employee first name
    * @example "Anna"
@@ -707,7 +707,7 @@ export interface EmployeeResponseDto {
    * Employee email address
    * @example "anna.schneider@dialyse-praxis.de"
    */
-  email: string;
+  email?: string;
   /**
    * Employee first name
    * @example "Anna"

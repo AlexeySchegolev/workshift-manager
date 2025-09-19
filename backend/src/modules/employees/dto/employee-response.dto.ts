@@ -40,11 +40,11 @@ export class EmployeeResponseDto {
   })
   displayName?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Employee email address',
     example: 'anna.schneider@dialyse-praxis.de'
   })
-  email: string;
+  email?: string;
 
   @ApiPropertyOptional({
     description: 'Phone number',

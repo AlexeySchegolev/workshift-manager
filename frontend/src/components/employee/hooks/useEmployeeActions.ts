@@ -68,7 +68,7 @@ export const useEmployeeActions = (
   };
 
   // Save employee (add or update) - now with API calls
-  const saveEmployee = async (formData: EmployeeFormData, editingId: string | null) => {
+  const saveEmployee = async (formData: EmployeeFormData, editingId: string | null): Promise<boolean> => {
     try {
       const employeeService = new EmployeeService();
 
@@ -103,7 +103,7 @@ export const useEmployeeActions = (
         // Create new employee - validate organizationId is available
         if (!organizationId) {
           showError('Mitarbeiter kann nicht erstellt werden: Keine Organisation verfügbar');
-          return;
+          return false;
         }
         
         // Create new employee via API
@@ -111,7 +111,6 @@ export const useEmployeeActions = (
           organizationId: organizationId,
           firstName: formData.firstName,
           lastName: formData.lastName,
-          email: `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@dialyse-praxis.de`,
           hireDate: getTodayDateString(), // Today's date in YYYY-MM-DD format
           locationId: formData.location?.id,
           primaryRoleId: formData.primaryRole?.id,
@@ -131,10 +130,13 @@ export const useEmployeeActions = (
       if (addEmployeeModalOpen) {
         closeAddEmployeeModal();
       }
+      
+      return true;
     } catch (error) {
       const errorMessage = extractErrorMessage(error);
       const duration = getErrorDisplayDuration(error);
       showError(errorMessage, duration);
+      return false;
     }
   };
 

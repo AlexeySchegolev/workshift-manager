@@ -24,12 +24,13 @@ export class CreateEmployeeDto {
   @IsString()
   lastName: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Employee email address',
     example: 'anna.schneider@dialyse-praxis.de'
   })
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @ApiPropertyOptional({
     description: 'Phone number',

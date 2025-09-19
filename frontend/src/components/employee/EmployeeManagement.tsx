@@ -55,8 +55,10 @@ const EmployeeManagement: React.FC<EmployeeManagementProps> = ({
   const handleSaveEmployee = async () => {
     if (!validateForm()) return;
     
-    await saveEmployee(formData, editingId);
-    resetForm();
+    const success = await saveEmployee(formData, editingId);
+    if (success) {
+      resetForm();
+    }
   };
 
   // Handle add employee modal close

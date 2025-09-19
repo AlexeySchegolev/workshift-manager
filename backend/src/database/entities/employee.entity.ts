@@ -33,8 +33,8 @@ export class Employee {
   @Column({ name: 'last_name', type: 'varchar', length: 100 })
   lastName: string;
 
-  @Column({ type: 'varchar', length: 255, unique: true })
-  email: string;
+  @Column({ type: 'varchar', length: 255, unique: true, nullable: true })
+  email?: string;
 
   @Column({ name: 'phone_number', type: 'varchar', length: 20, nullable: true })
   phoneNumber?: string;

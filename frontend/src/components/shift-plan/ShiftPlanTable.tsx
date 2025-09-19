@@ -1,4 +1,3 @@
-import { excelExportService, shiftPlanDetailService } from '@/services';
 import { CalculatedShiftPlan, ReducedEmployee } from '@/services';
 import {
     FileDownload as FileDownloadIcon,
@@ -33,6 +32,9 @@ import MonthSelector from '../MonthSelector';
 import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
 import ShiftAssignmentDialog from '../shift/ShiftAssignmentDialog';
 import ShiftChip from './ShiftChip';
+import { ShiftPlanTableStyles } from './ShiftPlanTableStyles';
+import { ShiftPlanTableExport } from './ShiftPlanTableExport';
+import { ShiftPlanTableHandlers } from './ShiftPlanTableHandlers';
 
 interface ShiftPlanTableProps {
     calculatedShiftPlan: CalculatedShiftPlan;
@@ -50,150 +52,51 @@ interface ShiftPlanTableProps {
  * Modern Shift Plan Table in Dashboard Style
  */
 const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
-                                                   calculatedShiftPlan,
-                                                   selectedDate,
-                                                   onDateChange,
-                                                   selectedLocationId,
-                                                   onLocationChange,
-                                                   isLoading,
-                                                   onGeneratePlan,
-                                                   onCreatePlan,
-                                                   showNoShiftPlanOverlay = false
-                                               }) => {
-  const theme = useTheme();
-  
-  // Modal state
-  const [isAssignmentDialogOpen, setIsAssignmentDialogOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<ReducedEmployee | null>(null);
-  const [selectedDateForAssignment, setSelectedDateForAssignment] = useState<string>('');
-  const [currentShiftId, setCurrentShiftId] = useState<string | null>(null);
+    calculatedShiftPlan,
+    selectedDate,
+    onDateChange,
+    selectedLocationId,
+    onLocationChange,
+    isLoading,
+    onGeneratePlan,
+    onCreatePlan,
+    showNoShiftPlanOverlay = false
+}) => {
+    const theme = useTheme();
+    
+    // Modal state
+    const [isAssignmentDialogOpen, setIsAssignmentDialogOpen] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState<ReducedEmployee | null>(null);
+    const [selectedDateForAssignment, setSelectedDateForAssignment] = useState<string>('');
+    const [currentShiftId, setCurrentShiftId] = useState<string | null>(null);
 
-  // Destructure calculated data
-  const { employees, days, shiftPlan, shiftPlanDetails } = calculatedShiftPlan;
+    // Destructure calculated data
+    const { employees, days, shiftPlan, shiftPlanDetails } = calculatedShiftPlan;
 
-    // Formatted month name
-    const monthName = format(selectedDate, 'MMMM yyyy', {locale: de});
+    // Get styles
+    const headerActionStyles = ShiftPlanTableStyles.getHeaderActionStyles(theme);
+    const monthSelectorStyles = ShiftPlanTableStyles.getMonthSelectorStyles();
+    const tableCellStyles = ShiftPlanTableStyles.getTableCellStyles(theme);
 
-    // Function to export the shift plan
-    const handleExportToExcel = async () => {
-        if (!shiftPlan || !shiftPlan.id) {
-            alert('Kein Schichtplan zum Exportieren verfügbar.');
-            return;
-        }
+    // Event handlers
+    const handleExportToExcel = () => ShiftPlanTableExport.exportToExcel(shiftPlan, selectedDate);
+    
+    const handleCellClick = ShiftPlanTableHandlers.createCellClickHandler(
+        setSelectedEmployee,
+        setSelectedDateForAssignment,
+        setCurrentShiftId,
+        setIsAssignmentDialogOpen
+    );
 
-        try {
-            const blob = await excelExportService.exportShiftPlan(
-                shiftPlan.id,
-                {
-                    includeStatistics: true,
-                    includePlanning: true,
-                    dateRange: {
-                        start: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
-                        end: new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
-                    }
-                }
-            );
+    const handleShiftAssignment = (employeeId: string, shiftId: string | null, date: string) =>
+        ShiftPlanTableHandlers.handleShiftAssignment(employeeId, shiftId, date, shiftPlan, onGeneratePlan);
 
-            excelExportService.downloadBlob(blob, `Schichtplan_${monthName}.xlsx`);
-        } catch (error) {
-            alert('Der Schichtplan konnte nicht exportiert werden.');
-        }
-    };
-
-    // Function to determine background color based on shift
-    const getShiftBackgroundColor = (shift: string): string => {
-        switch (shift) {
-            case 'F':
-                return alpha(theme.palette.shifts?.early || theme.palette.success.main, 0.1);
-            case 'S':
-            case 'S0':
-            case 'S1':
-            case 'S00':
-                return alpha(theme.palette.shifts?.late || theme.palette.warning.main, 0.1);
-            case 'FS':
-                return alpha(theme.palette.shifts?.special || theme.palette.info.main, 0.1);
-            case '4':
-            case '5':
-            case '6':
-                return alpha(theme.palette.shifts?.uetersen || theme.palette.info.main, 0.1);
-            default:
-                return 'transparent';
-        }
-    };
-
-    // Function for shift colors
-    const getShiftColor = (shift: string): string => {
-        switch (shift) {
-            case 'F':
-                return theme.palette.shifts?.early || theme.palette.success.main;
-            case 'S':
-            case 'S0':
-            case 'S1':
-            case 'S00':
-                return theme.palette.shifts?.late || theme.palette.warning.main;
-            case 'FS':
-                return theme.palette.shifts?.special || theme.palette.info.main;
-            case '4':
-            case '5':
-            case '6':
-                return theme.palette.shifts?.uetersen || theme.palette.info.main;
-            default:
-                return theme.palette.text.secondary;
-        }
-    };
-
-
-    // Handle cell click to open assignment dialog
-    const handleCellClick = (employee: ReducedEmployee, dayKey: string, currentShift?: string) => {
-        setSelectedEmployee(employee);
-        setSelectedDateForAssignment(dayKey);
-        setCurrentShiftId(currentShift || null);
-        setIsAssignmentDialogOpen(true);
-    };
-
-    // Handle shift assignment
-    const handleShiftAssignment = async (employeeId: string, shiftId: string | null, date: string) => {
-        if (!shiftPlan || !shiftPlan.id) {
-            throw new Error('Kein Schichtplan verfügbar');
-        }
-
-        // Parse date from DD.MM.YYYY format
-        const [day, month, year] = date.split('.');
-        const dayNumber = parseInt(day, 10);
-
-        try {
-            if (shiftId) {
-                // Assign shift
-                await shiftPlanDetailService.assignEmployeeToShift(
-                    shiftPlan.id,
-                    employeeId,
-                    shiftId,
-                    dayNumber
-                );
-            } else {
-                // Remove assignment
-                await shiftPlanDetailService.removeEmployeeAssignment(
-                    shiftPlan.id,
-                    employeeId,
-                    dayNumber
-                );
-            }
-
-            // Refresh the shift plan data
-            onGeneratePlan();
-        } catch (error) {
-            console.error('Error assigning shift:', error);
-            throw error;
-        }
-    };
-
-    // Close assignment dialog
-    const handleCloseAssignmentDialog = () => {
-        setIsAssignmentDialogOpen(false);
-        setSelectedEmployee(null);
-        setSelectedDateForAssignment('');
-        setCurrentShiftId(null);
-    };
+    const handleCloseAssignmentDialog = ShiftPlanTableHandlers.createCloseAssignmentDialogHandler(
+        setIsAssignmentDialogOpen,
+        setSelectedEmployee,
+        setSelectedDateForAssignment,
+        setCurrentShiftId
+    );
 
     return (
         <Box sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
@@ -205,30 +108,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                         <Typography variant="h6" component="div">
                             Schichtplan für
                         </Typography>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                            '& .MuiBox-root': {
-                                margin: 0,
-                                padding: 0,
-                                backgroundColor: 'transparent',
-                                borderRadius: 1,
-                            },
-                            '& .MuiButton-root': {
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                padding: '4px 8px',
-                                minHeight: 'auto',
-                                textTransform: 'capitalize',
-                            },
-                            '& .MuiIconButton-root': {
-                                padding: '4px',
-                                '& .MuiSvgIcon-root': {
-                                    fontSize: '1.2rem',
-                                },
-                            },
-                        }}>
+                        <Box sx={monthSelectorStyles}>
                             <MonthSelector
                                 selectedDate={selectedDate}
                                 onDateChange={onDateChange}
@@ -247,18 +127,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                 color="primary"
                                 onClick={onGeneratePlan}
                                 disabled={isLoading}
-                                sx={{
-                                    backgroundColor: theme.palette.primary.main,
-                                    color: 'white',
-                                    borderRadius: 2,
-                                    '&:hover': {
-                                        backgroundColor: theme.palette.primary.dark,
-                                    },
-                                    '&:disabled': {
-                                        backgroundColor: alpha(theme.palette.primary.main, 0.3),
-                                        color: alpha(theme.palette.common.white, 0.5),
-                                    },
-                                }}
+                                sx={headerActionStyles.refreshButton}
                             >
                                 {isLoading ? <CircularProgress size={20} sx={{color: 'inherit'}}/> : <RefreshIcon/>}
                             </IconButton>
@@ -269,13 +138,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                 color="primary"
                                 onClick={handleExportToExcel}
                                 disabled={!shiftPlan || isLoading}
-                                sx={{
-                                    border: `1px solid ${theme.palette.primary.main}`,
-                                    borderRadius: 2,
-                                    '&:hover': {
-                                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                                    },
-                                }}
+                                sx={headerActionStyles.exportButton}
                             >
                                 <FileDownloadIcon/>
                             </IconButton>
@@ -322,91 +185,32 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                     {/* Table head with dates */}
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell
-                                                sx={{
-                                                    minWidth: 250,
-                                                    width: '250px',
-                                                    position: 'sticky',
-                                                    left: 0,
-                                                    top: 0,
-                                                    zIndex: 4,
-                                                    backgroundColor: theme.palette.background.paper,
-                                                    borderRight: `2px solid ${theme.palette.divider}`,
-                                                    borderBottom: `2px solid ${theme.palette.divider}`,
-                                                    fontWeight: 700,
-                                                    fontSize: '0.875rem',
-                                                }}
-                                            >
+                                            <TableCell sx={tableCellStyles.employeeCell}>
                                                 
                                             </TableCell>
-                                            {days.map((dayInfo) => {
-
-                                                return (
-                                                    <TableCell
-                                                        key={dayInfo.dayKey}
-                                                        align="center"
-                                                        sx={{
-                                                            minWidth: 50,
-                                                            width: '50px',
-                                                            height: '50px',
-                                                            fontWeight: 600,
-                                                            fontSize: '0.8rem',
-                                                            backgroundColor: dayInfo.isToday
-                                                                ? alpha(theme.palette.primary.main, 0.04)
-                                                                : dayInfo.isWeekend
-                                                                    ? alpha(theme.palette.error.main, 0.05)
-                                                                    : theme.palette.background.paper,
-                                                            color: dayInfo.isWeekend ? theme.palette.error.main : 'inherit',
-                                                            position: 'sticky',
-                                                            top: 0,
-                                                            zIndex: 2,
-                                                            borderBottom: `2px solid ${theme.palette.divider}`,
-                                                        }}
-                                                    >
-                                                        <Box>
-                                                            <Typography variant="caption"
-                                                                        sx={{display: 'block', fontWeight: 700}}>
-                                                                {format(dayInfo.date, 'dd.MM')}
-                                                            </Typography>
-                                                            <Typography variant="caption"
-                                                                        sx={{fontSize: '0.7rem', opacity: 0.8}}>
-                                                                {format(dayInfo.date, 'EEE', {locale: de})}
-                                                            </Typography>
-                                                        </Box>
-                                                    </TableCell>
-                                                );
-                                            })}
+                                            {days.map((dayInfo) => (
+                                                <TableCell
+                                                    key={dayInfo.dayKey}
+                                                    align="center"
+                                                    sx={tableCellStyles.dateCell(dayInfo)}
+                                                >
+                                                    <Box>
+                                                        <Typography variant="caption"
+                                                                    sx={{display: 'block', fontWeight: 700}}>
+                                                            {format(dayInfo.date, 'dd.MM')}
+                                                        </Typography>
+                                                        <Typography variant="caption"
+                                                                    sx={{fontSize: '0.7rem', opacity: 0.8}}>
+                                                            {format(dayInfo.date, 'EEE', {locale: de})}
+                                                        </Typography>
+                                                    </Box>
+                                                </TableCell>
+                                            ))}
                                         </TableRow>
                                         
                                         {/* Schicht-Übersicht Zeile */}
                                         <TableRow>
-                                            <TableCell
-                                                sx={{
-                                                    minWidth: 250,
-                                                    width: '250px',
-                                                    position: 'sticky',
-                                                    left: 0,
-                                                    top: 50,
-                                                    zIndex: 3,
-                                                    backgroundColor: theme.palette.background.paper,
-                                                    borderRight: `2px solid ${theme.palette.divider}`,
-                                                    borderBottom: `1px solid ${theme.palette.divider}`,
-                                                    fontWeight: 600,
-                                                    fontSize: '0.8rem',
-                                                    color: theme.palette.text.primary,
-                                                    padding: 0,
-                                                    '&::before': {
-                                                        content: '""',
-                                                        position: 'absolute',
-                                                        top: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        bottom: 0,
-                                                        background: `linear-gradient(to top right, transparent 49%, ${theme.palette.divider} 49%, ${theme.palette.divider} 51%, transparent 51%)`,
-                                                        zIndex: 1,
-                                                    }
-                                                }}
-                                            >
+                                            <TableCell sx={tableCellStyles.shiftOverviewCell}>
                                                 <Box sx={{
                                                     position: 'relative',
                                                     width: '100%',
@@ -612,7 +416,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                             onClick={() => handleCellClick(emp, dayInfo.dayKey, assignedShift)}
                                                             sx={{
                                                                 backgroundColor: assignedShift
-                                                                    ? getShiftBackgroundColor(assignedShift)
+                                                                    ? ShiftPlanTableStyles.getShiftBackgroundColor(assignedShift, theme)
                                                                     : absenceReason
                                                                         ? alpha(theme.palette.warning.main, 0.1)
                                                                         : dayInfo.isToday
@@ -634,8 +438,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                             width: 33,
                                                                             height: 33,
                                                                             borderRadius: '50%',
-                                                                            backgroundColor: alpha(getShiftColor(assignedShift), 0.15),
-                                                                            color: getShiftColor(assignedShift),
+                                                                            backgroundColor: alpha(ShiftPlanTableStyles.getShiftColor(assignedShift, theme), 0.15),
+                                                                            color: ShiftPlanTableStyles.getShiftColor(assignedShift, theme),
                                                                             display: 'flex',
                                                                             alignItems: 'center',
                                                                             justifyContent: 'center',

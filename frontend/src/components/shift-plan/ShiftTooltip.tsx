@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShiftOccupancy } from '@/services/ShiftPlanCalculationService';
+import { ShiftOccupancy } from '@/services/shift-plan';
 
 interface ShiftTooltipProps {
   shift: ShiftOccupancy;

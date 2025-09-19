@@ -18,7 +18,7 @@ import {
     alpha,
 } from '@mui/material';
 import { EmployeeResponseDto, ShiftResponseDto } from '@/api/data-contracts';
-import { ReducedEmployee } from '@/services/ShiftPlanCalculationService';
+import { ReducedEmployee } from '@/services/shift-plan';
 import { shiftService } from '@/services/ShiftService';
 import { shiftWeekdaysService } from '@/services/ShiftWeekdaysService';
 import { format, parse } from 'date-fns';

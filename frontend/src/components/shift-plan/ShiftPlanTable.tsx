@@ -620,11 +620,6 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                             : dayInfo.isWeekend
                                                                                 ? alpha(theme.palette.error.main, 0.02)
                                                                                 : 'inherit',
-                                                                border: assignedShift
-                                                                    ? `1px solid ${alpha(getShiftColor(assignedShift), 0.3)}`
-                                                                    : absenceReason
-                                                                        ? `1px solid ${alpha(theme.palette.warning.main, 0.3)}`
-                                                                        : 'none',
                                                                 position: 'relative',
                                                                 cursor: 'pointer',
                                                                 '&:hover': {
@@ -636,12 +631,11 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                 <Tooltip title={shiftName} arrow>
                                                                     <Box
                                                                         sx={{
-                                                                            width: 28,
-                                                                            height: 28,
+                                                                            width: 33,
+                                                                            height: 33,
                                                                             borderRadius: '50%',
                                                                             backgroundColor: alpha(getShiftColor(assignedShift), 0.15),
                                                                             color: getShiftColor(assignedShift),
-                                                                            border: `1px solid ${alpha(getShiftColor(assignedShift), 0.3)}`,
                                                                             display: 'flex',
                                                                             alignItems: 'center',
                                                                             justifyContent: 'center',
@@ -649,6 +643,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                             fontWeight: '600',
                                                                             cursor: 'pointer',
                                                                             margin: 'auto',
+                                                                            padding: '2px',
                                                                         }}
                                                                     >
                                                                         {assignedShift}
@@ -658,12 +653,11 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                 <Tooltip title={absenceReason} arrow>
                                                                     <Box
                                                                         sx={{
-                                                                            width: 28,
-                                                                            height: 28,
+                                                                            width: 33,
+                                                                            height: 33,
                                                                             borderRadius: '50%',
                                                                             backgroundColor: alpha(theme.palette.warning.main, 0.15),
                                                                             color: theme.palette.warning.main,
-                                                                            border: `1px solid ${alpha(theme.palette.warning.main, 0.3)}`,
                                                                             display: 'flex',
                                                                             alignItems: 'center',
                                                                             justifyContent: 'center',
@@ -671,6 +665,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                                                                             fontWeight: '600',
                                                                             cursor: 'pointer',
                                                                             margin: 'auto',
+                                                                            padding: '2px',
                                                                         }}
                                                                     >
                                                                         A

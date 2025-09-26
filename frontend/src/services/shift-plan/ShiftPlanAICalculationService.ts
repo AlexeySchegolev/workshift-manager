@@ -1,10 +1,16 @@
 import { CalculatedShiftPlan, ShiftPlanDay } from './ShiftPlanTypes';
+import { ShiftPlanOptimizer } from './ShiftPlanOptimizer';
 
 /**
- * AI-Berechnungsservice für Schichtplan-Generierung
+ * AI-Berechnungsservice für Schichtplan-Generierung mit Simplex-Optimierung
  */
 export class ShiftPlanAICalculationService {
   private previewModalCallback: ((previewData: ShiftPlanDay[]) => void) | null = null;
+  private optimizer: ShiftPlanOptimizer;
+  
+  constructor() {
+    this.optimizer = new ShiftPlanOptimizer();
+  }
   
   /**
    * Setzt den Callback für die Modal-Anzeige
@@ -14,18 +20,40 @@ export class ShiftPlanAICalculationService {
   }
   
   /**
-   * Generiert Schichtplan basierend auf den gegebenen Daten
+   * Generiert optimalen Schichtplan mit Simplex-Algorithmus
    */
   generateShiftPlan(shiftPlanData: CalculatedShiftPlan): void {
+    console.log('🚀 Starte Simplex-Optimierung für Schichtplan...');
     
-    // Einfache Rückgabe der days wie gefordert
-    const result = shiftPlanData.days;
-    
-    console.log('✅ AI-Berechnung abgeschlossen - Rückgabewert:', result);
-    
-    // Zeige Modal mit Preview-Daten
-    if (this.previewModalCallback) {
-      this.previewModalCallback(result);
+    try {
+      // Optimiere Schichtplan mit Simplex-Algorithmus
+      const optimizedDays = this.optimizer.optimizeShiftPlan(shiftPlanData);
+      
+      console.log('✅ Simplex-Optimierung abgeschlossen');
+      console.log('📊 Optimierungsergebnisse:', {
+        totalDays: optimizedDays.length,
+        totalEmployees: shiftPlanData.employees.length,
+        totalShifts: shiftPlanData.availableShifts.length
+      });
+      
+      // Zeige Modal mit optimierten Preview-Daten
+      if (this.previewModalCallback) {
+        console.log('📋 Zeige Preview-Modal mit optimierten Daten');
+        this.previewModalCallback(optimizedDays);
+      } else {
+        console.warn('⚠️ Kein Preview-Modal-Callback gesetzt');
+      }
+      
+    } catch (error) {
+      console.error('❌ Fehler bei Simplex-Optimierung:', error);
+      
+      // Fallback: Verwende ursprüngliche Daten
+      if (this.previewModalCallback) {
+        console.log('📋 Zeige Preview-Modal mit ursprünglichen Daten (Fallback)');
+        this.previewModalCallback(shiftPlanData.days);
+      } else {
+        console.warn('⚠️ Kein Preview-Modal-Callback gesetzt (Fallback)');
+      }
     }
   }
 }

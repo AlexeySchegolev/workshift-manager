@@ -26,13 +26,15 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { shiftPlanAICalculationService } from '../../services/shift-plan/ShiftPlanAICalculationService';
+import { ShiftPlanDay } from '../../services/shift-plan/ShiftPlanTypes';
 import LocationSelector from '../LocationSelector';
 import MonthSelector from '../MonthSelector';
 import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
 import ShiftAssignmentDialog from '../shift/ShiftAssignmentDialog';
 import ShiftChip from './ShiftChip';
+import ShiftPlanPreviewModal from './ShiftPlanPreviewModal';
 import { ShiftPlanTableExport } from './ShiftPlanTableExport';
 import { ShiftPlanTableHandlers } from './ShiftPlanTableHandlers';
 import { ShiftPlanTableStyles } from './ShiftPlanTableStyles';
@@ -70,6 +72,10 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     const [selectedEmployee, setSelectedEmployee] = useState<ReducedEmployee | null>(null);
     const [selectedDateForAssignment, setSelectedDateForAssignment] = useState<string>('');
     const [currentShiftId, setCurrentShiftId] = useState<string | null>(null);
+    
+    // AI Preview Modal state
+    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+    const [previewData, setPreviewData] = useState<ShiftPlanDay[] | null>(null);
 
     // Destructure calculated data
     const { employees, days, shiftPlan, shiftPlanDetails } = calculatedShiftPlan;
@@ -79,11 +85,31 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     const monthSelectorStyles = ShiftPlanTableStyles.getMonthSelectorStyles();
     const tableCellStyles = ShiftPlanTableStyles.getTableCellStyles(theme);
 
+    // Setup AI service callback
+    useEffect(() => {
+        shiftPlanAICalculationService.setPreviewModalCallback((data: ShiftPlanDay[]) => {
+            setPreviewData(data);
+            setIsPreviewModalOpen(true);
+        });
+    }, []);
+    
     // Event handlers
     const handleExportToExcel = () => ShiftPlanTableExport.exportToExcel(shiftPlan, selectedDate);
     
     const handleAIGeneration = () => {
         shiftPlanAICalculationService.generateShiftPlan(calculatedShiftPlan);
+    };
+    
+    const handlePreviewModalClose = () => {
+        setIsPreviewModalOpen(false);
+        setPreviewData(null);
+    };
+    
+    const handlePreviewModalAccept = () => {
+        // Hier würde die Logik zum Übernehmen des Schichtplans stehen
+        console.log('Schichtplan übernommen');
+        handlePreviewModalClose();
+        onGeneratePlan(); // Refresh der Daten
     };
     
     const handleCellClick = ShiftPlanTableHandlers.createCellClickHandler(
@@ -533,6 +559,15 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 selectedDate={selectedDateForAssignment}
                 currentShiftId={currentShiftId}
                 locationId={selectedLocationId}
+            />
+            
+            {/* AI Preview Modal */}
+            <ShiftPlanPreviewModal
+                open={isPreviewModalOpen}
+                onClose={handlePreviewModalClose}
+                onAccept={handlePreviewModalAccept}
+                previewData={previewData}
+                originalData={calculatedShiftPlan}
             />
         </Box>
     );

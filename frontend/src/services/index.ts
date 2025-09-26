@@ -9,7 +9,7 @@ export { LocationService } from './LocationService';
 export { OrganizationsService } from './OrganizationsService';
 export { RoleService } from './RoleService';
 export { ShiftPlanAbsenceManager } from './shift-plan/ShiftPlanAbsenceManager';
-export { ShiftPlanCalculationService, shiftPlanCalculationService } from './shift-plan/ShiftPlanCalculationService';
+export { ShiftPlanViewService, shiftPlanViewService } from './shift-plan/ShiftPlanViewService';
 export { ShiftPlanDataLoader } from './shift-plan/ShiftPlanDataLoader';
 // ShiftPlanDetailService wird dynamisch importiert - kein statischer Export nötig
 export { ExcelExportService } from './shift-plan/ShiftPlanExcelExportService';

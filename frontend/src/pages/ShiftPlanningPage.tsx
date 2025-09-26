@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import ShiftPlanTable from '../components/shift-plan/ShiftPlanTable';
 import {ShiftPlanService, LocationService} from "@/services";
-import {shiftPlanCalculationService, CalculatedShiftPlan} from "@/services";
+import {shiftPlanViewService, CalculatedShiftPlan} from "@/services";
 import {shiftWeekdaysService, ShiftWeekdayResponseDto} from "@/services/ShiftWeekdaysService";
 import {useAuth} from "@/contexts/AuthContext";
 import {
@@ -74,7 +74,7 @@ const ShiftPlanningPage: React.FC = () => {
             const year = date.getFullYear();
             const month = date.getMonth() + 1; // JavaScript months are 0-based
             
-            const result = await shiftPlanCalculationService.calculateShiftPlan(
+            const result = await shiftPlanViewService.calculateShiftPlan(
                 year,
                 month,
                 locationId

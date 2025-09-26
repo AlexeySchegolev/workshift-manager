@@ -11,10 +11,10 @@ import { ShiftPlanTimeUtils } from './ShiftPlanTimeUtils';
 import { ShiftPlanOccupancyCalculator } from './ShiftPlanOccupancyCalculator';
 
 /**
- * Haupt-Service für die Berechnung und Kapselung von Schichtplänen
- * Orchestriert die verschiedenen Teilservices für eine komplette Schichtplan-Berechnung
+ * Service für die Erstellung von Schichtplan-Views
+ * Orchestriert die verschiedenen Teilservices für eine komplette Schichtplan-Darstellung
  */
-export class ShiftPlanCalculationService {
+export class ShiftPlanViewService {
   private dataLoader: ShiftPlanDataLoader;
   private absenceManager: ShiftPlanAbsenceManager;
   private occupancyCalculator: ShiftPlanOccupancyCalculator;
@@ -298,4 +298,4 @@ export class ShiftPlanCalculationService {
 }
 
 // Export singleton instance
-export const shiftPlanCalculationService = new ShiftPlanCalculationService();
+export const shiftPlanViewService = new ShiftPlanViewService();

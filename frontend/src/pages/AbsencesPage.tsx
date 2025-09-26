@@ -6,13 +6,11 @@ import {
     Paper,
 } from '@mui/material';
 import AbsenceTable from '../components/absence/AbsenceTable';
-import AbsenceDialog from '../components/absence/AbsenceDialog';
 import { EmployeeService } from "@/services";
 import { employeeAbsenceService } from "@/services";
 import {
     EmployeeResponseDto,
     EmployeeAbsenceResponseDto,
-    CreateEmployeeAbsenceDto,
 } from "@/api/data-contracts.ts";
 
 /**
@@ -32,9 +30,6 @@ const AbsencesPage: React.FC = () => {
 
     // Loading-Status
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    // Dialog-Status
-    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
     // Animation-Kontrolle
     const [showCards, setShowCards] = useState(false);
@@ -78,28 +73,19 @@ const AbsencesPage: React.FC = () => {
         loadAbsences();
     }, [selectedDate]);
 
-    // Neue Abwesenheit hinzufügen
-    const handleAddAbsence = () => {
-        setDialogOpen(true);
-    };
 
-    // Dialog schließen
-    const handleCloseDialog = () => {
-        setDialogOpen(false);
-    };
-
-    // Neue Abwesenheit speichern
-    const handleSaveAbsence = async (absenceData: CreateEmployeeAbsenceDto) => {
+    // Refresh absences function
+    const refreshAbsences = async () => {
+        setIsLoading(true);
         try {
-            await employeeAbsenceService.createAbsence(absenceData);
-            
-            // Abwesenheiten neu laden
             const year = selectedDate.getFullYear().toString();
             const month = (selectedDate.getMonth() + 1).toString();
             const updatedAbsences = await employeeAbsenceService.getAbsencesByMonth(year, month);
             setAbsences(updatedAbsences);
         } catch (error) {
-            throw error; // Re-throw to let the dialog handle error display
+            // Error handling could be added here if needed
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -121,19 +107,12 @@ const AbsencesPage: React.FC = () => {
                         absences={absences}
                         selectedDate={selectedDate}
                         onDateChange={setSelectedDate}
-                        onAddAbsence={handleAddAbsence}
+                        onRefreshAbsences={refreshAbsences}
                         isLoading={isLoading}
                     />
                 </Paper>
             </Box>
 
-            {/* Abwesenheit hinzufügen Dialog */}
-            <AbsenceDialog
-                open={dialogOpen}
-                onClose={handleCloseDialog}
-                onSave={handleSaveAbsence}
-                employees={employees}
-            />
         </Container>
     );
 };

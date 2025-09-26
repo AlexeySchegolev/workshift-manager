@@ -18,13 +18,14 @@ import {
     CardContent,
 } from '@mui/material';
 import {
-    Add as AddIcon,
     EventBusy as EventBusyIcon,
 } from '@mui/icons-material';
 import { format, getDaysInMonth, startOfMonth, addDays, isToday } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { EmployeeResponseDto, EmployeeAbsenceResponseDto } from '@/api/data-contracts';
+import { EmployeeResponseDto, EmployeeAbsenceResponseDto, CreateEmployeeAbsenceDto } from '@/api/data-contracts';
 import MonthSelector from '../MonthSelector';
+import AbsenceAssignmentDialog from './AbsenceAssignmentDialog';
+import { employeeAbsenceService } from '@/services';
 
 // Hilfsfunktionen für Abwesenheitstypen basierend auf data-contracts
 const getAbsenceTypeLabel = (type: string): string => {
@@ -50,7 +51,7 @@ interface AbsenceTableProps {
     absences: EmployeeAbsenceResponseDto[];
     selectedDate: Date;
     onDateChange: (date: Date) => void;
-    onAddAbsence: () => void;
+    onRefreshAbsences: () => void;
     isLoading?: boolean;
 }
 
@@ -60,11 +61,16 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
     absences,
     selectedDate,
     onDateChange,
-    onAddAbsence,
+    onRefreshAbsences,
     isLoading = false,
 }) => {
     const theme = useTheme();
     const [monthDays, setMonthDays] = useState<Date[]>([]);
+    
+    // Modal state
+    const [isAbsenceDialogOpen, setIsAbsenceDialogOpen] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState<EmployeeResponseDto | null>(null);
+    const [selectedDay, setSelectedDay] = useState<Date | null>(null);
 
     // Berechne die Tage des Monats
     useEffect(() => {
@@ -89,6 +95,46 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
             return absence.employeeId === employeeId && 
                    day >= startDate && day <= endDate;
         });
+    };
+
+    // Handle cell click to open absence assignment dialog
+    const handleCellClick = (employee: EmployeeResponseDto, day: Date) => {
+        setSelectedEmployee(employee);
+        setSelectedDay(day);
+        setIsAbsenceDialogOpen(true);
+    };
+
+    // Handle absence assignment
+    const handleAbsenceAssignment = async (absenceData: CreateEmployeeAbsenceDto): Promise<void> => {
+        try {
+            await employeeAbsenceService.createAbsence(absenceData);
+            onRefreshAbsences();
+        } catch (error) {
+            console.error('Error creating absence:', error);
+            throw error;
+        }
+    };
+
+    // Handle dialog close
+    const handleCloseDialog = () => {
+        setIsAbsenceDialogOpen(false);
+        setSelectedEmployee(null);
+        setSelectedDay(null);
+    };
+
+    // Convert employee to reduced format for dialog
+    const getReducedEmployee = (employee: EmployeeResponseDto) => ({
+        id: employee.id,
+        name: `${employee.firstName} ${employee.lastName}`,
+        role: employee.primaryRole?.displayName || employee.primaryRole?.name || '',
+        location: employee.location?.name || '',
+        calculatedMonthlyHours: 0,
+        monthlyWorkHours: employee.monthlyWorkHours || 0,
+    });
+
+    // Format date for dialog (DD.MM.YYYY)
+    const formatDateForDialog = (date: Date): string => {
+        return format(date, 'dd.MM.yyyy');
     };
 
     return (
@@ -129,21 +175,7 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                         </Box>
                     </Box>
                 }
-                action={
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={onAddAbsence}
-                        sx={{
-                            borderRadius: 2,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            px: 3,
-                        }}
-                    >
-                        Abwesenheit hinzufügen
-                    </Button>
-                }
+                action={null}
                 sx={{ pb: 1 }}
             />
 
@@ -303,6 +335,7 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                 <TableCell
                                                     key={`${employee.id}-${day.toISOString()}`}
                                                     align="center"
+                                                    onClick={() => handleCellClick(employee, day)}
                                                     sx={{
                                                         backgroundColor: dayAbsences.length > 0
                                                             ? alpha(getAbsenceTypeColor(dayAbsences[0].absenceType), 0.1)
@@ -315,6 +348,10 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                             ? `1px solid ${alpha(getAbsenceTypeColor(dayAbsences[0].absenceType), 0.3)}`
                                                             : 'none',
                                                         position: 'relative',
+                                                        cursor: 'pointer',
+                                                        '&:hover': {
+                                                            backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                                                        },
                                                     }}
                                                 >
                                                     {dayAbsences.length > 0 ? (
@@ -381,6 +418,15 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                     </TableContainer>
                 </Box>
             </CardContent>
+
+            {/* Absence Assignment Dialog */}
+            <AbsenceAssignmentDialog
+                open={isAbsenceDialogOpen}
+                onClose={handleCloseDialog}
+                onAssign={handleAbsenceAssignment}
+                employee={selectedEmployee ? getReducedEmployee(selectedEmployee) : null}
+                selectedDate={selectedDay ? formatDateForDialog(selectedDay) : ''}
+            />
         </Box>
     );
 };

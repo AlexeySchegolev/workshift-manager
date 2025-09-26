@@ -1,4 +1,4 @@
-import { EmployeeResponseDto, ShiftPlanResponseDto, ShiftPlanDetailResponseDto } from '../../api/data-contracts';
+import { ShiftPlanDetailResponseDto, ShiftPlanResponseDto } from '../../api/data-contracts';
 
 /**
  * Reduziertes Mitarbeiter-Interface für Schichtplan-Berechnungen

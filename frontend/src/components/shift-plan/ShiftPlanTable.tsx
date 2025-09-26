@@ -1,8 +1,8 @@
 import { CalculatedShiftPlan, ReducedEmployee } from '@/services';
 import {
+    AutoAwesome as AutoAwesomeIcon,
     FileDownload as FileDownloadIcon,
-    Refresh as RefreshIcon,
-    Schedule as ScheduleIcon,
+    Schedule as ScheduleIcon
 } from '@mui/icons-material';
 import {
     alpha,
@@ -27,14 +27,15 @@ import {
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import React, { useState } from 'react';
+import { shiftPlanAICalculationService } from '../../services/shift-plan/ShiftPlanAICalculationService';
 import LocationSelector from '../LocationSelector';
 import MonthSelector from '../MonthSelector';
 import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
 import ShiftAssignmentDialog from '../shift/ShiftAssignmentDialog';
 import ShiftChip from './ShiftChip';
-import { ShiftPlanTableStyles } from './ShiftPlanTableStyles';
 import { ShiftPlanTableExport } from './ShiftPlanTableExport';
 import { ShiftPlanTableHandlers } from './ShiftPlanTableHandlers';
+import { ShiftPlanTableStyles } from './ShiftPlanTableStyles';
 
 interface ShiftPlanTableProps {
     calculatedShiftPlan: CalculatedShiftPlan;
@@ -81,6 +82,10 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     // Event handlers
     const handleExportToExcel = () => ShiftPlanTableExport.exportToExcel(shiftPlan, selectedDate);
     
+    const handleAIGeneration = () => {
+        shiftPlanAICalculationService.generateShiftPlan(calculatedShiftPlan);
+    };
+    
     const handleCellClick = ShiftPlanTableHandlers.createCellClickHandler(
         setSelectedEmployee,
         setSelectedDateForAssignment,
@@ -122,14 +127,14 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 }
                 action={
                     <Box sx={{display: 'flex', gap: 1}}>
-                        <Tooltip title="Schichtplan generieren">
+                        <Tooltip title="AI Schichtplan generieren">
                             <IconButton
-                                color="primary"
-                                onClick={onGeneratePlan}
+                                color="secondary"
+                                onClick={handleAIGeneration}
                                 disabled={isLoading}
                                 sx={headerActionStyles.refreshButton}
                             >
-                                {isLoading ? <CircularProgress size={20} sx={{color: 'inherit'}}/> : <RefreshIcon/>}
+                                <AutoAwesomeIcon/>
                             </IconButton>
                         </Tooltip>
 

@@ -295,6 +295,7 @@ export class ShiftPlanViewService {
       hasData: false
     };
   }
+
 }
 
 // Export singleton instance

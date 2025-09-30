@@ -1,4 +1,4 @@
-import { CalculatedShiftPlan, ShiftPlanDay } from './ShiftPlanTypes';
+import { CalculatedShiftPlan, ShiftPlanDay } from '../ShiftPlanTypes';
 import { ShiftPlanOptimizer } from './ShiftPlanOptimizer';
 
 /**

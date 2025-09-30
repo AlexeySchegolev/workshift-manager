@@ -20,10 +20,11 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import React from 'react';
-import { CalculatedShiftPlan, ReducedEmployee, ShiftPlanDay } from '../../services/shift-plan/ShiftPlanTypes';
-import ShiftChip from './ShiftChip';
-import { ShiftPlanTableStyles } from './ShiftPlanTableStyles';
+import React, { useMemo } from 'react';
+import { shiftPlanPreviewService } from '../../../services/shift-plan/shift-plan-preview/ShiftPlanPreviewService';
+import { CalculatedShiftPlan, ShiftPlanDay } from '../../../services/shift-plan/ShiftPlanTypes';
+import ShiftChip from '../ShiftChip';
+import { ShiftPlanTableStyles } from '../ShiftPlanTableStyles';
 
 interface ShiftPlanPreviewModalProps {
     open: boolean;
@@ -46,7 +47,11 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
         return null;
     }
 
-    const { employees } = originalData;
+    // Berechne Mitarbeiterzeiten und Schichtenbelegung für Preview
+    const { employeesWithHours, daysWithOccupancy } = useMemo(() => {
+        return shiftPlanPreviewService.calculatePreviewData(previewData, originalData.employees, originalData);
+    }, [previewData, originalData]);
+
     const tableCellStyles = ShiftPlanTableStyles.getTableCellStyles(theme);
 
     return (
@@ -89,7 +94,7 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
                                 <TableCell sx={tableCellStyles.employeeCell}>
                                     
                                 </TableCell>
-                                {previewData.map((dayInfo) => (
+                                {daysWithOccupancy.map((dayInfo) => (
                                     <TableCell
                                         key={dayInfo.dayKey}
                                         align="center"
@@ -145,7 +150,7 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
                                         </Typography>
                                     </Box>
                                 </TableCell>
-                                {previewData.map((dayInfo) => (
+                                {daysWithOccupancy.map((dayInfo) => (
                                     <TableCell
                                         key={`shifts-${dayInfo.dayKey}`}
                                         align="center"
@@ -187,7 +192,7 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
 
                         {/* Table body with employees and shifts */}
                         <TableBody>
-                            {employees.map((emp) => (
+                            {employeesWithHours.map((emp) => (
                                 <TableRow
                                     key={emp.id}
                                     hover
@@ -301,7 +306,7 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
                                         </Box>
                                     </TableCell>
 
-                                    {previewData.map((dayInfo) => {
+                                    {daysWithOccupancy.map((dayInfo) => {
                                         // Finde den Mitarbeiter-Status für diesen Tag
                                         const employeeStatus = dayInfo.employees.find(empStatus =>
                                             empStatus.employee.id === emp.id

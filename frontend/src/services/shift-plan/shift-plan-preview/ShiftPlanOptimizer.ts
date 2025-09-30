@@ -1,5 +1,5 @@
 import * as solver from 'javascript-lp-solver';
-import { CalculatedShiftPlan, ShiftPlanDay, EmployeeDayStatus, ShiftOccupancy } from './ShiftPlanTypes';
+import { CalculatedShiftPlan, ShiftPlanDay } from '../ShiftPlanTypes';
 
 /**
  * Optimierungsmodell für Schichtplanung mit Simplex-Algorithmus

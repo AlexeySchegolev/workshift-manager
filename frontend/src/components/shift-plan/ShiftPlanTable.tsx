@@ -27,14 +27,14 @@ import {
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import React, { useEffect, useState } from 'react';
-import { shiftPlanAICalculationService } from '../../services/shift-plan/ShiftPlanAICalculationService';
+import { shiftPlanAICalculationService } from '../../services/shift-plan/shift-plan-preview/ShiftPlanAICalculationService';
 import { ShiftPlanDay } from '../../services/shift-plan/ShiftPlanTypes';
 import LocationSelector from '../LocationSelector';
 import MonthSelector from '../MonthSelector';
 import NoShiftPlanOverlay from '../NoShiftPlanOverlay';
 import ShiftAssignmentDialog from '../shift/ShiftAssignmentDialog';
+import ShiftPlanPreviewModal from './shift-plan-preview/ShiftPlanPreviewModal';
 import ShiftChip from './ShiftChip';
-import ShiftPlanPreviewModal from './ShiftPlanPreviewModal';
 import { ShiftPlanTableExport } from './ShiftPlanTableExport';
 import { ShiftPlanTableHandlers } from './ShiftPlanTableHandlers';
 import { ShiftPlanTableStyles } from './ShiftPlanTableStyles';

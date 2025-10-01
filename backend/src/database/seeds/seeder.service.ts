@@ -21,6 +21,8 @@ import {ShiftRole} from "@/database/entities/shift-role.entity";
 import {shiftRolesSeedData} from "@/database/seeds/data/shift-roles.seed";
 import {ShiftWeekday} from "@/database/entities/shift-weekday.entity";
 import {shiftWeekdaysSeedData} from "@/database/seeds/data/shift-weekdays.seed";
+import {ShiftPlanDetail} from "@/database/entities/shift-plan-detail.entity";
+import {shiftPlanDetailsSeedData} from "@/database/seeds/data/shift-plan-details.seed";
 
 @Injectable()
 export class SeederService {
@@ -49,6 +51,7 @@ export class SeederService {
             await this.seedShiftRoles(shifts, roles);
             await this.seedShiftWeekdays(shifts);
             const shiftPlans = await this.seedShiftPlans(organization, locations, user);
+            await this.seedShiftPlanDetails(shiftPlans, employees, shifts);
             await this.seedEmployeeAbsences(employees);
 
             this.logger.log('✅ Database Seeding completed successfully!');
@@ -329,6 +332,34 @@ export class SeederService {
         }
     }
 
+    private async seedShiftPlanDetails(shiftPlans: ShiftPlan[], employees: Employee[], shifts: Shift[]): Promise<void> {
+        this.logger.log('📋 Adding shift plan details...');
+
+        try {
+            const shiftPlanDetailRepo = this.dataSource.getRepository(ShiftPlanDetail);
+
+            // Update shift plan detail data with proper references
+            const shiftPlanDetailData = shiftPlanDetailsSeedData.map(detail => {
+                const shiftPlanIndex = parseInt(detail.shiftPlanId as string) - 1;
+                const employeeIndex = parseInt(detail.employeeId as string) - 1;
+                const shiftIndex = parseInt(detail.shiftId as string) - 1;
+
+                return {
+                    ...detail,
+                    shiftPlanId: shiftPlans[shiftPlanIndex]?.id || shiftPlans[0].id,
+                    employeeId: employees[employeeIndex]?.id || employees[0].id,
+                    shiftId: shifts[shiftIndex]?.id || shifts[0].id,
+                };
+            });
+
+            const shiftPlanDetails = await shiftPlanDetailRepo.save(shiftPlanDetailData);
+
+            this.logger.log(`✅ ${shiftPlanDetails.length} shift plan details added successfully`);
+        } catch (error) {
+            this.logger.error('❌ Error adding shift plan details:', error);
+            throw error;
+        }
+    }
 
     async getSeededDataSummary(): Promise<{
         organizations: number;
@@ -341,6 +372,7 @@ export class SeederService {
         shiftRoles: number;
         shiftWeekdays: number;
         shiftPlans: number;
+        shiftPlanDetails: number;
     }> {
         const organizationRepo = this.dataSource.getRepository(Organization);
         const userRepo = this.dataSource.getRepository(User);
@@ -352,8 +384,9 @@ export class SeederService {
         const shiftRoleRepo = this.dataSource.getRepository(ShiftRole);
         const shiftWeekdayRepo = this.dataSource.getRepository(ShiftWeekday);
         const shiftPlanRepo = this.dataSource.getRepository(ShiftPlan);
+        const shiftPlanDetailRepo = this.dataSource.getRepository(ShiftPlanDetail);
 
-        const [organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftRoles, shiftWeekdays, shiftPlans] = await Promise.all([
+        const [organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftRoles, shiftWeekdays, shiftPlans, shiftPlanDetails] = await Promise.all([
             organizationRepo.count(),
             userRepo.count(),
             roleRepo.count(),
@@ -364,8 +397,9 @@ export class SeederService {
             shiftRoleRepo.count(),
             shiftWeekdayRepo.count(),
             shiftPlanRepo.count(),
+            shiftPlanDetailRepo.count(),
         ]);
 
-        return {organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftRoles, shiftWeekdays, shiftPlans};
+        return {organizations, users, roles, locations, employees, employeeAbsences, shifts, shiftRoles, shiftWeekdays, shiftPlans, shiftPlanDetails};
     }
 }

@@ -2,7 +2,6 @@ import {
     alpha,
     Box,
     Button,
-    Chip,
     Dialog,
     DialogActions,
     DialogContent,
@@ -20,9 +19,12 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { EmployeeAbsenceResponseDto } from '../../api/data-contracts';
+import { EmployeeAbsenceService } from '../../services/EmployeeAbsenceService';
 import { shiftPlanPreviewService } from '../../services/shift-plan/shift-plan-preview/ShiftPlanPreviewService';
 import { CalculatedShiftPlan, ShiftPlanDay } from '../../services/shift-plan/ShiftPlanTypes';
+import EmployeeCell from '../common/EmployeeCell';
 import ShiftChip from '../shift-plan/ShiftChip';
 import { ShiftPlanTableStyles } from '../shift-plan/ShiftPlanTableStyles';
 
@@ -43,14 +45,40 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
 }) => {
     const theme = useTheme();
 
-    if (!previewData || !originalData) {
-        return null;
-    }
+    // Absences state
+    const [absences, setAbsences] = useState<EmployeeAbsenceResponseDto[]>([]);
+    const [absenceService] = useState(() => new EmployeeAbsenceService());
+
+    // Load absences when modal opens
+    useEffect(() => {
+        if (!open || !originalData) return;
+
+        const loadAbsences = async () => {
+            try {
+                const year = originalData.year.toString();
+                const month = originalData.month.toString().padStart(2, '0');
+                const monthlyAbsences = await absenceService.getAbsencesByMonth(year, month);
+                setAbsences(monthlyAbsences);
+            } catch (error) {
+                console.error('Fehler beim Laden der Abwesenheiten:', error);
+                setAbsences([]);
+            }
+        };
+
+        loadAbsences();
+    }, [open, originalData, absenceService]);
 
     // Berechne Mitarbeiterzeiten und Schichtenbelegung für Preview
     const { employeesWithHours, daysWithOccupancy } = useMemo(() => {
+        if (!previewData || !originalData) {
+            return { employeesWithHours: [], daysWithOccupancy: [] };
+        }
         return shiftPlanPreviewService.calculatePreviewData(previewData, originalData.employees, originalData);
     }, [previewData, originalData]);
+
+    if (!previewData || !originalData) {
+        return null;
+    }
 
     const tableCellStyles = ShiftPlanTableStyles.getTableCellStyles(theme);
 
@@ -218,92 +246,14 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
                                             zIndex: 1,
                                         }}
                                     >
-                                        <Box sx={{py: 0.5}}>
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    fontWeight: 600,
-                                                    fontSize: '0.85rem',
-                                                    color: 'text.primary',
-                                                }}
-                                            >
-                                                {emp.name}
-                                            </Typography>
-                                            <Box sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 1,
-                                                mt: 0.5,
-                                                flexWrap: 'wrap'
-                                            }}>
-                                                <Chip
-                                                    label={emp.role}
-                                                    size="small"
-                                                    color={"primary"}
-                                                    sx={{
-                                                        height: 18,
-                                                        fontSize: '0.7rem',
-                                                        fontWeight: 500,
-                                                    }}
-                                                />
-                                                <Chip
-                                                    label={emp.location}
-                                                    size="small"
-                                                    sx={{
-                                                        height: 18,
-                                                        fontSize: '0.7rem',
-                                                        backgroundColor: alpha(theme.palette.info.main, 0.1),
-                                                        color: theme.palette.info.main,
-                                                    }}
-                                                />
-                                            </Box>
-                                            <Typography
-                                                variant="caption"
-                                                sx={{
-                                                    display: 'block',
-                                                    fontSize: '0.7rem',
-                                                    color: 'text.secondary',
-                                                    mt: 0.5,
-                                                    fontWeight: 500,
-                                                }}
-                                            >
-                                                <Box component="span"
-                                                     sx={{
-                                                         color: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
-                                                             ? theme.palette.error.main
-                                                             : 'inherit',
-                                                         fontWeight: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
-                                                             ? 700
-                                                             : 'inherit',
-                                                         backgroundColor: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
-                                                             ? alpha(theme.palette.error.main, 0.1)
-                                                             : 'transparent',
-                                                         px: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0) ? 0.3 : 0,
-                                                         borderRadius: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0) ? 0.3 : 0,
-                                                     }}
-                                                >
-                                                    {emp.calculatedMonthlyHours.toFixed(1)}h
-                                                </Box>
-                                                {' / '}
-                                                <Box component="span"
-                                                     sx={{
-                                                         color: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
-                                                             ? theme.palette.error.main
-                                                             : 'inherit',
-                                                         fontWeight: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
-                                                             ? 700
-                                                             : 'inherit',
-                                                         backgroundColor: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0)
-                                                             ? alpha(theme.palette.error.main, 0.1)
-                                                             : 'transparent',
-                                                         px: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0) ? 0.3 : 0,
-                                                         borderRadius: emp.calculatedMonthlyHours > (emp.monthlyWorkHours || 0) ? 0.3 : 0,
-                                                     }}
-                                                >
-                                                    {emp.monthlyWorkHours || 0}h
-                                                </Box>
-                                            </Typography>
-                                        </Box>
+                                        <EmployeeCell
+                                            employee={emp}
+                                            month={originalData.month}
+                                            year={originalData.year}
+                                            absences={absences.filter(absence =>
+                                                absence.employeeId === emp.id
+                                            )}
+                                        />
                                     </TableCell>
 
                                     {daysWithOccupancy.map((dayInfo) => {

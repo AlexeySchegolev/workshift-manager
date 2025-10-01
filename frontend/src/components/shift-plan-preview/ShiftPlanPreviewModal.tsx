@@ -21,10 +21,10 @@ import {
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import React, { useMemo } from 'react';
-import { shiftPlanPreviewService } from '../../../services/shift-plan/shift-plan-preview/ShiftPlanPreviewService';
-import { CalculatedShiftPlan, ShiftPlanDay } from '../../../services/shift-plan/ShiftPlanTypes';
-import ShiftChip from '../ShiftChip';
-import { ShiftPlanTableStyles } from '../ShiftPlanTableStyles';
+import { shiftPlanPreviewService } from '../../services/shift-plan/shift-plan-preview/ShiftPlanPreviewService';
+import { CalculatedShiftPlan, ShiftPlanDay } from '../../services/shift-plan/ShiftPlanTypes';
+import ShiftChip from '../shift-plan/ShiftChip';
+import { ShiftPlanTableStyles } from '../shift-plan/ShiftPlanTableStyles';
 
 interface ShiftPlanPreviewModalProps {
     open: boolean;

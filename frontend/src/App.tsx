@@ -3,7 +3,7 @@ import React from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import Layout from './components/Layout';
+import Layout from './components/common/Layout';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import AbsencesPage from './pages/AbsencesPage';

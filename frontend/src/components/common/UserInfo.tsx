@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Avatar,
-  useTheme,
-  alpha,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-
-} from '@mui/material';
 import {
   Business as BusinessIcon,
   Logout as LogoutIcon
 } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import {
+  alpha,
+  Avatar,
+  Box,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 
 /**
  * UserInfo Component - Zeigt User und Organisation im Header an

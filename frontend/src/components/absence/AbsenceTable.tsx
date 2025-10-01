@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { CreateEmployeeAbsenceDto, EmployeeAbsenceResponseDto, EmployeeResponseDto } from '@/api/data-contracts';
+import { employeeAbsenceService } from '@/services';
 import {
+    EventBusy as EventBusyIcon,
+} from '@mui/icons-material';
+import {
+    alpha,
     Box,
+    CardContent,
+    CardHeader,
+    Chip,
     Paper,
     Table,
     TableBody,
@@ -8,24 +16,15 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Typography,
-    Button,
-    Chip,
-    useTheme,
-    alpha,
     Tooltip,
-    CardHeader,
-    CardContent,
+    Typography,
+    useTheme
 } from '@mui/material';
-import {
-    EventBusy as EventBusyIcon,
-} from '@mui/icons-material';
-import { format, getDaysInMonth, startOfMonth, addDays, isToday } from 'date-fns';
+import { addDays, format, getDaysInMonth, isToday, startOfMonth } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { EmployeeResponseDto, EmployeeAbsenceResponseDto, CreateEmployeeAbsenceDto } from '@/api/data-contracts';
-import MonthSelector from '../MonthSelector';
+import React, { useEffect, useState } from 'react';
+import MonthSelector from '../common/MonthSelector';
 import AbsenceAssignmentDialog from './AbsenceAssignmentDialog';
-import { employeeAbsenceService } from '@/services';
 
 // Hilfsfunktionen für Abwesenheitstypen basierend auf data-contracts
 const getAbsenceTypeLabel = (type: string): string => {

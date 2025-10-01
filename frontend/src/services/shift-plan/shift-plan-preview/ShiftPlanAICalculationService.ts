@@ -29,13 +29,6 @@ export class ShiftPlanAICalculationService {
       // Optimiere Schichtplan mit Simplex-Algorithmus
       const optimizedDays = this.optimizer.optimizeShiftPlan(shiftPlanData);
       
-      console.log('✅ Simplex-Optimierung abgeschlossen');
-      console.log('📊 Optimierungsergebnisse:', {
-        totalDays: optimizedDays.length,
-        totalEmployees: shiftPlanData.employees.length,
-        totalShifts: shiftPlanData.availableShifts.length
-      });
-      
       // Zeige Modal mit optimierten Preview-Daten
       if (this.previewModalCallback) {
         console.log('📋 Zeige Preview-Modal mit optimierten Daten');

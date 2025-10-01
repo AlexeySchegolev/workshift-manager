@@ -15,6 +15,8 @@ export class ShiftPlanOptimizer {
     // Erstelle Optimierungsmodell
     const model = this.createOptimizationModel(employees, days, availableShifts);
     
+    console.log('🔧 Optimierungsmodell erstellt:', model);
+    
     // Löse mit Simplex
     const solution = solver.Solve(model);
     

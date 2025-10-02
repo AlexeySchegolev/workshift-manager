@@ -39,6 +39,7 @@ const ShiftChip: React.FC<ShiftChipProps> = ({ shift }) => {
   return (
     <Tooltip
       title={<ShiftTooltip shift={shift} />}
+      placement="right"
       arrow
       componentsProps={{
         tooltip: {

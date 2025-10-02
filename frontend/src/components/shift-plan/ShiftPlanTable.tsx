@@ -29,6 +29,7 @@ import React, { useEffect, useState } from 'react';
 import { EmployeeAbsenceResponseDto } from '../../api/data-contracts';
 import { EmployeeAbsenceService } from '../../services/EmployeeAbsenceService';
 import { shiftPlanAICalculationService } from '../../services/shift-plan/shift-plan-preview/ShiftPlanAICalculationService';
+import { shiftPlanPreviewService } from '../../services/shift-plan/shift-plan-preview/ShiftPlanPreviewService';
 import { ShiftPlanDay } from '../../services/shift-plan/ShiftPlanTypes';
 import EmployeeCell from '../common/EmployeeCell';
 import LocationSelector from '../common/LocationSelector';
@@ -78,6 +79,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     // AI Preview Modal state
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState<ShiftPlanDay[] | null>(null);
+    const [isSavingPreview, setIsSavingPreview] = useState(false);
 
     // Absences state
     const [absences, setAbsences] = useState<EmployeeAbsenceResponseDto[]>([]);
@@ -124,15 +126,25 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     };
     
     const handlePreviewModalClose = () => {
+        if (isSavingPreview) return; // Verhindere Schließen während Speichern
         setIsPreviewModalOpen(false);
         setPreviewData(null);
     };
     
-    const handlePreviewModalAccept = () => {
-        // Hier würde die Logik zum Übernehmen des Schichtplans stehen
-        console.log('Schichtplan übernommen');
-        handlePreviewModalClose();
-        onGeneratePlan(); // Refresh der Daten
+    const handlePreviewModalAccept = async () => {
+        if (!previewData) return;
+        
+        setIsSavingPreview(true);
+        try {
+            await shiftPlanPreviewService.applyPreviewToShiftPlan(previewData, calculatedShiftPlan);
+            handlePreviewModalClose();
+            onGeneratePlan(); // Refresh der Daten
+        } catch (error) {
+            console.error('Fehler beim Übernehmen des Schichtplans:', error);
+            // Hier könnte eine Toast-Nachricht angezeigt werden
+        } finally {
+            setIsSavingPreview(false);
+        }
     };
     
     const handleCellClick = ShiftPlanTableHandlers.createCellClickHandler(
@@ -511,6 +523,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 onAccept={handlePreviewModalAccept}
                 previewData={previewData}
                 originalData={calculatedShiftPlan}
+                isSaving={isSavingPreview}
             />
         </Box>
     );

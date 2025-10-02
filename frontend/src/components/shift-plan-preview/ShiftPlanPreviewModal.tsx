@@ -2,6 +2,7 @@ import {
     alpha,
     Box,
     Button,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -34,6 +35,7 @@ interface ShiftPlanPreviewModalProps {
     onAccept: () => void;
     previewData: ShiftPlanDay[] | null;
     originalData: CalculatedShiftPlan;
+    isSaving?: boolean;
 }
 
 const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
@@ -41,7 +43,8 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
     onClose,
     onAccept,
     previewData,
-    originalData
+    originalData,
+    isSaving = false
 }) => {
     const theme = useTheme();
 
@@ -357,11 +360,17 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
             </DialogContent>
 
             <DialogActions sx={{ p: 2, gap: 1 }}>
-                <Button onClick={onClose} variant="outlined">
+                <Button onClick={onClose} variant="outlined" disabled={isSaving}>
                     Abbrechen
                 </Button>
-                <Button onClick={onAccept} variant="contained" color="primary">
-                    Schichtplan übernehmen
+                <Button
+                    onClick={onAccept}
+                    variant="contained"
+                    color="primary"
+                    disabled={isSaving}
+                    startIcon={isSaving ? <CircularProgress size={16} /> : undefined}
+                >
+                    {isSaving ? 'Wird gespeichert...' : 'Schichtplan übernehmen'}
                 </Button>
             </DialogActions>
         </Dialog>

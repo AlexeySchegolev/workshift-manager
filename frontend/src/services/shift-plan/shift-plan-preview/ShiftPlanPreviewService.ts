@@ -1,8 +1,10 @@
 import { ShiftPlanTimeUtils } from '../ShiftPlanTimeUtils';
 import {
     ReducedEmployee,
-    ShiftPlanDay
+    ShiftPlanDay,
+    CalculatedShiftPlan
 } from '../ShiftPlanTypes';
+import { shiftPlanDetailService } from '../ShiftPlanDetailService';
 
 /**
  * Service für Preview-Berechnungen von Schichtplänen
@@ -274,6 +276,68 @@ export class ShiftPlanPreviewService {
     );
     
     return shiftRole ? (shiftRole.count || 1) : 1;
+  }
+
+  /**
+   * Übernimmt Preview-Daten in den aktuellen Schichtplan
+   */
+  async applyPreviewToShiftPlan(
+    previewData: ShiftPlanDay[],
+    originalData: CalculatedShiftPlan
+  ): Promise<void> {
+    if (!originalData.shiftPlan?.id) {
+      throw new Error('Kein Schichtplan vorhanden');
+    }
+
+    const shiftPlanId = originalData.shiftPlan.id;
+
+    // 1. Lösche alle bestehenden ShiftPlanDetails für diesen Schichtplan
+    try {
+      const existingDetails = await shiftPlanDetailService.getDetailsByShiftPlan(shiftPlanId);
+      
+      for (const detail of existingDetails) {
+        await shiftPlanDetailService.deleteShiftPlanDetail(detail.id);
+      }
+    } catch (error) {
+      console.error('Fehler beim Löschen bestehender Schichtplan-Details:', error);
+      throw new Error('Fehler beim Löschen bestehender Zuordnungen');
+    }
+
+    // 2. Sammle alle neuen Zuordnungen aus den Preview-Daten
+    const assignments: Array<{
+      employeeId: string;
+      shiftId: string;
+      day: number;
+    }> = [];
+
+    previewData.forEach(dayInfo => {
+      const day = dayInfo.date.getDate();
+      
+      dayInfo.employees.forEach(empStatus => {
+        if (empStatus.assignedShift && empStatus.shiftId && !empStatus.isEmpty) {
+          assignments.push({
+            employeeId: empStatus.employee.id,
+            shiftId: empStatus.shiftId,
+            day: day
+          });
+        }
+      });
+    });
+
+    // 3. Erstelle alle neuen Zuordnungen
+    for (const assignment of assignments) {
+      try {
+        await shiftPlanDetailService.createShiftPlanDetail({
+          shiftPlanId,
+          employeeId: assignment.employeeId,
+          shiftId: assignment.shiftId,
+          day: assignment.day
+        });
+      } catch (error) {
+        console.error(`Fehler beim Erstellen der Zuordnung für Mitarbeiter ${assignment.employeeId} zu Schicht ${assignment.shiftId} am Tag ${assignment.day}:`, error);
+        // Weiter mit nächster Zuordnung
+      }
+    }
   }
 }
 

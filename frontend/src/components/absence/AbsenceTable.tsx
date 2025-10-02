@@ -24,6 +24,7 @@ import { addDays, format, getDaysInMonth, isToday, startOfMonth } from 'date-fns
 import { de } from 'date-fns/locale';
 import React, { useEffect, useState } from 'react';
 import MonthSelector from '../common/MonthSelector';
+import EmployeeCell from '../common/EmployeeCell';
 import AbsenceAssignmentDialog from './AbsenceAssignmentDialog';
 
 // Hilfsfunktionen für Abwesenheitstypen basierend auf data-contracts
@@ -131,6 +132,16 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
         monthlyWorkHours: employee.monthlyWorkHours || 0,
     });
 
+    // Convert employee to EmployeeCell format
+    const convertToEmployeeCellFormat = (employee: EmployeeResponseDto) => ({
+        id: employee.id,
+        name: `${employee.firstName} ${employee.lastName}`,
+        role: employee.primaryRole?.displayName || employee.primaryRole?.name || '',
+        location: employee.location?.name || '',
+        monthlyWorkHours: employee.monthlyWorkHours || 0,
+        calculatedMonthlyHours: 0,
+    });
+
     // Format date for dialog (DD.MM.YYYY)
     const formatDateForDialog = (date: Date): string => {
         return format(date, 'dd.MM.yyyy');
@@ -198,8 +209,8 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                 <TableRow>
                                     <TableCell
                                         sx={{
-                                            minWidth: 200,
-                                            width: '200px',
+                                            minWidth: 250,
+                                            width: '250px',
                                             position: 'sticky',
                                             left: 0,
                                             top: 0,
@@ -271,8 +282,8 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                             component="th"
                                             scope="row"
                                             sx={{
-                                                minWidth: 200,
-                                                width: '200px',
+                                                minWidth: 250,
+                                                width: '250px',
                                                 position: 'sticky',
                                                 left: 0,
                                                 backgroundColor: theme.palette.background.paper,
@@ -280,49 +291,12 @@ const AbsenceTable: React.FC<AbsenceTableProps> = ({
                                                 zIndex: 1,
                                             }}
                                         >
-                                            <Box sx={{ py: 0.5 }}>
-                                                <Typography
-                                                    variant="body2"
-                                                    sx={{
-                                                        fontWeight: 600,
-                                                        fontSize: '0.85rem',
-                                                        color: 'text.primary',
-                                                    }}
-                                                >
-                                                    {employee.lastName}, {employee.firstName}
-                                                </Typography>
-                                                <Box sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 1,
-                                                    mt: 0.5
-                                                }}>
-                                                    {employee.primaryRole && (
-                                                        <Chip
-                                                            label={employee.primaryRole.displayName || employee.primaryRole.name}
-                                                            size="small"
-                                                            color="primary"
-                                                            sx={{
-                                                                height: 18,
-                                                                fontSize: '0.7rem',
-                                                                fontWeight: 500,
-                                                            }}
-                                                        />
-                                                    )}
-                                                    {employee.location && (
-                                                        <Chip
-                                                            label={employee.location.name}
-                                                            size="small"
-                                                            sx={{
-                                                                height: 18,
-                                                                fontSize: '0.7rem',
-                                                                backgroundColor: alpha(theme.palette.info.main, 0.1),
-                                                                color: theme.palette.info.main,
-                                                            }}
-                                                        />
-                                                    )}
-                                                </Box>
-                                            </Box>
+                                            <EmployeeCell
+                                                employee={convertToEmployeeCellFormat(employee)}
+                                                month={selectedDate.getMonth() + 1}
+                                                year={selectedDate.getFullYear()}
+                                                absences={absences.filter(absence => absence.employeeId === employee.id)}
+                                            />
                                         </TableCell>
 
                                         {monthDays.map((day) => {

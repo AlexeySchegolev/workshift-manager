@@ -106,7 +106,35 @@ export class ShiftPlanPreviewService {
   private calculateShiftOccupancyFromPreview(day: ShiftPlanDay, originalData?: any): any[] {
     const shiftMap = new Map<string, any>();
     
-    // Sammle alle Schichten und ihre Zuordnungen
+    // 1. Sammle ALLE verfügbaren Schichten für diesen Wochentag aus originalData
+    if (originalData?.shiftWeekdays) {
+      const dayOfWeek = day.date.getDay();
+      originalData.shiftWeekdays.forEach((shiftWeekday: any) => {
+        if (shiftWeekday.weekday === dayOfWeek && shiftWeekday.shift) {
+          const shift = shiftWeekday.shift;
+          const shiftId = shift.id;
+          
+          if (!shiftMap.has(shiftId)) {
+            shiftMap.set(shiftId, {
+              shiftId,
+              shiftName: shift.name,
+              shortName: shift.shortName,
+              startTime: shift.startTime || '00:00',
+              endTime: shift.endTime || '00:00',
+              requiredCount: 0, // Wird später berechnet
+              assignedCount: 0,
+              assignedEmployees: [],
+              roleOccupancy: new Map<string, any>(),
+              originalShift: shift,
+              isUnderStaffed: false,
+              isCorrectlyStaffed: false
+            });
+          }
+        }
+      });
+    }
+    
+    // 2. Sammle alle Schichten und ihre Zuordnungen aus Preview-Daten
     day.employees.forEach(empStatus => {
       if (empStatus.assignedShift && empStatus.shiftId) {
         const shiftId = empStatus.shiftId;
@@ -165,6 +193,23 @@ export class ShiftPlanPreviewService {
         const roleOccupancy = shift.roleOccupancy.get(roleName);
         roleOccupancy.assigned++;
         roleOccupancy.assignedEmployees.push(empStatus.employee.name);
+      }
+    });
+    
+    // 3. Initialisiere Rollen-Belegung für alle Schichten (auch leere)
+    shiftMap.forEach((shift, shiftId) => {
+      if (shift.originalShift?.shiftRoles) {
+        shift.originalShift.shiftRoles.forEach((shiftRole: any) => {
+          const roleName = shiftRole.role?.name;
+          if (roleName && !shift.roleOccupancy.has(roleName)) {
+            shift.roleOccupancy.set(roleName, {
+              roleName,
+              required: shiftRole.count || 1,
+              assigned: 0,
+              assignedEmployees: []
+            });
+          }
+        });
       }
     });
     

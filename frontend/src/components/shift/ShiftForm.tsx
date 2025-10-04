@@ -1,32 +1,32 @@
-import React, { useState } from 'react';
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    TextField,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Box,
-    Typography,
-    Divider,
-    IconButton,
-    Grid,
-} from '@mui/material';
+import { ShiftRoleResponseDto } from '@/api/data-contracts';
+import { useLocations } from '@/hooks/useLocations';
 import {
     Close as CloseIcon,
     Schedule as ScheduleIcon,
-
 } from '@mui/icons-material';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    FormControl,
+    Grid,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography,
+} from '@mui/material';
+import React, { useState } from 'react';
 import { ShiftFormData, ShiftFormErrors } from './hooks/useShiftForm';
-import { useLocations } from '@/hooks/useLocations';
 import { useShiftRoles } from './hooks/useShiftRoles';
-import ShiftRolesTable from './ShiftRolesTable';
 import ShiftRoleDialog from './ShiftRoleDialog';
-import { ShiftRoleResponseDto } from '@/api/data-contracts';
+import ShiftRolesTable from './ShiftRolesTable';
+import ShiftWeekdayAssignment from './ShiftWeekdayAssignment';
 
 interface ShiftFormProps {
     open: boolean;
@@ -125,12 +125,6 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
 
             <DialogContent dividers sx={{ p: 3 }}>
                 <Grid container spacing={3}>
-                    {/* Basic Information */}
-                    <Grid size={{ xs: 12 }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                            Grundinformationen
-                        </Typography>
-                    </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
                         <TextField
@@ -229,6 +223,22 @@ const ShiftForm: React.FC<ShiftFormProps> = ({
                             required
                         />
                     </Grid>
+
+                    {/* Weekday Assignment Section - Only show for existing shifts */}
+                    {isEditing && formData.id && formData.locationId && (
+                        <>
+                            <Grid size={{ xs: 12 }}>
+                                <Divider sx={{ my: 2 }} />
+                            </Grid>
+                            
+                            <Grid size={{ xs: 12 }}>
+                                <ShiftWeekdayAssignment
+                                    shiftId={formData.id}
+                                    locationId={formData.locationId}
+                                />
+                            </Grid>
+                        </>
+                    )}
 
                     {/* Shift Roles Section - Only show for existing shifts */}
                     {isEditing && formData.id && (

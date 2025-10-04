@@ -36,63 +36,36 @@ export class ShiftPlanOptimizer {
     };
     
     // Variablen: x_employee_day_shift (0 oder 1)
-    // Aber nur für nicht bereits belegte Schichten
+    // Ignoriere bestehende Zuweisungen - starte immer von null
     employees.forEach(employee => {
       days.forEach(day => {
-        const existingAssignment = day.employees.find(emp => emp.employee.id === employee.id);
-        const isAlreadyAssigned = existingAssignment && !existingAssignment.isEmpty;
-        
         availableShifts.forEach(shift => {
           const varName = `x_${employee.id}_${day.dayKey}_${shift.id}`;
           
-          // Wenn bereits zugewiesen, fixiere die Variable
-          if (isAlreadyAssigned && existingAssignment.shiftId === shift.id) {
-            model.variables[varName] = {
-              fairness: 1,
-              min: 1, // Fixiere auf 1
-              max: 1  // Fixiere auf 1
-            };
-          } else if (isAlreadyAssigned) {
-            // Andere Schichten für bereits zugewiesene Mitarbeiter auf 0 setzen
-            model.variables[varName] = {
-              fairness: 0,
-              max: 0 // Fixiere auf 0
-            };
-          } else {
-            // Normale Variable für nicht zugewiesene Mitarbeiter
-            model.variables[varName] = {
-              fairness: 1, // Zielfunktion: Maximiere Fairness
-              // Constraints werden unten definiert
-            };
-          }
+          // Alle Variablen sind frei optimierbar
+          model.variables[varName] = {
+            fairness: 1, // Zielfunktion: Maximiere Fairness
+            // Constraints werden unten definiert
+          };
         });
       });
     });
     
     // Constraint 1: Jede Schicht muss vollständig besetzt sein
-    // Berücksichtige bereits belegte Plätze
+    // Ignoriere bestehende Zuweisungen - plane komplett neu
     days.forEach(day => {
       day.shiftOccupancy.forEach(shiftOcc => {
         const constraintName = `shift_coverage_${day.dayKey}_${shiftOcc.shiftId}`;
         
-        // Zähle bereits belegte Plätze
-        const alreadyAssigned = day.employees.filter(emp =>
-          !emp.isEmpty && emp.shiftId === shiftOcc.shiftId
-        ).length;
+        // Benötige die volle Anzahl (ignoriere bestehende Zuweisungen)
+        model.constraints[constraintName] = { equal: shiftOcc.requiredCount };
         
-        // Benötigte zusätzliche Mitarbeiter
-        const additionalNeeded = shiftOcc.requiredCount - alreadyAssigned;
-        
-        if (additionalNeeded > 0) {
-          model.constraints[constraintName] = { equal: additionalNeeded };
-          
-          employees.forEach(employee => {
-            const varName = `x_${employee.id}_${day.dayKey}_${shiftOcc.shiftId}`;
-            if (model.variables[varName]) {
-              model.variables[varName][constraintName] = 1;
-            }
-          });
-        }
+        employees.forEach(employee => {
+          const varName = `x_${employee.id}_${day.dayKey}_${shiftOcc.shiftId}`;
+          if (model.variables[varName]) {
+            model.variables[varName][constraintName] = 1;
+          }
+        });
       });
     });
     
@@ -173,12 +146,7 @@ export class ShiftPlanOptimizer {
     // Erstelle neue Tage mit optimierten Zuweisungen
     const optimizedDays = days.map(day => {
       const optimizedEmployees = day.employees.map(empStatus => {
-        // Behalte bereits zugewiesene Schichten bei
-        if (!empStatus.isEmpty) {
-          return empStatus; // Keine Änderung für bereits belegte Schichten
-        }
-        
-        // Finde neue Zuweisung nur für leere Plätze
+        // Ignoriere bestehende Zuweisungen - weise komplett neu zu
         const assignedShift = this.findAssignedShift(solution, empStatus.employee.id, day.dayKey, availableShifts);
         
         if (assignedShift) {
@@ -191,7 +159,14 @@ export class ShiftPlanOptimizer {
           };
         }
         
-        return empStatus; // Bleibt leer wenn keine Zuweisung gefunden
+        // Setze auf leer wenn keine Zuweisung gefunden
+        return {
+          ...empStatus,
+          assignedShift: '',
+          shiftId: '',
+          shiftName: '',
+          isEmpty: true
+        };
       });
       
       // Aktualisiere Schicht-Belegung
@@ -276,24 +251,18 @@ export class ShiftPlanOptimizer {
    * Behält bereits belegte Schichten bei
    */
   private fallbackAssignment(days: ShiftPlanDay[], employees: any[], availableShifts: any[]): ShiftPlanDay[] {
-    console.log('Verwende einfache Fallback-Zuweisung (behält bestehende Zuweisungen bei)');
+    console.log('Verwende einfache Fallback-Zuweisung (startet von null)');
     
     return days.map(day => {
-      // Sammle verfügbare Mitarbeiter (die noch keine Schicht haben)
-      const availableEmployees = day.employees.filter(emp => emp.isEmpty);
+      // Alle Mitarbeiter sind verfügbar (ignoriere bestehende Zuweisungen)
+      const availableEmployees = [...day.employees];
       let employeeIndex = 0;
       
       const updatedShiftOccupancy = day.shiftOccupancy.map(shiftOcc => {
-        // Zähle bereits zugewiesene Mitarbeiter für diese Schicht
-        const alreadyAssigned = day.employees.filter(emp =>
-          !emp.isEmpty && emp.shiftId === shiftOcc.shiftId
-        );
+        const assignedEmployees: string[] = [];
         
-        const assignedEmployees = [...alreadyAssigned.map(emp => emp.employee.name)];
-        const additionalNeeded = shiftOcc.requiredCount - alreadyAssigned.length;
-        
-        // Weise zusätzliche Mitarbeiter zu
-        for (let i = 0; i < additionalNeeded && employeeIndex < availableEmployees.length; i++) {
+        // Weise Mitarbeiter zu (ignoriere bestehende Zuweisungen)
+        for (let i = 0; i < shiftOcc.requiredCount && employeeIndex < availableEmployees.length; i++) {
           assignedEmployees.push(availableEmployees[employeeIndex].employee.name);
           employeeIndex++;
         }
@@ -307,17 +276,11 @@ export class ShiftPlanOptimizer {
         };
       });
       
-      // Aktualisiere Mitarbeiter-Status
+      // Aktualisiere Mitarbeiter-Status (komplett neu zuweisen)
       const updatedEmployees = day.employees.map(empStatus => {
-        // Behalte bereits zugewiesene Schichten bei
-        if (!empStatus.isEmpty) {
-          return empStatus;
-        }
-        
-        // Finde neue Zuweisung für verfügbare Mitarbeiter
+        // Finde neue Zuweisung für alle Mitarbeiter
         const assignedShift = updatedShiftOccupancy.find(shift =>
-          shift.assignedEmployees.includes(empStatus.employee.name) &&
-          !day.employees.some(emp => !emp.isEmpty && emp.employee.name === empStatus.employee.name)
+          shift.assignedEmployees.includes(empStatus.employee.name)
         );
         
         if (assignedShift) {
@@ -331,7 +294,14 @@ export class ShiftPlanOptimizer {
           };
         }
         
-        return empStatus; // Bleibt leer
+        // Setze auf leer wenn keine Zuweisung
+        return {
+          ...empStatus,
+          assignedShift: '',
+          shiftId: '',
+          shiftName: '',
+          isEmpty: true
+        };
       });
       
       return {

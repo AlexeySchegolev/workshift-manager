@@ -1,209 +1,189 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-  Box,
-  Chip,
-  useTheme,
-  alpha,
-  IconButton,
-  Tooltip,
+    Box,
+    Typography,
+    FormGroup,
+    FormControlLabel,
+    Checkbox,
+    Paper,
+    Alert,
+    CircularProgress,
 } from '@mui/material';
 import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-  CalendarToday as CalendarIcon,
+    CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
-import { format, isSameDay, isToday } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { ShiftWeekdaysService } from '@/services/ShiftWeekdaysService';
 
-export interface WeekDay {
-  datum: Date;
-  schichten: {
-    [schichtName: string]: number; // Number of employees in this shift
-  };
-  istFeiertag?: boolean;
-  istWochenende?: boolean;
+interface ShiftWeekdayAssignmentProps {
+    shiftId: string;
+    locationId: string;
+    disabled?: boolean;
 }
 
-export interface ShiftWeekdayAssignmentProps {
-  woche: WeekDay[];
-  selectedDate?: Date;
-  onDateSelect?: (date: Date) => void;
-  onWeekChange?: (direction: 'prev' | 'next') => void;
-  title?: string;
-}
+const WEEKDAYS = [
+    { value: 1, label: 'Montag', short: 'Mo' },
+    { value: 2, label: 'Dienstag', short: 'Di' },
+    { value: 3, label: 'Mittwoch', short: 'Mi' },
+    { value: 4, label: 'Donnerstag', short: 'Do' },
+    { value: 5, label: 'Freitag', short: 'Fr' },
+    { value: 6, label: 'Samstag', short: 'Sa' },
+    { value: 0, label: 'Sonntag', short: 'So' },
+];
 
-/**
- * Shift Weekday Assignment Component for Configuration
- */
 const ShiftWeekdayAssignment: React.FC<ShiftWeekdayAssignmentProps> = ({
-  woche,
-  selectedDate,
-  onDateSelect,
-  onWeekChange,
-  title = 'Schichtzuordnung zu Wochentagen',
+    shiftId,
+    locationId,
+    disabled = false,
 }) => {
-  const theme = useTheme();
+    const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [saving, setSaving] = useState(false);
 
-  const getShiftColor = (schichtName: string): string => {
-      return theme.palette.shifts?.early;
-  };
+    const shiftWeekdaysService = new ShiftWeekdaysService();
 
-  const getShiftBackground = (schichtName: string): string => {
-    return alpha(theme.palette.grey[500], 0.1);
-  };
+    // Lade bestehende Wochentag-Zuordnungen
+    useEffect(() => {
+        if (!shiftId || !locationId) return;
 
-  const formatWeekday = (datum: Date): string => {
-    return format(datum, 'EEE', { locale: de });
-  };
+        const loadWeekdays = async () => {
+            setLoading(true);
+            setError(null);
+            
+            try {
+                const weekdays = await shiftWeekdaysService.getShiftWeekdaysByLocationId(locationId);
+                const shiftWeekdays = weekdays
+                    .filter(sw => sw.shiftId === shiftId)
+                    .map(sw => sw.weekday);
+                
+                setSelectedWeekdays(shiftWeekdays);
+            } catch (err) {
+                console.error('Fehler beim Laden der Wochentage:', err);
+                setError('Fehler beim Laden der Wochentag-Zuordnungen');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  return (
-    <Card sx={{ height: '100%' }}>
-      <CardHeader
-        title={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CalendarIcon sx={{ fontSize: '1.25rem', color: 'primary.main' }} />
-            <Typography variant="h6" component="div">
-              {title}
-            </Typography>
-          </Box>
+        loadWeekdays();
+    }, [shiftId, locationId]);
+
+    // Handle weekday toggle
+    const handleWeekdayToggle = async (weekday: number) => {
+        if (disabled || saving) return;
+
+        setSaving(true);
+        setError(null);
+
+        try {
+            const isCurrentlySelected = selectedWeekdays.includes(weekday);
+            
+            if (isCurrentlySelected) {
+                // Entferne Wochentag
+                const weekdayAssignments = await shiftWeekdaysService.getShiftWeekdaysByLocationId(locationId);
+                const assignmentToDelete = weekdayAssignments.find(
+                    sw => sw.shiftId === shiftId && sw.weekday === weekday
+                );
+                
+                if (assignmentToDelete) {
+                    await shiftWeekdaysService.deleteShiftWeekday(assignmentToDelete.id);
+                }
+                
+                setSelectedWeekdays(prev => prev.filter(w => w !== weekday));
+            } else {
+                // Füge Wochentag hinzu
+                await shiftWeekdaysService.createShiftWeekday({
+                    shiftId,
+                    weekday,
+                });
+                
+                setSelectedWeekdays(prev => [...prev, weekday]);
+            }
+        } catch (err) {
+            console.error('Fehler beim Aktualisieren der Wochentage:', err);
+            setError('Fehler beim Speichern der Wochentag-Zuordnung');
+        } finally {
+            setSaving(false);
         }
-        subheader=""
-        action={
-          onWeekChange && (
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
-              <Tooltip title="Vorherige Woche">
-                <IconButton
-                  size="small"
-                  onClick={() => onWeekChange('prev')}
-                  sx={{ color: 'text.secondary' }}
-                >
-                  <ChevronLeftIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Nächste Woche">
-                <IconButton
-                  size="small"
-                  onClick={() => onWeekChange('next')}
-                  sx={{ color: 'text.secondary' }}
-                >
-                  <ChevronRightIcon />
-                </IconButton>
-              </Tooltip>
+    };
+
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2 }}>
+                <CircularProgress size={20} />
+                <Typography variant="body2" color="text.secondary">
+                    Lade Wochentag-Zuordnungen...
+                </Typography>
             </Box>
-          )
-        }
-        sx={{ pb: 1 }}
-      />
-      
-      <CardContent sx={{ pt: 0 }}>
-        <Box sx={{ display: 'flex', gap: 1, overflowX: 'auto' }}>
-          {woche.map((day, index) => {
-            const isTodayLocal = isToday(day.datum);
-            const isSelected = selectedDate && isSameDay(day.datum, selectedDate);
-            const isWeekend = day.istWochenende || day.datum.getDay() === 0 || day.datum.getDay() === 6;
+        );
+    }
 
-            return (
-              <Box key={index} sx={{ flex: '1 1 0', minWidth: 80 }}>
-                <Box
-                  onClick={() => onDateSelect && onDateSelect(day.datum)}
-                  sx={{
-                    p: 1.5,
-                    borderRadius: 2,
-                    textAlign: 'center',
-                    cursor: onDateSelect ? 'pointer' : 'default',
-                    transition: 'all 0.2s ease-in-out',
-                    backgroundColor: isSelected 
-                      ? alpha(theme.palette.primary.main, 0.1)
-                      : isTodayLocal
-                        ? alpha(theme.palette.primary.main, 0.05)
-                        : 'transparent',
-                    border: isTodayLocal
-                      ? `2px solid ${theme.palette.primary.main}`
-                      : isSelected
-                        ? `2px solid ${alpha(theme.palette.primary.main, 0.5)}`
-                        : '2px solid transparent',
-                    '&:hover': onDateSelect ? {
-                      backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                      transform: 'translateY(-1px)',
-                    } : {},
-                  }}
-                >
-                  {/* Weekday */}
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      display: 'block',
-                      fontWeight: 600,
-                      color: isWeekend ? 'error.main' : 'text.secondary',
-                      textTransform: 'uppercase',
-                      letterSpacing: 0.5,
-                      mb: 0.5,
-                    }}
-                  >
-                    {formatWeekday(day.datum)}
-                  </Typography>
+    return (
+        <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <CalendarIcon color="primary" />
+                Wochentage
+            </Typography>
+            
+            {error && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                </Alert>
+            )}
 
-                  {/* Shifts */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                    {Object.entries(day.schichten).map(([schichtName, anzahl]) => (
-                      <Chip
-                        key={schichtName}
-                        label={`${schichtName}: ${anzahl}`}
-                        size="small"
-                        sx={{
-                          height: 20,
-                          fontSize: '0.7rem',
-                          fontWeight: 600,
-                          backgroundColor: getShiftBackground(schichtName),
-                          color: getShiftColor(schichtName),
-                          border: `1px solid ${alpha(getShiftColor(schichtName), 0.3)}`,
-                          '& .MuiChip-label': {
-                            px: 1,
-                          },
-                        }}
-                      />
+            <Paper variant="outlined" sx={{ p: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Wählen Sie die Wochentage aus, an denen diese Schicht verfügbar sein soll:
+                </Typography>
+                
+                <FormGroup row>
+                    {WEEKDAYS.map((weekday) => (
+                        <FormControlLabel
+                            key={weekday.value}
+                            control={
+                                <Checkbox
+                                    checked={selectedWeekdays.includes(weekday.value)}
+                                    onChange={() => handleWeekdayToggle(weekday.value)}
+                                    disabled={disabled || saving}
+                                />
+                            }
+                            label={
+                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                        {weekday.short}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {weekday.label}
+                                    </Typography>
+                                </Box>
+                            }
+                            sx={{
+                                mx: 1,
+                                '& .MuiFormControlLabel-label': {
+                                    textAlign: 'center',
+                                },
+                            }}
+                        />
                     ))}
+                </FormGroup>
 
-                    {Object.keys(day.schichten).length === 0 && (
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'text.disabled',
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        Keine Schichten
-                      </Typography>
-                    )}
-                  </Box>
+                {selectedWeekdays.length === 0 && (
+                    <Alert severity="warning" sx={{ mt: 2 }}>
+                        Diese Schicht ist für keinen Wochentag konfiguriert und wird nicht in Schichtplänen angezeigt.
+                    </Alert>
+                )}
 
-                  {/* Holiday indicator */}
-                  {day.istFeiertag && (
-                    <Box
-                      sx={{
-                        mt: 0.5,
-                        width: 6,
-                        height: 6,
-                        borderRadius: '50%',
-                        backgroundColor: 'error.main',
-                        mx: 'auto',
-                      }}
-                    />
-                  )}
-                </Box>
-              </Box>
-            );
-          })}
+                {saving && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
+                        <CircularProgress size={16} />
+                        <Typography variant="body2" color="text.secondary">
+                            Speichere...
+                        </Typography>
+                    </Box>
+                )}
+            </Paper>
         </Box>
-
-       
-      </CardContent>
-    </Card>
-  );
+    );
 };
 
 export default ShiftWeekdayAssignment;

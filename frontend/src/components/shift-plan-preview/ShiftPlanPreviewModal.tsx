@@ -107,58 +107,208 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
             );
         }
 
+        // Gruppiere Variablen nach Typ
+        const groupedVariables = Object.entries(lpModel.variables || {}).reduce((groups: any, [varName, varData]) => {
+            const parts = varName.split('_');
+            if (parts.length >= 4 && parts[0] === 'x') {
+                const employeeId = parts[1];
+                const day = parts[2];
+                const shiftId = parts[3];
+                
+                if (!groups.assignments) groups.assignments = [];
+                groups.assignments.push({ varName, employeeId, day, shiftId, data: varData });
+            } else {
+                if (!groups.other) groups.other = [];
+                groups.other.push({ varName, data: varData });
+            }
+            return groups;
+        }, {});
+
+        // Gruppiere Constraints nach Typ
+        const groupedConstraints = Object.entries(lpModel.constraints || {}).reduce((groups: any, [constraintName, constraintData]) => {
+            if (constraintName.startsWith('shift_coverage_')) {
+                if (!groups.shiftCoverage) groups.shiftCoverage = [];
+                groups.shiftCoverage.push({ name: constraintName, data: constraintData });
+            } else if (constraintName.startsWith('role_coverage_')) {
+                if (!groups.roleCoverage) groups.roleCoverage = [];
+                groups.roleCoverage.push({ name: constraintName, data: constraintData });
+            } else if (constraintName.startsWith('one_shift_per_day_')) {
+                if (!groups.oneShiftPerDay) groups.oneShiftPerDay = [];
+                groups.oneShiftPerDay.push({ name: constraintName, data: constraintData });
+            } else if (constraintName.includes('_hours_')) {
+                if (!groups.workHours) groups.workHours = [];
+                groups.workHours.push({ name: constraintName, data: constraintData });
+            } else {
+                if (!groups.other) groups.other = [];
+                groups.other.push({ name: constraintName, data: constraintData });
+            }
+            return groups;
+        }, {});
+
         return (
-            <Box sx={{ p: 2, height: '100%', overflow: 'auto' }}>
-                <Typography variant="h6" gutterBottom>
-                    Linear Programming Modell
+            <Box sx={{ p: 2, height: '100%', overflow: 'auto', fontFamily: 'monospace' }}>
+                <Typography variant="h6" gutterBottom sx={{ fontFamily: 'inherit' }}>
+                    Linear Programming Model (Debug)
                 </Typography>
                 
-                {/* Zielfunktion */}
-                <Paper sx={{ p: 2, mb: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
-                        Zielfunktion
+                {/* Objective Function */}
+                <Paper sx={{ p: 2, mb: 2, backgroundColor: '#f5f5f5' }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                        Objective Function
                     </Typography>
-                    <Typography variant="body2" sx={{ fontFamily: 'monospace', backgroundColor: theme.palette.grey[100], p: 1, borderRadius: 1 }}>
-                        {lpModel.opType === 'max' ? 'Maximiere' : 'Minimiere'}: {lpModel.optimize}
+                    <Typography variant="body2" sx={{ fontFamily: 'monospace', backgroundColor: '#fff', p: 1, border: '1px solid #ddd' }}>
+                        {lpModel.opType === 'max' ? 'maximize' : 'minimize'} {lpModel.optimize}
                     </Typography>
                 </Paper>
 
-                {/* Variablen */}
-                <Paper sx={{ p: 2, mb: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
-                        Variablen ({Object.keys(lpModel.variables || {}).length})
+                {/* Variables */}
+                <Paper sx={{ p: 2, mb: 2, backgroundColor: '#f5f5f5' }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                        Variables ({Object.keys(lpModel.variables || {}).length})
                     </Typography>
-                    <Box sx={{ maxHeight: 200, overflow: 'auto' }}>
-                        {Object.entries(lpModel.variables || {}).slice(0, 20).map(([varName, varData]: [string, any]) => (
-                            <Typography key={varName} variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                                {varName}: {JSON.stringify(varData)}
+                    
+                    {/* Assignment Variables */}
+                    {groupedVariables.assignments && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                                Assignment Variables: x_employee_day_shift
                             </Typography>
-                        ))}
-                        {Object.keys(lpModel.variables || {}).length > 20 && (
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                ... und {Object.keys(lpModel.variables).length - 20} weitere Variablen
-                            </Typography>
-                        )}
-                    </Box>
+                            <TableContainer component={Paper} sx={{ maxHeight: 300, border: '1px solid #ddd' }}>
+                                <Table size="small" stickyHeader>
+                                    <TableHead>
+                                        <TableRow sx={{ backgroundColor: '#f0f0f0' }}>
+                                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'monospace', fontSize: '0.8rem' }}>Variable Name</TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'monospace', fontSize: '0.8rem' }}>Employee ID</TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'monospace', fontSize: '0.8rem' }}>Day</TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'monospace', fontSize: '0.8rem' }}>Shift ID</TableCell>
+                                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'monospace', fontSize: '0.8rem' }}>Coefficient</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {groupedVariables.assignments.slice(0, 100).map((variable: any, index: number) => (
+                                            <TableRow key={index}>
+                                                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.7rem' }}>
+                                                    {variable.varName}
+                                                </TableCell>
+                                                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.7rem' }}>{variable.employeeId}</TableCell>
+                                                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.7rem' }}>{variable.day}</TableCell>
+                                                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.7rem' }}>{variable.shiftId}</TableCell>
+                                                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.7rem' }}>{variable.data.fairness || 1}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            {groupedVariables.assignments.length > 100 && (
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontFamily: 'monospace' }}>
+                                    ... {groupedVariables.assignments.length - 100} more variables (showing first 100)
+                                </Typography>
+                            )}
+                        </Box>
+                    )}
                 </Paper>
 
                 {/* Constraints */}
-                <Paper sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                <Paper sx={{ p: 2, backgroundColor: '#f5f5f5' }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
                         Constraints ({Object.keys(lpModel.constraints || {}).length})
                     </Typography>
-                    <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
-                        {Object.entries(lpModel.constraints || {}).map(([constraintName, constraintData]: [string, any]) => (
-                            <Box key={constraintName} sx={{ mb: 1, p: 1, backgroundColor: theme.palette.grey[50], borderRadius: 1 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.85rem' }}>
-                                    {constraintName}
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                                    {JSON.stringify(constraintData)}
-                                </Typography>
+                    
+                    {/* Shift Coverage Constraints */}
+                    {groupedConstraints.shiftCoverage && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                                Shift Coverage: shift_coverage_day_shift ({groupedConstraints.shiftCoverage.length})
+                            </Typography>
+                            <Box sx={{ maxHeight: 200, overflow: 'auto', backgroundColor: '#fff', border: '1px solid #ddd', p: 1 }}>
+                                {groupedConstraints.shiftCoverage.slice(0, 50).map((constraint: any, index: number) => (
+                                    <Typography key={index} variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem', mb: 0.5 }}>
+                                        {constraint.name}: {JSON.stringify(constraint.data)}
+                                    </Typography>
+                                ))}
+                                {groupedConstraints.shiftCoverage.length > 50 && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                        ... {groupedConstraints.shiftCoverage.length - 50} more constraints
+                                    </Typography>
+                                )}
                             </Box>
-                        ))}
-                    </Box>
+                        </Box>
+                    )}
+
+                    {/* Role Coverage Constraints */}
+                    {groupedConstraints.roleCoverage && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                                Role Coverage: role_coverage_day_shift_role ({groupedConstraints.roleCoverage.length})
+                            </Typography>
+                            <Box sx={{ maxHeight: 200, overflow: 'auto', backgroundColor: '#fff', border: '1px solid #ddd', p: 1 }}>
+                                {groupedConstraints.roleCoverage.slice(0, 30).map((constraint: any, index: number) => (
+                                    <Typography key={index} variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem', mb: 0.5 }}>
+                                        {constraint.name}: {JSON.stringify(constraint.data)}
+                                    </Typography>
+                                ))}
+                                {groupedConstraints.roleCoverage.length > 30 && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                        ... {groupedConstraints.roleCoverage.length - 30} more constraints
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+                    )}
+
+                    {/* One Shift Per Day Constraints */}
+                    {groupedConstraints.oneShiftPerDay && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                                One Shift Per Day: one_shift_per_day_employee_day ({groupedConstraints.oneShiftPerDay.length})
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontFamily: 'monospace', backgroundColor: '#fff', p: 1, border: '1px solid #ddd', fontSize: '0.75rem' }}>
+                                Each constraint: max: 1 (sum of all shifts for employee on specific day ≤ 1)
+                            </Typography>
+                        </Box>
+                    )}
+
+                    {/* Work Hours Constraints */}
+                    {groupedConstraints.workHours && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                                Work Hours Distribution: min_hours_employee / max_hours_employee ({groupedConstraints.workHours.length})
+                            </Typography>
+                            <Box sx={{ maxHeight: 150, overflow: 'auto', backgroundColor: '#fff', border: '1px solid #ddd', p: 1 }}>
+                                {groupedConstraints.workHours.slice(0, 20).map((constraint: any, index: number) => (
+                                    <Typography key={index} variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem', mb: 0.5 }}>
+                                        {constraint.name}: {JSON.stringify(constraint.data)}
+                                    </Typography>
+                                ))}
+                                {groupedConstraints.workHours.length > 20 && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                        ... {groupedConstraints.workHours.length - 20} more constraints
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+                    )}
+
+                    {/* Other Constraints */}
+                    {groupedConstraints.other && groupedConstraints.other.length > 0 && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                                Other Constraints ({groupedConstraints.other.length})
+                            </Typography>
+                            <Box sx={{ maxHeight: 150, overflow: 'auto', backgroundColor: '#fff', border: '1px solid #ddd', p: 1 }}>
+                                {groupedConstraints.other.slice(0, 20).map((constraint: any, index: number) => (
+                                    <Typography key={index} variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem', mb: 0.5 }}>
+                                        {constraint.name}: {JSON.stringify(constraint.data)}
+                                    </Typography>
+                                ))}
+                                {groupedConstraints.other.length > 20 && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                        ... {groupedConstraints.other.length - 20} more constraints
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+                    )}
                 </Paper>
             </Box>
         );

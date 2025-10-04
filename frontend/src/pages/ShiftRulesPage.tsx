@@ -30,7 +30,14 @@ import {
 import { LocationResponseDto, ShiftResponseDto } from '../api/data-contracts';
 import { ShiftWeekdayResponseDto } from '../services/ShiftWeekdaysService';
 import { locationService, shiftService, shiftWeekdaysService } from '../services';
-import ShiftWeekdayAssignment, { WeekDay } from '../components/shift/ShiftWeekdayAssignment';
+import ShiftWeekdayAssignment from '../components/shift/ShiftWeekdayAssignment';
+
+// Define WeekDay interface locally
+interface WeekDay {
+    datum: Date;
+    schichten: { [schichtName: string]: number };
+    istWochenende: boolean;
+}
 import { startOfWeek, addDays, format } from 'date-fns';
 import { de } from 'date-fns/locale';
 
@@ -248,12 +255,57 @@ const ShiftRulesPage: React.FC = () => {
             {selectedLocationId && (
                 <Fade in={showCards} timeout={1200}>
                     <Box sx={{ mb: 4 }}>
-                        <ShiftWeekdayAssignment
-                            woche={currentWeek}
-                            selectedDate={selectedDate}
-                            onDateSelect={handleDayClick}
-                            title="Schichtzuordnung zu Wochentagen"
-                        />
+                        {/* Week Overview - Custom Implementation */}
+                        <Paper sx={{ p: 3, borderRadius: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                                <ScheduleIcon sx={{ color: 'primary.main' }} />
+                                <Typography variant="h6">Schichtzuordnung zu Wochentagen</Typography>
+                            </Box>
+                            
+                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                {currentWeek.map((day, index) => (
+                                    <Card
+                                        key={index}
+                                        sx={{
+                                            flex: '1 1 calc(14.28% - 8px)',
+                                            minWidth: 120,
+                                            minHeight: 120,
+                                            backgroundColor: day.istWochenende ? alpha(theme.palette.error.main, 0.05) : 'inherit',
+                                            cursor: 'pointer',
+                                            '&:hover': {
+                                                backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                                            }
+                                        }}
+                                        onClick={() => handleDayClick(day.datum)}
+                                    >
+                                        <CardContent sx={{ p: 1.5 }}>
+                                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center' }}>
+                                                {format(day.datum, 'EEE', { locale: de })}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 1 }}>
+                                                {format(day.datum, 'dd.MM')}
+                                            </Typography>
+                                            
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                {Object.keys(day.schichten).map((schichtName) => (
+                                                    <Chip
+                                                        key={schichtName}
+                                                        label={schichtName}
+                                                        size="small"
+                                                        sx={{ fontSize: '0.6rem', height: 20 }}
+                                                    />
+                                                ))}
+                                                {Object.keys(day.schichten).length === 0 && (
+                                                    <Typography variant="caption" color="text.disabled" sx={{ textAlign: 'center' }}>
+                                                        Keine Schichten
+                                                    </Typography>
+                                                )}
+                                            </Box>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </Box>
+                        </Paper>
                     </Box>
                 </Fade>
             )}

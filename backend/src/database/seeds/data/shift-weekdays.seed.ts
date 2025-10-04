@@ -1,16 +1,6 @@
 export const shiftWeekdaysSeedData = [
-  // Station A - Frühschicht (FSA): Mo, Di, Mi, Do, Fr, Sa
+  // Station A - Frühschicht (FSA): nur Montag
   { shiftId: '1', weekday: 1 }, // Montag (JavaScript: 0=Sonntag, 1=Montag)
-  { shiftId: '1', weekday: 2 }, // Dienstag
-  { shiftId: '1', weekday: 3 }, // Mittwoch
-  { shiftId: '1', weekday: 4 }, // Donnerstag
-  { shiftId: '1', weekday: 5 }, // Freitag
-  { shiftId: '1', weekday: 6 }, // Samstag
-
-  // Station A - Spätschicht (SSA): Mo, Mi, Fr
-  { shiftId: '2', weekday: 1 }, // Montag
-  { shiftId: '2', weekday: 3 }, // Mittwoch
-  { shiftId: '2', weekday: 5 }, // Freitag
 
   // Station B - Frühschicht (FSB): alle Tage (So=0, Mo=1, Di=2, Mi=3, Do=4, Fr=5, Sa=6)
   { shiftId: '4', weekday: 1 }, // Montag

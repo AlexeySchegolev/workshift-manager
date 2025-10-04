@@ -1,5 +1,5 @@
 export const employeesSeedData = [
-  // Kardiologie Station 3A (locationId: 1)
+  // Station A (locationId: 1) - nur 3 Mitarbeiter, je 1 pro Rolle
   {
     organizationId: '1', // Will be replaced with actual organization ID during seeding
     firstName: 'Anna',
@@ -8,7 +8,7 @@ export const employeesSeedData = [
     phoneNumber: '+49 89 1234-001',
     hireDate: new Date('2020-01-15'),
     locationId: '1', // Will be replaced with actual location ID
-    primaryRoleId: '1', // Will be replaced with Schichtleiter role ID
+    primaryRoleId: '1', // Schichtleiter
     monthlyWorkHours: 173, // Vollzeit (40h/Woche)
     isActive: true
   },
@@ -26,18 +26,6 @@ export const employeesSeedData = [
   },
   {
     organizationId: '1',
-    firstName: 'Maria',
-    lastName: 'Wagner',
-    email: 'maria.wagner@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-003',
-    hireDate: new Date('2021-06-01'),
-    locationId: '1',
-    primaryRoleId: '2', // Krankenpfleger
-    monthlyWorkHours: 130, // Teilzeit (30h/Woche)
-    isActive: true
-  },
-  {
-    organizationId: '1',
     firstName: 'Stefan',
     lastName: 'Bauer',
     email: 'stefan.bauer@dialyse-praxis.de',
@@ -46,18 +34,6 @@ export const employeesSeedData = [
     locationId: '1',
     primaryRoleId: '3', // Pflegerassistent
     monthlyWorkHours: 87, // Teilzeit (20h/Woche)
-    isActive: true
-  },
-  {
-    organizationId: '1',
-    firstName: 'Julia',
-    lastName: 'Richter',
-    email: 'julia.richter@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-005',
-    hireDate: new Date('2023-01-10'),
-    locationId: '1',
-    primaryRoleId: '3', // Pflegerassistent
-    monthlyWorkHours: 108, // Teilzeit (25h/Woche)
     isActive: true
   },
 
@@ -123,19 +99,7 @@ export const employeesSeedData = [
     isActive: true
   },
 
-  // Zusätzliche Schichtleiter
-  {
-    organizationId: '1',
-    firstName: 'Petra',
-    lastName: 'Müller',
-    email: 'petra.mueller@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-011',
-    hireDate: new Date('2021-01-15'),
-    locationId: '1',
-    primaryRoleId: '1', // Schichtleiter
-    monthlyWorkHours: 173,
-    isActive: true
-  },
+  // Keine zusätzlichen Schichtleiter für Station A
   {
     organizationId: '1',
     firstName: 'Frank',
@@ -146,18 +110,6 @@ export const employeesSeedData = [
     locationId: '2',
     primaryRoleId: '1', // Schichtleiter
     monthlyWorkHours: 173,
-    isActive: true
-  },
-  {
-    organizationId: '1',
-    firstName: 'Sabine',
-    lastName: 'Fischer',
-    email: 'sabine.fischer@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-013',
-    hireDate: new Date('2019-12-01'),
-    locationId: '1',
-    primaryRoleId: '1', // Schichtleiter
-    monthlyWorkHours: 152,
     isActive: true
   },
   {
@@ -173,19 +125,7 @@ export const employeesSeedData = [
     isActive: true
   },
 
-  // Zusätzliche Krankenpfleger
-  {
-    organizationId: '1',
-    firstName: 'Nicole',
-    lastName: 'Hartmann',
-    email: 'nicole.hartmann@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-015',
-    hireDate: new Date('2021-05-12'),
-    locationId: '1',
-    primaryRoleId: '2', // Krankenpfleger
-    monthlyWorkHours: 173,
-    isActive: true
-  },
+  // Keine zusätzlichen Krankenpfleger für Station A
   {
     organizationId: '1',
     firstName: 'Daniel',
@@ -196,18 +136,6 @@ export const employeesSeedData = [
     locationId: '2',
     primaryRoleId: '2', // Krankenpfleger
     monthlyWorkHours: 173,
-    isActive: true
-  },
-  {
-    organizationId: '1',
-    firstName: 'Claudia',
-    lastName: 'Neumann',
-    email: 'claudia.neumann@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-017',
-    hireDate: new Date('2022-01-20'),
-    locationId: '1',
-    primaryRoleId: '2', // Krankenpfleger
-    monthlyWorkHours: 152,
     isActive: true
   },
   {
@@ -224,18 +152,6 @@ export const employeesSeedData = [
   },
   {
     organizationId: '1',
-    firstName: 'Birgit',
-    lastName: 'Schmitt',
-    email: 'birgit.schmitt@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-019',
-    hireDate: new Date('2020-07-03'),
-    locationId: '1',
-    primaryRoleId: '2', // Krankenpfleger
-    monthlyWorkHours: 173,
-    isActive: true
-  },
-  {
-    organizationId: '1',
     firstName: 'Jürgen',
     lastName: 'Berger',
     email: 'juergen.berger@dialyse-praxis.de',
@@ -247,19 +163,7 @@ export const employeesSeedData = [
     isActive: true
   },
 
-  // Zusätzliche Pflegeassistenten
-  {
-    organizationId: '1',
-    firstName: 'Karin',
-    lastName: 'Huber',
-    email: 'karin.huber@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-021',
-    hireDate: new Date('2022-06-01'),
-    locationId: '1',
-    primaryRoleId: '3', // Pflegerassistent
-    monthlyWorkHours: 130,
-    isActive: true
-  },
+  // Keine zusätzlichen Pflegeassistenten für Station A
   {
     organizationId: '1',
     firstName: 'Ralf',
@@ -270,18 +174,6 @@ export const employeesSeedData = [
     locationId: '2',
     primaryRoleId: '3', // Pflegerassistent
     monthlyWorkHours: 108,
-    isActive: true
-  },
-  {
-    organizationId: '1',
-    firstName: 'Anja',
-    lastName: 'Winkler',
-    email: 'anja.winkler@dialyse-praxis.de',
-    phoneNumber: '+49 89 1234-023',
-    hireDate: new Date('2023-02-15'),
-    locationId: '1',
-    primaryRoleId: '3', // Pflegerassistent
-    monthlyWorkHours: 87,
     isActive: true
   },
   {

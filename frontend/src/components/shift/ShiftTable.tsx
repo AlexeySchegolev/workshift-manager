@@ -133,7 +133,7 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                                 <TableCell>
                                     <Box>
                                         <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                            {shift.name}
+                                            {shift.shortName} - {shift.name}
                                         </Typography>
                                         {shift.description && (
                                             <Typography variant="caption" color="text.secondary">

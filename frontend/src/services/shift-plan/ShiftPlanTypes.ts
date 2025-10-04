@@ -7,6 +7,7 @@ export interface ReducedEmployee {
   id: string;
   name: string;
   role: string;
+  roleId?: string; // ID der Rolle für präzise Zuordnung
   location: string;
   monthlyWorkHours?: number;
 }
@@ -28,10 +29,14 @@ export interface EmployeeDayStatus {
  * Interface für Rollen-Belegung in einer Schicht
  */
 export interface RoleOccupancy {
+  roleId?: string; // Optional für Rückwärtskompatibilität
   roleName: string;
   required: number;
   assigned: number;
   assignedEmployees: string[];
+  minRequired?: number; // Mindestanzahl für diese Rolle
+  maxAllowed?: number;  // Maximalanzahl für diese Rolle
+  priority?: number;    // Priorität der Rolle (1-5)
 }
 
 /**

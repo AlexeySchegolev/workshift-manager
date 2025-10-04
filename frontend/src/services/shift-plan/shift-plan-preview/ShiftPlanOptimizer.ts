@@ -5,6 +5,7 @@ import { CalculatedShiftPlan, ShiftPlanDay } from '../ShiftPlanTypes';
  * Optimierungsmodell für Schichtplanung mit Simplex-Algorithmus
  */
 export class ShiftPlanOptimizer {
+  private lastModel: any = null;
   
   /**
    * Optimiert Schichtplan für einen Monat
@@ -15,6 +16,9 @@ export class ShiftPlanOptimizer {
     // Erstelle Optimierungsmodell
     const model = this.createOptimizationModel(employees, days, availableShifts, shiftWeekdays);
     
+    // Speichere Modell für LP-Anzeige
+    this.lastModel = model;
+    
     console.log('🔧 Optimierungsmodell erstellt:', model);
     
     // Löse mit Simplex
@@ -22,6 +26,13 @@ export class ShiftPlanOptimizer {
     
     // Konvertiere Lösung zurück zu ShiftPlanDay[]
     return this.applySolutionToShiftPlan(solution, days, employees, availableShifts, shiftWeekdays);
+  }
+  
+  /**
+   * Gibt das zuletzt erstellte LP Modell zurück
+   */
+  getLastModel(): any {
+    return this.lastModel;
   }
   
   /**
@@ -64,7 +75,7 @@ export class ShiftPlanOptimizer {
         
         const constraintName = `shift_coverage_${day.dayKey}_${shiftOcc.shiftId}`;
         
-        // Benötige die volle Anzahl (ignoriere bestehende Zuweisungen)
+        // STRIKTE Anforderung: Exakt die benötigte Anzahl
         model.constraints[constraintName] = { equal: shiftOcc.requiredCount };
         
         employees.forEach(employee => {
@@ -72,6 +83,37 @@ export class ShiftPlanOptimizer {
           if (model.variables[varName]) {
             model.variables[varName][constraintName] = 1;
           }
+        });
+      });
+    });
+    
+    // Constraint 1b: Rollen-spezifische Besetzung für jede Schicht
+    days.forEach(day => {
+      day.shiftOccupancy.forEach(shiftOcc => {
+        if (!this.isShiftAvailableOnWeekday(day.date, shiftOcc.shiftId, shiftWeekdays)) {
+          return;
+        }
+        
+        const shift = availableShifts.find(s => s.id === shiftOcc.shiftId);
+        if (!shift?.shiftRoles) return;
+        
+        // Für jede erforderliche Rolle in dieser Schicht
+        shift.shiftRoles.forEach((shiftRole: any) => {
+          const roleConstraintName = `role_coverage_${day.dayKey}_${shiftOcc.shiftId}_${shiftRole.roleId}`;
+          
+          // Exakt die benötigte Anzahl dieser Rolle
+          model.constraints[roleConstraintName] = { equal: shiftRole.count };
+          
+          // Nur Mitarbeiter mit passender Rolle können diese Variable haben
+          employees.forEach(employee => {
+            if (employee.role === shiftRole.role?.name ||
+                (employee.roleId && shiftRole.roleId === employee.roleId)) {
+              const varName = `x_${employee.id}_${day.dayKey}_${shiftOcc.shiftId}`;
+              if (model.variables[varName]) {
+                model.variables[varName][roleConstraintName] = 1;
+              }
+            }
+          });
         });
       });
     });
@@ -243,8 +285,16 @@ export class ShiftPlanOptimizer {
    * Prüft ob Mitarbeiter für Schicht qualifiziert ist
    */
   private isEmployeeQualifiedForShift(employee: any, shift: any): boolean {
-    // Vereinfachte Logik - kann erweitert werden
-    return true; // Alle Mitarbeiter können alle Schichten (vorerst)
+    // Prüfe ob Mitarbeiter die erforderliche Rolle für diese Schicht hat
+    if (!shift.shiftRoles || shift.shiftRoles.length === 0) {
+      return true; // Keine spezifischen Rollen-Anforderungen
+    }
+    
+    // Mitarbeiter muss mindestens eine der erforderlichen Rollen haben
+    return shift.shiftRoles.some((shiftRole: any) =>
+      shiftRole.role?.name === employee.role ||
+      (employee.roleId && shiftRole.roleId === employee.roleId)
+    );
   }
   
   /**
@@ -318,10 +368,31 @@ export class ShiftPlanOptimizer {
         
         const assignedEmployees: string[] = [];
         
-        // Weise Mitarbeiter zu (ignoriere bestehende Zuweisungen)
-        for (let i = 0; i < shiftOcc.requiredCount && employeeIndex < availableEmployees.length; i++) {
-          assignedEmployees.push(availableEmployees[employeeIndex].employee.name);
-          employeeIndex++;
+        // Weise Mitarbeiter zu basierend auf Rollen-Anforderungen
+        const shift = availableShifts.find(s => s.id === shiftOcc.shiftId);
+        
+        if (shift?.shiftRoles && shift.shiftRoles.length > 0) {
+          // Rollen-basierte Zuweisung
+          shift.shiftRoles.forEach((shiftRole: any) => {
+            const roleEmployees = availableEmployees.filter(emp =>
+              !assignedEmployees.includes(emp.employee.name) &&
+              (emp.employee.role === shiftRole.role?.name ||
+               (emp.employee.roleId && shiftRole.roleId === emp.employee.roleId))
+            );
+            
+            // Weise exakt die benötigte Anzahl dieser Rolle zu
+            for (let i = 0; i < shiftRole.count && i < roleEmployees.length; i++) {
+              assignedEmployees.push(roleEmployees[i].employee.name);
+            }
+          });
+        } else {
+          // Fallback: Einfache Zuweisung ohne Rollen-Spezifikation
+          for (let i = 0; i < shiftOcc.requiredCount && employeeIndex < availableEmployees.length; i++) {
+            if (!assignedEmployees.includes(availableEmployees[employeeIndex].employee.name)) {
+              assignedEmployees.push(availableEmployees[employeeIndex].employee.name);
+            }
+            employeeIndex++;
+          }
         }
         
         return {

@@ -14,6 +14,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Tab,
+    Tabs,
     Tooltip,
     Typography,
     useTheme,
@@ -36,6 +38,7 @@ interface ShiftPlanPreviewModalProps {
     previewData: ShiftPlanDay[] | null;
     originalData: CalculatedShiftPlan;
     isSaving?: boolean;
+    lpModel?: any;
 }
 
 const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
@@ -44,9 +47,13 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
     onAccept,
     previewData,
     originalData,
-    isSaving = false
+    isSaving = false,
+    lpModel
 }) => {
     const theme = useTheme();
+
+    // Tab state
+    const [activeTab, setActiveTab] = useState(0);
 
     // Absences state
     const [absences, setAbsences] = useState<EmployeeAbsenceResponseDto[]>([]);
@@ -85,6 +92,78 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
 
     const tableCellStyles = ShiftPlanTableStyles.getTableCellStyles(theme);
 
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setActiveTab(newValue);
+    };
+
+    const renderLPModel = () => {
+        if (!lpModel) {
+            return (
+                <Box sx={{ p: 3, textAlign: 'center' }}>
+                    <Typography variant="body1" color="text.secondary">
+                        Kein LP Modell verfügbar
+                    </Typography>
+                </Box>
+            );
+        }
+
+        return (
+            <Box sx={{ p: 2, height: '100%', overflow: 'auto' }}>
+                <Typography variant="h6" gutterBottom>
+                    Linear Programming Modell
+                </Typography>
+                
+                {/* Zielfunktion */}
+                <Paper sx={{ p: 2, mb: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                        Zielfunktion
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontFamily: 'monospace', backgroundColor: theme.palette.grey[100], p: 1, borderRadius: 1 }}>
+                        {lpModel.opType === 'max' ? 'Maximiere' : 'Minimiere'}: {lpModel.optimize}
+                    </Typography>
+                </Paper>
+
+                {/* Variablen */}
+                <Paper sx={{ p: 2, mb: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                        Variablen ({Object.keys(lpModel.variables || {}).length})
+                    </Typography>
+                    <Box sx={{ maxHeight: 200, overflow: 'auto' }}>
+                        {Object.entries(lpModel.variables || {}).slice(0, 20).map(([varName, varData]: [string, any]) => (
+                            <Typography key={varName} variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                                {varName}: {JSON.stringify(varData)}
+                            </Typography>
+                        ))}
+                        {Object.keys(lpModel.variables || {}).length > 20 && (
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                ... und {Object.keys(lpModel.variables).length - 20} weitere Variablen
+                            </Typography>
+                        )}
+                    </Box>
+                </Paper>
+
+                {/* Constraints */}
+                <Paper sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                        Constraints ({Object.keys(lpModel.constraints || {}).length})
+                    </Typography>
+                    <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+                        {Object.entries(lpModel.constraints || {}).map(([constraintName, constraintData]: [string, any]) => (
+                            <Box key={constraintName} sx={{ mb: 1, p: 1, backgroundColor: theme.palette.grey[50], borderRadius: 1 }}>
+                                <Typography variant="body2" sx={{ fontWeight: 'bold', fontSize: '0.85rem' }}>
+                                    {constraintName}
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                                    {JSON.stringify(constraintData)}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Paper>
+            </Box>
+        );
+    };
+
     return (
         <Dialog
             open={open}
@@ -106,9 +185,16 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
                     {format(new Date(originalData.year, originalData.month - 1), 'MMMM yyyy', { locale: de })}
                     {originalData.locationName && ` • ${originalData.locationName}`}
                 </Typography>
+                
+                {/* Tabs */}
+                <Tabs value={activeTab} onChange={handleTabChange} sx={{ mt: 2 }}>
+                    <Tab label="Schichtplan" />
+                    <Tab label="LP Modell" disabled={!lpModel} />
+                </Tabs>
             </DialogTitle>
 
             <DialogContent sx={{ p: 0, overflow: 'hidden' }}>
+                {activeTab === 0 ? (
                 <TableContainer
                     component={Paper}
                     sx={{
@@ -357,6 +443,9 @@ const ShiftPlanPreviewModal: React.FC<ShiftPlanPreviewModalProps> = ({
                         </TableBody>
                     </Table>
                 </TableContainer>
+                ) : (
+                    renderLPModel()
+                )}
             </DialogContent>
 
             <DialogActions sx={{ p: 2, gap: 1 }}>

@@ -10,10 +10,10 @@ export class ShiftPlanOptimizer {
    * Optimiert Schichtplan für einen Monat
    */
   optimizeShiftPlan(shiftPlanData: CalculatedShiftPlan): ShiftPlanDay[] {
-    const { employees, days, availableShifts } = shiftPlanData;
+    const { employees, days, availableShifts, shiftWeekdays } = shiftPlanData;
     
     // Erstelle Optimierungsmodell
-    const model = this.createOptimizationModel(employees, days, availableShifts);
+    const model = this.createOptimizationModel(employees, days, availableShifts, shiftWeekdays);
     
     console.log('🔧 Optimierungsmodell erstellt:', model);
     
@@ -21,13 +21,13 @@ export class ShiftPlanOptimizer {
     const solution = solver.Solve(model);
     
     // Konvertiere Lösung zurück zu ShiftPlanDay[]
-    return this.applySolutionToShiftPlan(solution, days, employees, availableShifts);
+    return this.applySolutionToShiftPlan(solution, days, employees, availableShifts, shiftWeekdays);
   }
   
   /**
    * Erstellt das lineare Optimierungsmodell
    */
-  private createOptimizationModel(employees: any[], days: ShiftPlanDay[], availableShifts: any[]) {
+  private createOptimizationModel(employees: any[], days: ShiftPlanDay[], availableShifts: any[], shiftWeekdays: any[]) {
     const model: any = {
       optimize: 'fairness',
       opType: 'max',
@@ -36,13 +36,15 @@ export class ShiftPlanOptimizer {
     };
     
     // Variablen: x_employee_day_shift (0 oder 1)
-    // Ignoriere bestehende Zuweisungen - starte immer von null
+    // Nur für Schichten erstellen, die an diesem Wochentag definiert sind
     employees.forEach(employee => {
       days.forEach(day => {
-        availableShifts.forEach(shift => {
+        // Filtere verfügbare Schichten für diesen Wochentag
+        const shiftsForDay = this.getShiftsForWeekday(day.date, availableShifts, shiftWeekdays);
+        
+        shiftsForDay.forEach(shift => {
           const varName = `x_${employee.id}_${day.dayKey}_${shift.id}`;
           
-          // Alle Variablen sind frei optimierbar
           model.variables[varName] = {
             fairness: 1, // Zielfunktion: Maximiere Fairness
             // Constraints werden unten definiert
@@ -52,9 +54,14 @@ export class ShiftPlanOptimizer {
     });
     
     // Constraint 1: Jede Schicht muss vollständig besetzt sein
-    // Ignoriere bestehende Zuweisungen - plane komplett neu
+    // Nur für Schichten, die an diesem Tag definiert sind
     days.forEach(day => {
       day.shiftOccupancy.forEach(shiftOcc => {
+        // Prüfe ob Schicht an diesem Wochentag definiert ist
+        if (!this.isShiftAvailableOnWeekday(day.date, shiftOcc.shiftId, shiftWeekdays)) {
+          return; // Überspringe Schichten, die an diesem Tag nicht definiert sind
+        }
+        
         const constraintName = `shift_coverage_${day.dayKey}_${shiftOcc.shiftId}`;
         
         // Benötige die volle Anzahl (ignoriere bestehende Zuweisungen)
@@ -75,7 +82,9 @@ export class ShiftPlanOptimizer {
         const constraintName = `one_shift_per_day_${employee.id}_${day.dayKey}`;
         model.constraints[constraintName] = { max: 1 };
         
-        availableShifts.forEach(shift => {
+        // Nur Schichten berücksichtigen, die an diesem Tag verfügbar sind
+        const shiftsForDay = this.getShiftsForWeekday(day.date, availableShifts, shiftWeekdays);
+        shiftsForDay.forEach(shift => {
           const varName = `x_${employee.id}_${day.dayKey}_${shift.id}`;
           if (model.variables[varName]) {
             model.variables[varName][constraintName] = 1;
@@ -96,7 +105,9 @@ export class ShiftPlanOptimizer {
       model.constraints[constraintNameMax] = { max: Math.ceil(avgHoursPerEmployee * 1.1) };
       
       days.forEach(day => {
-        availableShifts.forEach(shift => {
+        // Nur Schichten berücksichtigen, die an diesem Tag verfügbar sind
+        const shiftsForDay = this.getShiftsForWeekday(day.date, availableShifts, shiftWeekdays);
+        shiftsForDay.forEach(shift => {
           const varName = `x_${employee.id}_${day.dayKey}_${shift.id}`;
           const shiftHours = this.calculateShiftHours(shift);
           
@@ -111,7 +122,9 @@ export class ShiftPlanOptimizer {
     // Constraint 4: Rollen-Kompatibilität
     employees.forEach(employee => {
       days.forEach(day => {
-        availableShifts.forEach(shift => {
+        // Nur Schichten berücksichtigen, die an diesem Tag verfügbar sind
+        const shiftsForDay = this.getShiftsForWeekday(day.date, availableShifts, shiftWeekdays);
+        shiftsForDay.forEach(shift => {
           const varName = `x_${employee.id}_${day.dayKey}_${shift.id}`;
           
           // Prüfe ob Mitarbeiter für diese Schicht qualifiziert ist
@@ -132,22 +145,23 @@ export class ShiftPlanOptimizer {
    * Wendet die Optimierungslösung auf den Schichtplan an
    */
   private applySolutionToShiftPlan(
-    solution: any, 
-    days: ShiftPlanDay[], 
-    employees: any[], 
-    availableShifts: any[]
+    solution: any,
+    days: ShiftPlanDay[],
+    employees: any[],
+    availableShifts: any[],
+    shiftWeekdays: any[]
   ): ShiftPlanDay[] {
     
     if (!solution.feasible) {
       console.warn('Keine optimale Lösung gefunden, verwende Fallback-Strategie');
-      return this.fallbackAssignment(days, employees, availableShifts);
+      return this.fallbackAssignment(days, employees, availableShifts, shiftWeekdays);
     }
     
     // Erstelle neue Tage mit optimierten Zuweisungen
     const optimizedDays = days.map(day => {
       const optimizedEmployees = day.employees.map(empStatus => {
         // Ignoriere bestehende Zuweisungen - weise komplett neu zu
-        const assignedShift = this.findAssignedShift(solution, empStatus.employee.id, day.dayKey, availableShifts);
+        const assignedShift = this.findAssignedShift(solution, empStatus.employee.id, day.dayKey, availableShifts, shiftWeekdays);
         
         if (assignedShift) {
           return {
@@ -236,8 +250,15 @@ export class ShiftPlanOptimizer {
   /**
    * Findet zugewiesene Schicht aus der Lösung
    */
-  private findAssignedShift(solution: any, employeeId: string, dayKey: string, availableShifts: any[]): any | null {
-    for (const shift of availableShifts) {
+  private findAssignedShift(solution: any, employeeId: string, dayKey: string, availableShifts: any[], shiftWeekdays: any[]): any | null {
+    // Rekonstruiere Datum aus dayKey für Wochentag-Prüfung
+    const [day, month, year] = dayKey.split('.').map(Number);
+    const date = new Date(year, month - 1, day);
+    
+    // Nur Schichten prüfen, die an diesem Wochentag verfügbar sind
+    const shiftsForDay = this.getShiftsForWeekday(date, availableShifts, shiftWeekdays);
+    
+    for (const shift of shiftsForDay) {
       const varName = `x_${employeeId}_${dayKey}_${shift.id}`;
       if (solution[varName] && solution[varName] > 0.5) { // > 0.5 für binäre Variablen
         return shift;
@@ -245,12 +266,36 @@ export class ShiftPlanOptimizer {
     }
     return null;
   }
+
+  /**
+   * Filtert Schichten nach verfügbaren Wochentagen
+   */
+  private getShiftsForWeekday(date: Date, availableShifts: any[], shiftWeekdays: any[]): any[] {
+    const weekday = date.getDay(); // 0 = Sonntag, 1 = Montag, etc.
+    
+    // Finde alle Schicht-IDs, die für diesen Wochentag definiert sind
+    const shiftIdsForWeekday = shiftWeekdays
+      .filter(sw => sw.weekday === weekday)
+      .map(sw => sw.shiftId);
+    
+    // Filtere verfügbare Schichten nach den IDs
+    return availableShifts.filter(shift => shiftIdsForWeekday.includes(shift.id));
+  }
+
+  /**
+   * Prüft ob eine Schicht an einem bestimmten Wochentag verfügbar ist
+   */
+  private isShiftAvailableOnWeekday(date: Date, shiftId: string, shiftWeekdays: any[]): boolean {
+    const weekday = date.getDay();
+    
+    return shiftWeekdays.some(sw => sw.shiftId === shiftId && sw.weekday === weekday);
+  }
   
   /**
    * Fallback-Strategie wenn keine optimale Lösung gefunden wird
    * Behält bereits belegte Schichten bei
    */
-  private fallbackAssignment(days: ShiftPlanDay[], employees: any[], availableShifts: any[]): ShiftPlanDay[] {
+  private fallbackAssignment(days: ShiftPlanDay[], employees: any[], availableShifts: any[], shiftWeekdays: any[]): ShiftPlanDay[] {
     console.log('Verwende einfache Fallback-Zuweisung (startet von null)');
     
     return days.map(day => {
@@ -259,6 +304,18 @@ export class ShiftPlanOptimizer {
       let employeeIndex = 0;
       
       const updatedShiftOccupancy = day.shiftOccupancy.map(shiftOcc => {
+        // Prüfe ob Schicht an diesem Wochentag definiert ist
+        if (!this.isShiftAvailableOnWeekday(day.date, shiftOcc.shiftId, shiftWeekdays)) {
+          // Schicht ist an diesem Tag nicht definiert - keine Zuweisungen
+          return {
+            ...shiftOcc,
+            assignedCount: 0,
+            assignedEmployees: [],
+            isCorrectlyStaffed: false,
+            isUnderStaffed: true
+          };
+        }
+        
         const assignedEmployees: string[] = [];
         
         // Weise Mitarbeiter zu (ignoriere bestehende Zuweisungen)

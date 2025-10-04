@@ -1,6 +1,7 @@
 import { CalculatedShiftPlan, ReducedEmployee } from '@/services';
 import {
     AutoAwesome as AutoAwesomeIcon,
+    Clear as ClearIcon,
     FileDownload as FileDownloadIcon,
     Schedule as ScheduleIcon
 } from '@mui/icons-material';
@@ -31,6 +32,8 @@ import { EmployeeAbsenceService } from '../../services/EmployeeAbsenceService';
 import { shiftPlanAICalculationService } from '../../services/shift-plan/shift-plan-preview/ShiftPlanAICalculationService';
 import { shiftPlanPreviewService } from '../../services/shift-plan/shift-plan-preview/ShiftPlanPreviewService';
 import { ShiftPlanDay } from '../../services/shift-plan/ShiftPlanTypes';
+import { shiftPlanDetailService } from '../../services/shift-plan/ShiftPlanDetailService';
+import DeleteConfirmationDialog, { DeleteConfirmationConfig } from '../common/DeleteConfirmationDialog';
 import EmployeeCell from '../common/EmployeeCell';
 import LocationSelector from '../common/LocationSelector';
 import MonthSelector from '../common/MonthSelector';
@@ -80,6 +83,10 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState<ShiftPlanDay[] | null>(null);
     const [isSavingPreview, setIsSavingPreview] = useState(false);
+
+    // Clear plan dialog state
+    const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
+    const [isClearing, setIsClearing] = useState(false);
 
     // Absences state
     const [absences, setAbsences] = useState<EmployeeAbsenceResponseDto[]>([]);
@@ -146,6 +153,29 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
             setIsSavingPreview(false);
         }
     };
+
+    const handleClearPlan = () => {
+        setIsClearDialogOpen(true);
+    };
+
+    const handleClearPlanConfirm = async () => {
+        if (!shiftPlan?.id) return;
+        
+        setIsClearing(true);
+        try {
+            await shiftPlanDetailService.clearShiftPlan(shiftPlan.id);
+            setIsClearDialogOpen(false);
+            onGeneratePlan(); // Refresh der Daten
+        } catch (error) {
+            console.error('Fehler beim Leeren des Schichtplans:', error);
+        } finally {
+            setIsClearing(false);
+        }
+    };
+
+    const handleClearPlanCancel = () => {
+        setIsClearDialogOpen(false);
+    };
     
     const handleCellClick = ShiftPlanTableHandlers.createCellClickHandler(
         setSelectedEmployee,
@@ -188,6 +218,17 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 }
                 action={
                     <Box sx={{display: 'flex', gap: 1}}>
+                        <Tooltip title="Plan leeren">
+                            <IconButton
+                                color="error"
+                                onClick={handleClearPlan}
+                                disabled={!shiftPlan || isLoading}
+                                sx={headerActionStyles.refreshButton}
+                            >
+                                <ClearIcon/>
+                            </IconButton>
+                        </Tooltip>
+
                         <Tooltip title="AI Schichtplan generieren">
                             <IconButton
                                 color="secondary"
@@ -524,6 +565,23 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 previewData={previewData}
                 originalData={calculatedShiftPlan}
                 isSaving={isSavingPreview}
+            />
+
+            {/* Clear Plan Confirmation Dialog */}
+            <DeleteConfirmationDialog
+                open={isClearDialogOpen}
+                onClose={isClearing ? () => {} : handleClearPlanCancel}
+                onConfirm={handleClearPlanConfirm}
+                config={{
+                    title: 'Schichtplan leeren',
+                    entityName: 'alle Zuweisungen',
+                    confirmationMessage: `Möchten Sie wirklich alle Zuweisungen für ${format(selectedDate, 'MMMM yyyy', { locale: de })} löschen?`,
+                    warningMessage: '⚠️ Alle Mitarbeiterzuweisungen werden unwiderruflich gelöscht.',
+                    showDetailedView: true,
+                    icon: <ClearIcon color="error" />,
+                    maxWidth: 'sm',
+                    isLoading: isClearing
+                } as DeleteConfirmationConfig}
             />
         </Box>
     );

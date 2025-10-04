@@ -129,6 +129,16 @@ export class ShiftPlanDetailsController {
     return this.shiftPlanDetailsService.update(id, updateDto);
   }
 
+  @Delete('shift-plan/:shiftPlanId/clear')
+  @ApiOperation({ summary: 'Clear all assignments for a shift plan' })
+  @ApiParam({ name: 'shiftPlanId', description: 'Shift plan UUID' })
+  @ApiResponse({ status: 204, description: 'All shift plan assignments cleared successfully' })
+  @ApiResponse({ status: 404, description: 'Shift plan not found' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async clearShiftPlan(@Param('shiftPlanId', ParseUUIDPipe) shiftPlanId: string): Promise<void> {
+    return this.shiftPlanDetailsService.clearShiftPlan(shiftPlanId);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a shift plan detail' })
   @ApiParam({ name: 'id', description: 'Shift plan detail UUID' })

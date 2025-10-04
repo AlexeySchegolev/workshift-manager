@@ -216,6 +216,20 @@ export class ShiftPlanDetailsService {
     return this.findAll({ month, year });
   }
 
+  async clearShiftPlan(shiftPlanId: string): Promise<void> {
+    // Validate shift plan exists
+    const shiftPlan = await this.shiftPlanRepository.findOne({
+      where: { id: shiftPlanId }
+    });
+
+    if (!shiftPlan) {
+      throw new NotFoundException(`Shift plan with ID ${shiftPlanId} not found`);
+    }
+
+    // Delete all shift plan details for this shift plan
+    await this.shiftPlanDetailRepository.delete({ shiftPlanId });
+  }
+
   private mapToResponseDto(detail: ShiftPlanDetail): ShiftPlanDetailResponseDto {
     const dto = new ShiftPlanDetailResponseDto();
     

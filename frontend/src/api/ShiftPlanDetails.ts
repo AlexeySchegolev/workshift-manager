@@ -218,6 +218,22 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @summary Delete a shift plan detail
    * @request DELETE:/api/shift-plan-details/{id}
    */
+  shiftPlanDetailsControllerClearShiftPlan = (
+    shiftPlanId: string,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<void, void>({
+      path: `/api/shift-plan-details/shift-plan/${shiftPlanId}/clear`,
+      method: "DELETE",
+      ...params,
+    }); /**
+   * No description
+   *
+   * @tags shift-plan-details
+   * @name ShiftPlanDetailsControllerRemove
+   * @summary Delete a shift plan detail
+   * @request DELETE:/api/shift-plan-details/{id}
+   */
   shiftPlanDetailsControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/shift-plan-details/${id}`,

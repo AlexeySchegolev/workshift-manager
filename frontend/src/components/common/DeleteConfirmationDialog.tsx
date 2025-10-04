@@ -9,6 +9,7 @@ import {
   Typography,
   Box,
   Chip,
+  CircularProgress,
 } from '@mui/material';
 import { Warning as WarningIcon } from '@mui/icons-material';
 
@@ -37,6 +38,7 @@ export interface DeleteConfirmationConfig {
   fields?: DeleteDialogField[];
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   fullWidth?: boolean;
+  isLoading?: boolean;
 }
 
 interface DeleteConfirmationDialogProps {
@@ -64,6 +66,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
     fields = [],
     maxWidth = 'sm',
     fullWidth = true,
+    isLoading = false,
   } = config;
 
   const defaultConfirmationMessage = showDetailedView
@@ -178,13 +181,15 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
           color="error"
           variant="contained"
           autoFocus
+          disabled={isLoading}
+          startIcon={isLoading ? <CircularProgress size={16} color="inherit" /> : undefined}
           sx={{
             borderRadius: 2,
             textTransform: 'none',
             fontWeight: 600,
           }}
         >
-          Löschen
+          {isLoading ? 'Wird gelöscht...' : 'Löschen'}
         </Button>
       </DialogActions>
     </Dialog>

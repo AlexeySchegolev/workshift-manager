@@ -160,6 +160,13 @@ export class ShiftPlanDetailService extends BaseService {
       await this.deleteShiftPlanDetail(assignment.id);
     }
   }
+
+  /**
+   * Clear all assignments for a shift plan
+   */
+  async clearShiftPlan(shiftPlanId: string): Promise<void> {
+    await this.shiftPlanDetailsApi.shiftPlanDetailsControllerClearShiftPlan(shiftPlanId);
+  }
 }
 
 // Export singleton instance

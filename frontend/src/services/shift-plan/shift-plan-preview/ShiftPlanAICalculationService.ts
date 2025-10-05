@@ -1,5 +1,5 @@
 import { CalculatedShiftPlan, ShiftPlanDay } from '../ShiftPlanTypes';
-import { ShiftPlanOptimizer } from './ShiftPlanOptimizer';
+import { ShiftPlanOptimizer } from './ShiftPlanOptimizerLP';
 
 /**
  * AI-Berechnungsservice für Schichtplan-Generierung mit Simplex-Optimierung

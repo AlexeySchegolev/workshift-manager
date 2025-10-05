@@ -82,7 +82,6 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     // AI Preview Modal state
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState<ShiftPlanDay[] | null>(null);
-    const [lpModel, setLpModel] = useState<any>(null);
     const [isSavingPreview, setIsSavingPreview] = useState(false);
 
     // Clear plan dialog state
@@ -103,9 +102,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
 
     // Setup AI service callback
     useEffect(() => {
-        shiftPlanAICalculationService.setPreviewModalCallback((data: ShiftPlanDay[], model?: any) => {
+        shiftPlanAICalculationService.setPreviewModalCallback((data: ShiftPlanDay[]) => {
             setPreviewData(data);
-            setLpModel(model);
             setIsPreviewModalOpen(true);
         });
     }, []);
@@ -138,7 +136,6 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
         if (isSavingPreview) return; // Verhindere Schließen während Speichern
         setIsPreviewModalOpen(false);
         setPreviewData(null);
-        setLpModel(null);
     };
     
     const handlePreviewModalAccept = async () => {
@@ -568,7 +565,6 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                 previewData={previewData}
                 originalData={calculatedShiftPlan}
                 isSaving={isSavingPreview}
-                lpModel={lpModel}
             />
 
             {/* Clear Plan Confirmation Dialog */}

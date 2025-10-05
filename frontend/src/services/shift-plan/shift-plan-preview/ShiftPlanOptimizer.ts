@@ -370,7 +370,6 @@ export class ShiftPlanOptimizer {
     return days.map(day => {
       // Alle Mitarbeiter sind verfügbar (ignoriere bestehende Zuweisungen)
       const availableEmployees = [...day.employees];
-      let employeeIndex = 0;
       
       const updatedShiftOccupancy = day.shiftOccupancy.map(shiftOcc => {
         // Prüfe ob Schicht an diesem Wochentag definiert ist
@@ -407,12 +406,19 @@ export class ShiftPlanOptimizer {
           });
         } else {
           // Fallback: Einfache Zuweisung ohne Rollen-Spezifikation
-          for (let i = 0; i < shiftOcc.requiredCount && employeeIndex < availableEmployees.length; i++) {
-            if (!assignedEmployees.includes(availableEmployees[employeeIndex].employee.name) &&
-                !this.isEmployeeAbsentOnDate(availableEmployees[employeeIndex].employee.id, day.date)) {
-              assignedEmployees.push(availableEmployees[employeeIndex].employee.name);
+          let currentEmployeeIndex = 0;
+          for (let i = 0; i < shiftOcc.requiredCount && currentEmployeeIndex < availableEmployees.length; i++) {
+            // Finde nächsten verfügbaren Mitarbeiter
+            while (currentEmployeeIndex < availableEmployees.length &&
+                   (assignedEmployees.includes(availableEmployees[currentEmployeeIndex].employee.name) ||
+                    this.isEmployeeAbsentOnDate(availableEmployees[currentEmployeeIndex].employee.id, day.date))) {
+              currentEmployeeIndex++;
             }
-            employeeIndex++;
+            
+            if (currentEmployeeIndex < availableEmployees.length) {
+              assignedEmployees.push(availableEmployees[currentEmployeeIndex].employee.name);
+              currentEmployeeIndex++;
+            }
           }
         }
         

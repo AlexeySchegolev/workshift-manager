@@ -5,7 +5,7 @@ import { ShiftPlanOptimizer } from './ShiftPlanOptimizer';
  * AI-Berechnungsservice für Schichtplan-Generierung mit Simplex-Optimierung
  */
 export class ShiftPlanAICalculationService {
-  private previewModalCallback: ((previewData: ShiftPlanDay[], lpModel?: any) => void) | null = null;
+  private previewModalCallback: ((previewData: ShiftPlanDay[]) => void) | null = null;
   private optimizer: ShiftPlanOptimizer;
   
   constructor() {
@@ -15,7 +15,7 @@ export class ShiftPlanAICalculationService {
   /**
    * Setzt den Callback für die Modal-Anzeige
    */
-  setPreviewModalCallback(callback: (previewData: ShiftPlanDay[], lpModel?: any) => void) {
+  setPreviewModalCallback(callback: (previewData: ShiftPlanDay[]) => void) {
     this.previewModalCallback = callback;
   }
   
@@ -29,13 +29,10 @@ export class ShiftPlanAICalculationService {
       // Optimiere Schichtplan mit Simplex-Algorithmus
       const optimizedDays = await this.optimizer.optimizeShiftPlan(shiftPlanData);
       
-      // Hole LP Modell für Anzeige
-      const lpModel = this.optimizer.getLastModel();
-      
-      // Zeige Modal mit optimierten Preview-Daten und LP Modell
+      // Zeige Modal mit optimierten Preview-Daten
       if (this.previewModalCallback) {
-        console.log('📋 Zeige Preview-Modal mit optimierten Daten und LP Modell');
-        this.previewModalCallback(optimizedDays, lpModel);
+        console.log('📋 Zeige Preview-Modal mit optimierten Daten');
+        this.previewModalCallback(optimizedDays);
       } else {
         console.warn('⚠️ Kein Preview-Modal-Callback gesetzt');
       }
@@ -46,7 +43,7 @@ export class ShiftPlanAICalculationService {
       // Fallback: Verwende ursprüngliche Daten
       if (this.previewModalCallback) {
         console.log('📋 Zeige Preview-Modal mit ursprünglichen Daten (Fallback)');
-        this.previewModalCallback(shiftPlanData.days, null);
+        this.previewModalCallback(shiftPlanData.days);
       } else {
         console.warn('⚠️ Kein Preview-Modal-Callback gesetzt (Fallback)');
       }

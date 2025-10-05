@@ -1,6 +1,6 @@
 import * as solver from 'javascript-lp-solver';
-import { CalculatedShiftPlan, ShiftPlanDay } from '../ShiftPlanTypes';
 import { ShiftPlanAbsenceManager } from '../ShiftPlanAbsenceManager';
+import { CalculatedShiftPlan, ShiftPlanDay } from '../ShiftPlanTypes';
 
 /**
  * Optimierungsmodell für Schichtplanung mit Simplex-Algorithmus
@@ -33,6 +33,7 @@ export class ShiftPlanOptimizer {
     
     // Löse mit Simplex
     const solution = solver.Solve(model);
+    console.log(solution)
     
     // Konvertiere Lösung zurück zu ShiftPlanDay[]
     return this.applySolutionToShiftPlan(solution, days, employees, availableShifts, shiftWeekdays);

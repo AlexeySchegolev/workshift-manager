@@ -223,15 +223,15 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             label="Arbeitsstunden pro Monat"
             variant="outlined"
             type="number"
-            value={formData.monthlyWorkHours || ''}
-            onChange={(e) => onUpdateField('monthlyWorkHours', e.target.value ? parseFloat(e.target.value) : undefined)}
+            value={formData.monthlyWorkHours ? Math.round(formData.monthlyWorkHours) : ''}
+            onChange={(e) => onUpdateField('monthlyWorkHours', e.target.value ? parseInt(e.target.value, 10) : undefined)}
             error={!!errors.monthlyWorkHours}
             helperText={errors.monthlyWorkHours}
             fullWidth
             inputProps={{
               min: 0,
               max: 744,
-              step: 0.5
+              step: 1
             }}
             sx={{
               gridColumn: { md: 'span 2' },

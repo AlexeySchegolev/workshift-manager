@@ -55,7 +55,7 @@ export const useEmployeeForm = () => {
       primaryRole: employee.primaryRole ?? null,
       roles: employee.roles ?? [],
       location: employee.location ?? null,
-      monthlyWorkHours: employee.monthlyWorkHours,
+      monthlyWorkHours: employee.monthlyWorkHours ? Math.round(employee.monthlyWorkHours) : undefined,
     });
     setEditingId(employee.id);
     setErrors({});

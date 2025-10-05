@@ -192,7 +192,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                                     </TableCell>
                                     <TableCell>
                                         <Typography variant="body2">
-                                            {employee.monthlyWorkHours ? `${employee.monthlyWorkHours} h` : 'Nicht angegeben'}
+                                            {employee.monthlyWorkHours ? `${Math.round(employee.monthlyWorkHours)} h` : 'Nicht angegeben'}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>

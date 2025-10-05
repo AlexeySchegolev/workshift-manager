@@ -22,12 +22,12 @@ export class ShiftPlanAICalculationService {
   /**
    * Generiert optimalen Schichtplan mit Simplex-Algorithmus
    */
-  generateShiftPlan(shiftPlanData: CalculatedShiftPlan): void {
+  async generateShiftPlan(shiftPlanData: CalculatedShiftPlan): Promise<void> {
     console.log('🚀 Starte Simplex-Optimierung für Schichtplan...');
     
     try {
       // Optimiere Schichtplan mit Simplex-Algorithmus
-      const optimizedDays = this.optimizer.optimizeShiftPlan(shiftPlanData);
+      const optimizedDays = await this.optimizer.optimizeShiftPlan(shiftPlanData);
       
       // Hole LP Modell für Anzeige
       const lpModel = this.optimizer.getLastModel();

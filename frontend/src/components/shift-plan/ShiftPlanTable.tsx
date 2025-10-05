@@ -130,8 +130,8 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     // Event handlers
     const handleExportToExcel = () => ShiftPlanTableExport.exportToExcel(shiftPlan, selectedDate);
     
-    const handleAIGeneration = () => {
-        shiftPlanAICalculationService.generateShiftPlan(calculatedShiftPlan);
+    const handleAIGeneration = async () => {
+        await shiftPlanAICalculationService.generateShiftPlan(calculatedShiftPlan);
     };
     
     const handlePreviewModalClose = () => {

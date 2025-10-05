@@ -1,17 +1,27 @@
 import * as solver from 'javascript-lp-solver';
 import { CalculatedShiftPlan, ShiftPlanDay } from '../ShiftPlanTypes';
+import { ShiftPlanAbsenceManager } from '../ShiftPlanAbsenceManager';
 
 /**
  * Optimierungsmodell für Schichtplanung mit Simplex-Algorithmus
  */
 export class ShiftPlanOptimizer {
   private lastModel: any = null;
+  private absenceManager: ShiftPlanAbsenceManager;
+  private absences: any[] = [];
   
+  constructor() {
+    this.absenceManager = new ShiftPlanAbsenceManager();
+  }
+
   /**
    * Optimiert Schichtplan für einen Monat
    */
-  optimizeShiftPlan(shiftPlanData: CalculatedShiftPlan): ShiftPlanDay[] {
-    const { employees, days, availableShifts, shiftWeekdays } = shiftPlanData;
+  async optimizeShiftPlan(shiftPlanData: CalculatedShiftPlan): Promise<ShiftPlanDay[]> {
+    const { employees, days, availableShifts, shiftWeekdays, year, month } = shiftPlanData;
+    
+    // Lade Abwesenheiten für den Monat
+    this.absences = await this.absenceManager.loadAbsencesForMonth(year, month);
     
     // Erstelle Optimierungsmodell
     const model = this.createOptimizationModel(employees, days, availableShifts, shiftWeekdays);
@@ -161,7 +171,7 @@ export class ShiftPlanOptimizer {
       });
     });
     
-    // Constraint 4: Rollen-Kompatibilität
+    // Constraint 4: Rollen-Kompatibilität und Abwesenheiten
     employees.forEach(employee => {
       days.forEach(day => {
         // Nur Schichten berücksichtigen, die an diesem Tag verfügbar sind
@@ -172,6 +182,14 @@ export class ShiftPlanOptimizer {
           // Prüfe ob Mitarbeiter für diese Schicht qualifiziert ist
           if (!this.isEmployeeQualifiedForShift(employee, shift)) {
             // Setze Variable auf 0 wenn nicht qualifiziert
+            if (model.variables[varName]) {
+              model.variables[varName].max = 0;
+            }
+          }
+          
+          // Prüfe ob Mitarbeiter an diesem Tag abwesend ist
+          if (this.isEmployeeAbsentOnDate(employee.id, day.date)) {
+            // Setze Variable auf 0 wenn abwesend
             if (model.variables[varName]) {
               model.variables[varName].max = 0;
             }
@@ -376,6 +394,7 @@ export class ShiftPlanOptimizer {
           shift.shiftRoles.forEach((shiftRole: any) => {
             const roleEmployees = availableEmployees.filter(emp =>
               !assignedEmployees.includes(emp.employee.name) &&
+              !this.isEmployeeAbsentOnDate(emp.employee.id, day.date) && // Prüfe Abwesenheit
               (emp.employee.role === shiftRole.role?.name ||
                (emp.employee.roleId && shiftRole.roleId === emp.employee.roleId))
             );
@@ -388,7 +407,8 @@ export class ShiftPlanOptimizer {
         } else {
           // Fallback: Einfache Zuweisung ohne Rollen-Spezifikation
           for (let i = 0; i < shiftOcc.requiredCount && employeeIndex < availableEmployees.length; i++) {
-            if (!assignedEmployees.includes(availableEmployees[employeeIndex].employee.name)) {
+            if (!assignedEmployees.includes(availableEmployees[employeeIndex].employee.name) &&
+                !this.isEmployeeAbsentOnDate(availableEmployees[employeeIndex].employee.id, day.date)) {
               assignedEmployees.push(availableEmployees[employeeIndex].employee.name);
             }
             employeeIndex++;
@@ -437,6 +457,23 @@ export class ShiftPlanOptimizer {
         employees: updatedEmployees,
         shiftOccupancy: updatedShiftOccupancy
       };
+    });
+  }
+
+  /**
+   * Prüft ob ein Mitarbeiter an einem bestimmten Datum abwesend ist
+   */
+  private isEmployeeAbsentOnDate(employeeId: string, date: Date): boolean {
+    return this.absences.some(absence => {
+      if (absence.employeeId !== employeeId) {
+        return false;
+      }
+      
+      return this.absenceManager.isDateInAbsenceRange(
+        date,
+        absence.startDate,
+        absence.endDate
+      );
     });
   }
 }

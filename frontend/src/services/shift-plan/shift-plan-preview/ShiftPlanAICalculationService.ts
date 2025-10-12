@@ -23,8 +23,7 @@ export class ShiftPlanAICalculationService {
    * Generiert optimalen Schichtplan mit Simplex-Algorithmus
    */
   async generateShiftPlan(shiftPlanData: CalculatedShiftPlan): Promise<void> {
-    console.log('🚀 Starte Simplex-Optimierung für Schichtplan...');
-    
+
     try {
       // Optimiere Schichtplan mit Simplex-Algorithmus
       const optimizedDays = await this.optimizer.optimizeShiftPlan(shiftPlanData);

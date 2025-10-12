@@ -2,7 +2,7 @@ import { ShiftPlanAbsenceManager } from '../ShiftPlanAbsenceManager';
 import { CalculatedShiftPlan, EmployeeDayStatus, ReducedEmployee, RoleOccupancy, ShiftOccupancy, ShiftPlanDay } from '../ShiftPlanTypes';
 
 /**
- * Zufallsbasierter Schichtplan-Optimizer
+ * fairer Schichtplan-Optimizer
  * Implementiert einen Algorithmus zur schrittweisen Schichtbelegung
  */
 export class ShiftPlanOptimizer2 {
@@ -16,11 +16,11 @@ export class ShiftPlanOptimizer2 {
   }
 
   /**
-   * Optimiert Schichtplan mit zufallsbasiertem Algorithmus
+   * Optimiert Schichtplan mit fairem Algorithmus
    */
   async optimizeShiftPlan(shiftPlanData: CalculatedShiftPlan): Promise<ShiftPlanDay[]> {
     const { year, month, days, employees } = shiftPlanData;
-    console.log('🔧 ShiftPlanOptimizer2: Starte zufallsbasierte Optimierung');
+    console.log('🔧 ShiftPlanOptimizer2: Starte faire Optimierung');
     
     // Lade Abwesenheiten für den Monat
     this.absences = await this.absenceManager.loadAbsencesForMonth(year, month);
@@ -30,7 +30,7 @@ export class ShiftPlanOptimizer2 {
     const optimizedDays = this.deepCopyDays(days);
     
     // Führe den Optimierungsalgorithmus aus
-    const result = this.runRandomOptimizationAlgorithm(optimizedDays);
+    const result = this.runOptimizationAlgorithm(optimizedDays);
     
     // Erstelle Modell-Informationen
     this.lastModel = {
@@ -47,9 +47,9 @@ export class ShiftPlanOptimizer2 {
   }
 
   /**
-   * Hauptalgorithmus für zufallsbasierte Schichtbelegung
+   * Hauptalgorithmus für faire Schichtbelegung
    */
-  private runRandomOptimizationAlgorithm(days: ShiftPlanDay[]): { success: boolean, message: string, assignmentsCount: number, iterations: number } {
+  private runOptimizationAlgorithm(days: ShiftPlanDay[]): { success: boolean, message: string, assignmentsCount: number, iterations: number } {
     let assignmentsCount = 0;
     let iterations = 0;
     const maxIterations = 3000; // Schutz vor Endlosschleife

@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiNotFoundResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth, ApiNotFoundResponse } from '@nestjs/swagger';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -7,6 +7,7 @@ import { RoleResponseDto } from './dto/role-response.dto';
 import {Role} from "@/database/entities/role.entity";
 
 @ApiTags('roles')
+@ApiBearerAuth()
 @Controller('api/roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}

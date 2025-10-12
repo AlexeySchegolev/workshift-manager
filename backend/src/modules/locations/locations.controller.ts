@@ -18,6 +18,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { LocationsService } from './locations.service';
@@ -26,6 +27,7 @@ import { UpdateLocationDto } from './dto/update-location.dto';
 import { LocationResponseDto } from './dto/location-response.dto';
 
 @ApiTags('locations')
+@ApiBearerAuth()
 @Controller('api/locations')
 export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}

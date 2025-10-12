@@ -11,13 +11,14 @@ import {
     Post,
     Query,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateEmployeeAbsenceDto } from './dto/create-employee-absence.dto';
 import { EmployeeAbsenceResponseDto } from './dto/employee-absence-response.dto';
 import { UpdateEmployeeAbsenceDto } from './dto/update-employee-absence.dto';
 import { EmployeeAbsencesService } from './employee-absences.service';
 
 @ApiTags('employee-absences')
+@ApiBearerAuth()
 @Controller('api/employee-absences')
 export class EmployeeAbsencesController {
     constructor(private readonly employeeAbsencesService: EmployeeAbsencesService) {}

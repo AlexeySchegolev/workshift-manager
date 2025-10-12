@@ -11,13 +11,14 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateShiftPlanDetailDto } from './dto/create-shift-plan-detail.dto';
 import { ShiftPlanDetailResponseDto } from './dto/shift-plan-detail-response.dto';
 import { UpdateShiftPlanDetailDto } from './dto/update-shift-plan-detail.dto';
 import { ShiftPlanDetailsService } from './shift-plan-details.service';
 
 @ApiTags('shift-plan-details')
+@ApiBearerAuth()
 @Controller('api/shift-plan-details')
 export class ShiftPlanDetailsController {
   constructor(private readonly shiftPlanDetailsService: ShiftPlanDetailsService) {}

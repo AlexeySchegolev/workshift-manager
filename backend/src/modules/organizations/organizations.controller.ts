@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiNotFoundResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth, ApiNotFoundResponse } from '@nestjs/swagger';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
@@ -7,6 +7,7 @@ import { OrganizationResponseDto } from './dto/organization-response.dto';
 import {Organization} from "@/database/entities/organization.entity";
 
 @ApiTags('organizations')
+@ApiBearerAuth()
 @Controller('api/organizations')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}

@@ -18,6 +18,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { ShiftRolesService } from './shift-roles.service';
@@ -27,6 +28,7 @@ import { ShiftRoleResponseDto } from './dto/shift-role-response.dto';
 import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('shift-roles')
+@ApiBearerAuth()
 @Controller('api/shift-roles')
 export class ShiftRolesController {
   constructor(private readonly shiftRolesService: ShiftRolesService) {}

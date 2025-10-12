@@ -1,20 +1,22 @@
 import {
-    Body,
-    Controller,
-    Post,
+  Body,
+  Controller,
+  Post,
 } from '@nestjs/common';
 import {
-    ApiBadRequestResponse,
-    ApiNotFoundResponse,
-    ApiOperation,
-    ApiResponse,
-    ApiTags,
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import {CalculateShiftPlanDto} from './dto/calculate-shift-plan.dto';
-import {ShiftPlanCalculationResponseDto} from './dto/shift-plan-calculation-response.dto';
-import {ShiftPlanCalculationService} from './services/shift-plan-calculation.service';
+import { CalculateShiftPlanDto } from './dto/calculate-shift-plan.dto';
+import { ShiftPlanCalculationResponseDto } from './dto/shift-plan-calculation-response.dto';
+import { ShiftPlanCalculationService } from './services/shift-plan-calculation.service';
 
 @ApiTags('shift-plan-calculation')
+@ApiBearerAuth()
 @Controller('api/shift-plan-calculation')
 export class ShiftPlanCalculationController {
   constructor(
@@ -24,7 +26,7 @@ export class ShiftPlanCalculationController {
   @Post('calculate')
   @ApiOperation({
     summary: 'Calculate shift plan',
-    description: 'Calculates an optimized shift plan for the given organization, location, year and month using ShiftPlanOptimizer2'
+    description: 'Calculates an optimized shift plan for the given organization, location, year and month using ShiftPlanOptimizer'
   })
   @ApiResponse({
     status: 200,

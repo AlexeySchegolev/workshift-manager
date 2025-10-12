@@ -32,6 +32,7 @@ async function bootstrap() {
     .setTitle('Workshift Manager API')
     .setDescription('API for workshift management system')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   
   const options = {};

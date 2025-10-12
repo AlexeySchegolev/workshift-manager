@@ -19,6 +19,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { EmployeesService } from './employees.service';
@@ -27,6 +28,7 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeResponseDto } from './dto/employee-response.dto';
 
 @ApiTags('employees')
+@ApiBearerAuth()
 @Controller('api/employees')
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}

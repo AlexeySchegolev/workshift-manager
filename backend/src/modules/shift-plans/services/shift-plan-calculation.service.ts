@@ -9,7 +9,7 @@ import { ShiftWeekdaysService } from '../../shift-weekdays/shift-weekdays.servic
 import { ShiftsService } from '../../shifts/shifts.service';
 import { CalculateShiftPlanDto } from '../dto/calculate-shift-plan.dto';
 import { ShiftPlanCalculationResponseDto } from '../dto/shift-plan-calculation-response.dto';
-import { CalculatedShiftPlan, EmployeeDayStatus, ReducedEmployee, RoleOccupancy, ShiftOccupancy, ShiftPlanDay, ShiftPlanOptimizer2Service } from './shift-plan-optimizer.service';
+import { CalculatedShiftPlan, EmployeeDayStatus, ReducedEmployee, RoleOccupancy, ShiftOccupancy, ShiftPlanDay, ShiftPlanOptimizerService } from './shift-plan-optimizer.service';
 
 @Injectable()
 export class ShiftPlanCalculationService {
@@ -26,7 +26,7 @@ export class ShiftPlanCalculationService {
     private readonly employeeAbsenceRepository: Repository<EmployeeAbsence>,
     private readonly shiftsService: ShiftsService,
     private readonly shiftWeekdaysService: ShiftWeekdaysService,
-    private readonly optimizer: ShiftPlanOptimizer2Service,
+    private readonly optimizer: ShiftPlanOptimizerService,
   ) {}
 
   async calculateShiftPlan(dto: CalculateShiftPlanDto): Promise<ShiftPlanCalculationResponseDto> {

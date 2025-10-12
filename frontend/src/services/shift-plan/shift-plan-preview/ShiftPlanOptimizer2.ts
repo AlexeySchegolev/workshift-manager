@@ -5,7 +5,7 @@ import { CalculatedShiftPlan, EmployeeDayStatus, ReducedEmployee, RoleOccupancy,
  * fairer Schichtplan-Optimizer
  * Implementiert einen Algorithmus zur schrittweisen Schichtbelegung
  */
-export class ShiftPlanOptimizer2 {
+export class ShiftPlanOptimizerFrontend {
   private lastModel: any = null;
   private absenceManager: ShiftPlanAbsenceManager;
   private absences: any[] = [];
@@ -20,7 +20,7 @@ export class ShiftPlanOptimizer2 {
    */
   async optimizeShiftPlan(shiftPlanData: CalculatedShiftPlan): Promise<ShiftPlanDay[]> {
     const { year, month, days, employees } = shiftPlanData;
-    console.log('🔧 ShiftPlanOptimizer2: Starte faire Optimierung');
+    console.log('🔧 ShiftPlanOptimizer: Starte faire Optimierung');
     
     // Lade Abwesenheiten für den Monat
     this.absences = await this.absenceManager.loadAbsencesForMonth(year, month);
@@ -34,14 +34,14 @@ export class ShiftPlanOptimizer2 {
     
     // Erstelle Modell-Informationen
     this.lastModel = {
-      optimizer: 'ShiftPlanOptimizer2',
+      optimizer: 'ShiftPlanOptimizer',
       status: result.success ? 'completed' : 'partial',
       message: result.message,
       assignmentsCount: result.assignmentsCount,
       iterations: result.iterations
     };
     
-    console.log('🔧 ShiftPlanOptimizer2:', result.message);
+    console.log('🔧 ShiftPlanOptimizer:', result.message);
     
     return optimizedDays;
   }

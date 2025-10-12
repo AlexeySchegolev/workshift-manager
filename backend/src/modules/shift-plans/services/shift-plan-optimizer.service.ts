@@ -1,7 +1,7 @@
+import { EmployeeAbsence } from '@/database/entities/employee-absence.entity';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
-import { EmployeeAbsence } from '@/database/entities/employee-absence.entity';
+import { Between, Repository } from 'typeorm';
 
 /**
  * Reduziertes Mitarbeiter-Interface für Schichtplan-Berechnungen
@@ -88,8 +88,8 @@ export interface CalculatedShiftPlan {
  * Implementiert einen Algorithmus zur schrittweisen Schichtbelegung
  */
 @Injectable()
-export class ShiftPlanOptimizer2Service {
-  private readonly logger = new Logger(ShiftPlanOptimizer2Service.name);
+export class ShiftPlanOptimizerService {
+  private readonly logger = new Logger(ShiftPlanOptimizerService.name);
   private lastModel: any = null;
   private absences: any[] = [];
   private employees: (ReducedEmployee & { calculatedMonthlyHours: number })[] = [];
@@ -104,7 +104,7 @@ export class ShiftPlanOptimizer2Service {
    */
   async optimizeShiftPlan(shiftPlanData: CalculatedShiftPlan): Promise<ShiftPlanDay[]> {
     const { year, month, days, employees } = shiftPlanData;
-    this.logger.log('🔧 ShiftPlanOptimizer2: Starte faire Optimierung');
+    this.logger.log('🔧 ShiftPlanOptimizer: Starte faire Optimierung');
     
     // Lade Abwesenheiten für den Monat (TODO: Implementierung)
     this.absences = await this.loadAbsencesForMonth(year, month);
@@ -118,14 +118,14 @@ export class ShiftPlanOptimizer2Service {
     
     // Erstelle Modell-Informationen
     this.lastModel = {
-      optimizer: 'ShiftPlanOptimizer2',
+      optimizer: 'ShiftPlanOptimizer',
       status: result.success ? 'completed' : 'partial',
       message: result.message,
       assignmentsCount: result.assignmentsCount,
       iterations: result.iterations
     };
     
-    this.logger.log('🔧 ShiftPlanOptimizer2: ' + result.message);
+    this.logger.log('🔧 ShiftPlanOptimizer: ' + result.message);
     
     return optimizedDays;
   }

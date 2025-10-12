@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiNotFoundResponse,
     ApiOperation,
     ApiParam,
@@ -28,6 +29,7 @@ import {ExcelExportService} from './services/excel-export.service';
 import {ExcelExportRequestDto, ExcelExportResultDto} from './dto/excel-export.dto';
 
 @ApiTags('shift-plans')
+@ApiBearerAuth()
 @Controller('api/shift-plans')
 export class ShiftPlansController {
   constructor(

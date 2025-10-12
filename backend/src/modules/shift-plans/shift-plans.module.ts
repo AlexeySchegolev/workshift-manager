@@ -9,7 +9,7 @@ import { ShiftWeekdaysModule } from '../shift-weekdays/shift-weekdays.module';
 import { ShiftsModule } from '../shifts/shifts.module';
 import { ExcelExportService } from './services/excel-export.service';
 import { ShiftPlanCalculationService } from './services/shift-plan-calculation.service';
-import { ShiftPlanOptimizer2Service } from './services/shift-plan-optimizer.service';
+import { ShiftPlanOptimizerService } from './services/shift-plan-optimizer.service';
 import { ShiftPlanningUtilityService } from './services/shift-planning-utility.service';
 import { ShiftPlanCalculationController } from './shift-plan-calculation.controller';
 import { ShiftPlansController } from './shift-plans.controller';
@@ -36,14 +36,14 @@ import { ShiftPlansService } from './shift-plans.service';
     ShiftPlanningUtilityService,
     ExcelExportService,
     ShiftPlanCalculationService,
-    ShiftPlanOptimizer2Service,
+    ShiftPlanOptimizerService,
   ],
   exports: [
     ShiftPlansService,
     ShiftPlanningUtilityService,
     ExcelExportService,
     ShiftPlanCalculationService,
-    ShiftPlanOptimizer2Service,
+    ShiftPlanOptimizerService,
     TypeOrmModule,
   ],
 })

@@ -1,5 +1,5 @@
 import { ShiftPlanAbsenceManager } from '../ShiftPlanAbsenceManager';
-import { CalculatedShiftPlan, ShiftPlanDay, RoleOccupancy, ShiftOccupancy, EmployeeDayStatus, ReducedEmployee } from '../ShiftPlanTypes';
+import { CalculatedShiftPlan, EmployeeDayStatus, ReducedEmployee, RoleOccupancy, ShiftOccupancy, ShiftPlanDay } from '../ShiftPlanTypes';
 
 /**
  * Zufallsbasierter Schichtplan-Optimizer
@@ -52,49 +52,65 @@ export class ShiftPlanOptimizer2 {
   private runRandomOptimizationAlgorithm(days: ShiftPlanDay[]): { success: boolean, message: string, assignmentsCount: number, iterations: number } {
     let assignmentsCount = 0;
     let iterations = 0;
-    const maxIterations = 1000; // Schutz vor Endlosschleife
+    const maxIterations = 3000; // Schutz vor Endlosschleife
+    const blockedDays = new Set<string>(); // Tage ohne verfügbare Mitarbeiter
     
     while (iterations < maxIterations) {
       iterations++;
       
-      // 1) Finde zufällig einen Tag mit unvollständig belegten Schichten
-      const dayWithIncompleteShifts = this.findRandomDayWithIncompleteShifts(days);
-      if (!dayWithIncompleteShifts) {
-        return {
-          success: true,
-          message: `Alle Schichten vollständig belegt nach ${assignmentsCount} Zuweisungen in ${iterations} Iterationen`,
-          assignmentsCount,
-          iterations
-        };
+      // 1) Finde alle Tage mit unvollständig belegten Schichten (außer blockierte)
+      const availableDays = this.findAllDaysWithIncompleteShifts(days, blockedDays);
+      if (availableDays.length === 0) {
+        // Prüfe ob alle Schichten vollständig belegt sind
+        const allComplete = this.areAllShiftsComplete(days);
+        if (allComplete) {
+          return {
+            success: true,
+            message: `Alle Schichten vollständig belegt nach ${assignmentsCount} Zuweisungen in ${iterations} Iterationen`,
+            assignmentsCount,
+            iterations
+          };
+        } else {
+          // Es gibt noch unvollständige Schichten, aber keine verfügbaren Tage mehr
+          this.logBlockedDaysWarning(blockedDays, days);
+          return {
+            success: false,
+            message: `Keine weiteren Zuweisungen möglich. ${assignmentsCount} Zuweisungen durchgeführt. Blockierte Tage: ${blockedDays.size}`,
+            assignmentsCount,
+            iterations
+          };
+        }
       }
       
+      // Wähle zufälligen Tag aus verfügbaren Tagen
+      const randomIndex = Math.floor(Math.random() * availableDays.length);
+      const selectedDay = availableDays[randomIndex];
+      
       // 2) Finde die am wenigsten belegte Rolle in unvollständigen Schichten
-      const targetRole = this.findLeastOccupiedRole(dayWithIncompleteShifts);
+      const targetRole = this.findLeastOccupiedRole(selectedDay);
       if (!targetRole) {
-        return {
-          success: false,
-          message: `Keine verfügbaren Rollen mehr für Tag ${dayWithIncompleteShifts.dayKey} nach ${assignmentsCount} Zuweisungen`,
-          assignmentsCount,
-          iterations
-        };
+        blockedDays.add(selectedDay.dayKey);
+        console.warn(`⚠️ Tag ${selectedDay.dayKey} blockiert: Keine verfügbaren Rollen mehr`);
+        continue;
       }
       
       // 3) Finde verfügbaren Mitarbeiter mit passender Rolle und geringster Belastung
-      const availableEmployee = this.findBestAvailableEmployee(dayWithIncompleteShifts, targetRole);
+      const availableEmployee = this.findBestAvailableEmployee(selectedDay, targetRole);
       if (!availableEmployee) {
-        return {
-          success: false,
-          message: `Keine verfügbaren Mitarbeiter für Rolle ${targetRole.role.roleName} am ${dayWithIncompleteShifts.dayKey} nach ${assignmentsCount} Zuweisungen`,
-          assignmentsCount,
-          iterations
-        };
+        // Prüfe ob für diesen Tag überhaupt noch Mitarbeiter verfügbar sind
+        const hasAnyAvailableEmployees = this.hasAvailableEmployeesForDay(selectedDay);
+        if (!hasAnyAvailableEmployees) {
+          blockedDays.add(selectedDay.dayKey);
+          console.warn(`⚠️ Tag ${selectedDay.dayKey} blockiert: Keine verfügbaren Mitarbeiter mehr`);
+        }
+        continue;
       }
       
       // 4) Führe Zuweisung durch
-      const assigned = this.assignEmployeeToShift(dayWithIncompleteShifts, targetRole, availableEmployee);
+      const assigned = this.assignEmployeeToShift(selectedDay, targetRole, availableEmployee);
       if (assigned) {
         assignmentsCount++;
-        console.log(`✅ Zuweisung ${assignmentsCount}: ${availableEmployee.employee.name} → ${targetRole.role.roleName} am ${dayWithIncompleteShifts.dayKey}`);
+        console.log(`✅ Zuweisung ${assignmentsCount}: ${availableEmployee.employee.name} → ${targetRole.role.roleName} am ${selectedDay.dayKey}`);
       }
     }
     
@@ -107,22 +123,59 @@ export class ShiftPlanOptimizer2 {
   }
 
   /**
-   * Findet zufällig einen Tag mit unvollständig belegten Schichten
+   * Findet alle Tage mit unvollständig belegten Schichten (außer blockierte)
    */
-  private findRandomDayWithIncompleteShifts(days: ShiftPlanDay[]): ShiftPlanDay | null {
-    const daysWithIncompleteShifts = days.filter(day =>
+  private findAllDaysWithIncompleteShifts(days: ShiftPlanDay[], blockedDays: Set<string>): ShiftPlanDay[] {
+    return days.filter(day =>
+      !blockedDays.has(day.dayKey) &&
       day.shiftOccupancy.some(shift =>
         shift.roleOccupancy.some(role => role.assigned < role.required)
       )
     );
-    
-    if (daysWithIncompleteShifts.length === 0) {
-      return null;
+  }
+
+  /**
+   * Prüft ob alle Schichten vollständig belegt sind
+   */
+  private areAllShiftsComplete(days: ShiftPlanDay[]): boolean {
+    return days.every(day =>
+      day.shiftOccupancy.every(shift =>
+        shift.roleOccupancy.every(role => role.assigned >= role.required)
+      )
+    );
+  }
+
+  /**
+   * Prüft ob für einen Tag noch Mitarbeiter verfügbar sind
+   */
+  private hasAvailableEmployeesForDay(day: ShiftPlanDay): boolean {
+    return day.employees.some(empStatus =>
+      empStatus.isEmpty && empStatus.absenceType === ''
+    );
+  }
+
+  /**
+   * Loggt Warnung für blockierte Tage
+   */
+  private logBlockedDaysWarning(blockedDays: Set<string>, days: ShiftPlanDay[]): void {
+    if (blockedDays.size > 0) {
+      console.warn(`⚠️ WARNUNG: ${blockedDays.size} Tage konnten nicht vollständig belegt werden:`);
+      blockedDays.forEach(dayKey => {
+        const day = days.find(d => d.dayKey === dayKey);
+        if (day) {
+          const incompleteShifts = day.shiftOccupancy.filter(shift =>
+            shift.roleOccupancy.some(role => role.assigned < role.required)
+          );
+          console.warn(`  - ${dayKey}: ${incompleteShifts.length} unvollständige Schichten`);
+          incompleteShifts.forEach(shift => {
+            const incompleteRoles = shift.roleOccupancy.filter(role => role.assigned < role.required);
+            incompleteRoles.forEach(role => {
+              console.warn(`    * ${shift.shiftName}: ${role.roleName} (${role.assigned}/${role.required})`);
+            });
+          });
+        }
+      });
     }
-    
-    // Wähle zufälligen Tag
-    const randomIndex = Math.floor(Math.random() * daysWithIncompleteShifts.length);
-    return daysWithIncompleteShifts[randomIndex];
   }
 
   /**

@@ -1,15 +1,15 @@
 import { CalculatedShiftPlan, ShiftPlanDay } from '../ShiftPlanTypes';
-import { ShiftPlanOptimizer } from './ShiftPlanOptimizerLP';
+import { ShiftPlanOptimizer2 } from './ShiftPlanOptimizer2';
 
 /**
  * AI-Berechnungsservice für Schichtplan-Generierung mit Simplex-Optimierung
  */
 export class ShiftPlanAICalculationService {
   private previewModalCallback: ((previewData: ShiftPlanDay[]) => void) | null = null;
-  private optimizer: ShiftPlanOptimizer;
+  private optimizer: ShiftPlanOptimizer2;
   
   constructor() {
-    this.optimizer = new ShiftPlanOptimizer();
+    this.optimizer = new ShiftPlanOptimizer2();
   }
   
   /**

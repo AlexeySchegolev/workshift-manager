@@ -283,4 +283,5 @@ export class ShiftPlansController {
       metadata: result.metadata
     };
   }
+
 }

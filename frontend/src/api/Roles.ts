@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -81,12 +89,14 @@ export class Roles<SecurityDataType = unknown> {
    * @name RolesControllerCreate
    * @summary Create new role
    * @request POST:/api/roles
+   * @secure
    */
   rolesControllerCreate = (data: CreateRoleDto, params: RequestParams = {}) =>
     this.http.request<RoleResponseDto, any>({
       path: `/api/roles`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -97,6 +107,7 @@ export class Roles<SecurityDataType = unknown> {
    * @name RolesControllerFindAll
    * @summary Get all roles
    * @request GET:/api/roles
+   * @secure
    */
   rolesControllerFindAll = (
     query?: {
@@ -109,6 +120,7 @@ export class Roles<SecurityDataType = unknown> {
       path: `/api/roles`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -118,6 +130,7 @@ export class Roles<SecurityDataType = unknown> {
    * @name RolesControllerFindByOrganization
    * @summary Get roles by organization
    * @request GET:/api/roles/organization/{organizationId}
+   * @secure
    */
   rolesControllerFindByOrganization = (
     organizationId: string,
@@ -131,6 +144,7 @@ export class Roles<SecurityDataType = unknown> {
       path: `/api/roles/organization/${organizationId}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -140,6 +154,7 @@ export class Roles<SecurityDataType = unknown> {
    * @name RolesControllerFindOne
    * @summary Get role by ID
    * @request GET:/api/roles/{id}
+   * @secure
    */
   rolesControllerFindOne = (
     id: string,
@@ -153,6 +168,7 @@ export class Roles<SecurityDataType = unknown> {
       path: `/api/roles/${id}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -162,11 +178,13 @@ export class Roles<SecurityDataType = unknown> {
    * @name RolesControllerRemove
    * @summary Soft delete role
    * @request DELETE:/api/roles/{id}
+   * @secure
    */
   rolesControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/roles/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -175,6 +193,7 @@ export class Roles<SecurityDataType = unknown> {
    * @name RolesControllerUpdate
    * @summary Update role
    * @request PATCH:/api/roles/{id}
+   * @secure
    */
   rolesControllerUpdate = (
     id: string,
@@ -185,6 +204,7 @@ export class Roles<SecurityDataType = unknown> {
       path: `/api/roles/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

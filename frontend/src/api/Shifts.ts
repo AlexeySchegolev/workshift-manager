@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -81,12 +89,14 @@ export class Shifts<SecurityDataType = unknown> {
    * @name ShiftsControllerCreate
    * @summary Create new shift
    * @request POST:/api/shifts
+   * @secure
    */
   shiftsControllerCreate = (data: CreateShiftDto, params: RequestParams = {}) =>
     this.http.request<ShiftResponseDto, void>({
       path: `/api/shifts`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -97,6 +107,7 @@ export class Shifts<SecurityDataType = unknown> {
    * @name ShiftsControllerFindAll
    * @summary Get all shifts
    * @request GET:/api/shifts
+   * @secure
    */
   shiftsControllerFindAll = (
     query?: {
@@ -126,6 +137,7 @@ export class Shifts<SecurityDataType = unknown> {
       path: `/api/shifts`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -135,6 +147,7 @@ export class Shifts<SecurityDataType = unknown> {
    * @name ShiftsControllerFindByLocationId
    * @summary Get shifts by location ID
    * @request GET:/api/shifts/location/{locationId}
+   * @secure
    */
   shiftsControllerFindByLocationId = (
     locationId: string,
@@ -150,6 +163,7 @@ export class Shifts<SecurityDataType = unknown> {
       path: `/api/shifts/location/${locationId}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -159,6 +173,7 @@ export class Shifts<SecurityDataType = unknown> {
    * @name ShiftsControllerFindOne
    * @summary Get shift by ID
    * @request GET:/api/shifts/{id}
+   * @secure
    */
   shiftsControllerFindOne = (
     id: string,
@@ -172,6 +187,7 @@ export class Shifts<SecurityDataType = unknown> {
       path: `/api/shifts/${id}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -181,11 +197,13 @@ export class Shifts<SecurityDataType = unknown> {
    * @name ShiftsControllerRemove
    * @summary Delete shift (soft delete)
    * @request DELETE:/api/shifts/{id}
+   * @secure
    */
   shiftsControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/shifts/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * @description Updates an existing shift with validation
@@ -194,6 +212,7 @@ export class Shifts<SecurityDataType = unknown> {
    * @name ShiftsControllerUpdate
    * @summary Update shift
    * @request PATCH:/api/shifts/{id}
+   * @secure
    */
   shiftsControllerUpdate = (
     id: string,
@@ -204,6 +223,7 @@ export class Shifts<SecurityDataType = unknown> {
       path: `/api/shifts/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -78,9 +86,28 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * No description
    *
    * @tags shift-plan-details
+   * @name ShiftPlanDetailsControllerClearShiftPlan
+   * @summary Clear all assignments for a shift plan
+   * @request DELETE:/api/shift-plan-details/shift-plan/{shiftPlanId}/clear
+   * @secure
+   */
+  shiftPlanDetailsControllerClearShiftPlan = (
+    shiftPlanId: string,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<void, void>({
+      path: `/api/shift-plan-details/shift-plan/${shiftPlanId}/clear`,
+      method: "DELETE",
+      secure: true,
+      ...params,
+    }); /**
+   * No description
+   *
+   * @tags shift-plan-details
    * @name ShiftPlanDetailsControllerCreate
    * @summary Create a new shift plan detail
    * @request POST:/api/shift-plan-details
+   * @secure
    */
   shiftPlanDetailsControllerCreate = (
     data: CreateShiftPlanDetailDto,
@@ -90,6 +117,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
       path: `/api/shift-plan-details`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -100,6 +128,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @name ShiftPlanDetailsControllerFindAll
    * @summary Get all shift plan details with optional filters
    * @request GET:/api/shift-plan-details
+   * @secure
    */
   shiftPlanDetailsControllerFindAll = (
     query?: {
@@ -122,6 +151,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
       path: `/api/shift-plan-details`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -131,6 +161,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @name ShiftPlanDetailsControllerFindByEmployee
    * @summary Get all shift assignments for a specific employee
    * @request GET:/api/shift-plan-details/employee/{employeeId}
+   * @secure
    */
   shiftPlanDetailsControllerFindByEmployee = (
     employeeId: string,
@@ -139,6 +170,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
     this.http.request<ShiftPlanDetailResponseDto[], void>({
       path: `/api/shift-plan-details/employee/${employeeId}`,
       method: "GET",
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -148,6 +180,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @name ShiftPlanDetailsControllerFindByMonth
    * @summary Get all shift plan details for a specific month and year
    * @request GET:/api/shift-plan-details/month/{year}/{month}
+   * @secure
    */
   shiftPlanDetailsControllerFindByMonth = (
     year: string,
@@ -157,6 +190,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
     this.http.request<ShiftPlanDetailResponseDto[], any>({
       path: `/api/shift-plan-details/month/${year}/${month}`,
       method: "GET",
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -166,6 +200,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @name ShiftPlanDetailsControllerFindByShift
    * @summary Get all assignments for a specific shift
    * @request GET:/api/shift-plan-details/shift/{shiftId}
+   * @secure
    */
   shiftPlanDetailsControllerFindByShift = (
     shiftId: string,
@@ -174,6 +209,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
     this.http.request<ShiftPlanDetailResponseDto[], void>({
       path: `/api/shift-plan-details/shift/${shiftId}`,
       method: "GET",
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -183,6 +219,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @name ShiftPlanDetailsControllerFindByShiftPlan
    * @summary Get all details for a specific shift plan
    * @request GET:/api/shift-plan-details/shift-plan/{shiftPlanId}
+   * @secure
    */
   shiftPlanDetailsControllerFindByShiftPlan = (
     shiftPlanId: string,
@@ -191,6 +228,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
     this.http.request<ShiftPlanDetailResponseDto[], void>({
       path: `/api/shift-plan-details/shift-plan/${shiftPlanId}`,
       method: "GET",
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -200,6 +238,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @name ShiftPlanDetailsControllerFindOne
    * @summary Get a specific shift plan detail by ID
    * @request GET:/api/shift-plan-details/{id}
+   * @secure
    */
   shiftPlanDetailsControllerFindOne = (
     id: string,
@@ -208,6 +247,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
     this.http.request<ShiftPlanDetailResponseDto, void>({
       path: `/api/shift-plan-details/${id}`,
       method: "GET",
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -217,27 +257,13 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @name ShiftPlanDetailsControllerRemove
    * @summary Delete a shift plan detail
    * @request DELETE:/api/shift-plan-details/{id}
-   */
-  shiftPlanDetailsControllerClearShiftPlan = (
-    shiftPlanId: string,
-    params: RequestParams = {}
-  ) =>
-    this.http.request<void, void>({
-      path: `/api/shift-plan-details/shift-plan/${shiftPlanId}/clear`,
-      method: "DELETE",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags shift-plan-details
-   * @name ShiftPlanDetailsControllerRemove
-   * @summary Delete a shift plan detail
-   * @request DELETE:/api/shift-plan-details/{id}
+   * @secure
    */
   shiftPlanDetailsControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/shift-plan-details/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -246,6 +272,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
    * @name ShiftPlanDetailsControllerUpdate
    * @summary Update a shift plan detail
    * @request PATCH:/api/shift-plan-details/{id}
+   * @secure
    */
   shiftPlanDetailsControllerUpdate = (
     id: string,
@@ -256,6 +283,7 @@ export class ShiftPlanDetails<SecurityDataType = unknown> {
       path: `/api/shift-plan-details/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

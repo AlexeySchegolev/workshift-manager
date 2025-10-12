@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -81,6 +89,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
    * @name EmployeeAbsencesControllerCreate
    * @summary Create a new employee absence
    * @request POST:/api/employee-absences
+   * @secure
    */
   employeeAbsencesControllerCreate = (
     data: CreateEmployeeAbsenceDto,
@@ -90,6 +99,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
       path: `/api/employee-absences`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -100,6 +110,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
    * @name EmployeeAbsencesControllerFindAll
    * @summary Get all employee absences with optional filters
    * @request GET:/api/employee-absences
+   * @secure
    */
   employeeAbsencesControllerFindAll = (
     query?: {
@@ -120,6 +131,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
       path: `/api/employee-absences`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -129,6 +141,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
    * @name EmployeeAbsencesControllerFindByEmployee
    * @summary Get all absences for a specific employee
    * @request GET:/api/employee-absences/employee/{employeeId}
+   * @secure
    */
   employeeAbsencesControllerFindByEmployee = (
     employeeId: string,
@@ -137,6 +150,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
     this.http.request<EmployeeAbsenceResponseDto[], void>({
       path: `/api/employee-absences/employee/${employeeId}`,
       method: "GET",
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -146,6 +160,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
    * @name EmployeeAbsencesControllerFindByMonth
    * @summary Get all absences for a specific month and year
    * @request GET:/api/employee-absences/month/{year}/{month}
+   * @secure
    */
   employeeAbsencesControllerFindByMonth = (
     year: string,
@@ -155,6 +170,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
     this.http.request<EmployeeAbsenceResponseDto[], any>({
       path: `/api/employee-absences/month/${year}/${month}`,
       method: "GET",
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -164,6 +180,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
    * @name EmployeeAbsencesControllerFindOne
    * @summary Get a specific employee absence by ID
    * @request GET:/api/employee-absences/{id}
+   * @secure
    */
   employeeAbsencesControllerFindOne = (
     id: string,
@@ -172,6 +189,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
     this.http.request<EmployeeAbsenceResponseDto, void>({
       path: `/api/employee-absences/${id}`,
       method: "GET",
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -181,11 +199,13 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
    * @name EmployeeAbsencesControllerRemove
    * @summary Delete an employee absence
    * @request DELETE:/api/employee-absences/{id}
+   * @secure
    */
   employeeAbsencesControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/employee-absences/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -194,6 +214,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
    * @name EmployeeAbsencesControllerUpdate
    * @summary Update an employee absence
    * @request PATCH:/api/employee-absences/{id}
+   * @secure
    */
   employeeAbsencesControllerUpdate = (
     id: string,
@@ -204,6 +225,7 @@ export class EmployeeAbsences<SecurityDataType = unknown> {
       path: `/api/employee-absences/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

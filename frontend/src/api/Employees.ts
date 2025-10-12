@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -81,6 +89,7 @@ export class Employees<SecurityDataType = unknown> {
    * @name EmployeesControllerCreate
    * @summary Create a new employee
    * @request POST:/api/employees
+   * @secure
    */
   employeesControllerCreate = (
     data: CreateEmployeeDto,
@@ -90,6 +99,7 @@ export class Employees<SecurityDataType = unknown> {
       path: `/api/employees`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -100,6 +110,7 @@ export class Employees<SecurityDataType = unknown> {
    * @name EmployeesControllerFindAll
    * @summary Get all employees
    * @request GET:/api/employees
+   * @secure
    */
   employeesControllerFindAll = (
     query?: {
@@ -112,6 +123,7 @@ export class Employees<SecurityDataType = unknown> {
       path: `/api/employees`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -121,6 +133,7 @@ export class Employees<SecurityDataType = unknown> {
    * @name EmployeesControllerFindByLocation
    * @summary Get employees by location ID
    * @request GET:/api/employees/location/{locationId}
+   * @secure
    */
   employeesControllerFindByLocation = (
     locationId: string,
@@ -134,6 +147,7 @@ export class Employees<SecurityDataType = unknown> {
       path: `/api/employees/location/${locationId}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -143,6 +157,7 @@ export class Employees<SecurityDataType = unknown> {
    * @name EmployeesControllerFindOne
    * @summary Get employee by ID
    * @request GET:/api/employees/{id}
+   * @secure
    */
   employeesControllerFindOne = (
     id: string,
@@ -156,6 +171,7 @@ export class Employees<SecurityDataType = unknown> {
       path: `/api/employees/${id}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -165,11 +181,13 @@ export class Employees<SecurityDataType = unknown> {
    * @name EmployeesControllerRemove
    * @summary Delete employee
    * @request DELETE:/api/employees/{id}
+   * @secure
    */
   employeesControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/employees/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * @description Updates an existing employee with the provided information
@@ -178,6 +196,7 @@ export class Employees<SecurityDataType = unknown> {
    * @name EmployeesControllerUpdate
    * @summary Update employee
    * @request PATCH:/api/employees/{id}
+   * @secure
    */
   employeesControllerUpdate = (
     id: string,
@@ -188,6 +207,7 @@ export class Employees<SecurityDataType = unknown> {
       path: `/api/employees/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

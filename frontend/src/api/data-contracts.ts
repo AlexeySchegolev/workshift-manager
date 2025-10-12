@@ -88,6 +88,33 @@ export interface AuthUserDto {
   role: "super_admin" | "organization_admin" | "employee";
 }
 
+export interface CalculateShiftPlanDto {
+  /**
+   * Location ID
+   * @example "123e4567-e89b-12d3-a456-426614174001"
+   */
+  locationId: string;
+  /**
+   * Month for shift plan calculation (1-12)
+   * @min 1
+   * @max 12
+   * @example 12
+   */
+  month: number;
+  /**
+   * Organization ID
+   * @example "123e4567-e89b-12d3-a456-426614174000"
+   */
+  organizationId: string;
+  /**
+   * Year for shift plan calculation
+   * @min 2020
+   * @max 2030
+   * @example 2024
+   */
+  year: number;
+}
+
 export interface CreateEmployeeAbsenceDto {
   /**
    * Type of absence
@@ -659,6 +686,22 @@ export interface EmployeeAbsenceResponseDto {
   updatedBy?: string;
 }
 
+export interface EmployeeDayStatusDto {
+  /** Absence reason */
+  absenceReason: string;
+  /** Absence type */
+  absenceType: string;
+  /** Assigned shift short name */
+  assignedShift: string;
+  employee: ReducedEmployeeDto;
+  /** Is empty (no shift, no absence) */
+  isEmpty: boolean;
+  /** Shift ID */
+  shiftId: string;
+  /** Full shift name */
+  shiftName: string;
+}
+
 export interface EmployeeResponseDto {
   /**
    * Address
@@ -1044,6 +1087,19 @@ export interface OperatingHoursDto {
   wednesday?: TimeSlotDto[];
 }
 
+export interface OptimizationModelDto {
+  /** Assignments count */
+  assignmentsCount: number;
+  /** Iterations */
+  iterations: number;
+  /** Message */
+  message: string;
+  /** Optimizer name */
+  optimizer: string;
+  /** Status */
+  status: string;
+}
+
 export interface OrganizationResponseDto {
   /**
    * Created at
@@ -1110,6 +1166,23 @@ export interface OrganizationResponseDto {
   updatedAt?: string;
 }
 
+export interface ReducedEmployeeDto {
+  /** Calculated monthly hours */
+  calculatedMonthlyHours: number;
+  /** Employee ID */
+  id: string;
+  /** Location name */
+  location: string;
+  /** Monthly work hours */
+  monthlyWorkHours?: number;
+  /** Employee name */
+  name: string;
+  /** Employee role */
+  role: string;
+  /** Role ID */
+  roleId?: string;
+}
+
 export interface RegisterDto {
   /**
    * User email address
@@ -1159,6 +1232,25 @@ export interface RegisterResponseDto {
 }
 
 export type Role = object;
+
+export interface RoleOccupancyDto {
+  /** Assigned count */
+  assigned: number;
+  /** Assigned employee names */
+  assignedEmployees: string[];
+  /** Maximum allowed */
+  maxAllowed?: number;
+  /** Minimum required */
+  minRequired?: number;
+  /** Priority (1-5) */
+  priority?: number;
+  /** Required count */
+  required: number;
+  /** Role ID */
+  roleId?: string;
+  /** Role name */
+  roleName: string;
+}
 
 export interface RoleResponseDto {
   /**
@@ -1222,6 +1314,66 @@ export interface RoleResponseDto {
 }
 
 export type Shift = object;
+
+export interface ShiftOccupancyDto {
+  /** Assigned count */
+  assignedCount: number;
+  /** Assigned employee names */
+  assignedEmployees: string[];
+  /** End time */
+  endTime: string;
+  /** Is correctly staffed */
+  isCorrectlyStaffed: boolean;
+  /** Is under staffed */
+  isUnderStaffed: boolean;
+  /** Required count */
+  requiredCount: number;
+  /** Role occupancy */
+  roleOccupancy: RoleOccupancyDto[];
+  /** Shift ID */
+  shiftId: string;
+  /** Shift name */
+  shiftName: string;
+  /** Short name */
+  shortName: string;
+  /** Start time */
+  startTime: string;
+}
+
+export interface ShiftPlanCalculationResponseDto {
+  /** Calculated shift plan days */
+  days: ShiftPlanDayDto[];
+  /** Location ID */
+  locationId: string;
+  /** Optimization model info */
+  model: OptimizationModelDto;
+  /** Month */
+  month: number;
+  /** Organization ID */
+  organizationId: string;
+  /** Year */
+  year: number;
+}
+
+export interface ShiftPlanDayDto {
+  /**
+   * Date
+   * @format date-time
+   */
+  date: string;
+  /** Day key (DD.MM.YYYY) */
+  dayKey: string;
+  /** Day number */
+  dayNumber: number;
+  /** Employee day status */
+  employees: EmployeeDayStatusDto[];
+  /** Is today */
+  isToday: boolean;
+  /** Is weekend */
+  isWeekend: boolean;
+  /** Shift occupancy */
+  shiftOccupancy: ShiftOccupancyDto[];
+}
 
 export interface ShiftPlanDetailResponseDto {
   /**

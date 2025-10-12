@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -81,6 +89,7 @@ export class Organizations<SecurityDataType = unknown> {
    * @name OrganizationsControllerCreate
    * @summary Create a new organization
    * @request POST:/api/organizations
+   * @secure
    */
   organizationsControllerCreate = (
     data: CreateOrganizationDto,
@@ -90,6 +99,7 @@ export class Organizations<SecurityDataType = unknown> {
       path: `/api/organizations`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -100,6 +110,7 @@ export class Organizations<SecurityDataType = unknown> {
    * @name OrganizationsControllerFindAll
    * @summary Get all organizations
    * @request GET:/api/organizations
+   * @secure
    */
   organizationsControllerFindAll = (
     query?: {
@@ -112,6 +123,7 @@ export class Organizations<SecurityDataType = unknown> {
       path: `/api/organizations`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -121,6 +133,7 @@ export class Organizations<SecurityDataType = unknown> {
    * @name OrganizationsControllerFindOne
    * @summary Get organization by ID
    * @request GET:/api/organizations/{id}
+   * @secure
    */
   organizationsControllerFindOne = (
     id: string,
@@ -133,6 +146,7 @@ export class Organizations<SecurityDataType = unknown> {
       path: `/api/organizations/${id}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -142,11 +156,13 @@ export class Organizations<SecurityDataType = unknown> {
    * @name OrganizationsControllerRemove
    * @summary Delete organization by ID
    * @request DELETE:/api/organizations/{id}
+   * @secure
    */
   organizationsControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, any>({
       path: `/api/organizations/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -155,6 +171,7 @@ export class Organizations<SecurityDataType = unknown> {
    * @name OrganizationsControllerUpdate
    * @summary Update organization by ID
    * @request PATCH:/api/organizations/{id}
+   * @secure
    */
   organizationsControllerUpdate = (
     id: string,
@@ -165,6 +182,7 @@ export class Organizations<SecurityDataType = unknown> {
       path: `/api/organizations/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

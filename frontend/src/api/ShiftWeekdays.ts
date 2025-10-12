@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -80,6 +88,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
    * @tags shift-weekdays
    * @name ShiftWeekdaysControllerCreate
    * @request POST:/api/shift-weekdays
+   * @secure
    */
   shiftWeekdaysControllerCreate = (
     data: CreateShiftWeekdayDto,
@@ -89,6 +98,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
       path: `/api/shift-weekdays`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       ...params,
     }); /**
@@ -97,6 +107,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
    * @tags shift-weekdays
    * @name ShiftWeekdaysControllerFindAll
    * @request GET:/api/shift-weekdays
+   * @secure
    */
   shiftWeekdaysControllerFindAll = (
     query: {
@@ -109,6 +120,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
       path: `/api/shift-weekdays`,
       method: "GET",
       query: query,
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -116,11 +128,13 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
    * @tags shift-weekdays
    * @name ShiftWeekdaysControllerFindOne
    * @request GET:/api/shift-weekdays/{id}
+   * @secure
    */
   shiftWeekdaysControllerFindOne = (id: string, params: RequestParams = {}) =>
     this.http.request<void, any>({
       path: `/api/shift-weekdays/${id}`,
       method: "GET",
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -128,11 +142,13 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
    * @tags shift-weekdays
    * @name ShiftWeekdaysControllerRemove
    * @request DELETE:/api/shift-weekdays/{id}
+   * @secure
    */
   shiftWeekdaysControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, any>({
       path: `/api/shift-weekdays/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -140,6 +156,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
    * @tags shift-weekdays
    * @name ShiftWeekdaysControllerRemoveByShiftId
    * @request DELETE:/api/shift-weekdays/shift/{shiftId}
+   * @secure
    */
   shiftWeekdaysControllerRemoveByShiftId = (
     shiftId: string,
@@ -148,6 +165,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
     this.http.request<void, any>({
       path: `/api/shift-weekdays/shift/${shiftId}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -155,6 +173,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
    * @tags shift-weekdays
    * @name ShiftWeekdaysControllerUpdate
    * @request PATCH:/api/shift-weekdays/{id}
+   * @secure
    */
   shiftWeekdaysControllerUpdate = (
     id: string,
@@ -165,6 +184,7 @@ export class ShiftWeekdays<SecurityDataType = unknown> {
       path: `/api/shift-weekdays/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       ...params,
     });

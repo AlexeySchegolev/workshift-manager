@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -81,12 +89,14 @@ export class Users<SecurityDataType = unknown> {
    * @name UsersControllerCreate
    * @summary Create a new user
    * @request POST:/api/users
+   * @secure
    */
   usersControllerCreate = (data: CreateUserDto, params: RequestParams = {}) =>
     this.http.request<UserResponseDto, void>({
       path: `/api/users`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -97,6 +107,7 @@ export class Users<SecurityDataType = unknown> {
    * @name UsersControllerFindAll
    * @summary Get all users
    * @request GET:/api/users
+   * @secure
    */
   usersControllerFindAll = (
     query?: {
@@ -109,6 +120,7 @@ export class Users<SecurityDataType = unknown> {
       path: `/api/users`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -118,6 +130,7 @@ export class Users<SecurityDataType = unknown> {
    * @name UsersControllerFindOne
    * @summary Get user by ID
    * @request GET:/api/users/{id}
+   * @secure
    */
   usersControllerFindOne = (
     id: string,
@@ -130,6 +143,7 @@ export class Users<SecurityDataType = unknown> {
       path: `/api/users/${id}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -139,11 +153,13 @@ export class Users<SecurityDataType = unknown> {
    * @name UsersControllerRemove
    * @summary Delete user by ID
    * @request DELETE:/api/users/{id}
+   * @secure
    */
   usersControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, any>({
       path: `/api/users/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * No description
@@ -152,6 +168,7 @@ export class Users<SecurityDataType = unknown> {
    * @name UsersControllerUpdate
    * @summary Update user by ID
    * @request PATCH:/api/users/{id}
+   * @secure
    */
   usersControllerUpdate = (
     id: string,
@@ -162,6 +179,7 @@ export class Users<SecurityDataType = unknown> {
       path: `/api/users/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

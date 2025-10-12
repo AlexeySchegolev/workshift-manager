@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -81,6 +89,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
    * @name ShiftRolesControllerCreate
    * @summary Create new shift role
    * @request POST:/api/shift-roles
+   * @secure
    */
   shiftRolesControllerCreate = (
     data: CreateShiftRoleDto,
@@ -90,6 +99,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
       path: `/api/shift-roles`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -100,6 +110,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
    * @name ShiftRolesControllerFindAll
    * @summary Get all shift roles
    * @request GET:/api/shift-roles
+   * @secure
    */
   shiftRolesControllerFindAll = (
     query?: {
@@ -122,6 +133,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
       path: `/api/shift-roles`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -131,6 +143,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
    * @name ShiftRolesControllerFindByRoleId
    * @summary Get shift roles by role ID
    * @request GET:/api/shift-roles/role/{roleId}
+   * @secure
    */
   shiftRolesControllerFindByRoleId = (
     roleId: string,
@@ -144,6 +157,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
       path: `/api/shift-roles/role/${roleId}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -153,6 +167,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
    * @name ShiftRolesControllerFindByShiftId
    * @summary Get shift roles by shift ID
    * @request GET:/api/shift-roles/shift/{shiftId}
+   * @secure
    */
   shiftRolesControllerFindByShiftId = (
     shiftId: string,
@@ -166,6 +181,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
       path: `/api/shift-roles/shift/${shiftId}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -175,6 +191,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
    * @name ShiftRolesControllerFindOne
    * @summary Get shift role by ID
    * @request GET:/api/shift-roles/{id}
+   * @secure
    */
   shiftRolesControllerFindOne = (
     id: string,
@@ -188,6 +205,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
       path: `/api/shift-roles/${id}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -197,11 +215,13 @@ export class ShiftRoles<SecurityDataType = unknown> {
    * @name ShiftRolesControllerRemove
    * @summary Delete shift role (soft delete)
    * @request DELETE:/api/shift-roles/{id}
+   * @secure
    */
   shiftRolesControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/shift-roles/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * @description Updates an existing shift role
@@ -210,6 +230,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
    * @name ShiftRolesControllerUpdate
    * @summary Update shift role
    * @request PATCH:/api/shift-roles/{id}
+   * @secure
    */
   shiftRolesControllerUpdate = (
     id: string,
@@ -220,6 +241,7 @@ export class ShiftRoles<SecurityDataType = unknown> {
       path: `/api/shift-roles/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

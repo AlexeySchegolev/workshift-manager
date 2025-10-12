@@ -75,7 +75,7 @@ import {
   UserResponseDto,
 } from "./data-contracts";
 
-export class Authentication<SecurityDataType = unknown> {
+export class ShiftPlanCalculation<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -83,65 +83,23 @@ export class Authentication<SecurityDataType = unknown> {
   }
 
   /**
-   * No description
+   * @description Calculates an optimized shift plan for the given organization, location, year and month using ShiftPlanOptimizer2
    *
-   * @tags authentication
-   * @name AuthControllerGetProfile
-   * @summary Get current user profile
-   * @request GET:/auth/profile
+   * @tags shift-plan-calculation
+   * @name ShiftPlanCalculationControllerCalculateShiftPlan
+   * @summary Calculate shift plan
+   * @request POST:/api/shift-plan-calculation/calculate
    * @secure
    */
-  authControllerGetProfile = (params: RequestParams = {}) =>
-    this.http.request<AuthUserDto, void>({
-      path: `/auth/profile`,
-      method: "GET",
-      secure: true,
-      format: "json",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags authentication
-   * @name AuthControllerLogin
-   * @summary User login
-   * @request POST:/auth/login
-   */
-  authControllerLogin = (data: LoginDto, params: RequestParams = {}) =>
-    this.http.request<AuthResponseDto, void>({
-      path: `/auth/login`,
+  shiftPlanCalculationControllerCalculateShiftPlan = (
+    data: CalculateShiftPlanDto,
+    params: RequestParams = {}
+  ) =>
+    this.http.request<ShiftPlanCalculationResponseDto, void>({
+      path: `/api/shift-plan-calculation/calculate`,
       method: "POST",
       body: data,
-      type: ContentType.Json,
-      format: "json",
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags authentication
-   * @name AuthControllerLogout
-   * @summary User logout
-   * @request POST:/auth/logout
-   * @secure
-   */
-  authControllerLogout = (params: RequestParams = {}) =>
-    this.http.request<void, any>({
-      path: `/auth/logout`,
-      method: "POST",
       secure: true,
-      ...params,
-    }); /**
-   * No description
-   *
-   * @tags authentication
-   * @name AuthControllerRegister
-   * @summary User registration
-   * @request POST:/auth/register
-   */
-  authControllerRegister = (data: RegisterDto, params: RequestParams = {}) =>
-    this.http.request<RegisterResponseDto, void>({
-      path: `/auth/register`,
-      method: "POST",
-      body: data,
       type: ContentType.Json,
       format: "json",
       ...params,

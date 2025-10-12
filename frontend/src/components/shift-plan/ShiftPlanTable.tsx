@@ -83,6 +83,7 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [previewData, setPreviewData] = useState<ShiftPlanDay[] | null>(null);
     const [isSavingPreview, setIsSavingPreview] = useState(false);
+    const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
 
     // Clear plan dialog state
     const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
@@ -129,7 +130,14 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
     const handleExportToExcel = () => ShiftPlanTableExport.exportToExcel(shiftPlan, selectedDate);
     
     const handleAIGeneration = async () => {
-        await shiftPlanAICalculationService.generateShiftPlan(calculatedShiftPlan);
+        setIsGeneratingPlan(true);
+        try {
+            await shiftPlanAICalculationService.generateShiftPlan(calculatedShiftPlan);
+        } catch (error) {
+            console.error('Fehler bei der Schichtplan-Generierung:', error);
+        } finally {
+            setIsGeneratingPlan(false);
+        }
     };
     
     const handlePreviewModalClose = () => {
@@ -233,10 +241,14 @@ const ShiftPlanTable: React.FC<ShiftPlanTableProps> = ({
                             <IconButton
                                 color="secondary"
                                 onClick={handleAIGeneration}
-                                disabled={isLoading}
+                                disabled={isLoading || isGeneratingPlan}
                                 sx={headerActionStyles.refreshButton}
                             >
-                                <AutoAwesomeIcon/>
+                                {isGeneratingPlan ? (
+                                    <CircularProgress size={20} color="secondary" />
+                                ) : (
+                                    <AutoAwesomeIcon/>
+                                )}
                             </IconButton>
                         </Tooltip>
 

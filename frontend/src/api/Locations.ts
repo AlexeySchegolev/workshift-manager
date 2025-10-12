@@ -21,6 +21,7 @@ import {
   AdditionalColumnDto,
   AuthResponseDto,
   AuthUserDto,
+  CalculateShiftPlanDto,
   CreateEmployeeAbsenceDto,
   CreateEmployeeDto,
   CreateLocationDto,
@@ -34,6 +35,7 @@ import {
   CreateUserDto,
   DateRangeDto,
   EmployeeAbsenceResponseDto,
+  EmployeeDayStatusDto,
   EmployeeResponseDto,
   ExcelExportMetadataDto,
   ExcelExportOptionsDto,
@@ -42,12 +44,18 @@ import {
   LocationResponseDto,
   LoginDto,
   OperatingHoursDto,
+  OptimizationModelDto,
   OrganizationResponseDto,
+  ReducedEmployeeDto,
   RegisterDto,
   RegisterResponseDto,
   Role,
+  RoleOccupancyDto,
   RoleResponseDto,
   Shift,
+  ShiftOccupancyDto,
+  ShiftPlanCalculationResponseDto,
+  ShiftPlanDayDto,
   ShiftPlanDetailResponseDto,
   ShiftPlanResponseDto,
   ShiftResponseDto,
@@ -81,6 +89,7 @@ export class Locations<SecurityDataType = unknown> {
    * @name LocationsControllerCreate
    * @summary Create a new location
    * @request POST:/api/locations
+   * @secure
    */
   locationsControllerCreate = (
     data: CreateLocationDto,
@@ -90,6 +99,7 @@ export class Locations<SecurityDataType = unknown> {
       path: `/api/locations`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,
@@ -100,6 +110,7 @@ export class Locations<SecurityDataType = unknown> {
    * @name LocationsControllerFindAll
    * @summary Get all locations
    * @request GET:/api/locations
+   * @secure
    */
   locationsControllerFindAll = (
     query?: {
@@ -114,6 +125,7 @@ export class Locations<SecurityDataType = unknown> {
       path: `/api/locations`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -123,6 +135,7 @@ export class Locations<SecurityDataType = unknown> {
    * @name LocationsControllerFindOne
    * @summary Get location by ID
    * @request GET:/api/locations/{id}
+   * @secure
    */
   locationsControllerFindOne = (
     id: string,
@@ -136,6 +149,7 @@ export class Locations<SecurityDataType = unknown> {
       path: `/api/locations/${id}`,
       method: "GET",
       query: query,
+      secure: true,
       format: "json",
       ...params,
     }); /**
@@ -145,11 +159,13 @@ export class Locations<SecurityDataType = unknown> {
    * @name LocationsControllerRemove
    * @summary Delete location
    * @request DELETE:/api/locations/{id}
+   * @secure
    */
   locationsControllerRemove = (id: string, params: RequestParams = {}) =>
     this.http.request<void, void>({
       path: `/api/locations/${id}`,
       method: "DELETE",
+      secure: true,
       ...params,
     }); /**
    * @description Updates an existing location with the provided information
@@ -158,6 +174,7 @@ export class Locations<SecurityDataType = unknown> {
    * @name LocationsControllerUpdate
    * @summary Update location
    * @request PATCH:/api/locations/{id}
+   * @secure
    */
   locationsControllerUpdate = (
     id: string,
@@ -168,6 +185,7 @@ export class Locations<SecurityDataType = unknown> {
       path: `/api/locations/${id}`,
       method: "PATCH",
       body: data,
+      secure: true,
       type: ContentType.Json,
       format: "json",
       ...params,

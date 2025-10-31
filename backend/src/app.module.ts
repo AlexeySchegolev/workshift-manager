@@ -1,7 +1,8 @@
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, InjectDataSource } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
+import { DataSource } from 'typeorm';
 import { getDatabaseConfig } from './config/database.config';
 import { SeederService } from './database/seeds/seeder.service';
 import { EmployeesModule } from './modules/employees/employees.module';
@@ -55,11 +56,22 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
   ],
 })
 export class AppModule implements OnApplicationBootstrap {
-  constructor(private readonly seederService: SeederService) {}
+  constructor(
+    private readonly seederService: SeederService,
+    @InjectDataSource() private readonly dataSource: DataSource,
+  ) {}
 
   async onApplicationBootstrap() {
     // Run seeding in development or if explicitly enabled
     if (process.env.NODE_ENV === 'development' || process.env.ENABLE_SEEDING === 'true') {
+      // Wait for database synchronization to complete
+      if (!this.dataSource.isInitialized) {
+        await this.dataSource.initialize();
+      }
+      
+      // Small delay to ensure all tables are created
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       await this.seederService.seed();
     }
   }

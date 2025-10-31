@@ -22,12 +22,13 @@ services:
         value: 7d
 
   # --- Frontend (Static Site) ---
-  - type: static
+  - type: web
     name: workshift-frontend
+    env: static
     plan: free
     rootDir: frontend
     buildCommand: npm ci && npm run build
-    publishDir: dist
+    staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
         fromService:

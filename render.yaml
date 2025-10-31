@@ -5,7 +5,7 @@ services:
     env: node
     plan: free
     rootDir: backend
-    buildCommand: npm ci && npm run build
+    buildCommand: npm install && npm run build
     startCommand: npm run start:prod
     # healthCheckPath: /api/health   # nur lassen, wenn Route existiert
     envVars:
@@ -26,7 +26,7 @@ services:
     name: workshift-frontend
     env: static
     rootDir: frontend
-    buildCommand: npm ci && npm run build
+    buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL

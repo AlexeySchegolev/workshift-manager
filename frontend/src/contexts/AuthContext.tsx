@@ -104,11 +104,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
         setOrganization(userOrganization);
       }
-      
+    } finally {
       setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      throw error;
     }
   };
 
@@ -135,7 +132,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     organization,
     userId: user?.id || null,
     organizationId: organization?.id || null,
-    isAuthenticated: !!user && authService.isAuthenticated(),
+    isAuthenticated: !!user,
     isLoading,
     login,
     register,

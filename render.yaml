@@ -40,6 +40,11 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: workshift-frontend
+          property: host
 
   # --- Frontend (Static Site) ---
   - type: web
@@ -54,6 +59,7 @@ services:
           type: web
           name: workshift-backend
           property: host
+        sync: false
     routes:
       - type: rewrite
         source: /*

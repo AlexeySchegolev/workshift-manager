@@ -16,6 +16,26 @@ services:
         fromDatabase:
           name: workshift-postgres
           property: connectionString
+      - key: DB_HOST
+        fromDatabase:
+          name: workshift-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: workshift-postgres
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: workshift-postgres
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: workshift-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: workshift-postgres
+          property: password
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN

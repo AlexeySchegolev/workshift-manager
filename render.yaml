@@ -55,12 +55,11 @@ services:
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: workshift-backend
-          property: host
-        sync: false
+        value: /workshift-backend
     routes:
+      - type: rewrite
+        source: /workshift-backend/*
+        destination: https://workshift-backend.onrender.com/:splat
       - type: rewrite
         source: /*
         destination: /index.html

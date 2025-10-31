@@ -41,10 +41,7 @@ services:
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: FRONTEND_URL
-        fromService:
-          type: web
-          name: workshift-frontend
-          property: host
+        value: https://workshift-frontend.onrender.com
 
   # --- Frontend (Static Site) ---
   - type: web
@@ -55,11 +52,8 @@ services:
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
-        value: /workshift-backend
+        value: https://workshift-backend.onrender.com
     routes:
-      - type: rewrite
-        source: /workshift-backend/*
-        destination: https://workshift-backend.onrender.com/:splat
       - type: rewrite
         source: /*
         destination: /index.html

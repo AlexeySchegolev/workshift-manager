@@ -41,13 +41,15 @@ export const LoginForm: React.FC = () => {
 
     try {
       await login(formData);
-      navigate('/');
+      // Small delay to ensure auth state is fully updated
+      setTimeout(() => {
+        navigate('/');
+      }, 100);
     } catch (error: any) {
       setError(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Eingaben.'
       );
-    } finally {
       setIsLoading(false);
     }
   };

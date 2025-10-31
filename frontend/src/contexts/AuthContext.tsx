@@ -104,8 +104,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
         setOrganization(userOrganization);
       }
-    } finally {
+      
       setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      throw error;
     }
   };
 

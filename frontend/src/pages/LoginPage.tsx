@@ -1,20 +1,20 @@
-import React from 'react';
 import {
+  ArrowBack as ArrowBackIcon,
+  Dashboard as DashboardIcon,
+} from '@mui/icons-material';
+import {
+  alpha,
   AppBar,
+  Avatar,
   Box,
   Button,
   Container,
   Paper,
   Toolbar,
   Typography,
-  Avatar,
   useTheme,
-  alpha,
 } from '@mui/material';
-import {
-  ArrowBack as ArrowBackIcon,
-  Dashboard as DashboardIcon,
-} from '@mui/icons-material';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import LoginForm from '../components/auth/LoginForm';
 
@@ -158,7 +158,7 @@ const LoginPage: React.FC = () => {
       >
         <Container maxWidth="lg">
           <Typography variant="body2" color="text.secondary" textAlign="center">
-            © 2024 WorkShift Manager. Sichere Anmeldung für Ihr Schichtplanungssystem.
+            © 2025 WorkShift Manager. Sichere Anmeldung für Ihr Schichtplanungssystem.
           </Typography>
         </Container>
       </Box>

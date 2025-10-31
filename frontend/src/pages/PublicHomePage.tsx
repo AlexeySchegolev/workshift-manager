@@ -1,27 +1,27 @@
-import React from 'react';
 import {
+  Business as BusinessIcon,
+  Dashboard as DashboardIcon,
+  Login as LoginIcon,
+  People as PeopleIcon,
+  Schedule as ScheduleIcon,
+  Security as SecurityIcon,
+} from '@mui/icons-material';
+import {
+  alpha,
   AppBar,
+  Avatar,
   Box,
   Button,
+  Card,
+  CardContent,
   Container,
+  Grid,
   Paper,
   Toolbar,
   Typography,
-  Avatar,
-  Grid,
-  Card,
-  CardContent,
   useTheme,
-  alpha,
 } from '@mui/material';
-import {
-  Login as LoginIcon,
-  Dashboard as DashboardIcon,
-  Schedule as ScheduleIcon,
-  People as PeopleIcon,
-  Business as BusinessIcon,
-  Security as SecurityIcon,
-} from '@mui/icons-material';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 /**
@@ -270,7 +270,7 @@ const PublicHomePage: React.FC = () => {
       >
         <Container maxWidth="lg">
           <Typography variant="body2" color="text.secondary" textAlign="center">
-            © 2024 WorkShift Manager. Professionelle Schichtplanung für Ihr Unternehmen.
+            © 2025 WorkShift Manager. Professionelle Schichtplanung für Ihr Unternehmen.
           </Typography>
         </Container>
       </Box>

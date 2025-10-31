@@ -58,7 +58,8 @@ export class AppModule implements OnApplicationBootstrap {
   constructor(private readonly seederService: SeederService) {}
 
   async onApplicationBootstrap() {
-    if (process.env.NODE_ENV === 'development') {
+    // Run seeding in development or if explicitly enabled
+    if (process.env.NODE_ENV === 'development' || process.env.ENABLE_SEEDING === 'true') {
       await this.seederService.seed();
     }
   }

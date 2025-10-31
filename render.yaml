@@ -11,6 +11,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: ENABLE_SEEDING
+        value: true
       # PORT NICHT fix setzen – Render liefert PORT automatisch
       - key: DATABASE_URL
         fromDatabase:

@@ -1,54 +1,39 @@
 services:
-  # PostgreSQL Database
-  - type: pserv
-    name: workshift-postgres
-    env: docker
-    plan: free
-    dockerfilePath: ./Dockerfile.postgres
-    envVars:
-      - key: POSTGRES_DB
-        value: workshift_manager
-      - key: POSTGRES_USER
-        value: workshift_user
-      - key: POSTGRES_PASSWORD
-        generateValue: true
-
-  # Backend API Service
+  # --- Backend ---
   - type: web
     name: workshift-backend
     env: node
     plan: free
-    buildCommand: cd backend && npm ci && npm run build
-    startCommand: cd backend && npm run start:prod
+    rootDir: backend
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    # healthCheckPath: /api/health   # nur lassen, wenn Route existiert
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3001
+      # PORT NICHT fix setzen – Render liefert PORT automatisch
       - key: DATABASE_URL
-        fromService:
-          type: pserv
+        fromDatabase:
           name: workshift-postgres
           property: connectionString
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
-    healthCheckPath: /api/health
 
-  # Frontend Static Site
-  - type: web
+  # --- Frontend (Static Site) ---
+  - type: static
     name: workshift-frontend
-    env: static
     plan: free
-    buildCommand: cd frontend && npm ci && npm run build
-    staticPublishPath: ./frontend/dist
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    publishDir: dist
     envVars:
       - key: VITE_API_URL
         fromService:
           type: web
           name: workshift-backend
-          property: host
+          property: url
     routes:
       - type: rewrite
         source: /*

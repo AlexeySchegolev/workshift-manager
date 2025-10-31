@@ -65,20 +65,40 @@ export class SeederService {
         this.logger.log('🧹 Clearing existing data...');
 
         try {
-            // Order is important due to Foreign Key Constraints
-            await this.dataSource.query('TRUNCATE TABLE shift_plan_details CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE shift_plans CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE shift_weekdays CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE shift_roles CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE shift_required_roles CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE shifts CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE employee_absences CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE employee_roles CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE employees CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE roles CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE locations CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE users CASCADE');
-            await this.dataSource.query('TRUNCATE TABLE organizations CASCADE');
+            // Check if tables exist before truncating
+            const tables = [
+                'shift_plan_details',
+                'shift_plans',
+                'shift_weekdays',
+                'shift_roles',
+                'shift_required_roles',
+                'shifts',
+                'employee_absences',
+                'employee_roles',
+                'employees',
+                'roles',
+                'locations',
+                'users',
+                'organizations'
+            ];
+
+            for (const table of tables) {
+                const result = await this.dataSource.query(
+                    `SELECT EXISTS (
+                        SELECT FROM information_schema.tables
+                        WHERE table_schema = 'public'
+                        AND table_name = $1
+                    )`,
+                    [table]
+                );
+
+                if (result[0].exists) {
+                    await this.dataSource.query(`TRUNCATE TABLE ${table} CASCADE`);
+                    this.logger.log(`✅ Cleared table: ${table}`);
+                } else {
+                    this.logger.warn(`⚠️ Table does not exist: ${table}`);
+                }
+            }
 
             this.logger.log('✅ Database cleared successfully');
         } catch (error) {

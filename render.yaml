@@ -34,7 +34,7 @@ services:
         fromService:
           type: web
           name: workshift-backend
-          property: url
+          property: host
     routes:
       - type: rewrite
         source: /*
